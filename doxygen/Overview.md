@@ -1,14 +1,32 @@
-**ARPACK-Eigen** is a redesign of the [ARPACK](http://www.caam.rice.edu/software/ARPACK/)
-software for large scale eigenvalue problems, built on top of
-[Eigen](http://eigen.tuxfamily.org), an open source C++ linear algebra library.
+**Spectra** stands for **Sp**arse **E**igenvalue **C**omputation **T**oolkit
+as a **R**edesigned **A**RPACK. It is a C++ library for large scale eigenvalue
+problems, built on top of [Eigen](http://eigen.tuxfamily.org),
+an open source linear algebra library.
 
-**ARPACK-Eigen** is implemented as a header-only C++ library, whose only dependency,
-**Eigen**, is also header-only. Hence **ARPACK-Eigen** can be easily embedded in
-C++ projects that require solving large scale eigenvalue problems.
+**Spectra** is implemented as a header-only C++ library, whose only dependency,
+**Eigen**, is also header-only. Hence **Spectra** can be easily embedded in
+C++ projects that require calculating eigenvalues of large matrices.
+
+The development page of **Spectra** is at
+[https://github.com/yixuan/spectra/](https://github.com/yixuan/spectra).
+
+## Relation to ARPACK
+
+[ARPACK](http://www.caam.rice.edu/software/ARPACK/) is a software written in
+FORTRAN for solving large scale eigenvalue problems. The development of
+**Spectra** is much inspired by ARPACK, and as the whole name indicates,
+**Spectra** is a redesign of the ARPACK library using C++ language.
+
+In fact, **Spectra** is based on the algorithms described in the
+[ARPACK Users' Guide](http://www.caam.rice.edu/software/ARPACK/UG/ug.html),
+but it does not use the ARPACK code, and it is not a clone of ARPACK in C++.
+In short, **Spectra** implements the major algorithms in ARPACK,
+but **Spectra** provides a completely different interface, and it does not
+depend on ARPACK.
 
 ## Common Usage
 
-**ARPACK-Eigen** is designed to calculate a specified number (\f$k\f$) of eigenvalues
+**Spectra** is designed to calculate a specified number (\f$k\f$) of eigenvalues
 of a large square matrix (\f$A\f$). Usually \f$k\f$ is much less than the size of matrix
 (\f$n\f$), so that only a few eigenvalues and eigenvectors are computed, which
 in general is more efficient than calculating the whole spectral decomposition.
@@ -20,14 +38,14 @@ To use the eigen solvers in this library, the user does not need to directly
 provide the whole matrix, but instead, the algorithm only requires certain operations
 defined on \f$A\f$, and in the basic setting, it is simply the matrix-vector
 multiplication. Therefore, if the matrix-vector product \f$Ax\f$ can be computed
-efficiently, which is the case when \f$A\f$ is sparse, **ARPACK-Eigen**
+efficiently, which is the case when \f$A\f$ is sparse, **Spectra**
 will be very powerful for large scale eigenvalue problems.
 
-There are two major steps to use the **ARPACK-Eigen** library:
+There are two major steps to use the **Spectra** library:
 
 1. Define a class that implements a certain matrix operation, for example the
 matrix-vector multiplication \f$y=Ax\f$ or the shift-solve operation
-\f$y=(A-\sigma I)^{-1}x\f$. **ARPACK-Eigen** has defined a number of
+\f$y=(A-\sigma I)^{-1}x\f$. **Spectra** has defined a number of
 helper classes to quickly create such operations from a matrix object.
 See the documentation of DenseGenMatProd, DenseSymShiftSolve, etc.
 2. Create an object of one of the eigen solver classes, for example SymEigsSolver
@@ -35,7 +53,7 @@ for symmetric matrices, and GenEigsSolver for general matrices. Member functions
 of this object can then be called to conduct the computation and retrieve the
 eigenvalues and/or eigenvectors.
 
-Below is a list of the available eigen solvers in **ARPACK-Eigen**:
+Below is a list of the available eigen solvers in **Spectra**:
 - SymEigsSolver: for real symmetric matrices
 - GenEigsSolver: for general real matrices
 - SymEigsShiftSolver: for real symmetric matrices using the shift-and-invert mode
@@ -129,5 +147,5 @@ the documentation of SymEigsShiftSolver for details.
 
 ## License
 
-**ARPACK-Eigen** is an open source project licensed under
+**Spectra** is an open source project licensed under
 [MPL2](https://www.mozilla.org/MPL/2.0/), the same license used by **Eigen**.
