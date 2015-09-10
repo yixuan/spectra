@@ -33,7 +33,7 @@
 ///
 /// This class implements the eigen solver for real symmetric matrices.
 ///
-/// **ARPACK-Eigen** is designed to calculate a specified number (\f$k\f$)
+/// **Spectra** is designed to calculate a specified number (\f$k\f$)
 /// of eigenvalues of a large square matrix (\f$A\f$). Usually \f$k\f$ is much
 /// less than the size of the matrix (\f$n\f$), so that only a few eigenvalues
 /// and eigenvectors are computed.
@@ -401,7 +401,7 @@ public:
     ///
     /// \param init_resid Pointer to the initial residual vector.
     ///
-    /// **ARPACK-Eigen** (and also **ARPACK**) uses an iterative algorithm
+    /// **Spectra** (and also **ARPACK**) uses an iterative algorithm
     /// to find eigenvalues. This function allows the user to provide the initial
     /// residual vector.
     ///
@@ -596,7 +596,7 @@ public:
 /// that \f$\lambda=\sigma+\nu^{-1}\f$.
 ///
 /// The reason why we need this type of manipulation is that
-/// the algorithm of **ARPACK-Eigen** (and also **ARPACK**)
+/// the algorithm of **Spectra** (and also **ARPACK**)
 /// is good at finding eigenvalues with large magnitude, but may fail in looking
 /// for eigenvalues that are close to zero. However, if we really need them, we
 /// can set \f$\sigma=0\f$, find the largest eigenvalues of \f$A^{-1}\f$, and then

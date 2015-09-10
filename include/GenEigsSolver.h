@@ -371,7 +371,7 @@ public:
     ///
     /// \param init_resid Pointer to the initial residual vector.
     ///
-    /// **ARPACK-Eigen** (and also **ARPACK**) uses an iterative algorithm
+    /// **Spectra** (and also **ARPACK**) uses an iterative algorithm
     /// to find eigenvalues. This function allows the user to provide the initial
     /// residual vector.
     ///
