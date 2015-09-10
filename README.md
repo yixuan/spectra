@@ -1,16 +1,31 @@
-# ARPACK-Eigen
+# Spectra
 
-**ARPACK-Eigen** is a redesign of the [ARPACK](http://www.caam.rice.edu/software/ARPACK/)
-software for large scale eigenvalue problems, built on top of
-[Eigen](http://eigen.tuxfamily.org), an open source C++ linear algebra library.
+**Spectra** stands for **Sp**arse **E**igenvalue **C**omputation **T**oolkit
+as a **R**edesigned **A**RPACK. It is a C++ library for large scale eigenvalue
+problems, built on top of [Eigen](http://eigen.tuxfamily.org),
+an open source linear algebra library.
 
-**ARPACK-Eigen** is implemented as a header-only C++ library, whose only dependency,
-**Eigen**, is also header-only. Hence **ARPACK-Eigen** can be easily embedded in
-C++ projects that require solving large scale eigenvalue problems.
+**Spectra** is implemented as a header-only C++ library, whose only dependency,
+**Eigen**, is also header-only. Hence **Spectra** can be easily embedded in
+C++ projects that require calculating eigenvalues of large matrices.
+
+## Relation to ARPACK
+
+[ARPACK](http://www.caam.rice.edu/software/ARPACK/) is a software written in
+FORTRAN for solving large scale eigenvalue problems. The development of
+**Spectra** is much inspired by ARPACK, and as the whole name indicates,
+**Spectra** is a redesign of the ARPACK library using C++ language.
+
+In fact, **Spectra** is based on the algorithms described in the
+[ARPACK Users' Guide](http://www.caam.rice.edu/software/ARPACK/UG/ug.html),
+but it does not use the ARPACK code, and it is not a clone of ARPACK in C++.
+In short, **Spectra** implements the major algorithms in ARPACK,
+but **Spectra** provides a completely different interface, and it does not
+depend on ARPACK.
 
 ## Common Usage
 
-**ARPACK-Eigen** is designed to calculate a specified number (`k`) of eigenvalues
+**Spectra** is designed to calculate a specified number (`k`) of eigenvalues
 of a large square matrix (`A`). Usually `k` is much less than the size of matrix
 (`n`), so that only a few eigenvalues and eigenvectors are computed, which
 in general is more efficient than calculating the whole spectral decomposition.
@@ -22,34 +37,34 @@ To use the eigen solvers in this library, the user does not need to directly
 provide the whole matrix, but instead, the algorithm only requires certain operations
 defined on `A`, and in the basic setting, it is simply the matrix-vector
 multiplication. Therefore, if the matrix-vector product `A * x` can be computed
-efficiently, which is the case when `A` is sparse, **ARPACK-Armadillo**
+efficiently, which is the case when `A` is sparse, **Spectra**
 will be very powerful for large scale eigenvalue problems.
 
-There are two major steps to use the **ARPACK-Eigen** library:
+There are two major steps to use the **Spectra** library:
 
 1. Define a class that implements a certain matrix operation, for example the
 matrix-vector multiplication `y = A * x` or the shift-solve operation
-`y = inv(A - σ * I) * x`. **ARPACK-Eigen** has defined a number of
+`y = inv(A - σ * I) * x`. **Spectra** has defined a number of
 helper classes to quickly create such operations from a matrix object.
 See the documentation of
-[DenseGenMatProd](http://yixuan.cos.name/arpack-eigen/doc/classDenseGenMatProd.html),
-[DenseSymShiftSolve](http://yixuan.cos.name/arpack-eigen/doc/classDenseSymShiftSolve.html), etc.
+[DenseGenMatProd](http://yixuan.cos.name/spectra/doc/classDenseGenMatProd.html),
+[DenseSymShiftSolve](http://yixuan.cos.name/spectra/doc/classDenseSymShiftSolve.html), etc.
 2. Create an object of one of the eigen solver classes, for example
-[SymEigsSolver](http://yixuan.cos.name/arpack-eigen/doc/classSymEigsSolver.html)
+[SymEigsSolver](http://yixuan.cos.name/spectra/doc/classSymEigsSolver.html)
 for symmetric matrices, and
-[GenEigsSolver](http://yixuan.cos.name/arpack-eigen/doc/classGenEigsSolver.html)
+[GenEigsSolver](http://yixuan.cos.name/spectra/doc/classGenEigsSolver.html)
 for general matrices. Member functions
 of this object can then be called to conduct the computation and retrieve the
 eigenvalues and/or eigenvectors.
 
-Below is a list of the available eigen solvers in **ARPACK-Eigen**:
-- [SymEigsSolver](http://yixuan.cos.name/arpack-eigen/doc/classSymEigsSolver.html):
+Below is a list of the available eigen solvers in **Spectra**:
+- [SymEigsSolver](http://yixuan.cos.name/spectra/doc/classSymEigsSolver.html):
 for real symmetric matrices
-- [GenEigsSolver](http://yixuan.cos.name/arpack-eigen/doc/classGenEigsSolver.html):
+- [GenEigsSolver](http://yixuan.cos.name/spectra/doc/classGenEigsSolver.html):
 for general real matrices
-- [SymEigsShiftSolver](http://yixuan.cos.name/arpack-eigen/doc/classSymEigsShiftSolver.html):
+- [SymEigsShiftSolver](http://yixuan.cos.name/spectra/doc/classSymEigsShiftSolver.html):
 for real symmetric matrices using the shift-and-invert mode
-- [GenEigsRealShiftSolver](http://yixuan.cos.name/arpack-eigen/doc/classGenEigsRealShiftSolver.html):
+- [GenEigsRealShiftSolver](http://yixuan.cos.name/spectra/doc/classGenEigsRealShiftSolver.html):
 for general real matrices using the shift-and-invert mode,
 with a real-valued shift
 
@@ -183,16 +198,16 @@ In the shift-and-invert mode, selection rules are applied to `1/(λ - σ)`
 rather than `λ`, where `λ` are eigenvalues of `A`.
 To use this mode, users need to define the shift-solve matrix operation. See
 the documentation of
-[SymEigsShiftSolver](http://yixuan.cos.name/arpack-eigen/doc/classSymEigsShiftSolver.html)
+[SymEigsShiftSolver](http://yixuan.cos.name/spectra/doc/classSymEigsShiftSolver.html)
 for details.
 
 ## Documentation
 
-[This page](http://yixuan.cos.name/arpack-eigen/doc/) contains the documentation
-of **ARPACK-Eigen** generated by [Doxygen](http://www.doxygen.org/),
+[This page](http://yixuan.cos.name/spectra/doc/) contains the documentation
+of **Spectra** generated by [Doxygen](http://www.doxygen.org/),
 including all the background knowledge, example code and class APIs.
 
 ## License
 
-**ARPACK-Eigen** is an open source project licensed under
+**Spectra** is an open source project licensed under
 [MPL2](https://www.mozilla.org/MPL/2.0/), the same license used by **Eigen**.
