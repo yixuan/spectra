@@ -41,7 +41,7 @@ namespace Spectra {
 ///                       the requested eigenvalues, for example `LARGEST_MAGN`
 ///                       to retrieve eigenvalues with the largest magnitude.
 ///                       The full list of enumeration values can be found in
-///                       SelectionRule.h .
+///                       \ref Enumerations.
 /// \tparam OpType        The name of the matrix operation class. Users could either
 ///                       use the DenseGenMatProd wrapper class, or define their
 ///                       own that impelemnts all the public member functions as in
@@ -53,6 +53,8 @@ namespace Spectra {
 /// #include <Eigen/Core>
 /// #include <GenEigsSolver.h>  // Also includes <MatOp/DenseGenMatProd.h>
 /// #include <iostream>
+///
+/// using namespace Spectra;
 ///
 /// int main()
 /// {
@@ -554,7 +556,7 @@ public:
 /// \tparam SelectionRule An enumeration value indicating the selection rule of
 ///                       the shifted-and-inverted eigenvalues.
 ///                       The full list of enumeration values can be found in
-///                       SelectionRule.h .
+///                       \ref Enumerations.
 /// \tparam OpType        The name of the matrix operation class. Users could either
 ///                       use the DenseGenRealShiftSolve wrapper class, or define their
 ///                       own that impelemnts all the public member functions as in
@@ -624,7 +626,7 @@ public:
 /// \tparam SelectionRule An enumeration value indicating the selection rule of
 ///                       the shifted-and-inverted eigenvalues.
 ///                       The full list of enumeration values can be found in
-///                       SelectionRule.h .
+///                       \ref Enumerations.
 /// \tparam OpType        The name of the matrix operation class. Users could either
 ///                       use the DenseGenComplexShiftSolve wrapper class, or define their
 ///                       own that impelemnts all the public member functions as in

@@ -18,11 +18,13 @@ namespace Spectra {
 
 
 ///
-/// \file SelectionRule.h
+/// \defgroup Enumerations
 ///
-/// This file defines enumeration types for the selection rule of eigenvalues.
+/// Enumeration types for the selection rule of eigenvalues.
 ///
 
+///
+/// \ingroup Enumerations
 ///
 /// The enumeration of selection rules of desired eigenvalues.
 ///
@@ -53,6 +55,8 @@ enum SELECT_EIGENVALUE
                        ///< `nev` is odd, compute more from the high end. Only for symmetric eigen solvers.
 };
 
+///
+/// \ingroup Enumerations
 ///
 /// The enumeration of selection rules of desired eigenvalues. Alias for `SELECT_EIGENVALUE`.
 ///

@@ -1,5 +1,7 @@
-**Spectra** stands for **Sp**arse **E**igenvalue **C**omputation **T**oolkit
-as a **R**edesigned **A**RPACK. It is a C++ library for large scale eigenvalue
+**Spectra** stands for <strong>Sp</strong>arse <strong>E</strong>igenvalue
+<strong>C</strong>omputation <strong>T</strong>oolkit
+as a <strong>R</strong>edesigned <strong>A</strong>RPACK.
+It is a C++ library for large scale eigenvalue
 problems, built on top of [Eigen](http://eigen.tuxfamily.org),
 an open source linear algebra library.
 
@@ -19,7 +21,7 @@ FORTRAN for solving large scale eigenvalue problems. The development of
 
 In fact, **Spectra** is based on the algorithms described in the
 [ARPACK Users' Guide](http://www.caam.rice.edu/software/ARPACK/UG/ug.html),
-but it does not use the ARPACK code, and it is not a clone of ARPACK in C++.
+but it does not use the ARPACK code, and it is **NOT** a clone of ARPACK for C++.
 In short, **Spectra** implements the major algorithms in ARPACK,
 but **Spectra** provides a completely different interface, and it does not
 depend on ARPACK.
@@ -47,18 +49,20 @@ There are two major steps to use the **Spectra** library:
 matrix-vector multiplication \f$y=Ax\f$ or the shift-solve operation
 \f$y=(A-\sigma I)^{-1}x\f$. **Spectra** has defined a number of
 helper classes to quickly create such operations from a matrix object.
-See the documentation of DenseGenMatProd, DenseSymShiftSolve, etc.
-2. Create an object of one of the eigen solver classes, for example SymEigsSolver
-for symmetric matrices, and GenEigsSolver for general matrices. Member functions
-of this object can then be called to conduct the computation and retrieve the
-eigenvalues and/or eigenvectors.
+See the documentation of Spectra::DenseGenMatProd, Spectra::DenseSymShiftSolve, etc.
+2. Create an object of one of the eigen solver classes, for example
+Spectra::SymEigsSolver for symmetric matrices, and Spectra::GenEigsSolver
+for general matrices. Member functions of this object can then be called to
+conduct the computation and retrieve the eigenvalues and/or eigenvectors.
 
 Below is a list of the available eigen solvers in **Spectra**:
-- SymEigsSolver: for real symmetric matrices
-- GenEigsSolver: for general real matrices
-- SymEigsShiftSolver: for real symmetric matrices using the shift-and-invert mode
-- GenEigsRealShiftSolver: for general real matrices using the shift-and-invert mode,
+- \link Spectra::SymEigsSolver SymEigsSolver \endlink: for real symmetric matrices
+- \link Spectra::GenEigsSolver GenEigsSolver \endlink: for general real matrices
+- \link Spectra::SymEigsShiftSolver SymEigsShiftSolver \endlink: for real symmetric matrices using the shift-and-invert mode
+- \link Spectra::GenEigsRealShiftSolver GenEigsRealShiftSolver \endlink: for general real matrices using the shift-and-invert mode,
 with a real-valued shift
+- \link Spectra::GenEigsComplexShiftSolver GenEigsComplexShiftSolver \endlink: for general real matrices using the shift-and-invert mode,
+with a complex-valued shift
 
 ## Examples
 
@@ -69,6 +73,8 @@ matrices.
 #include <Eigen/Core>
 #include <SymEigsSolver.h>  // Also includes <MatOp/DenseGenMatProd.h>
 #include <iostream>
+
+using namespace Spectra;
 
 int main()
 {
@@ -103,6 +109,8 @@ And here is an example for user-supplied matrix operation class.
 #include <Eigen/Core>
 #include <SymEigsSolver.h>
 #include <iostream>
+
+using namespace Spectra;
 
 // M = diag(1, 2, ..., 10)
 class MyDiagonalTen
@@ -143,7 +151,7 @@ of eigen solvers.
 In the shift-and-invert mode, selection rules are applied to \f$1/(\lambda-\sigma)\f$
 rather than \f$\lambda\f$, where \f$\lambda\f$ are eigenvalues of \f$A\f$.
 To use this mode, users need to define the shift-solve matrix operation. See
-the documentation of SymEigsShiftSolver for details.
+the documentation of Spectra::SymEigsShiftSolver for details.
 
 ## License
 
