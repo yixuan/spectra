@@ -4,7 +4,8 @@
 
 #include <SymEigsSolver.h>
 #include <GenEigsSolver.h>
-#include <MatOp/DenseGenMatProd.h>
+
+using namespace Spectra;
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
