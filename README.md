@@ -47,27 +47,27 @@ matrix-vector multiplication `y = A * x` or the shift-solve operation
 `y = inv(A - σ * I) * x`. **Spectra** has defined a number of
 helper classes to quickly create such operations from a matrix object.
 See the documentation of
-[DenseGenMatProd](http://yixuan.cos.name/spectra/doc/classDenseGenMatProd.html),
-[DenseSymShiftSolve](http://yixuan.cos.name/spectra/doc/classDenseSymShiftSolve.html), etc.
+[DenseGenMatProd](http://yixuan.cos.name/spectra/doc/classSpectra_1_1DenseGenMatProd.html),
+[DenseSymShiftSolve](http://yixuan.cos.name/spectra/doc/classSpectra_1_1DenseSymShiftSolve.html), etc.
 2. Create an object of one of the eigen solver classes, for example
-[SymEigsSolver](http://yixuan.cos.name/spectra/doc/classSymEigsSolver.html)
+[SymEigsSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1SymEigsSolver.html)
 for symmetric matrices, and
-[GenEigsSolver](http://yixuan.cos.name/spectra/doc/classGenEigsSolver.html)
+[GenEigsSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1GenEigsSolver.html)
 for general matrices. Member functions
 of this object can then be called to conduct the computation and retrieve the
 eigenvalues and/or eigenvectors.
 
 Below is a list of the available eigen solvers in **Spectra**:
-- [SymEigsSolver](http://yixuan.cos.name/spectra/doc/classSymEigsSolver.html):
+- [SymEigsSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1SymEigsSolver.html):
 for real symmetric matrices
-- [GenEigsSolver](http://yixuan.cos.name/spectra/doc/classGenEigsSolver.html):
+- [GenEigsSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1GenEigsSolver.html):
 for general real matrices
-- [SymEigsShiftSolver](http://yixuan.cos.name/spectra/doc/classSymEigsShiftSolver.html):
+- [SymEigsShiftSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1SymEigsShiftSolver.html):
 for real symmetric matrices using the shift-and-invert mode
-- [GenEigsRealShiftSolver](http://yixuan.cos.name/spectra/doc/classGenEigsRealShiftSolver.html):
+- [GenEigsRealShiftSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
 for general real matrices using the shift-and-invert mode,
 with a real-valued shift
-- [GenEigsComplexShiftSolver](http://yixuan.cos.name/spectra/doc/classGenEigsRealShiftSolver.html):
+- [GenEigsComplexShiftSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
 for general real matrices using the shift-and-invert mode,
 with a complex-valued shift
 
@@ -207,7 +207,7 @@ In the shift-and-invert mode, selection rules are applied to `1/(λ - σ)`
 rather than `λ`, where `λ` are eigenvalues of `A`.
 To use this mode, users need to define the shift-solve matrix operation. See
 the documentation of
-[SymEigsShiftSolver](http://yixuan.cos.name/spectra/doc/classSymEigsShiftSolver.html)
+[SymEigsShiftSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1SymEigsShiftSolver.html)
 for details.
 
 ## Documentation
