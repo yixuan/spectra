@@ -4,6 +4,8 @@
 #include <SymEigsSolver.h>
 #include <MatOp/DenseSymShiftSolve.h>
 
+using namespace Spectra;
+
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 

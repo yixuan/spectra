@@ -1,8 +1,11 @@
-// Test ../include/UpperHessenbergEigen.h and ../include/TridiagEigen.h
-#include <UpperHessenbergEigen.h>
-#include <TridiagEigen.h>
+// Test ../include/LinAlg/UpperHessenbergEigen.h and
+//      ../include/LinAlg/TridiagEigen.h
+#include <LinAlg/UpperHessenbergEigen.h>
+#include <LinAlg/TridiagEigen.h>
 #include <Eigen/Eigenvalues>
 #include <ctime>
+
+using namespace Spectra;
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"

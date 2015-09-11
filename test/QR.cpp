@@ -1,8 +1,11 @@
-// Test ../include/UpperHessenbergQR.h and ../include/DoubleShiftQR.h
+// Test ../include/LinAlg/UpperHessenbergQR.h and
+//      ../include/LinAlg/DoubleShiftQR.h
 #include <Eigen/Core>
 #include <Eigen/QR>
-#include <UpperHessenbergQR.h>
-#include <DoubleShiftQR.h>
+#include <LinAlg/UpperHessenbergQR.h>
+#include <LinAlg/DoubleShiftQR.h>
+
+using namespace Spectra;
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
