@@ -13,6 +13,9 @@
 #include <limits>     // std::numeric_limits
 #include <stdexcept>  // std::logic_error
 
+namespace Spectra {
+
+
 ///
 /// \defgroup LinearAlgebra Linear Algebra
 ///
@@ -587,5 +590,6 @@ public:
 };
 
 
+} // namespace Spectra
 
 #endif // UPPER_HESSENBERG_QR_H

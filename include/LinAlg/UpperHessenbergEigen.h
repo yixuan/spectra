@@ -15,6 +15,9 @@
 #include <Eigen/Eigenvalues>
 #include <stdexcept>
 
+namespace Spectra {
+
+
 template <typename Scalar = double>
 class UpperHessenbergEigen
 {
@@ -299,5 +302,6 @@ public:
 };
 
 
+} // namespace Spectra
 
 #endif // UPPER_HESSENBERG_EIGEN_H

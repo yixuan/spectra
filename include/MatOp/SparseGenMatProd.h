@@ -10,6 +10,9 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 
+namespace Spectra {
+
+
 ///
 /// \ingroup MatOp
 ///
@@ -63,5 +66,7 @@ public:
     }
 };
 
+
+} // namespace Spectra
 
 #endif // SPARSE_GEN_MAT_PROD_H

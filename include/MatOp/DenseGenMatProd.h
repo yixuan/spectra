@@ -9,6 +9,9 @@
 
 #include <Eigen/Core>
 
+namespace Spectra {
+
+
 ///
 /// \defgroup MatOp Matrix Operations
 ///
@@ -73,5 +76,7 @@ public:
     }
 };
 
+
+} // namespace Spectra
 
 #endif // DENSE_GEN_MAT_PROD_H

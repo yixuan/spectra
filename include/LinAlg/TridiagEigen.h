@@ -15,6 +15,9 @@
 #include <Eigen/Eigenvalues>
 #include <stdexcept>
 
+namespace Spectra {
+
+
 template <typename Scalar = double>
 class TridiagEigen
 {
@@ -115,5 +118,6 @@ public:
 };
 
 
+} // namespace Spectra
 
 #endif // TRIDIAG_EIGEN_H

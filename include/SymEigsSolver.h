@@ -16,10 +16,13 @@
 #include <stdexcept>  // std::invalid_argument
 
 #include "SelectionRule.h"
-#include "UpperHessenbergQR.h"
-#include "TridiagEigen.h"
+#include "LinAlg/UpperHessenbergQR.h"
+#include "LinAlg/TridiagEigen.h"
 #include "MatOp/DenseGenMatProd.h"
 #include "MatOp/DenseSymShiftSolve.h"
+
+
+namespace Spectra {
 
 
 ///
@@ -740,5 +743,8 @@ public:
         this->op->set_shift(sigma);
     }
 };
+
+
+} // namespace Spectra
 
 #endif // SYM_EIGS_SOLVER_H

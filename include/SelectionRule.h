@@ -14,6 +14,9 @@
 #include <utility>    // std::pair
 #include <stdexcept>  // std::invalid_argument
 
+namespace Spectra {
+
+
 ///
 /// \file SelectionRule.h
 ///
@@ -25,7 +28,6 @@
 ///
 enum SELECT_EIGENVALUE
 {
-
     LARGEST_MAGN = 0,  ///< Select eigenvalues with largest magnitude. Magnitude
                        ///< means the absolute value for real numbers and norm for
                        ///< complex numbers. Applies to both symmetric and general
@@ -259,5 +261,8 @@ public:
 };
 
 /// \endcond
+
+
+} // namespace Spectra
 
 #endif // SELECTION_RULE_H

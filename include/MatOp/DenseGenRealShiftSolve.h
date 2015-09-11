@@ -11,6 +11,9 @@
 #include <Eigen/LU>
 #include <stdexcept>
 
+namespace Spectra {
+
+
 ///
 /// \ingroup MatOp
 ///
@@ -82,5 +85,7 @@ public:
     }
 };
 
+
+} // namespace Spectra
 
 #endif // DENSE_GEN_REAL_SHIFT_SOLVE_H

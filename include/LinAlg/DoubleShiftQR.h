@@ -14,6 +14,9 @@
 #include <limits>     // std::numeric_limits
 #include <stdexcept>  // std::invalid_argument, std::logic_error
 
+namespace Spectra {
+
+
 template <typename Scalar = double>
 class DoubleShiftQR
 {
@@ -330,5 +333,7 @@ public:
     }
 };
 
+
+} // namespace Spectra
 
 #endif // DOUBLE_SHIFT_QR_H

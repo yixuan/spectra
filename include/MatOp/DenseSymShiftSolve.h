@@ -11,6 +11,9 @@
 #include <Eigen/Cholesky>
 #include <stdexcept>
 
+namespace Spectra {
+
+
 ///
 /// \ingroup MatOp
 ///
@@ -82,5 +85,7 @@ public:
     }
 };
 
+
+} // namespace Spectra
 
 #endif // DENSESYMSHIFTSOLVE_H

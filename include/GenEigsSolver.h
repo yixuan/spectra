@@ -16,12 +16,14 @@
 #include <stdexcept>  // std::invalid_argument
 
 #include "SelectionRule.h"
-#include "UpperHessenbergQR.h"
-#include "UpperHessenbergEigen.h"
-#include "DoubleShiftQR.h"
+#include "LinAlg/UpperHessenbergQR.h"
+#include "LinAlg/UpperHessenbergEigen.h"
+#include "LinAlg/DoubleShiftQR.h"
 #include "MatOp/DenseGenMatProd.h"
 #include "MatOp/DenseGenRealShiftSolve.h"
 #include "MatOp/DenseGenComplexShiftSolve.h"
+
+namespace Spectra {
 
 
 ///
@@ -714,5 +716,8 @@ public:
         this->op->set_shift(sigmar, sigmai);
     }
 };
+
+
+} // namespace Spectra
 
 #endif // GEN_EIGS_SOLVER_H
