@@ -346,12 +346,39 @@ private:
     }
 
 protected:
-    // Sort the first nev Ritz pairs in decreasing magnitude order
+    // Sort the first nev Ritz pairs in the specified order
     // This is used to return the final results
-    virtual void sort_ritzpair()
+    virtual void sort_ritzpair(int sort_rule)
     {
+        // First make sure that we have a valid index vector
         SortEigenvalue<Scalar, LARGEST_ALGE> sorting(ritz_val.data(), nev);
         std::vector<int> ind = sorting.index();
+
+        switch(sort_rule)
+        {
+            case LARGEST_ALGE:
+                break;
+            case LARGEST_MAGN:
+            {
+                SortEigenvalue<Scalar, LARGEST_MAGN> sorting(ritz_val.data(), nev);
+                ind = sorting.index();
+            }
+                break;
+            case SMALLEST_ALGE:
+            {
+                SortEigenvalue<Scalar, SMALLEST_ALGE> sorting(ritz_val.data(), nev);
+                ind = sorting.index();
+            }
+                break;
+            case SMALLEST_MAGN:
+            {
+                SortEigenvalue<Scalar, SMALLEST_MAGN> sorting(ritz_val.data(), nev);
+                ind = sorting.index();
+            }
+                break;
+            default:
+                throw std::invalid_argument("unsupported sorting rule");
+        }
 
         Vector new_ritz_val(ncv);
         Matrix new_ritz_vec(ncv, nev);
@@ -465,12 +492,22 @@ public:
     ///
     /// Conducting the major computation procedure.
     ///
-    /// \param maxit Maximum number of iterations allowed in the algorithm.
-    /// \param tol Precision parameter for the calculated eigenvalues.
+    /// \param maxit      Maximum number of iterations allowed in the algorithm.
+    /// \param tol        Precision parameter for the calculated eigenvalues.
+    /// \param sort_rule  Rule to sort the eigenvalues and eigenvectors.
+    ///                   Supported values are
+    ///                   `Spectra::LARGEST_ALGE`, `Spectra::LARGEST_MAGN`,
+    ///                   `Spectra::SMALLEST_ALGE` and `Spectra::SMALLEST_MAGN`,
+    ///                   for example `LARGEST_ALGE` indicates that largest eigenvalues
+    ///                   come first. Note that this argument is only used to
+    ///                   **sort** the final result, and the **selection** rule
+    ///                   (e.g. selecting the largest or smallest eigenvalues in the
+    ///                   full spectrum) is specified by the template parameter
+    ///                   `SelectionRule` of SymEigsSolver.
     ///
     /// \return Number of converged eigenvalues.
     ///
-    int compute(int maxit = 1000, Scalar tol = 1e-10)
+    int compute(int maxit = 1000, Scalar tol = 1e-10, int sort_rule = LARGEST_ALGE)
     {
         // The m-step Arnoldi factorization
         factorize_from(1, ncv, fac_f);
@@ -487,7 +524,7 @@ public:
             restart(nev_adj);
         }
         // Sorting results
-        sort_ritzpair();
+        sort_ritzpair(sort_rule);
 
         niter += i + 1;
 
@@ -719,11 +756,11 @@ private:
     Scalar sigma;
 
     // First transform back the ritz values, and then sort
-    void sort_ritzpair()
+    void sort_ritzpair(int sort_rule)
     {
         Array ritz_val_org = Scalar(1.0) / this->ritz_val.head(this->nev).array() + sigma;
         this->ritz_val.head(this->nev) = ritz_val_org;
-        SymEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair();
+        SymEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair(sort_rule);
     }
 public:
     ///

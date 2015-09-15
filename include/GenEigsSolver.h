@@ -313,12 +313,51 @@ private:
     }
 
 protected:
-    // Sort the first nev Ritz pairs in decreasing magnitude order
+    // Sort the first nev Ritz pairs in the specified order
     // This is used to return the final results
-    virtual void sort_ritzpair()
+    virtual void sort_ritzpair(int sort_rule)
     {
+        // First make sure that we have a valid index vector
         SortEigenvalue<Complex, LARGEST_MAGN> sorting(ritz_val.data(), nev);
         std::vector<int> ind = sorting.index();
+
+        switch(sort_rule)
+        {
+            case LARGEST_MAGN:
+                break;
+            case LARGEST_REAL:
+            {
+                SortEigenvalue<Complex, LARGEST_REAL> sorting(ritz_val.data(), nev);
+                ind = sorting.index();
+            }
+                break;
+            case LARGEST_IMAG:
+            {
+                SortEigenvalue<Complex, LARGEST_IMAG> sorting(ritz_val.data(), nev);
+                ind = sorting.index();
+            }
+                break;
+            case SMALLEST_MAGN:
+            {
+                SortEigenvalue<Complex, SMALLEST_MAGN> sorting(ritz_val.data(), nev);
+                ind = sorting.index();
+            }
+                break;
+            case SMALLEST_REAL:
+            {
+                SortEigenvalue<Complex, SMALLEST_REAL> sorting(ritz_val.data(), nev);
+                ind = sorting.index();
+            }
+                break;
+            case SMALLEST_IMAG:
+            {
+                SortEigenvalue<Complex, SMALLEST_IMAG> sorting(ritz_val.data(), nev);
+                ind = sorting.index();
+            }
+                break;
+            default:
+                throw std::invalid_argument("unsupported sorting rule");
+        }
 
         ComplexVector new_ritz_val(ncv);
         ComplexMatrix new_ritz_vec(ncv, nev);
@@ -429,12 +468,24 @@ public:
     ///
     /// Conducting the major computation procedure.
     ///
-    /// \param maxit Maximum number of iterations allowed in the algorithm.
-    /// \param tol Precision parameter for the calculated eigenvalues.
+    /// \param maxit      Maximum number of iterations allowed in the algorithm.
+    /// \param tol        Precision parameter for the calculated eigenvalues.
+    /// \param sort_rule  Rule to sort the eigenvalues and eigenvectors.
+    ///                   Supported values are
+    ///                   `Spectra::LARGEST_MAGN`, `Spectra::LARGEST_REAL`,
+    ///                   `Spectra::LARGEST_IMAG`, `Spectra::SMALLEST_MAGN`,
+    ///                   `Spectra::SMALLEST_REAL` and `Spectra::SMALLEST_IMAG`,
+    ///                   for example `LARGEST_MAGN` indicates that eigenvalues
+    ///                   with largest magnitude come first.
+    ///                   Note that this argument is only used to
+    ///                   **sort** the final result, and the **selection** rule
+    ///                   (e.g. selecting the largest or smallest eigenvalues in the
+    ///                   full spectrum) is specified by the template parameter
+    ///                   `SelectionRule` of GenEigsSolver.
     ///
     /// \return Number of converged eigenvalues.
     ///
-    int compute(int maxit = 1000, Scalar tol = 1e-10)
+    int compute(int maxit = 1000, Scalar tol = 1e-10, int sort_rule = LARGEST_MAGN)
     {
         // The m-step Arnoldi factorization
         factorize_from(1, ncv, fac_f);
@@ -451,7 +502,7 @@ public:
             restart(nev_adj);
         }
         // Sorting results
-        sort_ritzpair();
+        sort_ritzpair(sort_rule);
 
         niter += i + 1;
 
@@ -574,13 +625,13 @@ private:
     Scalar sigma;
 
     // First transform back the ritz values, and then sort
-    void sort_ritzpair()
+    void sort_ritzpair(int sort_rule)
     {
         // The eigenvalus we get from the iteration is nu = 1 / (lambda - sigma)
         // So the eigenvalues of the original problem is lambda = 1 / nu + sigma
         ComplexArray ritz_val_org = Scalar(1.0) / this->ritz_val.head(this->nev).array() + sigma;
         this->ritz_val.head(this->nev) = ritz_val_org;
-        GenEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair();
+        GenEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair(sort_rule);
     }
 public:
     ///
@@ -646,7 +697,7 @@ private:
     Scalar sigmai;
 
     // First transform back the ritz values, and then sort
-    void sort_ritzpair()
+    void sort_ritzpair(int sort_rule)
     {
         // The eigenvalus we get from the iteration is
         //     nu = 0.5 * (1 / (lambda - sigma)) + 1 / (lambda - conj(sigma)))
@@ -689,7 +740,7 @@ private:
             }
         }
 
-        GenEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair();
+        GenEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair(sort_rule);
     }
 public:
     ///
