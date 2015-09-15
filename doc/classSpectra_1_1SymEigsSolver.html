@@ -137,8 +137,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aaf2ef756971d56fb6a432efdf9c9a059"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5720333d68d6146388f1e6ef8233ffd5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#a5720333d68d6146388f1e6ef8233ffd5">init</a> ()</td></tr>
 <tr class="separator:a5720333d68d6146388f1e6ef8233ffd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91f19eac2c739256eaae0cc45653d710"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#a91f19eac2c739256eaae0cc45653d710">compute</a> (int maxit=1000, Scalar tol=1e-10)</td></tr>
-<tr class="separator:a91f19eac2c739256eaae0cc45653d710"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd644fd8368d2f944774fe32200f44f5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#acd644fd8368d2f944774fe32200f44f5">compute</a> (int maxit=1000, Scalar tol=1e-10, int sort_rule=LARGEST_ALGE)</td></tr>
+<tr class="separator:acd644fd8368d2f944774fe32200f44f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81df0bff7918c929f5d5bc7b6c35f27d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#a81df0bff7918c929f5d5bc7b6c35f27d">num_iterations</a> ()</td></tr>
 <tr class="separator:a81df0bff7918c929f5d5bc7b6c35f27d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08594fdd5e1d5d09cd54be3b06e07f03"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#a08594fdd5e1d5d09cd54be3b06e07f03">num_operations</a> ()</td></tr>
@@ -286,7 +286,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00390">390</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00417">417</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -323,7 +323,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </dl>
 <p><b>Spectra</b> (and also <b>ARPACK</b>) uses an iterative algorithm to find eigenvalues. This function allows the user to provide the initial residual vector. </p>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00415">415</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00442">442</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -352,11 +352,11 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <p>Providing a random initial residual vector.</p>
 <p>This overloaded function generates a random initial residual vector for the algorithm. Elements in the vector follow independent Uniform(-0.5, 0.5) distributions. </p>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00458">458</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00485">485</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a91f19eac2c739256eaae0cc45653d710"></a>
+<a class="anchor" id="acd644fd8368d2f944774fe32200f44f5"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -375,7 +375,13 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">Scalar&#160;</td>
-          <td class="paramname"><em>tol</em> = <code>1e-10</code>&#160;</td>
+          <td class="paramname"><em>tol</em> = <code>1e-10</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sort_rule</em> = <code>LARGEST_ALGE</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -393,13 +399,14 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">maxit</td><td>Maximum number of iterations allowed in the algorithm. </td></tr>
-    <tr><td class="paramname">tol</td><td>Precision parameter for the calculated eigenvalues.</td></tr>
+    <tr><td class="paramname">tol</td><td>Precision parameter for the calculated eigenvalues. </td></tr>
+    <tr><td class="paramname">sort_rule</td><td>Rule to sort the eigenvalues and eigenvectors. Supported values are <code>Spectra::LARGEST_ALGE</code>, <code>Spectra::LARGEST_MAGN</code>, <code>Spectra::SMALLEST_ALGE</code> and <code>Spectra::SMALLEST_MAGN</code>, for example <code>LARGEST_ALGE</code> indicates that largest eigenvalues come first. Note that this argument is only used to <b>sort</b> the final result, and the <b>selection</b> rule (e.g. selecting the largest or smallest eigenvalues in the full spectrum) is specified by the template parameter <code>SelectionRule</code> of <a class="el" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver</a>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of converged eigenvalues. </dd></dl>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00473">473</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00510">510</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -427,7 +434,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returning the number of iterations used in the computation. </p>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00500">500</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00537">537</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -455,7 +462,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returning the number of matrix operations used in the computation. </p>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00505">505</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00542">542</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -484,7 +491,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <p>Returning the converged eigenvalues.</p>
 <dl class="section return"><dt>Returns</dt><dd>A vector containing the eigenvalues. Returned vector type will be <code>Eigen::Vector&lt;Scalar, ...&gt;</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00514">514</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00551">551</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -520,7 +527,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A matrix containing the eigenvectors. Returned matrix type will be <code>Eigen::Matrix&lt;Scalar, ...&gt;</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00544">544</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00581">581</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -548,7 +555,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returning all converged eigenvectors. </p>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00572">572</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00609">609</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>

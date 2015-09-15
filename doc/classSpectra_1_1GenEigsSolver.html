@@ -138,8 +138,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a9b98ce65ddf08cd600585e982a3cc15f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7480a89931c401111c69ed83d62d5c69"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1GenEigsSolver.html#a7480a89931c401111c69ed83d62d5c69">init</a> ()</td></tr>
 <tr class="separator:a7480a89931c401111c69ed83d62d5c69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69a71c4b0a9f2bb98af2c04633bc9a06"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1GenEigsSolver.html#a69a71c4b0a9f2bb98af2c04633bc9a06">compute</a> (int maxit=1000, Scalar tol=1e-10)</td></tr>
-<tr class="separator:a69a71c4b0a9f2bb98af2c04633bc9a06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75b6986cb7e62d80eba284227d01f3f8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1GenEigsSolver.html#a75b6986cb7e62d80eba284227d01f3f8">compute</a> (int maxit=1000, Scalar tol=1e-10, int sort_rule=LARGEST_MAGN)</td></tr>
+<tr class="separator:a75b6986cb7e62d80eba284227d01f3f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bd3fc9eb721adcdf51825501953574d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1GenEigsSolver.html#a3bd3fc9eb721adcdf51825501953574d">num_iterations</a> ()</td></tr>
 <tr class="separator:a3bd3fc9eb721adcdf51825501953574d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbe5efbfc3966bc595bae6851cc18641"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1GenEigsSolver.html#afbe5efbfc3966bc595bae6851cc18641">num_operations</a> ()</td></tr>
@@ -249,7 +249,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00357">357</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00396">396</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -286,7 +286,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </dl>
 <p><b>Spectra</b> (and also <b>ARPACK</b>) uses an iterative algorithm to find eigenvalues. This function allows the user to provide the initial residual vector. </p>
 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00382">382</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00421">421</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -315,11 +315,11 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <p>Providing a random initial residual vector.</p>
 <p>This overloaded function generates a random initial residual vector for the algorithm. Elements in the vector follow independent Uniform(-0.5, 0.5) distributions. </p>
 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00422">422</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00461">461</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a69a71c4b0a9f2bb98af2c04633bc9a06"></a>
+<a class="anchor" id="a75b6986cb7e62d80eba284227d01f3f8"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -338,7 +338,13 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">Scalar&#160;</td>
-          <td class="paramname"><em>tol</em> = <code>1e-10</code>&#160;</td>
+          <td class="paramname"><em>tol</em> = <code>1e-10</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sort_rule</em> = <code>LARGEST_MAGN</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -356,13 +362,14 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">maxit</td><td>Maximum number of iterations allowed in the algorithm. </td></tr>
-    <tr><td class="paramname">tol</td><td>Precision parameter for the calculated eigenvalues.</td></tr>
+    <tr><td class="paramname">tol</td><td>Precision parameter for the calculated eigenvalues. </td></tr>
+    <tr><td class="paramname">sort_rule</td><td>Rule to sort the eigenvalues and eigenvectors. Supported values are <code>Spectra::LARGEST_MAGN</code>, <code>Spectra::LARGEST_REAL</code>, <code>Spectra::LARGEST_IMAG</code>, <code>Spectra::SMALLEST_MAGN</code>, <code>Spectra::SMALLEST_REAL</code> and <code>Spectra::SMALLEST_IMAG</code>, for example <code>LARGEST_MAGN</code> indicates that eigenvalues with largest magnitude come first. Note that this argument is only used to <b>sort</b> the final result, and the <b>selection</b> rule (e.g. selecting the largest or smallest eigenvalues in the full spectrum) is specified by the template parameter <code>SelectionRule</code> of <a class="el" href="classSpectra_1_1GenEigsSolver.html">GenEigsSolver</a>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of converged eigenvalues. </dd></dl>
 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00437">437</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00488">488</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -390,7 +397,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returning the number of iterations used in the computation. </p>
 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00464">464</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00515">515</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -418,7 +425,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returning the number of matrix operations used in the computation. </p>
 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00469">469</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00520">520</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -447,7 +454,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <p>Returning the converged eigenvalues.</p>
 <dl class="section return"><dt>Returns</dt><dd>A complex-valued vector containing the eigenvalues. Returned vector type will be <code>Eigen::Vector&lt;std::complex&lt;Scalar&gt;, ...&gt;</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00478">478</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00529">529</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -483,7 +490,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A complex-valued matrix containing the eigenvectors. Returned matrix type will be <code>Eigen::Matrix&lt;std::complex&lt;Scalar&gt;, ...&gt;</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00508">508</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00559">559</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -511,7 +518,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returning all converged eigenvectors. </p>
 
-<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00536">536</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="GenEigsSolver_8h_source.html#l00587">587</a> of file <a class="el" href="GenEigsSolver_8h_source.html">GenEigsSolver.h</a>.</p>
 
 </div>
 </div>
