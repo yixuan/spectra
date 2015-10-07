@@ -305,7 +305,7 @@ private:
     // Retrieve and sort ritz values and ritz vectors
     void retrieve_ritzpair()
     {
-        TridiagEigen<double> decomp(fac_H);
+        TridiagEigen<Scalar> decomp(fac_H);
         Vector evals = decomp.eigenvalues();
         Matrix evecs = decomp.eigenvectors();
 
