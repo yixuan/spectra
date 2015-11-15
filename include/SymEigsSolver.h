@@ -199,17 +199,18 @@ private:
         fac_f = fk;
 
         Vector w(dim_n);
-        Scalar beta = 0.0, Hii = 0.0;
+        Scalar beta = fac_f.norm(), Hii = 0.0;
         // Keep the upperleft k x k submatrix of H and set other elements to 0
         fac_H.rightCols(ncv - from_k).setZero();
         fac_H.block(from_k, 0, ncv - from_k, from_k).setZero();
         for(int i = from_k; i <= to_m - 1; i++)
         {
-            beta = fac_f.norm();
+            // v <- f / ||f||
             MapVec v(&fac_V(0, i), dim_n); // The (i+1)-th column
             v.noalias() = fac_f / beta;
             fac_H(i, i - 1) = beta;
 
+            // w <- A * v
             op->perform_op(v.data(), w.data());
             nmatop++;
 
@@ -217,18 +218,19 @@ private:
             fac_H(i - 1, i) = beta;
             fac_H(i, i) = Hii;
 
+            //  f <- w - V * V' * w
             fac_f.noalias() = w - beta * fac_V.col(i - 1) - Hii * v;
-            // Correct f if it is not orthogonal to V
-            // Typically the largest absolute value occurs in
-            // the first element, i.e., <v1, f>, so we use this
-            // to test the orthogonality
-            Scalar v1f = fac_f.dot(fac_V.col(0));
-            if(v1f > prec || v1f < -prec)
+            beta = fac_f.norm();
+
+            // f/||f|| is going to be the next column of V, so we need to test
+            // whether V' * (f/||f||) ~= 0
+            MapMat V(fac_V.data(), dim_n, i + 1); // The first (i+1) columns
+            Vector Vf = V.transpose() * fac_f;
+            if(Vf.cwiseAbs().maxCoeff() > prec * beta)
             {
-                Vector Vf(i + 1);
-                Vf.tail(i) = fac_V.block(0, 1, dim_n, i).transpose() * fac_f;
-                Vf[0] = v1f;
-                fac_f -= fac_V.leftCols(i + 1) * Vf;
+                // f <- f - V * V' * f
+                fac_f.noalias() -= V * Vf;
+                beta = fac_f.norm();
             }
         }
     }
