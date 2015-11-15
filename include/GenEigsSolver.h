@@ -118,6 +118,7 @@ protected:
 
     ComplexVector ritz_val; // ritz values
     ComplexMatrix ritz_vec; // ritz vectors
+    ComplexVector ritz_est; // last row of ritz_vec
 
 private:
     BoolArray ritz_conv;    // indicator of the convergence of ritz values
@@ -253,7 +254,7 @@ private:
     {
         // thresh = tol * max(prec, abs(theta)), theta for ritz value
         Array thresh = tol * ritz_val.head(nev).array().abs().max(prec);
-        Array resid = ritz_vec.template bottomRows<1>().transpose().array().abs() * fac_f.norm();
+        Array resid = ritz_est.head(nev).array().abs() * fac_f.norm();
         // Converged "wanted" ritz values
         ritz_conv = (resid < thresh);
 
@@ -265,15 +266,18 @@ private:
     {
         int nev_new = nev;
 
+        for(int i = nev; i < ncv; i++)
+            if(std::abs(ritz_est[i]) < prec)  nev_new++;
+
         // Increase nev by one if ritz_val[nev - 1] and
         // ritz_val[nev] are conjugate pairs
-        if(is_complex(ritz_val[nev - 1], prec) &&
-           is_conj(ritz_val[nev - 1], ritz_val[nev], prec))
+        if(is_complex(ritz_val[nev_new - 1], prec) &&
+           is_conj(ritz_val[nev_new - 1], ritz_val[nev_new], prec))
         {
-            nev_new = nev + 1;
+            nev_new++;
         }
         // Adjust nev_new again, according to dnaup2.f line 660~674 in ARPACK
-        nev_new = nev_new + std::min(nconv, (ncv - nev_new) / 2);
+        nev_new += std::min(nconv, (ncv - nev_new) / 2);
         if(nev_new == 1 && ncv >= 6)
             nev_new = ncv / 2;
         else if(nev_new == 1 && ncv > 3)
@@ -306,6 +310,7 @@ private:
         for(int i = 0; i < ncv; i++)
         {
             ritz_val[i] = evals[ind[i]];
+            ritz_est[i] = evecs(ncv - 1, ind[i]);
         }
         for(int i = 0; i < nev; i++)
         {
@@ -427,6 +432,7 @@ public:
         fac_f.resize(dim_n);
         ritz_val.resize(ncv);
         ritz_vec.resize(ncv, nev);
+        ritz_est.resize(ncv);
         ritz_conv.resize(nev);
 
         fac_V.setZero();
@@ -434,6 +440,7 @@ public:
         fac_f.setZero();
         ritz_val.setZero();
         ritz_vec.setZero();
+        ritz_est.setZero();
         ritz_conv.setZero();
 
         Vector v(dim_n);
