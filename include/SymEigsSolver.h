@@ -183,6 +183,7 @@ protected:
 
 private:
     Matrix ritz_vec;     // ritz vectors
+    Vector ritz_est;     // last row of ritz_vec
     BoolArray ritz_conv; // indicator of the convergence of ritz values
 
     const Scalar prec;   // precision parameter used to test convergence
@@ -280,7 +281,7 @@ private:
     {
         // thresh = tol * max(prec, abs(theta)), theta for ritz value
         Array thresh = tol * ritz_val.head(nev).array().abs().max(prec);
-        Array resid =  ritz_vec.template bottomRows<1>().transpose().array().abs() * fac_f.norm();
+        Array resid =  ritz_est.head(nev).array().abs() * fac_f.norm();
         // Converged "wanted" ritz values
         ritz_conv = (resid < thresh);
 
@@ -292,11 +293,14 @@ private:
     {
         int nev_new = nev;
 
+        for(int i = nev; i < ncv; i++)
+            if(std::abs(ritz_est[i]) < prec)  nev_new++;
+
         // Adjust nev_new, according to dsaup2.f line 677~684 in ARPACK
-        nev_new = nev + std::min(nconv, (ncv - nev) / 2);
-        if(nev == 1 && ncv >= 6)
+        nev_new += std::min(nconv, (ncv - nev_new) / 2);
+        if(nev_new == 1 && ncv >= 6)
             nev_new = ncv / 2;
-        else if(nev == 1 && ncv > 2)
+        else if(nev_new == 1 && ncv > 2)
             nev_new = 2;
 
         return nev_new;
@@ -338,6 +342,7 @@ private:
         for(int i = 0; i < ncv; i++)
         {
             ritz_val[i] = evals[ind[i]];
+            ritz_est[i] = evecs(ncv - 1, ind[i]);
         }
         for(int i = 0; i < nev; i++)
         {
@@ -447,6 +452,7 @@ public:
         fac_f.resize(dim_n);
         ritz_val.resize(ncv);
         ritz_vec.resize(ncv, nev);
+        ritz_est.resize(ncv);
         ritz_conv.resize(nev);
 
         fac_V.setZero();
@@ -454,6 +460,7 @@ public:
         fac_f.setZero();
         ritz_val.setZero();
         ritz_vec.setZero();
+        ritz_est.setZero();
         ritz_conv.setZero();
 
         nmatop = 0;
