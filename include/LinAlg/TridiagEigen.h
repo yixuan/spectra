@@ -22,22 +22,23 @@ template <typename Scalar = double>
 class TridiagEigen
 {
 private:
+    // For convenience in adapting the tridiagonal_qr_step() function
+    typedef Scalar RealScalar;
+
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
+
+    typedef typename Matrix::Index Index;
 
     typedef Eigen::Ref<Matrix> GenericMatrix;
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
-    // These two are for convenience in adapting the tridiagonal_qr_step() function
-    typedef Scalar RealScalar;
-    typedef int Index;
+    Index m_n;
+    Vector m_main_diag;     // Main diagonal elements of the matrix
+    Vector m_sub_diag;      // Sub-diagonal elements of the matrix
+    Matrix m_evecs;         // To store eigenvectors
 
-    int n;
-    Vector main_diag;     // Main diagonal elements of the matrix
-    Vector sub_diag;      // Sub-diagonal elements of the matrix
-    Matrix evecs;         // To store eigenvectors
-
-    bool computed;
+    bool m_computed;
 
     static bool is_much_smaller_than(const Scalar &x, const Scalar &y,
         const Scalar &prec = Eigen::NumTraits<Scalar>::dummy_precision())
@@ -106,11 +107,11 @@ private:
 
 public:
     TridiagEigen() :
-        n(0), computed(false)
+        m_n(0), m_computed(false)
     {}
 
     TridiagEigen(ConstGenericMatrix &mat) :
-        n(mat.rows()), computed(false)
+        m_n(mat.rows()), m_computed(false)
     {
         compute(mat);
     }
@@ -120,23 +121,23 @@ public:
         if(mat.rows() != mat.cols())
             throw std::invalid_argument("TridiagEigen: matrix must be square");
 
-        n = mat.rows();
-        main_diag = mat.diagonal();
-        sub_diag = mat.diagonal(-1);
-        evecs.resize(n, n);
-        evecs.setIdentity();
+        m_n = mat.rows();
+        m_main_diag = mat.diagonal();
+        m_sub_diag = mat.diagonal(-1);
+        m_evecs.resize(m_n, m_n);
+        m_evecs.setIdentity();
 
-        int end = n - 1;
-        int start = 0;
+        Index end = m_n - 1;
+        Index start = 0;
         int iter = 0; // total number of iterations
         int info = 0;
 
-        Scalar *maind = main_diag.data();
-        Scalar *subd = sub_diag.data();
+        Scalar *maind = m_main_diag.data();
+        Scalar *subd = m_sub_diag.data();
 
         while(end > 0)
         {
-            for(int i = start; i < end; i++)
+            for(Index i = start; i < end; i++)
                 if(is_much_smaller_than(std::abs(subd[i]), (std::abs(maind[i]) + std::abs(maind[i + 1]))))
                     subd[i] = 0;
 
@@ -149,7 +150,7 @@ public:
 
             // if we spent too many iterations, we give up
             iter++;
-            if(iter > 30 * n)
+            if(iter > 30 * m_n)
             {
                 info = 1;
                 break;
@@ -159,30 +160,30 @@ public:
             while(start > 0 && subd[start - 1] != 0)
                 start--;
 
-            tridiagonal_qr_step(maind, subd, start, end, evecs.data(), n);
+            tridiagonal_qr_step(maind, subd, start, end, m_evecs.data(), m_n);
         }
 
         if(info > 0)
             throw std::logic_error("TridiagEigen: failed to compute all the eigenvalues");
 
-        computed = true;
+        m_computed = true;
     }
 
     Vector eigenvalues()
     {
-        if(!computed)
+        if(!m_computed)
             throw std::logic_error("TridiagEigen: need to call compute() first");
 
         // After calling compute(), main_diag will contain the eigenvalues.
-        return main_diag;
+        return m_main_diag;
     }
 
     Matrix eigenvectors()
     {
-        if(!computed)
+        if(!m_computed)
             throw std::logic_error("TridiagEigen: need to call compute() first");
 
-        return evecs;
+        return m_evecs;
     }
 };
 
