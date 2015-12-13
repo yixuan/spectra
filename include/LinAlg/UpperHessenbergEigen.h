@@ -25,6 +25,8 @@ private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
 
+    typedef typename Matrix::Index Index;
+
     typedef Eigen::Ref<Matrix> GenericMatrix;
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
@@ -32,13 +34,13 @@ private:
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic> ComplexMatrix;
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, 1> ComplexVector;
 
-    int dim_n;                             // Size of the matrix
+    Index m_n;                             // Size of the matrix
     Eigen::RealSchur<Matrix> m_realSchur;  // Schur decomposition solver
     Matrix m_matT;                         // Schur T matrix
     Matrix m_eivec;                        // Storing eigenvectors
     ComplexVector m_eivalues;              // Eigenvalues
 
-    bool computed;
+    bool m_computed;
 
     // Complex scalar division
     static Complex cdiv(const Scalar& xr, const Scalar& xi, const Scalar& yr, const Scalar& yi)
@@ -58,21 +60,21 @@ private:
 
     void doComputeEigenvectors()
     {
-        const int size = m_eivec.cols();
+        const Index size = m_eivec.cols();
         const Scalar eps = std::numeric_limits<Scalar>::epsilon();
 
         // inefficient! this is already computed in RealSchur
         Scalar norm(0);
-        for(int j = 0; j < size; ++j)
+        for(Index j = 0; j < size; ++j)
         {
-            norm += m_matT.row(j).segment((std::max)(j-1, 0), size-(std::max)(j-1, 0)).cwiseAbs().sum();
+            norm += m_matT.row(j).segment((std::max)(j-1, Index(0)), size-(std::max)(j-1, Index(0))).cwiseAbs().sum();
         }
 
         // Backsubstitute to find vectors of upper triangular form
         if(norm == Scalar(0))
             return;
 
-        for(int n = size - 1; n >= 0; n--)
+        for(Index n = size - 1; n >= 0; n--)
         {
             Scalar p = m_eivalues.coeff(n).real();
             Scalar q = m_eivalues.coeff(n).imag();
@@ -81,10 +83,10 @@ private:
             if(q == Scalar(0))
             {
                 Scalar lastr(0), lastw(0);
-                int l = n;
+                Index l = n;
 
                 m_matT.coeffRef(n,n) = 1.0;
-                for(int i = n-1; i >= 0; i--)
+                for(Index i = n-1; i >= 0; i--)
                 {
                     Scalar w = m_matT.coeff(i,i) - p;
                     Scalar r = m_matT.row(i).segment(l,n-l+1).dot(m_matT.col(n).segment(l, n-l+1));
@@ -123,7 +125,7 @@ private:
                 }
             } else if(q < Scalar(0) && n > 0) {  // Complex vector
                 Scalar lastra(0), lastsa(0), lastw(0);
-                int l = n-1;
+                Index l = n-1;
 
                 // Last vector component imaginary so matrix is triangular
                 if(std::abs(m_matT.coeff(n,n-1)) > std::abs(m_matT.coeff(n-1,n)))
@@ -139,7 +141,7 @@ private:
                 }
                 m_matT.coeffRef(n,n-1) = 0.0;
                 m_matT.coeffRef(n,n) = 1.0;
-                for(int i = n-2; i >= 0; i--)
+                for(Index i = n-2; i >= 0; i--)
                 {
                     Scalar ra = m_matT.row(i).segment(l, n-l+1).dot(m_matT.col(n-1).segment(l, n-l+1));
                     Scalar sa = m_matT.row(i).segment(l, n-l+1).dot(m_matT.col(n).segment(l, n-l+1));
@@ -201,7 +203,7 @@ private:
 
         // Back transformation to get eigenvectors of original matrix
         Vector m_tmp(size);
-        for(int j = size-1; j >= 0; j--)
+        for(Index j = size-1; j >= 0; j--)
         {
             m_tmp.noalias() = m_eivec.leftCols(j+1) * m_matT.col(j).segment(0, j+1);
             m_eivec.col(j) = m_tmp;
@@ -211,11 +213,11 @@ private:
 public:
 
     UpperHessenbergEigen() :
-        dim_n(0), computed(false)
+        m_n(0), m_computed(false)
     {}
 
     UpperHessenbergEigen(ConstGenericMatrix &mat) :
-        dim_n(mat.rows()), computed(false)
+        m_n(mat.rows()), m_computed(false)
     {
         compute(mat);
     }
@@ -225,21 +227,21 @@ public:
         if(mat.rows() != mat.cols())
             throw std::invalid_argument("UpperHessenbergEigen: matrix must be square");
 
-        dim_n = mat.rows();
+        m_n = mat.rows();
 
         // Reduce to real Schur form
-        Matrix Q = Matrix::Identity(dim_n, dim_n);
+        Matrix Q = Matrix::Identity(m_n, m_n);
         m_realSchur.computeFromHessenberg(mat, Q, true);
         m_matT = m_realSchur.matrixT();
         m_eivec = m_realSchur.matrixU();
 
         // Compute eigenvalues from matT
-        m_eivalues.resize(dim_n);
-        int i = 0;
-        while(i < dim_n)
+        m_eivalues.resize(m_n);
+        Index i = 0;
+        while(i < m_n)
         {
             // Real eigenvalue
-            if(i == dim_n - 1 || m_matT.coeff(i+1, i) == Scalar(0))
+            if(i == m_n - 1 || m_matT.coeff(i+1, i) == Scalar(0))
             {
                 m_eivalues.coeffRef(i) = m_matT.coeff(i, i);
                 ++i;
@@ -257,12 +259,12 @@ public:
         // Compute eigenvectors
         doComputeEigenvectors();
 
-        computed = true;
+        m_computed = true;
     }
 
     ComplexVector eigenvalues()
     {
-        if(!computed)
+        if(!m_computed)
             throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
 
         return m_eivalues;
@@ -270,14 +272,14 @@ public:
 
     ComplexMatrix eigenvectors()
     {
-        if(!computed)
+        if(!m_computed)
             throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
 
-        int n = m_eivec.cols();
+        Index n = m_eivec.cols();
         const Scalar prec = std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3);
 
         ComplexMatrix matV(n, n);
-        for(int j = 0; j < n; ++j)
+        for(Index j = 0; j < n; ++j)
         {
             if(std::abs(m_eivalues.coeff(j).imag()) <= prec || j + 1 == n)
             {
@@ -286,7 +288,7 @@ public:
                 matV.col(j).normalize();
             } else {
                 // we have a pair of complex eigen values
-                for(int i = 0; i < n; ++i)
+                for(Index i = 0; i < n; ++i)
                 {
                     matV.coeffRef(i,j)   = Complex(m_eivec.coeff(i,j),  m_eivec.coeff(i,j+1));
                     matV.coeffRef(i,j+1) = Complex(m_eivec.coeff(i,j), -m_eivec.coeff(i,j+1));
