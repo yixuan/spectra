@@ -32,9 +32,9 @@ private:
 
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
-    const MapMat mat;
-    const int dim_n;
-    Eigen::PartialPivLU<Matrix> solver;
+    const MapMat m_mat;
+    const int m_n;
+    Eigen::PartialPivLU<Matrix> m_solver;
 
 public:
     ///
@@ -46,8 +46,8 @@ public:
     /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
     ///
     DenseGenRealShiftSolve(ConstGenericMatrix &mat_) :
-        mat(mat_.data(), mat_.rows(), mat_.cols()),
-        dim_n(mat_.rows())
+        m_mat(mat_.data(), mat_.rows(), mat_.cols()),
+        m_n(mat_.rows())
     {
         if(mat_.rows() != mat_.cols())
             throw std::invalid_argument("DenseGenRealShiftSolve: matrix must be square");
@@ -56,18 +56,18 @@ public:
     ///
     /// Return the number of rows of the underlying matrix.
     ///
-    int rows() { return dim_n; }
+    int rows() { return m_n; }
     ///
     /// Return the number of columns of the underlying matrix.
     ///
-    int cols() { return dim_n; }
+    int cols() { return m_n; }
 
     ///
     /// Set the real shift \f$\sigma\f$.
     ///
     void set_shift(Scalar sigma)
     {
-        solver.compute(mat - sigma * Matrix::Identity(dim_n, dim_n));
+        m_solver.compute(m_mat - sigma * Matrix::Identity(m_n, m_n));
     }
 
     ///
@@ -79,9 +79,9 @@ public:
     // y_out = inv(A - sigma * I) * x_in
     void perform_op(Scalar *x_in, Scalar *y_out)
     {
-        MapVec x(x_in,  dim_n);
-        MapVec y(y_out, dim_n);
-        y.noalias() = solver.solve(x);
+        MapVec x(x_in,  m_n);
+        MapVec y(y_out, m_n);
+        y.noalias() = m_solver.solve(x);
     }
 };
 

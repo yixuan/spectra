@@ -37,10 +37,10 @@ private:
 
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
-    const MapMat mat;
-    const int dim_n;
-    ComplexSolver solver;
-    ComplexVector x_cache;
+    const MapMat m_mat;
+    const int m_n;
+    ComplexSolver m_solver;
+    ComplexVector m_x_cache;
 
 public:
     ///
@@ -52,8 +52,8 @@ public:
     /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
     ///
     DenseGenComplexShiftSolve(ConstGenericMatrix &mat_) :
-        mat(mat_.data(), mat_.rows(), mat_.cols()),
-        dim_n(mat_.rows())
+        m_mat(mat_.data(), mat_.rows(), mat_.cols()),
+        m_n(mat_.rows())
     {
         if(mat_.rows() != mat_.cols())
             throw std::invalid_argument("DenseGenComplexShiftSolve: matrix must be square");
@@ -62,11 +62,11 @@ public:
     ///
     /// Return the number of rows of the underlying matrix.
     ///
-    int rows() { return dim_n; }
+    int rows() { return m_n; }
     ///
     /// Return the number of columns of the underlying matrix.
     ///
-    int cols() { return dim_n; }
+    int cols() { return m_n; }
 
     ///
     /// Set the complex shift \f$\sigma\f$.
@@ -76,11 +76,11 @@ public:
     ///
     void set_shift(Scalar sigmar, Scalar sigmai)
     {
-        ComplexMatrix cmat = mat.template cast<Complex>();
+        ComplexMatrix cmat = m_mat.template cast<Complex>();
         cmat.diagonal().array() -= Complex(sigmar, sigmai);
-        solver.compute(cmat);
-        x_cache.resize(dim_n);
-        x_cache.setZero();
+        m_solver.compute(cmat);
+        m_x_cache.resize(m_n);
+        m_x_cache.setZero();
     }
 
     ///
@@ -93,9 +93,9 @@ public:
     // y_out = Re( inv(A - sigma * I) * x_in )
     void perform_op(Scalar *x_in, Scalar *y_out)
     {
-        x_cache.real() = MapVec(x_in, dim_n);
-        MapVec y(y_out, dim_n);
-        y.noalias() = solver.solve(x_cache).real();
+        m_x_cache.real() = MapVec(x_in, m_n);
+        MapVec y(y_out, m_n);
+        y.noalias() = m_solver.solve(m_x_cache).real();
     }
 };
 

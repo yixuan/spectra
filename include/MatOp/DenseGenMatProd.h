@@ -37,7 +37,7 @@ private:
 
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
-    const MapMat mat;
+    const MapMat m_mat;
 
 public:
     ///
@@ -49,17 +49,17 @@ public:
     /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
     ///
     DenseGenMatProd(ConstGenericMatrix &mat_) :
-        mat(mat_.data(), mat_.rows(), mat_.cols())
+        m_mat(mat_.data(), mat_.rows(), mat_.cols())
     {}
 
     ///
     /// Return the number of rows of the underlying matrix.
     ///
-    int rows() { return mat.rows(); }
+    int rows() { return m_mat.rows(); }
     ///
     /// Return the number of columns of the underlying matrix.
     ///
-    int cols() { return mat.cols(); }
+    int cols() { return m_mat.cols(); }
 
     ///
     /// Perform the matrix-vector multiplication operation \f$y=Ax\f$.
@@ -70,9 +70,9 @@ public:
     // y_out = A * x_in
     void perform_op(Scalar *x_in, Scalar *y_out)
     {
-        MapVec x(x_in, mat.cols());
-        MapVec y(y_out, mat.rows());
-        y.noalias() = mat * x;
+        MapVec x(x_in, m_mat.cols());
+        MapVec y(y_out, m_mat.rows());
+        y.noalias() = m_mat * x;
     }
 };
 

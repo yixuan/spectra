@@ -29,7 +29,7 @@ private:
     typedef Eigen::Map<Vector> MapVec;
     typedef Eigen::SparseMatrix<Scalar> SparseMatrix;
 
-    const SparseMatrix &mat;
+    const SparseMatrix &m_mat;
 
 public:
     ///
@@ -39,17 +39,17 @@ public:
     /// `Eigen::SparseMatrix<Scalar, ...>`.
     ///
     SparseGenMatProd(SparseMatrix &mat_) :
-        mat(mat_)
+        m_mat(mat_)
     {}
 
     ///
     /// Return the number of rows of the underlying matrix.
     ///
-    int rows() { return mat.rows(); }
+    int rows() { return m_mat.rows(); }
     ///
     /// Return the number of columns of the underlying matrix.
     ///
-    int cols() { return mat.cols(); }
+    int cols() { return m_mat.cols(); }
 
     ///
     /// Perform the matrix-vector multiplication operation \f$y=Ax\f$.
@@ -60,9 +60,9 @@ public:
     // y_out = A * x_in
     void perform_op(Scalar *x_in, Scalar *y_out)
     {
-        MapVec x(x_in, mat.cols());
-        MapVec y(y_out, mat.rows());
-        y.noalias() = mat * x;
+        MapVec x(x_in, m_mat.cols());
+        MapVec y(y_out, m_mat.rows());
+        y.noalias() = m_mat * x;
     }
 };
 
