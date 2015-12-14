@@ -98,7 +98,7 @@ namespace Spectra {
 ///
 ///     // Retrieve results
 ///     Eigen::VectorXd evalues;
-///     if(nconv > 0)
+///     if(eigs.info() == SUCCESSFUL)
 ///         evalues = eigs.eigenvalues();
 ///
 ///     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
@@ -138,9 +138,12 @@ namespace Spectra {
 ///     SymEigsSolver<double, LARGEST_ALGE, MyDiagonalTen> eigs(&op, 3, 6);
 ///     eigs.init();
 ///     eigs.compute();
-///     Eigen::VectorXd evalues = eigs.eigenvalues();
-///     // Will get (10, 9, 8)
-///     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
+///     if(eigs.info() == SUCCESSFUL)
+///     {
+///         Eigen::VectorXd evalues = eigs.eigenvalues();
+///         // Will get (10, 9, 8)
+///         std::cout << "Eigenvalues found:\n" << evalues << std::endl;
+///     }
 ///
 ///     return 0;
 /// }
@@ -711,9 +714,12 @@ public:
 ///
 ///     eigs.init();
 ///     eigs.compute();
-///     Eigen::VectorXd evalues = eigs.eigenvalues();
-///     // Will get (3.0, 2.0, 1.0)
-///     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
+///     if(eigs.info() == SUCCESSFUL)
+///     {
+///         Eigen::VectorXd evalues = eigs.eigenvalues();
+///         // Will get (3.0, 2.0, 1.0)
+///         std::cout << "Eigenvalues found:\n" << evalues << std::endl;
+///     }
 ///
 ///     return 0;
 /// }
@@ -756,9 +762,12 @@ public:
 ///                        MyDiagonalTenShiftSolve> eigs(&op, 3, 6, 3.14);
 ///     eigs.init();
 ///     eigs.compute();
-///     Eigen::VectorXd evalues = eigs.eigenvalues();
-///     // Will get (4.0, 3.0, 2.0)
-///     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
+///     if(eigs.info() == SUCCESSFUL)
+///     {
+///         Eigen::VectorXd evalues = eigs.eigenvalues();
+///         // Will get (4.0, 3.0, 2.0)
+///         std::cout << "Eigenvalues found:\n" << evalues << std::endl;
+///     }
 ///
 ///     return 0;
 /// }

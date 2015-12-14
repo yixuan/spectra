@@ -101,7 +101,7 @@ int main()
 
     // Retrieve results
     Eigen::VectorXd evalues;
-    if(nconv > 0)
+    if(eigs.info() == SUCCESSFUL)
         evalues = eigs.eigenvalues();
 
     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
@@ -149,7 +149,7 @@ int main()
 
     // Retrieve results
     Eigen::VectorXcd evalues;
-    if(nconv > 0)
+    if(eigs.info() == SUCCESSFUL)
         evalues = eigs.eigenvalues();
 
     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
@@ -189,8 +189,11 @@ int main()
     SymEigsSolver<double, LARGEST_ALGE, MyDiagonalTen> eigs(&op, 3, 6);
     eigs.init();
     eigs.compute();
-    Eigen::VectorXd evalues = eigs.eigenvalues();
-    std::cout << "Eigenvalues found:\n" << evalues << std::endl;
+    if(eigs.info() == SUCCESSFUL)
+    {
+        Eigen::VectorXd evalues = eigs.eigenvalues();
+        std::cout << "Eigenvalues found:\n" << evalues << std::endl;
+    }
 
     return 0;
 }

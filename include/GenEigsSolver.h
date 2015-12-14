@@ -75,7 +75,7 @@ namespace Spectra {
 ///
 ///     // Retrieve results
 ///     Eigen::VectorXcd evalues;
-///     if(nconv > 0)
+///     if(eigs.info() == SUCCESSFUL)
 ///         evalues = eigs.eigenvalues();
 ///
 ///     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
