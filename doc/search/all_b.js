@@ -9,6 +9,7 @@ var searchData=
   ['smallest_5freal',['SMALLEST_REAL',['../group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a17731e66cfc0e09aec55f1d02605ffbb',1,'Spectra']]],
   ['sparsegenmatprod',['SparseGenMatProd',['../classSpectra_1_1SparseGenMatProd.html',1,'Spectra']]],
   ['sparsegenmatprod',['SparseGenMatProd',['../classSpectra_1_1SparseGenMatProd.html#a9117adb77ed180d46fa67c50ddd72562',1,'Spectra::SparseGenMatProd']]],
+  ['successful',['SUCCESSFUL',['../group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba79882c7474aed8cd8ebddc8cd4aa5185',1,'Spectra']]],
   ['symeigsshiftsolver',['SymEigsShiftSolver',['../classSpectra_1_1SymEigsShiftSolver.html',1,'Spectra']]],
   ['symeigsshiftsolver',['SymEigsShiftSolver',['../classSpectra_1_1SymEigsShiftSolver.html#ae8101360fe4038944bafcd2eb05cc81c',1,'Spectra::SymEigsShiftSolver']]],
   ['symeigssolver',['SymEigsSolver',['../classSpectra_1_1SymEigsSolver.html',1,'Spectra']]],

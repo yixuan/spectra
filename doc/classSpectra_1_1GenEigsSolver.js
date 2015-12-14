@@ -4,6 +4,7 @@ var classSpectra_1_1GenEigsSolver =
     [ "init", "classSpectra_1_1GenEigsSolver.html#a9b98ce65ddf08cd600585e982a3cc15f", null ],
     [ "init", "classSpectra_1_1GenEigsSolver.html#a7480a89931c401111c69ed83d62d5c69", null ],
     [ "compute", "classSpectra_1_1GenEigsSolver.html#a75b6986cb7e62d80eba284227d01f3f8", null ],
+    [ "info", "classSpectra_1_1GenEigsSolver.html#ab9a6ec758ab4657eeec93abbda3983ce", null ],
     [ "num_iterations", "classSpectra_1_1GenEigsSolver.html#a3bd3fc9eb721adcdf51825501953574d", null ],
     [ "num_operations", "classSpectra_1_1GenEigsSolver.html#afbe5efbfc3966bc595bae6851cc18641", null ],
     [ "eigenvalues", "classSpectra_1_1GenEigsSolver.html#afd7b3fc546bd6009e5172b959be03ba9", null ],

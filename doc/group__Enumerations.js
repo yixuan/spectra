@@ -1,5 +1,10 @@
 var group__Enumerations =
 [
+    [ "COMPUTATION_INFO", "group__Enumerations.html#ga6096571d2f7e1f0b62336e39d512ae4b", [
+      [ "SUCCESSFUL", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba79882c7474aed8cd8ebddc8cd4aa5185", null ],
+      [ "NOT_COMPUTED", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba535bfda50eb1bc734ca18b5ac7d36af6", null ],
+      [ "NOT_CONVERGING", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4baa9ea091773f727ee4c3bf16dda648d2f", null ]
+    ] ],
     [ "SELECT_EIGENVALUE", "group__Enumerations.html#ga455238b33ba7ae7498e873f1074790d5", [
       [ "LARGEST_MAGN", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a337b865327555ae670efc43ebdfc8c2d", null ],
       [ "LARGEST_REAL", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a2632c6262ba0916aa2ec693c17cf4cdf", null ],

@@ -3,8 +3,8 @@ var indexSectionsWithContent =
   0: "bcdegilmnprsw",
   1: "dgs",
   2: "cdeginprs",
-  3: "s",
-  4: "blsw",
+  3: "cs",
+  4: "blnsw",
   5: "em"
 };
 

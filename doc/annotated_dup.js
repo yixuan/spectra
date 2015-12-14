@@ -1,4 +1,4 @@
-var annotated =
+var annotated_dup =
 [
     [ "Spectra", null, [
       [ "DenseGenComplexShiftSolve", "classSpectra_1_1DenseGenComplexShiftSolve.html", "classSpectra_1_1DenseGenComplexShiftSolve" ],
