@@ -16,6 +16,7 @@
 #include <stdexcept>  // std::invalid_argument
 
 #include "SelectionRule.h"
+#include "CompInfo.h"
 #include "LinAlg/UpperHessenbergQR.h"
 #include "LinAlg/UpperHessenbergEigen.h"
 #include "LinAlg/DoubleShiftQR.h"
@@ -122,6 +123,7 @@ protected:
 
 private:
     BoolArray m_ritz_conv;    // indicator of the convergence of ritz values
+    int m_info;               // status of the computation
 
     const Scalar m_prec;      // precision parameter used to test convergence
                               // m_prec = epsilon^(2/3)
@@ -406,6 +408,7 @@ public:
         m_ncv(ncv_ > m_n ? m_n : ncv_),
         m_nmatop(0),
         m_niter(0),
+        m_info(NOT_COMPUTED),
         m_prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3))
     {
         if(nev_ < 1 || nev_ > m_n - 2)
@@ -513,9 +516,16 @@ public:
         sort_ritzpair(sort_rule);
 
         m_niter += i + 1;
+        m_info = (nconv >= m_nev) ? SUCCESSFUL : NOT_CONVERGING;
 
         return std::min(m_nev, nconv);
     }
+
+    ///
+    /// Retuning the status of the computation.
+    /// The full list of enumeration values can be found in \ref Enumerations.
+    ///
+    int info() { return m_info; }
 
     ///
     /// Returning the number of iterations used in the computation.
