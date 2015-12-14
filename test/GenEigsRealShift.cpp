@@ -24,16 +24,15 @@ void run_test(const Matrix &mat, int k, int m, double sigma)
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
-    REQUIRE( nconv > 0 );
-
-    ComplexVector evals = eigs.eigenvalues();
-    ComplexMatrix evecs = eigs.eigenvectors();
-
-    ComplexMatrix err = mat * evecs - evecs * evals.asDiagonal();
-
     INFO( "nconv = " << nconv );
     INFO( "niter = " << niter );
     INFO( "nops = " << nops );
+    REQUIRE( eigs.info() == SUCCESSFUL );
+
+    ComplexVector evals = eigs.eigenvalues();
+    ComplexMatrix evecs = eigs.eigenvectors();
+    ComplexMatrix err = mat * evecs - evecs * evals.asDiagonal();
+
     INFO( "||AU - UD||_inf = " << err.array().abs().maxCoeff() );
     REQUIRE( err.array().abs().maxCoeff() == Approx(0.0) );
 }

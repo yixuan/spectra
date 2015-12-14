@@ -25,7 +25,10 @@ void run_test(const Matrix &mat, int k, int m)
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
-    REQUIRE( nconv > 0 );
+    INFO( "nconv = " << nconv );
+    INFO( "niter = " << niter );
+    INFO( "nops = " << nops );
+    REQUIRE( eigs.info() == SUCCESSFUL );
 
     Vector evals = eigs.eigenvalues();
     Matrix evecs = eigs.eigenvectors();
@@ -34,9 +37,6 @@ void run_test(const Matrix &mat, int k, int m)
     // std::cout << "computed eigenvectors U = \n" << evecs << "\n\n";
     Matrix err = mat * evecs - evecs * evals.asDiagonal();
 
-    INFO( "nconv = " << nconv );
-    INFO( "niter = " << niter );
-    INFO( "nops = " << nops );
     INFO( "||AU - UD||_inf = " << err.array().abs().maxCoeff() );
     REQUIRE( err.array().abs().maxCoeff() == Approx(0.0) );
 }
