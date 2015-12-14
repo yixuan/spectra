@@ -101,74 +101,74 @@ private:
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, 1> ComplexVector;
 
 protected:
-    OpType *op;             // object to conduct matrix operation,
-                            // e.g. matrix-vector product
-    const int dim_n;        // dimension of matrix A
-    const int nev;          // number of eigenvalues requested
+    OpType *m_op;             // object to conduct matrix operation,
+                              // e.g. matrix-vector product
+    const int m_n;            // dimension of matrix A
+    const int m_nev;          // number of eigenvalues requested
 
 private:
-    const int ncv;          // number of ritz values
-    int nmatop;             // number of matrix operations called
-    int niter;              // number of restarting iterations
+    const int m_ncv;          // number of ritz values
+    int m_nmatop;             // number of matrix operations called
+    int m_niter;              // number of restarting iterations
 
 protected:
-    Matrix fac_V;           // V matrix in the Arnoldi factorization
-    Matrix fac_H;           // H matrix in the Arnoldi factorization
-    Vector fac_f;           // residual in the Arnoldi factorization
+    Matrix m_fac_V;           // V matrix in the Arnoldi factorization
+    Matrix m_fac_H;           // H matrix in the Arnoldi factorization
+    Vector m_fac_f;           // residual in the Arnoldi factorization
 
-    ComplexVector ritz_val; // ritz values
-    ComplexMatrix ritz_vec; // ritz vectors
-    ComplexVector ritz_est; // last row of ritz_vec
+    ComplexVector m_ritz_val; // ritz values
+    ComplexMatrix m_ritz_vec; // ritz vectors
+    ComplexVector m_ritz_est; // last row of m_ritz_vec
 
 private:
-    BoolArray ritz_conv;    // indicator of the convergence of ritz values
+    BoolArray m_ritz_conv;    // indicator of the convergence of ritz values
 
-    const Scalar prec;      // precision parameter used to test convergence
-                            // prec = epsilon^(2/3)
-                            // epsilon is the machine precision,
-                            // e.g. ~= 1e-16 for the "double" type
+    const Scalar m_prec;      // precision parameter used to test convergence
+                              // m_prec = epsilon^(2/3)
+                              // epsilon is the machine precision,
+                              // e.g. ~= 1e-16 for the "double" type
 
     // Arnoldi factorization starting from step-k
     void factorize_from(int from_k, int to_m, const Vector &fk)
     {
         if(to_m <= from_k) return;
 
-        fac_f = fk;
+        m_fac_f = fk;
 
-        Vector w(dim_n);
-        Scalar beta = fac_f.norm();
+        Vector w(m_n);
+        Scalar beta = m_fac_f.norm();
         // Keep the upperleft k x k submatrix of H and set other elements to 0
-        fac_H.rightCols(ncv - from_k).setZero();
-        fac_H.block(from_k, 0, ncv - from_k, from_k).setZero();
+        m_fac_H.rightCols(m_ncv - from_k).setZero();
+        m_fac_H.block(from_k, 0, m_ncv - from_k, from_k).setZero();
         for(int i = from_k; i <= to_m - 1; i++)
         {
             // v <- f / ||f||
-            fac_V.col(i).noalias() = fac_f / beta; // The (i+1)-th column
-            fac_H(i, i - 1) = beta;
+            m_fac_V.col(i).noalias() = m_fac_f / beta; // The (i+1)-th column
+            m_fac_H(i, i - 1) = beta;
 
-            // w <- A * v, v = fac_V.col(i)
-            op->perform_op(&fac_V(0, i), w.data());
-            nmatop++;
+            // w <- A * v, v = m_fac_V.col(i)
+            m_op->perform_op(&m_fac_V(0, i), w.data());
+            m_nmatop++;
 
             // First i+1 columns of V
-            MapMat Vs(fac_V.data(), dim_n, i + 1);
-            // h = fac_H(0:i, i)
-            MapVec h(&fac_H(0, i), i + 1);
+            MapMat Vs(m_fac_V.data(), m_n, i + 1);
+            // h = m_fac_H(0:i, i)
+            MapVec h(&m_fac_H(0, i), i + 1);
             // h <- V' * w
             h.noalias() = Vs.transpose() * w;
 
             // f <- w - V * h
-            fac_f.noalias() = w - Vs * h;
-            beta = fac_f.norm();
+            m_fac_f.noalias() = w - Vs * h;
+            beta = m_fac_f.norm();
 
             // f/||f|| is going to be the next column of V, so we need to test
             // whether V' * (f/||f||) ~= 0
-            Vector Vf = Vs.transpose() * fac_f;
-            if(Vf.cwiseAbs().maxCoeff() > prec * beta)
+            Vector Vf = Vs.transpose() * m_fac_f;
+            if(Vf.cwiseAbs().maxCoeff() > m_prec * beta)
             {
                 // f <- f - V * V' * f
-                fac_f.noalias() -= Vs * Vf;
-                beta = fac_f.norm();
+                m_fac_f.noalias() -= Vs * Vf;
+                beta = m_fac_f.norm();
             }
         }
     }
@@ -186,16 +186,16 @@ private:
     // Implicitly restarted Arnoldi factorization
     void restart(int k)
     {
-        if(k >= ncv)
+        if(k >= m_ncv)
             return;
 
-        DoubleShiftQR<Scalar> decomp_ds(ncv);
+        DoubleShiftQR<Scalar> decomp_ds(m_ncv);
         UpperHessenbergQR<Scalar> decomp_hb;
-        Matrix Q = Matrix::Identity(ncv, ncv);
+        Matrix Q = Matrix::Identity(m_ncv, m_ncv);
 
-        for(int i = k; i < ncv; i++)
+        for(int i = k; i < m_ncv; i++)
         {
-            if(is_complex(ritz_val[i], prec) && is_conj(ritz_val[i], ritz_val[i + 1], prec))
+            if(is_complex(m_ritz_val[i], m_prec) && is_conj(m_ritz_val[i], m_ritz_val[i + 1], m_prec))
             {
                 // H - mu * I = Q1 * R1
                 // H <- R1 * Q1 + mu * I = Q1' * H * Q1
@@ -203,92 +203,92 @@ private:
                 // H <- R2 * Q2 + conj(mu) * I = Q2' * H * Q2
                 //
                 // (H - mu * I) * (H - conj(mu) * I) = Q1 * Q2 * R2 * R1 = Q * R
-                Scalar s = 2 * ritz_val[i].real();
-                Scalar t = std::norm(ritz_val[i]);
+                Scalar s = 2 * m_ritz_val[i].real();
+                Scalar t = std::norm(m_ritz_val[i]);
 
-                decomp_ds.compute(fac_H, s, t);
+                decomp_ds.compute(m_fac_H, s, t);
 
                 // Q -> Q * Qi
                 decomp_ds.apply_YQ(Q);
                 // H -> Q'HQ
-                // Matrix Q = Matrix::Identity(ncv, ncv);
+                // Matrix Q = Matrix::Identity(m_ncv, m_ncv);
                 // decomp_ds.apply_YQ(Q);
-                // fac_H = Q.transpose() * fac_H * Q;
-                fac_H = decomp_ds.matrix_QtHQ();
+                // m_fac_H = Q.transpose() * m_fac_H * Q;
+                m_fac_H = decomp_ds.matrix_QtHQ();
 
                 i++;
             } else {
                 // QR decomposition of H - mu * I, mu is real
-                fac_H.diagonal().array() -= ritz_val[i].real();
-                decomp_hb.compute(fac_H);
+                m_fac_H.diagonal().array() -= m_ritz_val[i].real();
+                decomp_hb.compute(m_fac_H);
 
                 // Q -> Q * Qi
                 decomp_hb.apply_YQ(Q);
                 // H -> Q'HQ = RQ + mu * I
-                fac_H = decomp_hb.matrix_RQ();
-                fac_H.diagonal().array() += ritz_val[i].real();
+                m_fac_H = decomp_hb.matrix_RQ();
+                m_fac_H.diagonal().array() += m_ritz_val[i].real();
             }
         }
         // V -> VQ, only need to update the first k+1 columns
         // Q has some elements being zero
         // The first (ncv - k + i) elements of the i-th column of Q are non-zero
-        Matrix Vs(dim_n, k + 1);
+        Matrix Vs(m_n, k + 1);
         int nnz;
         for(int i = 0; i < k; i++)
         {
-            nnz = ncv - k + i + 1;
-            MapMat V(fac_V.data(), dim_n, nnz);
+            nnz = m_ncv - k + i + 1;
+            MapMat V(m_fac_V.data(), m_n, nnz);
             MapVec q(&Q(0, i), nnz);
             Vs.col(i).noalias() = V * q;
         }
-        Vs.col(k).noalias() = fac_V * Q.col(k);
-        fac_V.leftCols(k + 1).noalias() = Vs;
+        Vs.col(k).noalias() = m_fac_V * Q.col(k);
+        m_fac_V.leftCols(k + 1).noalias() = Vs;
 
-        Vector fk = fac_f * Q(ncv - 1, k - 1) + fac_V.col(k) * fac_H(k, k - 1);
-        factorize_from(k, ncv, fk);
+        Vector fk = m_fac_f * Q(m_ncv - 1, k - 1) + m_fac_V.col(k) * m_fac_H(k, k - 1);
+        factorize_from(k, m_ncv, fk);
         retrieve_ritzpair();
     }
 
     // Calculate the number of converged Ritz values
     int num_converged(Scalar tol)
     {
-        // thresh = tol * max(prec, abs(theta)), theta for ritz value
-        Array thresh = tol * ritz_val.head(nev).array().abs().max(prec);
-        Array resid = ritz_est.head(nev).array().abs() * fac_f.norm();
+        // thresh = tol * max(m_prec, abs(theta)), theta for ritz value
+        Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(m_prec);
+        Array resid = m_ritz_est.head(m_nev).array().abs() * m_fac_f.norm();
         // Converged "wanted" ritz values
-        ritz_conv = (resid < thresh);
+        m_ritz_conv = (resid < thresh);
 
-        return ritz_conv.cast<int>().sum();
+        return m_ritz_conv.cast<int>().sum();
     }
 
     // Return the adjusted nev for restarting
     int nev_adjusted(int nconv)
     {
-        int nev_new = nev;
+        int nev_new = m_nev;
 
-        for(int i = nev; i < ncv; i++)
-            if(std::abs(ritz_est[i]) < prec)  nev_new++;
+        for(int i = m_nev; i < m_ncv; i++)
+            if(std::abs(m_ritz_est[i]) < m_prec)  nev_new++;
 
-        // Increase nev by one if ritz_val[nev - 1] and
-        // ritz_val[nev] are conjugate pairs
-        if(is_complex(ritz_val[nev_new - 1], prec) &&
-           is_conj(ritz_val[nev_new - 1], ritz_val[nev_new], prec))
+        // Increase nev by one if m_ritz_val[nev - 1] and
+        // m_ritz_val[nev] are conjugate pairs
+        if(is_complex(m_ritz_val[nev_new - 1], m_prec) &&
+           is_conj(m_ritz_val[nev_new - 1], m_ritz_val[nev_new], m_prec))
         {
             nev_new++;
         }
         // Adjust nev_new again, according to dnaup2.f line 660~674 in ARPACK
-        nev_new += std::min(nconv, (ncv - nev_new) / 2);
-        if(nev_new == 1 && ncv >= 6)
-            nev_new = ncv / 2;
-        else if(nev_new == 1 && ncv > 3)
+        nev_new += std::min(nconv, (m_ncv - nev_new) / 2);
+        if(nev_new == 1 && m_ncv >= 6)
+            nev_new = m_ncv / 2;
+        else if(nev_new == 1 && m_ncv > 3)
             nev_new = 2;
 
-        if(nev_new > ncv - 2)
-            nev_new = ncv - 2;
+        if(nev_new > m_ncv - 2)
+            nev_new = m_ncv - 2;
 
         // Examine conjugate pairs again
-        if(is_complex(ritz_val[nev_new - 1], prec) &&
-           is_conj(ritz_val[nev_new - 1], ritz_val[nev_new], prec))
+        if(is_complex(m_ritz_val[nev_new - 1], m_prec) &&
+           is_conj(m_ritz_val[nev_new - 1], m_ritz_val[nev_new], m_prec))
         {
             nev_new++;
         }
@@ -299,22 +299,22 @@ private:
     // Retrieve and sort ritz values and ritz vectors
     void retrieve_ritzpair()
     {
-        UpperHessenbergEigen<Scalar> decomp(fac_H);
+        UpperHessenbergEigen<Scalar> decomp(m_fac_H);
         ComplexVector evals = decomp.eigenvalues();
         ComplexMatrix evecs = decomp.eigenvectors();
 
         SortEigenvalue<Complex, SelectionRule> sorting(evals.data(), evals.size());
         std::vector<int> ind = sorting.index();
 
-        // Copy the ritz values and vectors to ritz_val and ritz_vec, respectively
-        for(int i = 0; i < ncv; i++)
+        // Copy the ritz values and vectors to m_ritz_val and m_ritz_vec, respectively
+        for(int i = 0; i < m_ncv; i++)
         {
-            ritz_val[i] = evals[ind[i]];
-            ritz_est[i] = evecs(ncv - 1, ind[i]);
+            m_ritz_val[i] = evals[ind[i]];
+            m_ritz_est[i] = evecs(m_ncv - 1, ind[i]);
         }
-        for(int i = 0; i < nev; i++)
+        for(int i = 0; i < m_nev; i++)
         {
-            ritz_vec.col(i) = evecs.col(ind[i]);
+            m_ritz_vec.col(i) = evecs.col(ind[i]);
         }
     }
 
@@ -324,7 +324,7 @@ protected:
     virtual void sort_ritzpair(int sort_rule)
     {
         // First make sure that we have a valid index vector
-        SortEigenvalue<Complex, LARGEST_MAGN> sorting(ritz_val.data(), nev);
+        SortEigenvalue<Complex, LARGEST_MAGN> sorting(m_ritz_val.data(), m_nev);
         std::vector<int> ind = sorting.index();
 
         switch(sort_rule)
@@ -333,31 +333,31 @@ protected:
                 break;
             case LARGEST_REAL:
             {
-                SortEigenvalue<Complex, LARGEST_REAL> sorting(ritz_val.data(), nev);
+                SortEigenvalue<Complex, LARGEST_REAL> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
             }
                 break;
             case LARGEST_IMAG:
             {
-                SortEigenvalue<Complex, LARGEST_IMAG> sorting(ritz_val.data(), nev);
+                SortEigenvalue<Complex, LARGEST_IMAG> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
             }
                 break;
             case SMALLEST_MAGN:
             {
-                SortEigenvalue<Complex, SMALLEST_MAGN> sorting(ritz_val.data(), nev);
+                SortEigenvalue<Complex, SMALLEST_MAGN> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
             }
                 break;
             case SMALLEST_REAL:
             {
-                SortEigenvalue<Complex, SMALLEST_REAL> sorting(ritz_val.data(), nev);
+                SortEigenvalue<Complex, SMALLEST_REAL> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
             }
                 break;
             case SMALLEST_IMAG:
             {
-                SortEigenvalue<Complex, SMALLEST_IMAG> sorting(ritz_val.data(), nev);
+                SortEigenvalue<Complex, SMALLEST_IMAG> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
             }
                 break;
@@ -365,20 +365,20 @@ protected:
                 throw std::invalid_argument("unsupported sorting rule");
         }
 
-        ComplexVector new_ritz_val(ncv);
-        ComplexMatrix new_ritz_vec(ncv, nev);
-        BoolArray new_ritz_conv(nev);
+        ComplexVector new_ritz_val(m_ncv);
+        ComplexMatrix new_ritz_vec(m_ncv, m_nev);
+        BoolArray new_ritz_conv(m_nev);
 
-        for(int i = 0; i < nev; i++)
+        for(int i = 0; i < m_nev; i++)
         {
-            new_ritz_val[i] = ritz_val[ind[i]];
-            new_ritz_vec.col(i) = ritz_vec.col(ind[i]);
-            new_ritz_conv[i] = ritz_conv[ind[i]];
+            new_ritz_val[i] = m_ritz_val[ind[i]];
+            new_ritz_vec.col(i) = m_ritz_vec.col(ind[i]);
+            new_ritz_conv[i] = m_ritz_conv[ind[i]];
         }
 
-        ritz_val.swap(new_ritz_val);
-        ritz_vec.swap(new_ritz_vec);
-        ritz_conv.swap(new_ritz_conv);
+        m_ritz_val.swap(new_ritz_val);
+        m_ritz_vec.swap(new_ritz_vec);
+        m_ritz_conv.swap(new_ritz_conv);
     }
 
 public:
@@ -400,18 +400,18 @@ public:
     ///             and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
     ///
     GenEigsSolver(OpType *op_, int nev_, int ncv_) :
-        op(op_),
-        dim_n(op->rows()),
-        nev(nev_),
-        ncv(ncv_ > dim_n ? dim_n : ncv_),
-        nmatop(0),
-        niter(0),
-        prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3))
+        m_op(op_),
+        m_n(m_op->rows()),
+        m_nev(nev_),
+        m_ncv(ncv_ > m_n ? m_n : ncv_),
+        m_nmatop(0),
+        m_niter(0),
+        m_prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3))
     {
-        if(nev_ < 1 || nev_ > dim_n - 2)
+        if(nev_ < 1 || nev_ > m_n - 2)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 2, n is the size of matrix");
 
-        if(ncv_ < nev_ + 2 || ncv_ > dim_n)
+        if(ncv_ < nev_ + 2 || ncv_ > m_n)
             throw std::invalid_argument("ncv must satisfy nev + 2 <= ncv <= n, n is the size of matrix");
     }
 
@@ -427,36 +427,36 @@ public:
     void init(const Scalar *init_resid)
     {
         // Reset all matrices/vectors to zero
-        fac_V.resize(dim_n, ncv);
-        fac_H.resize(ncv, ncv);
-        fac_f.resize(dim_n);
-        ritz_val.resize(ncv);
-        ritz_vec.resize(ncv, nev);
-        ritz_est.resize(ncv);
-        ritz_conv.resize(nev);
+        m_fac_V.resize(m_n, m_ncv);
+        m_fac_H.resize(m_ncv, m_ncv);
+        m_fac_f.resize(m_n);
+        m_ritz_val.resize(m_ncv);
+        m_ritz_vec.resize(m_ncv, m_nev);
+        m_ritz_est.resize(m_ncv);
+        m_ritz_conv.resize(m_nev);
 
-        fac_V.setZero();
-        fac_H.setZero();
-        fac_f.setZero();
-        ritz_val.setZero();
-        ritz_vec.setZero();
-        ritz_est.setZero();
-        ritz_conv.setZero();
+        m_fac_V.setZero();
+        m_fac_H.setZero();
+        m_fac_f.setZero();
+        m_ritz_val.setZero();
+        m_ritz_vec.setZero();
+        m_ritz_est.setZero();
+        m_ritz_conv.setZero();
 
-        Vector v(dim_n);
-        std::copy(init_resid, init_resid + dim_n, v.data());
+        Vector v(m_n);
+        std::copy(init_resid, init_resid + m_n, v.data());
         Scalar vnorm = v.norm();
-        if(vnorm < prec)
+        if(vnorm < m_prec)
             throw std::invalid_argument("initial residual vector cannot be zero");
         v /= vnorm;
 
-        Vector w(dim_n);
-        op->perform_op(v.data(), w.data());
-        nmatop++;
+        Vector w(m_n);
+        m_op->perform_op(v.data(), w.data());
+        m_nmatop++;
 
-        fac_H(0, 0) = v.dot(w);
-        fac_f = w - v * fac_H(0, 0);
-        fac_V.col(0) = v;
+        m_fac_H(0, 0) = v.dot(w);
+        m_fac_f = w - v * m_fac_H(0, 0);
+        m_fac_V.col(0) = v;
     }
 
     ///
@@ -468,7 +468,7 @@ public:
     ///
     void init()
     {
-        Vector init_resid = Vector::Random(dim_n);
+        Vector init_resid = Vector::Random(m_n);
         init_resid.array() -= 0.5;
         init(init_resid.data());
     }
@@ -496,14 +496,14 @@ public:
     int compute(int maxit = 1000, Scalar tol = 1e-10, int sort_rule = LARGEST_MAGN)
     {
         // The m-step Arnoldi factorization
-        factorize_from(1, ncv, fac_f);
+        factorize_from(1, m_ncv, m_fac_f);
         retrieve_ritzpair();
         // Restarting
         int i, nconv = 0, nev_adj;
         for(i = 0; i < maxit; i++)
         {
             nconv = num_converged(tol);
-            if(nconv >= nev)
+            if(nconv >= m_nev)
                 break;
 
             nev_adj = nev_adjusted(nconv);
@@ -512,20 +512,20 @@ public:
         // Sorting results
         sort_ritzpair(sort_rule);
 
-        niter += i + 1;
+        m_niter += i + 1;
 
-        return std::min(nev, nconv);
+        return std::min(m_nev, nconv);
     }
 
     ///
     /// Returning the number of iterations used in the computation.
     ///
-    int num_iterations() { return niter; }
+    int num_iterations() { return m_niter; }
 
     ///
     /// Returning the number of matrix operations used in the computation.
     ///
-    int num_operations() { return nmatop; }
+    int num_operations() { return m_nmatop; }
 
     ///
     /// Returning the converged eigenvalues.
@@ -536,18 +536,18 @@ public:
     ///
     ComplexVector eigenvalues()
     {
-        int nconv = ritz_conv.cast<int>().sum();
+        int nconv = m_ritz_conv.cast<int>().sum();
         ComplexVector res(nconv);
 
         if(!nconv)
             return res;
 
         int j = 0;
-        for(int i = 0; i < nev; i++)
+        for(int i = 0; i < m_nev; i++)
         {
-            if(ritz_conv[i])
+            if(m_ritz_conv[i])
             {
-                res[j] = ritz_val[i];
+                res[j] = m_ritz_val[i];
                 j++;
             }
         }
@@ -566,25 +566,25 @@ public:
     ///
     ComplexMatrix eigenvectors(int nvec)
     {
-        int nconv = ritz_conv.cast<int>().sum();
+        int nconv = m_ritz_conv.cast<int>().sum();
         nvec = std::min(nvec, nconv);
-        ComplexMatrix res(dim_n, nvec);
+        ComplexMatrix res(m_n, nvec);
 
         if(!nvec)
             return res;
 
-        ComplexMatrix ritz_vec_conv(ncv, nvec);
+        ComplexMatrix ritz_vec_conv(m_ncv, nvec);
         int j = 0;
-        for(int i = 0; i < nev && j < nvec; i++)
+        for(int i = 0; i < m_nev && j < nvec; i++)
         {
-            if(ritz_conv[i])
+            if(m_ritz_conv[i])
             {
-                ritz_vec_conv.col(j) = ritz_vec.col(i);
+                ritz_vec_conv.col(j) = m_ritz_vec.col(i);
                 j++;
             }
         }
 
-        res.noalias() = fac_V * ritz_vec_conv;
+        res.noalias() = m_fac_V * ritz_vec_conv;
 
         return res;
     }
@@ -594,7 +594,7 @@ public:
     ///
     ComplexMatrix eigenvectors()
     {
-        return eigenvectors(nev);
+        return eigenvectors(m_nev);
     }
 };
 
@@ -637,8 +637,8 @@ private:
     {
         // The eigenvalus we get from the iteration is nu = 1 / (lambda - sigma)
         // So the eigenvalues of the original problem is lambda = 1 / nu + sigma
-        ComplexArray ritz_val_org = Scalar(1.0) / this->ritz_val.head(this->nev).array() + sigma;
-        this->ritz_val.head(this->nev) = ritz_val_org;
+        ComplexArray ritz_val_org = Scalar(1.0) / this->m_ritz_val.head(this->m_nev).array() + sigma;
+        this->m_ritz_val.head(this->m_nev) = ritz_val_org;
         GenEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair(sort_rule);
     }
 public:
@@ -664,7 +664,7 @@ public:
         GenEigsSolver<Scalar, SelectionRule, OpType>(op_, nev_, ncv_),
         sigma(sigma_)
     {
-        this->op->set_shift(sigma);
+        this->m_op->set_shift(sigma);
     }
 };
 
@@ -721,29 +721,29 @@ private:
 
         // Select an arbitrary real shift value
         Scalar r = sigmar + std::sin(sigmar);
-        this->op->set_shift(r, 0);
+        this->m_op->set_shift(r, 0);
 
         // Calculate inv(A - r * I) * vi
         ComplexArray v;
         Array v_real, v_imag;
-        Array lhs_real(this->dim_n), lhs_imag(this->dim_n);
+        Array lhs_real(this->m_n), lhs_imag(this->m_n);
         Scalar eps = std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3);
-        for(int i = 0; i < this->nev; i++)
+        for(int i = 0; i < this->m_nev; i++)
         {
-            v = this->fac_V * this->ritz_vec.col(i);
+            v = this->m_fac_V * this->m_ritz_vec.col(i);
             v_real = v.real();
             v_imag = v.imag();
 
-            this->op->perform_op(v_real.data(), lhs_real.data());
-            this->op->perform_op(v_imag.data(), lhs_imag.data());
+            this->m_op->perform_op(v_real.data(), lhs_real.data());
+            this->m_op->perform_op(v_imag.data(), lhs_imag.data());
 
             Complex lambdai = Complex(v_real[0], v_imag[0]) / Complex(lhs_real[0], lhs_imag[0]) +
                               Complex(r, 0);
-            this->ritz_val[i] = lambdai;
+            this->m_ritz_val[i] = lambdai;
 
             if(std::abs(lambdai.imag()) > eps)
             {
-                this->ritz_val[i + 1] = std::conj(lambdai);
+                this->m_ritz_val[i + 1] = std::conj(lambdai);
                 i++;
             }
         }
@@ -774,7 +774,7 @@ public:
         GenEigsSolver<Scalar, SelectionRule, OpType>(op_, nev_, ncv_),
         sigmar(sigmar_), sigmai(sigmai_)
     {
-        this->op->set_shift(sigmar, sigmai);
+        this->m_op->set_shift(sigmar, sigmai);
     }
 };
 
