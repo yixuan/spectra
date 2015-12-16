@@ -1,0 +1,46 @@
+/* custom theme */
+
+@media (min-width: 979px) {
+  #sidebar.affix-top {
+    position: static;
+  }
+
+  #sidebar.affix {
+    position: fixed;
+    top: 0;
+	width: 263px;
+  }
+}
+
+.affix, .affix-top {
+  position: static;
+}
+
+/* theme */
+
+body {
+  color: #555555;
+  background-color: #F2F2F2;
+}
+
+/* Sidebar */
+.site-sidebar a {
+  color: #81B33A;
+}
+
+.highlight {
+  color: #81B33A;
+}
+
+h3.highlight {
+  padding-top: 13px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #81B33A;
+}
+
+/* Site content */
+.panel {
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 30px;
+}
