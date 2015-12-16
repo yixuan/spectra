@@ -13,6 +13,9 @@ Spectra is implemented as a header-only C++ library, whose only dependency,
 Eigen, is also header-only. Hence Spectra can be easily embedded in
 C++ projects that require calculating eigenvalues of large matrices.
 
+The development page of Spectra is
+[https://github.com/yixuan/spectra/](https://github.com/yixuan/spectra/).
+
 ### Key Features
 
 - Calculates a specified number of eigenvalues/eigenvectors of a large square matrix
@@ -20,7 +23,8 @@ C++ projects that require calculating eigenvalues of large matrices.
 - Header-only. Easy to be embedded into other projects
 - Supports symmetric/general, dense/sparse matrices
 - Elegant and user-friendly API with great flexibility
-- Convenient and powerful R interface - [rARPACK](http://cran.r-project.org/package=rARPACK)
+- Convenient and powerful R interface - The [rARPACK](http://cran.r-project.org/package=rARPACK)
+package
 
 ### Relation to ARPACK
 
@@ -47,6 +51,12 @@ including all the background knowledge, example code and class APIs.
 
 The reference for the [rARPACK](http://cran.r-project.org/package=rARPACK) package
 can be found in the [R Interface](#) page.
+
+### Contributing to Spectra
+
+Spectra is open source. Bug reports, suggestions and feature requests are welcome
+on the [development page](https://github.com/yixuan/spectra/). Code contribution
+and pull requests would be great.
 
 ### License
 
