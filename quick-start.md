@@ -185,3 +185,10 @@ int main()
     return 0;
 }
 ~~~
+
+To compile and run these examples, simply download the source code of Spectra
+and Eigen, and let the compiler know about their paths. For example:
+
+~~~
+g++ -I/path/to/eigen -I/path/to/spectra/include -O2 example.cpp
+~~~
