@@ -1,4 +1,46 @@
-/* custom theme */
+/* Web fonts */
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Open Sans'), local('OpenSans'), url('../fonts/open-sans-400.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: local('Open Sans Bold'), local('OpenSans-Bold'), url('../fonts/open-sans-700.woff2') format('woff2');
+}
+
+/* Global style setting */
+
+body {
+  color: #333333;
+  background-color: #F5F5F5;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+a {
+  color: #1fa67a;
+}
+
+/* Sidebar */
+.site-sidebar a {
+  color: #87BF17;
+}
+
+.highlight {
+  color: #87BF17;
+}
+
+h3.highlight {
+  padding-top: 13px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #87BF17;
+}
 
 @media (min-width: 979px) {
   #sidebar.affix-top {
@@ -16,31 +58,16 @@
   position: static;
 }
 
-/* theme */
-
-body {
-  color: #555555;
-  background-color: #F2F2F2;
-}
-
-/* Sidebar */
-.site-sidebar a {
-  color: #81B33A;
-}
-
-.highlight {
-  color: #81B33A;
-}
-
-h3.highlight {
-  padding-top: 13px;
-  padding-bottom: 14px;
-  border-bottom: 2px solid #81B33A;
-}
-
 /* Site content */
 .panel {
   padding-left: 30px;
   padding-right: 30px;
   padding-bottom: 30px;
+}
+
+/* Footer */
+
+footer {
+  margin-top: 30px;
+  color: #AAAAAA;
 }
