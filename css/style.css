@@ -27,6 +27,22 @@ a {
   color: #1fa67a;
 }
 
+/* Header */
+
+header {
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+.vcenter {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+}
+
+.site-logo {
+  max-height: 80px;
+}
+
 /* Sidebar */
 .site-sidebar a {
   color: #87BF17;
