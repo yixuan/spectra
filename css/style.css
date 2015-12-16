@@ -48,11 +48,8 @@ header {
   color: #87BF17;
 }
 
-.highlight {
+.site-sidebar h3 {
   color: #87BF17;
-}
-
-h3.highlight {
   padding-top: 13px;
   padding-bottom: 14px;
   border-bottom: 2px solid #87BF17;
