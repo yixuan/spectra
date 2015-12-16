@@ -60,9 +60,15 @@ h3.highlight {
 
 /* Site content */
 .panel {
-  padding-left: 30px;
-  padding-right: 30px;
+  color: #555555;
+  padding-left: 45px;
+  padding-right: 45px;
+  padding-top: 10px;
   padding-bottom: 30px;
+}
+
+.panel h1 {
+  margin: 0.67em 0;
 }
 
 /* Footer */
