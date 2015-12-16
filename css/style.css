@@ -27,6 +27,12 @@ a {
   color: #1fa67a;
 }
 
+pre {
+  border: none;
+  border-radius: 0;
+  background-color: #F6F6F6;
+}
+
 /* Header */
 
 header {
