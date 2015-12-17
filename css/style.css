@@ -61,7 +61,7 @@ header {
   border-bottom: 2px solid #87BF17;
 }
 
-@media (min-width: 979px) {
+@media (min-width: 767px) {
   #sidebar.affix-top {
     position: static;
   }
@@ -69,7 +69,19 @@ header {
   #sidebar.affix {
     position: fixed;
     top: 0;
-	width: 263px;
+	width: 157px;
+  }
+}
+
+@media (min-width: 991px) {
+  #sidebar.affix {
+	width: 212px;
+  }
+}
+
+@media (min-width: 1199px) {
+  #sidebar.affix {
+    width: 263px;
   }
 }
 
@@ -95,4 +107,27 @@ header {
 footer {
   margin-top: 30px;
   color: #AAAAAA;
+}
+
+/* Media query */
+
+@media (max-width: 1199px) {
+  .panel {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+}
+
+@media (max-width: 991px) {
+  .panel {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .panel {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
 }
