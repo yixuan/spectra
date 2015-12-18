@@ -48,18 +48,19 @@ private:
     void compute_reflector(const Scalar &x1, const Scalar &x2, const Scalar &x3, Index ind)
     {
         Scalar *u = m_ref_u.data() + 3 * ind;
+        unsigned char *nr = m_ref_nr.data();
         // In general case the reflector affects 3 rows
-        m_ref_nr[ind] = 3;
+        nr[ind] = 3;
         // If x3 is zero, decrease nr by 1
         if(std::abs(x3) < m_prec)
         {
             // If x2 is also zero, nr will be 1, and we can exit this function
             if(std::abs(x2) < m_prec)
             {
-                m_ref_nr[ind] = 1;
+                nr[ind] = 1;
                 return;
             } else {
-                m_ref_nr[ind] = 2;
+                nr[ind] = 2;
             }
         }
 
@@ -71,7 +72,7 @@ private:
         // Double check the norm of new x
         if(x_norm < m_prec)
         {
-            m_ref_nr[ind] = 1;
+            nr[ind] = 1;
             return;
         }
         u[0] = x1_new / x_norm;
@@ -84,60 +85,69 @@ private:
         compute_reflector(x[0], x[1], x[2], ind);
     }
 
-    void compute_reflectors_from_block(GenericMatrix X, Index start_ind)
+    // Update the block X = H(il:iu, il:iu)
+    void update_block(Index il, Index iu)
     {
-        // For the block X, we can assume that ncol == nrow,
-        // and all sub-diagonal elements are non-zero
-        const Index nrow = X.rows();
-        // For block size == 1, there is no need to apply reflectors
-        if(nrow == 1)
+        // Block size
+        Index bsize = iu - il + 1;
+
+        // If block size == 1, there is no need to apply reflectors
+        if(bsize == 1)
         {
-            // This causes nr=1
-            compute_reflector(0, 0, 0, start_ind);
+            m_ref_nr[il] = 1;
             return;
         }
 
         // For block size == 2, do a Givens rotation on M = X * X - s * X + t * I
-        if(nrow == 2)
+        if(bsize == 2)
         {
-            Scalar x = X(0, 0) * (X(0, 0) - m_shift_s) + X(0, 1) * X(1, 0) + m_shift_t;
-            Scalar y = X(1, 0) * (X(0, 0) + X(1, 1) - m_shift_s);
+            // m00 = x00 * (x00 - s) + x01 * x10 + t
+            Scalar m00 = m_mat_H.coeff(il, il) * (m_mat_H.coeff(il, il) - m_shift_s) +
+                         m_mat_H.coeff(il, il + 1) * m_mat_H.coeff(il + 1, il) +
+                         m_shift_t;
+            // m10 = x10 * (x00 + x11 - s)
+            Scalar m10 = m_mat_H.coeff(il + 1, il) * (m_mat_H.coeff(il, il) + m_mat_H.coeff(il + 1, il + 1) - m_shift_s);
             // This causes nr=2
-            compute_reflector(x, y, 0, start_ind);
-            apply_PX(X.template block<2, 2>(0, 0), m_n, start_ind);
-            apply_XP(X.template block<2, 2>(0, 0), m_n, start_ind);
-            // This causes nr=1
-            compute_reflector(0, 0, 0, start_ind + 1);
+            compute_reflector(m00, m10, 0, il);
+            // Apply the reflector to X
+            apply_PX(m_mat_H.block(il, il, 2, m_n - il), m_n, il);
+            apply_XP(m_mat_H.block(0, il, il + 2, 2), m_n, il);
+
+            m_ref_nr[il + 1] = 1;
             return;
         }
 
         // For block size >=3, use the regular strategy
-        Scalar x = X(0, 0) * (X(0, 0) - m_shift_s) + X(0, 1) * X(1, 0) + m_shift_t;
-        Scalar y = X(1, 0) * (X(0, 0) + X(1, 1) - m_shift_s);
-        Scalar z = X(2, 1) * X(1, 0);
-        compute_reflector(x, y, z, start_ind);
+        Scalar m00 = m_mat_H.coeff(il, il) * (m_mat_H.coeff(il, il) - m_shift_s) +
+                     m_mat_H.coeff(il, il + 1) * m_mat_H.coeff(il + 1, il) +
+                     m_shift_t;
+        Scalar m10 = m_mat_H.coeff(il + 1, il) * (m_mat_H.coeff(il, il) + m_mat_H.coeff(il + 1, il + 1) - m_shift_s);
+        // m20 = x21 * x10
+        Scalar m20 = m_mat_H.coeff(il + 2, il + 1) * m_mat_H.coeff(il + 1, il);
+        compute_reflector(m00, m10, m20, il);
+
         // Apply the first reflector
-        apply_PX(X.template topRows<3>(), m_n, start_ind);
-        apply_XP(X.topLeftCorner(std::min(nrow, Index(4)), 3), m_n, start_ind);
+        apply_PX(m_mat_H.block(il, il, 3, m_n - il), m_n, il);
+        apply_XP(m_mat_H.block(0, il, il + std::min(bsize, Index(4)), 3), m_n, il);
 
         // Calculate the following reflectors
-        // If entering this loop, nrow is at least 4.
-        for(Index i = 1; i < nrow - 2; i++)
+        // If entering this loop, block size is at least 4.
+        for(Index i = 1; i < bsize - 2; i++)
         {
-            compute_reflector(&X(i, i - 1), start_ind + i);
+            compute_reflector(&m_mat_H.coeffRef(il + i, il + i - 1), il + i);
             // Apply the reflector to X
-            apply_PX(X.block(i, i - 1, 3, nrow - i + 1), m_n, start_ind + i);
-            apply_XP(X.block(0, i, std::min(nrow, Index(i + 4)), 3), m_n, start_ind + i);
+            apply_PX(m_mat_H.block(il + i, il + i - 1, 3, m_n - il - i + 1), m_n, il + i);
+            apply_XP(m_mat_H.block(0, il + i, il + std::min(bsize, Index(i + 4)), 3), m_n, il + i);
         }
 
         // The last reflector
         // This causes nr=2
-        compute_reflector(X(nrow - 2, nrow - 3), X(nrow - 1, nrow - 3), 0, start_ind + nrow - 2);
+        compute_reflector(m_mat_H.coeff(iu - 1, iu - 2), m_mat_H.coeff(iu, iu - 2), 0, iu - 1);
         // Apply the reflector to X
-        apply_PX(X.template block<2, 3>(nrow - 2, nrow - 3), m_n, start_ind + nrow - 2);
-        apply_XP(X.block(0, nrow - 2, nrow, 2), m_n, start_ind + nrow - 2);
-        // This causes nr=1
-        compute_reflector(0, 0, 0, start_ind + nrow - 1);
+        apply_PX(m_mat_H.block(iu - 1, iu - 2, 2, m_n - iu + 2), m_n, iu - 1);
+        apply_XP(m_mat_H.block(0, iu - 1, il + bsize, 2), m_n, iu - 1);
+
+        m_ref_nr[iu] = 1;
     }
 
     // P = I - 2 * u * u' = P'
@@ -297,25 +307,8 @@ public:
         {
             Index start = zero_ind[i];
             Index end = zero_ind[i + 1] - 1;
-            Index block_size = end - start + 1;
-            // Compute refelctors from each block X
-            compute_reflectors_from_block(m_mat_H.block(start, start, block_size, block_size), start);
-            // Apply reflectors to the block right to X
-            if(end < m_n - 1 && block_size >= 2)
-            {
-                for(Index j = start; j < end; j++)
-                {
-                    apply_PX(m_mat_H.block(j, end + 1, std::min(Index(3), end - j + 1), m_n - 1 - end), m_n, j);
-                }
-            }
-            // Apply reflectors to the block above X
-            if(start > 0 && block_size >= 2)
-            {
-                for(Index j = start; j < end; j++)
-                {
-                    apply_XP(m_mat_H.block(0, j, start, std::min(Index(3), end - j + 1)), m_n, j);
-                }
-            }
+            // Compute refelctors and update each block
+            update_block(start, end);
         }
 
         m_computed = true;
