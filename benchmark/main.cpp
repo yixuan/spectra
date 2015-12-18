@@ -100,7 +100,7 @@ int main()
 {
     srand(123);
     int n_experiment = 5;
-    int n_replicate = 5;
+    int n_replicate = 10;
 
     print_header("eigs_sym");
     run_eigs_sym(n_experiment, n_replicate, 100, 10, 20);
