@@ -17,6 +17,7 @@ libraries, based on the following environment setting:
 
 - OS: Fedora 23 64-bit
 - Compiler: GCC 5.3.1 with flag `g++ -Wall -O2 -mavx`
+- Spectra: version 0.1.0
 - BLAS: OpenBLAS 0.2.15, single threaded
 - ARPACK: ARPACK-NG 3.3.0
 - R: version 3.2.3
