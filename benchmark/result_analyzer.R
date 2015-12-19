@@ -27,7 +27,8 @@ ggplot(sym_medtime, aes(x = factor(Dataset), y = Medtime)) +
     geom_bar(aes(fill = Package), position = "dodge", stat = "identity") +
     facet_wrap(~ Size, scales = "free", ncol = 2) +
     xlab("Matrix ID") + ylab("Median Elapsed Time (ms)") +
-    theme_bw()
+    ggtitle("Symmetric Eigen Solver") +
+    theme_bw(base_size = 20)
 
 ## Benchmark result for general solver
 gen_start = grep("eigs_gen", res) + 4
@@ -51,4 +52,5 @@ ggplot(gen_medtime, aes(x = factor(Dataset), y = Medtime)) +
     geom_bar(aes(fill = Package), position = "dodge", stat = "identity") +
     facet_wrap(~ Size, scales = "free", ncol = 2) +
     xlab("Matrix ID") + ylab("Median Elapsed Time (ms)") +
-    theme_bw()
+    ggtitle("General Eigen Solver") +
+    theme_bw(base_size = 20)
