@@ -247,8 +247,8 @@ public:
     DoubleShiftQR(Index size) :
         m_n(size),
         m_prec(std::numeric_limits<Scalar>::epsilon()),
-        m_eps_rel(m_prec),
-        m_eps_abs(std::numeric_limits<Scalar>::min() * (Scalar(m_n) / m_prec)),
+        m_eps_rel(std::pow(m_prec, Scalar(2.0) / 3)),
+        m_eps_abs(std::min(std::pow(m_prec, Scalar(3.0) / 4), m_n * m_prec)),
         m_computed(false)
     {}
 
@@ -260,8 +260,8 @@ public:
         m_ref_u(3, m_n),
         m_ref_nr(m_n),
         m_prec(std::numeric_limits<Scalar>::epsilon()),
-        m_eps_rel(m_prec),
-        m_eps_abs(std::numeric_limits<Scalar>::min() * (Scalar(m_n) / m_prec)),
+        m_eps_rel(std::pow(m_prec, Scalar(2.0) / 3)),
+        m_eps_abs(std::min(std::pow(m_prec, Scalar(3.0) / 4), m_n * m_prec)),
         m_computed(false)
     {
         compute(mat, s, t);
