@@ -163,14 +163,25 @@ private:
             m_fac_f.noalias() = w - Vs * h;
             beta = m_fac_f.norm();
 
+            if(beta > 0.717 * h.norm())
+                continue;
+
             // f/||f|| is going to be the next column of V, so we need to test
             // whether V' * (f/||f||) ~= 0
             Vector Vf = Vs.transpose() * m_fac_f;
-            if(Vf.cwiseAbs().maxCoeff() > m_prec * beta)
+            // If not, iteratively correct the residual
+            int count = 0;
+            while(count < 5 && Vf.cwiseAbs().maxCoeff() > m_prec * beta)
             {
-                // f <- f - V * V' * f
+                // f <- f - V * Vf
                 m_fac_f.noalias() -= Vs * Vf;
+                // h <- h + Vf
+                h.noalias() += Vf;
+                // beta <- ||f||
                 beta = m_fac_f.norm();
+
+                Vf.noalias() = Vs.transpose() * m_fac_f;
+                count++;
             }
         }
     }

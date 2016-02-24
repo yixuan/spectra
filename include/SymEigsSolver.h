@@ -223,7 +223,7 @@ private:
             m_fac_H(i - 1, i) = beta;
             m_fac_H(i, i) = Hii;
 
-            //  f <- w - V * V' * w
+            // f <- w - V * V' * w
             m_fac_f.noalias() = w - beta * m_fac_V.col(i - 1) - Hii * v;
             beta = m_fac_f.norm();
 
