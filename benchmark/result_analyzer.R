@@ -3,7 +3,7 @@ library(reshape2)
 library(ggplot2)
 
 res = readLines("benchmark_res.txt")
-header = c("Size", "Dataset", "F77time", "F77err", "Cpptime", "Cpperr")
+header = c("Size", "Dataset", "F77time", "F77err", "F77nops", "Cpptime", "Cpperr", "Cppnops")
 
 ## Benchmark result for symmetric solver
 sym_start = grep("eigs_sym", res) + 4
