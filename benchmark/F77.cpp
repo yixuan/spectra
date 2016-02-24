@@ -10,7 +10,7 @@ using Eigen::VectorXcd;
 typedef Eigen::Map<VectorXd> MapVec;
 
 void eigs_sym_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
-                  double &time_used, double &prec_err)
+                  double &time_used, double &prec_err, int &nops)
 {
     double start, end;
     prec_err = -1.0;
@@ -166,12 +166,13 @@ void eigs_sym_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
     time_used = (end - start) * 1000;
     MatrixXd err = M * evecs.leftCols(nev) - evecs.leftCols(nev) * evals.asDiagonal();
     prec_err = err.cwiseAbs().maxCoeff();
+    nops = niter;
 }
 
 
 
 void eigs_gen_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
-                  double &time_used, double &prec_err)
+                  double &time_used, double &prec_err, int &nops)
 {
     double start, end;
     prec_err = -1.0;
@@ -333,5 +334,5 @@ void eigs_gen_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
 
     end = get_wall_time();
     time_used = (end - start) * 1000;
-    // std::cout << "nops77 = " << niter << std::endl;
+    nops = niter;
 }
