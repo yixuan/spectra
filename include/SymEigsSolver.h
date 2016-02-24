@@ -231,11 +231,21 @@ private:
             // whether V' * (f/||f||) ~= 0
             MapMat V(m_fac_V.data(), m_n, i + 1); // The first (i+1) columns
             Vector Vf = V.transpose() * m_fac_f;
-            if(Vf.cwiseAbs().maxCoeff() > m_prec * beta)
+            // If not, iteratively correct the residual
+            int count = 0;
+            while(count < 5 && Vf.cwiseAbs().maxCoeff() > m_prec * beta)
             {
-                // f <- f - V * V' * f
+                // f <- f - V * Vf
                 m_fac_f.noalias() -= V * Vf;
+                // h <- h + Vf
+                m_fac_H(i - 1, i) += Vf[i - 1];
+                m_fac_H(i, i - 1) = m_fac_H(i - 1, i);
+                m_fac_H(i, i) += Vf[i];
+                // beta <- ||f||
                 beta = m_fac_f.norm();
+
+                Vf.noalias() = V.transpose() * m_fac_f;
+                count++;
             }
         }
     }
