@@ -7,7 +7,8 @@
 - Improved Arnoldi factorization
 - Adjusted deflation tolerance in double shift QR
 - Updated result analyzer
+- Updated included Catch to v1.3.4
 
-## [v0.1.0] - 2015-12-19
+## [0.1.0] - 2015-12-19
 ### Added
 - Initial release of Spectra
