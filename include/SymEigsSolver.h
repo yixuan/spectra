@@ -210,21 +210,48 @@ private:
         m_fac_H.block(from_k, 0, m_ncv - from_k, from_k).setZero();
         for(int i = from_k; i <= to_m - 1; i++)
         {
+            bool restart = false;
+            // If beta = 0, then the next V is not full rank
+            // We need to generate a new residual vector that is orthogonal
+            // to the current V, which we call a restart
+            if(beta < m_prec)
+            {
+                m_fac_f.noalias() = Vector::Random(m_n);
+                // f <- f - V * V' * f, so that f is orthogonal to V
+                MapMat V(m_fac_V.data(), m_n, i); // The first i columns
+                Vector Vf = V.transpose() * m_fac_f;
+                m_fac_f.noalias() -= V * Vf;
+                // beta <- ||f||
+                beta = m_fac_f.norm();
+
+                restart = true;
+            }
+
             // v <- f / ||f||
             MapVec v(&m_fac_V(0, i), m_n); // The (i+1)-th column
             v.noalias() = m_fac_f / beta;
-            m_fac_H(i, i - 1) = beta;
+
+            // Note that H[i+1, i] equals to the unrestarted beta
+            if(restart)
+                m_fac_H(i, i - 1) = 0.0;
+            else
+                m_fac_H(i, i - 1) = beta;
 
             // w <- A * v
             m_op->perform_op(v.data(), w.data());
             m_nmatop++;
 
             Hii = v.dot(w);
-            m_fac_H(i - 1, i) = beta;
+            m_fac_H(i - 1, i) = m_fac_H(i, i - 1); // Due to symmetry
             m_fac_H(i, i) = Hii;
 
-            // f <- w - V * V' * w
-            m_fac_f.noalias() = w - beta * m_fac_V.col(i - 1) - Hii * v;
+            // f <- w - V * V' * w = w - H[i+1, i] * V{i} - H[i+1, i+1] * V{i+1}
+            // If restarting, we know that H[i+1, i] = 0
+            if(restart)
+                m_fac_f.noalias() = w - Hii * v;
+            else
+                m_fac_f.noalias() = w - m_fac_H(i, i - 1) * m_fac_V.col(i - 1) - Hii * v;
+
             beta = m_fac_f.norm();
 
             // f/||f|| is going to be the next column of V, so we need to test
