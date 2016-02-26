@@ -2,6 +2,8 @@
 ### Added
 - Benchmark script now outputs number of matrix operations
 - Added this change log
+- Added a simple built-in random number generator, so that we can make
+  the algorithm deterministic
 
 ### Changed
 - Improved Arnoldi factorization
