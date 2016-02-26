@@ -540,7 +540,6 @@ public:
     {
         SimpleRandom<Scalar> rng(0);
         Vector init_resid = rng.random_vec(m_n);
-        init_resid.array() -= 0.5;
         init(init_resid.data());
     }
 
