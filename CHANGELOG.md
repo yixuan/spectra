@@ -5,6 +5,9 @@
 
 ### Changed
 - Improved Arnoldi factorization
+  - Iteratively corrects orthogonality
+  - Creates new residual vector when invariant subspace is found
+  - Stability for matrices with repeated eigenvalues is greatly improved
 - Adjusted deflation tolerance in double shift QR
 - Updated result analyzer
 - Updated included Catch to v1.3.4
