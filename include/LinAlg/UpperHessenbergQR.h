@@ -115,6 +115,7 @@ public:
             r = std::sqrt(xi * xi + xj * xj);
             if(r <= eps)
             {
+                r = 0;
                 m_rot_cos[i] = c = 1;
                 m_rot_sin[i] = s = 0;
             } else {
@@ -479,6 +480,7 @@ public:
             r = std::sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
             if(r <= eps)
             {
+                r = 0;
                 *c = 1;
                 *s = 0;
             } else {
@@ -528,6 +530,7 @@ public:
         r = std::sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
         if(r <= eps)
         {
+            r = 0;
             *c = 1;
             *s = 0;
         } else {
@@ -581,7 +584,7 @@ public:
             *m22 = (*s) * tmp + (*c) * (*m22);
 
             // Move m11 to RQ[i+1, i+1]
-            m11  = m22;
+            m11 = m22;
             c++;
             s++;
         }
