@@ -17,6 +17,7 @@
 
 #include "SelectionRule.h"
 #include "CompInfo.h"
+#include "SimpleRandom.h"
 #include "LinAlg/UpperHessenbergQR.h"
 #include "LinAlg/UpperHessenbergEigen.h"
 #include "LinAlg/DoubleShiftQR.h"
@@ -150,7 +151,8 @@ private:
             // to the current V, which we call a restart
             if(beta < m_prec)
             {
-                m_fac_f.noalias() = Vector::Random(m_n);
+                SimpleRandom<Scalar> rng(2 * i);
+                m_fac_f.noalias() = rng.random_vec(m_n);
                 // f <- f - V * V' * f, so that f is orthogonal to V
                 MapMat V(m_fac_V.data(), m_n, i); // The first i columns
                 Vector Vf = V.transpose() * m_fac_f;
@@ -504,7 +506,8 @@ public:
     ///
     void init()
     {
-        Vector init_resid = Vector::Random(m_n);
+        SimpleRandom<Scalar> rng(0);
+        Vector init_resid = rng.random_vec(m_n);
         init_resid.array() -= 0.5;
         init(init_resid.data());
     }
