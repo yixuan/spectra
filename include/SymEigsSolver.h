@@ -20,6 +20,7 @@
 #include "SimpleRandom.h"
 #include "LinAlg/UpperHessenbergQR.h"
 #include "LinAlg/TridiagEigen.h"
+#include "MatOp/DenseSymMatProd.h"
 #include "MatOp/DenseGenMatProd.h"
 #include "MatOp/DenseSymShiftSolve.h"
 
