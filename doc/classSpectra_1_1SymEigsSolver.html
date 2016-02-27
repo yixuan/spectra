@@ -153,25 +153,25 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a55d9a17fafdaf3497a22c088e68f1116"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt;<br />
+<div class="textblock"><h3>template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseSymMatProd&lt;double&gt;&gt;<br />
 class Spectra::SymEigsSolver&lt; Scalar, SelectionRule, OpType &gt;</h3>
 
 <p>This class implements the eigen solver for real symmetric matrices.</p>
 <p><b>Spectra</b> is designed to calculate a specified number ( \(k\)) of eigenvalues of a large square matrix ( \(A\)). Usually \(k\) is much less than the size of the matrix ( \(n\)), so that only a few eigenvalues and eigenvectors are computed.</p>
 <p>This class implements the eigen solver of a real symmetric matrix, but rather than providing the whole matrix, the algorithm only requires the matrix-vector multiplication operation of \(A\). Therefore, users of this solver need to supply a class that computes the result of \(Av\) for any given vector \(v\). The name of this class should be given to the template parameter <code>OpType</code>, and instance of this class passed to the constructor of <a class="el" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver</a>.</p>
-<p>If the matrix \(A\) is already stored as a matrix object in <b>Eigen</b>, for example <code>Eigen::MatrixXd</code>, then there is an easy way to construct such matrix operation class, by using the built-in wrapper class <a class="el" href="classSpectra_1_1DenseGenMatProd.html">DenseGenMatProd</a> which wraps an existing matrix object in <b>Eigen</b>. This is also the default template parameter for <a class="el" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver</a>.</p>
-<p>If the users need to define their own matrix-vector multiplication operation class, it should implement all the public member functions as in <a class="el" href="classSpectra_1_1DenseGenMatProd.html">DenseGenMatProd</a>.</p>
+<p>If the matrix \(A\) is already stored as a matrix object in <b>Eigen</b>, for example <code>Eigen::MatrixXd</code>, then there is an easy way to construct such matrix operation class, by using the built-in wrapper class <a class="el" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd</a> which wraps an existing matrix object in <b>Eigen</b>. This is also the default template parameter for <a class="el" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver</a>.</p>
+<p>If the users need to define their own matrix-vector multiplication operation class, it should implement all the public member functions as in <a class="el" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd</a>.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Scalar</td><td>The element type of the matrix. Currently supported types are <code>float</code>, <code>double</code> and <code>long double</code>. </td></tr>
     <tr><td class="paramname">SelectionRule</td><td>An enumeration value indicating the selection rule of the requested eigenvalues, for example <code>LARGEST_MAGN</code> to retrieve eigenvalues with the largest magnitude. The full list of enumeration values can be found in <a class="el" href="group__Enumerations.html">Enumerations</a>. </td></tr>
-    <tr><td class="paramname">OpType</td><td>The name of the matrix operation class. Users could either use the <a class="el" href="classSpectra_1_1DenseGenMatProd.html">DenseGenMatProd</a> wrapper class, or define their own that impelemnts all the public member functions as in <a class="el" href="classSpectra_1_1DenseGenMatProd.html">DenseGenMatProd</a>.</td></tr>
+    <tr><td class="paramname">OpType</td><td>The name of the matrix operation class. Users could either use the <a class="el" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd</a> wrapper class, or define their own that impelemnts all the public member functions as in <a class="el" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd</a>.</td></tr>
   </table>
   </dd>
 </dl>
 <p>Below is an example that demonstrates the usage of this class.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;Eigen/Core&gt;</span></div>
-<div class="line"><span class="preprocessor">#include &lt;SymEigsSolver.h&gt;</span>  <span class="comment">// Also includes &lt;MatOp/DenseGenMatProd.h&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;SymEigsSolver.h&gt;</span>  <span class="comment">// Also includes &lt;MatOp/DenseSymMatProd.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code" href="namespaceSpectra.html">Spectra</a>;</div>
@@ -183,10 +183,10 @@ class Spectra::SymEigsSolver&lt; Scalar, SelectionRule, OpType &gt;</h3>
 <div class="line">    Eigen::MatrixXd M = A + A.transpose();</div>
 <div class="line"></div>
 <div class="line">    <span class="comment">// Construct matrix operation object using the wrapper class DenseGenMatProd</span></div>
-<div class="line">    <a class="code" href="classSpectra_1_1DenseGenMatProd.html">DenseGenMatProd&lt;double&gt;</a> op(M);</div>
+<div class="line">    <a class="code" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd&lt;double&gt;</a> op(M);</div>
 <div class="line"></div>
 <div class="line">    <span class="comment">// Construct eigen solver object, requesting the largest three eigenvalues</span></div>
-<div class="line">    <a class="code" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver&lt; double, LARGEST_ALGE, DenseGenMatProd&lt;double&gt;</a> &gt; eigs(&amp;op, 3, 6);</div>
+<div class="line">    <a class="code" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver&lt; double, LARGEST_ALGE, DenseSymMatProd&lt;double&gt;</a> &gt; eigs(&amp;op, 3, 6);</div>
 <div class="line"></div>
 <div class="line">    <span class="comment">// Initialize and compute</span></div>
 <div class="line">    eigs.init();</div>
@@ -240,13 +240,13 @@ class Spectra::SymEigsSolver&lt; Scalar, SelectionRule, OpType &gt;</h3>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 </div><!-- fragment --> 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00155">155</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00156">156</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="aa43d8837ab70c5a102d4366ff3b0c490"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt; </div>
+template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseSymMatProd&lt;double&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -284,14 +284,14 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <p>Constructor to create a solver object.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">op_</td><td>Pointer to the matrix operation object, which should implement the matrix-vector multiplication operation of \(A\): calculating \(Ay\) for any vector \(y\). Users could either create the object from the <a class="el" href="classSpectra_1_1DenseGenMatProd.html">DenseGenMatProd</a> wrapper class, or define their own that impelemnts all the public member functions as in <a class="el" href="classSpectra_1_1DenseGenMatProd.html">DenseGenMatProd</a>. </td></tr>
+    <tr><td class="paramname">op_</td><td>Pointer to the matrix operation object, which should implement the matrix-vector multiplication operation of \(A\): calculating \(Ay\) for any vector \(y\). Users could either create the object from the <a class="el" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd</a> wrapper class, or define their own that impelemnts all the public member functions as in <a class="el" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd</a>. </td></tr>
     <tr><td class="paramname">nev_</td><td>Number of eigenvalues requested. This should satisfy \(1\le nev \le n-1\), where \(n\) is the size of matrix. </td></tr>
     <tr><td class="paramname">ncv_</td><td>Parameter that controls the convergence speed of the algorithm. Typically a larger <code>ncv_</code> means faster convergence, but it may also result in greater memory use and more matrix operations in each iteration. This parameter must satisfy \(nev &lt; ncv \le n\), and is advised to take \(ncv \ge 2\cdot nev\). </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00429">429</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00468">468</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -300,7 +300,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt; </div>
+template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseSymMatProd&lt;double&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -328,7 +328,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </dl>
 <p><b>Spectra</b> (and also <b>ARPACK</b>) uses an iterative algorithm to find eigenvalues. This function allows the user to provide the initial residual vector. </p>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00455">455</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00494">494</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -336,7 +336,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt; </div>
+template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseSymMatProd&lt;double&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -357,7 +357,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <p>Providing a random initial residual vector.</p>
 <p>This overloaded function generates a random initial residual vector for the algorithm. Elements in the vector follow independent Uniform(-0.5, 0.5) distributions. </p>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00500">500</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00539">539</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -365,7 +365,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt; </div>
+template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseSymMatProd&lt;double&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -411,7 +411,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of converged eigenvalues. </dd></dl>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00525">525</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00564">564</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -419,7 +419,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt; </div>
+template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseSymMatProd&lt;double&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -439,7 +439,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Retuning the status of the computation. The full list of enumeration values can be found in <a class="el" href="group__Enumerations.html">Enumerations</a>. </p>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00554">554</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00593">593</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -447,7 +447,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt; </div>
+template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseSymMatProd&lt;double&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -467,7 +467,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returning the number of iterations used in the computation. </p>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00559">559</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00598">598</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -475,7 +475,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt; </div>
+template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseSymMatProd&lt;double&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -495,7 +495,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returning the number of matrix operations used in the computation. </p>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00564">564</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00603">603</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -503,7 +503,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt; </div>
+template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseSymMatProd&lt;double&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -524,7 +524,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <p>Returning the converged eigenvalues.</p>
 <dl class="section return"><dt>Returns</dt><dd>A vector containing the eigenvalues. Returned vector type will be <code>Eigen::Vector&lt;Scalar, ...&gt;</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00573">573</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00612">612</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -532,7 +532,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt; </div>
+template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseSymMatProd&lt;double&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -560,7 +560,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A matrix containing the eigenvectors. Returned matrix type will be <code>Eigen::Matrix&lt;Scalar, ...&gt;</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00603">603</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00642">642</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -568,7 +568,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseGenMatProd&lt;double&gt;&gt; </div>
+template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseSymMatProd&lt;double&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -588,7 +588,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returning all converged eigenvectors. </p>
 
-<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00631">631</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p>Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00670">670</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>

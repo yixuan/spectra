@@ -131,7 +131,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <h2>Examples</h2>
 <p>Below is an example that demonstrates the use of the eigen solver for symmetric matrices.</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;Eigen/Core&gt;</span></div>
-<div class="line"><span class="preprocessor">#include &lt;SymEigsSolver.h&gt;</span>  <span class="comment">// Also includes &lt;MatOp/DenseGenMatProd.h&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;SymEigsSolver.h&gt;</span>  <span class="comment">// Also includes &lt;MatOp/DenseSymMatProd.h&gt;</span></div>
 <div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
 <div class="line"></div>
 <div class="line"><span class="keyword">using namespace </span><a class="code" href="namespaceSpectra.html">Spectra</a>;</div>
@@ -143,10 +143,10 @@ $(document).ready(function(){initNavTree('index.html','');});
 <div class="line">    Eigen::MatrixXd M = A + A.transpose();</div>
 <div class="line"></div>
 <div class="line">    <span class="comment">// Construct matrix operation object using the wrapper class DenseGenMatProd</span></div>
-<div class="line">    <a class="code" href="classSpectra_1_1DenseGenMatProd.html">DenseGenMatProd&lt;double&gt;</a> op(M);</div>
+<div class="line">    <a class="code" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd&lt;double&gt;</a> op(M);</div>
 <div class="line"></div>
 <div class="line">    <span class="comment">// Construct eigen solver object, requesting the largest three eigenvalues</span></div>
-<div class="line">    <a class="code" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver&lt; double, LARGEST_ALGE, DenseGenMatProd&lt;double&gt;</a> &gt; eigs(&amp;op, 3, 6);</div>
+<div class="line">    <a class="code" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver&lt; double, LARGEST_ALGE, DenseSymMatProd&lt;double&gt;</a> &gt; eigs(&amp;op, 3, 6);</div>
 <div class="line"></div>
 <div class="line">    <span class="comment">// Initialize and compute</span></div>
 <div class="line">    eigs.init();</div>

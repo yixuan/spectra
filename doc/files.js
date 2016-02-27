@@ -4,5 +4,6 @@ var files =
     [ "CompInfo.h", "CompInfo_8h_source.html", null ],
     [ "GenEigsSolver.h", "GenEigsSolver_8h_source.html", null ],
     [ "SelectionRule.h", "SelectionRule_8h_source.html", null ],
+    [ "SimpleRandom.h", "SimpleRandom_8h_source.html", null ],
     [ "SymEigsSolver.h", "SymEigsSolver_8h_source.html", null ]
 ];

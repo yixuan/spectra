@@ -20,6 +20,12 @@ var group__MatOp =
       [ "set_shift", "classSpectra_1_1DenseGenRealShiftSolve.html#ac663090ebc5d0ca8653fcec8dbb24950", null ],
       [ "perform_op", "classSpectra_1_1DenseGenRealShiftSolve.html#a22ba398269a1cf1df8f2ac20dc81873b", null ]
     ] ],
+    [ "DenseSymMatProd", "classSpectra_1_1DenseSymMatProd.html", [
+      [ "DenseSymMatProd", "classSpectra_1_1DenseSymMatProd.html#af6601253fe3405935416a1289606280f", null ],
+      [ "rows", "classSpectra_1_1DenseSymMatProd.html#aad6b84d2db27207aa9210e3782040e4a", null ],
+      [ "cols", "classSpectra_1_1DenseSymMatProd.html#a5c55e2e56314b4a9dabaa91b569ee2b2", null ],
+      [ "perform_op", "classSpectra_1_1DenseSymMatProd.html#ac5c7948d6c7a8912e751e24185a76545", null ]
+    ] ],
     [ "DenseSymShiftSolve", "classSpectra_1_1DenseSymShiftSolve.html", [
       [ "DenseSymShiftSolve", "classSpectra_1_1DenseSymShiftSolve.html#a31a3281a1826bb51def6906fbca1a53d", null ],
       [ "rows", "classSpectra_1_1DenseSymShiftSolve.html#a8babd3c00bd15da77c32aec1815b3d30", null ],

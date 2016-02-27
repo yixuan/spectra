@@ -4,10 +4,12 @@ var annotated_dup =
       [ "DenseGenComplexShiftSolve", "classSpectra_1_1DenseGenComplexShiftSolve.html", "classSpectra_1_1DenseGenComplexShiftSolve" ],
       [ "DenseGenMatProd", "classSpectra_1_1DenseGenMatProd.html", "classSpectra_1_1DenseGenMatProd" ],
       [ "DenseGenRealShiftSolve", "classSpectra_1_1DenseGenRealShiftSolve.html", "classSpectra_1_1DenseGenRealShiftSolve" ],
+      [ "DenseSymMatProd", "classSpectra_1_1DenseSymMatProd.html", "classSpectra_1_1DenseSymMatProd" ],
       [ "DenseSymShiftSolve", "classSpectra_1_1DenseSymShiftSolve.html", "classSpectra_1_1DenseSymShiftSolve" ],
       [ "GenEigsComplexShiftSolver", "classSpectra_1_1GenEigsComplexShiftSolver.html", "classSpectra_1_1GenEigsComplexShiftSolver" ],
       [ "GenEigsRealShiftSolver", "classSpectra_1_1GenEigsRealShiftSolver.html", "classSpectra_1_1GenEigsRealShiftSolver" ],
       [ "GenEigsSolver", "classSpectra_1_1GenEigsSolver.html", "classSpectra_1_1GenEigsSolver" ],
+      [ "SimpleRandom", "classSpectra_1_1SimpleRandom.html", "classSpectra_1_1SimpleRandom" ],
       [ "SparseGenMatProd", "classSpectra_1_1SparseGenMatProd.html", "classSpectra_1_1SparseGenMatProd" ],
       [ "SymEigsShiftSolver", "classSpectra_1_1SymEigsShiftSolver.html", "classSpectra_1_1SymEigsShiftSolver" ],
       [ "SymEigsSolver", "classSpectra_1_1SymEigsSolver.html", "classSpectra_1_1SymEigsSolver" ]
