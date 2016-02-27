@@ -78,7 +78,7 @@ matrices.
 
 ```cpp
 #include <Eigen/Core>
-#include <SymEigsSolver.h>  // Also includes <MatOp/DenseGenMatProd.h>
+#include <SymEigsSolver.h>  // Also includes <MatOp/DenseSymMatProd.h>
 #include <iostream>
 
 using namespace Spectra;
@@ -90,10 +90,10 @@ int main()
     Eigen::MatrixXd M = A + A.transpose();
 
     // Construct matrix operation object using the wrapper class DenseGenMatProd
-    DenseGenMatProd<double> op(M);
+    DenseSymMatProd<double> op(M);
 
     // Construct eigen solver object, requesting the largest three eigenvalues
-    SymEigsSolver< double, LARGEST_ALGE, DenseGenMatProd<double> > eigs(&op, 3, 6);
+    SymEigsSolver< double, LARGEST_ALGE, DenseSymMatProd<double> > eigs(&op, 3, 6);
 
     // Initialize and compute
     eigs.init();
