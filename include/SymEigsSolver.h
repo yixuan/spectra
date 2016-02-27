@@ -21,7 +21,6 @@
 #include "LinAlg/UpperHessenbergQR.h"
 #include "LinAlg/TridiagEigen.h"
 #include "MatOp/DenseSymMatProd.h"
-#include "MatOp/DenseGenMatProd.h"
 #include "MatOp/DenseSymShiftSolve.h"
 
 
@@ -54,12 +53,12 @@ namespace Spectra {
 ///
 /// If the matrix \f$A\f$ is already stored as a matrix object in **Eigen**,
 /// for example `Eigen::MatrixXd`, then there is an easy way to construct such
-/// matrix operation class, by using the built-in wrapper class DenseGenMatProd
+/// matrix operation class, by using the built-in wrapper class DenseSymMatProd
 /// which wraps an existing matrix object in **Eigen**. This is also the
 /// default template parameter for SymEigsSolver.
 ///
 /// If the users need to define their own matrix-vector multiplication operation
-/// class, it should implement all the public member functions as in DenseGenMatProd.
+/// class, it should implement all the public member functions as in DenseSymMatProd.
 ///
 /// \tparam Scalar        The element type of the matrix.
 ///                       Currently supported types are `float`, `double` and `long double`.
@@ -69,15 +68,15 @@ namespace Spectra {
 ///                       The full list of enumeration values can be found in
 ///                       \ref Enumerations.
 /// \tparam OpType        The name of the matrix operation class. Users could either
-///                       use the DenseGenMatProd wrapper class, or define their
+///                       use the DenseSymMatProd wrapper class, or define their
 ///                       own that impelemnts all the public member functions as in
-///                       DenseGenMatProd.
+///                       DenseSymMatProd.
 ///
 /// Below is an example that demonstrates the usage of this class.
 ///
 /// \code{.cpp}
 /// #include <Eigen/Core>
-/// #include <SymEigsSolver.h>  // Also includes <MatOp/DenseGenMatProd.h>
+/// #include <SymEigsSolver.h>  // Also includes <MatOp/DenseSymMatProd.h>
 /// #include <iostream>
 ///
 /// using namespace Spectra;
@@ -89,10 +88,10 @@ namespace Spectra {
 ///     Eigen::MatrixXd M = A + A.transpose();
 ///
 ///     // Construct matrix operation object using the wrapper class DenseGenMatProd
-///     DenseGenMatProd<double> op(M);
+///     DenseSymMatProd<double> op(M);
 ///
 ///     // Construct eigen solver object, requesting the largest three eigenvalues
-///     SymEigsSolver< double, LARGEST_ALGE, DenseGenMatProd<double> > eigs(&op, 3, 6);
+///     SymEigsSolver< double, LARGEST_ALGE, DenseSymMatProd<double> > eigs(&op, 3, 6);
 ///
 ///     // Initialize and compute
 ///     eigs.init();
@@ -153,7 +152,7 @@ namespace Spectra {
 ///
 template < typename Scalar = double,
            int SelectionRule = LARGEST_MAGN,
-           typename OpType = DenseGenMatProd<double> >
+           typename OpType = DenseSymMatProd<double> >
 class SymEigsSolver
 {
 private:
@@ -455,9 +454,9 @@ public:
     /// \param op_  Pointer to the matrix operation object, which should implement
     ///             the matrix-vector multiplication operation of \f$A\f$:
     ///             calculating \f$Ay\f$ for any vector \f$y\f$. Users could either
-    ///             create the object from the DenseGenMatProd wrapper class, or
+    ///             create the object from the DenseSymMatProd wrapper class, or
     ///             define their own that impelemnts all the public member functions
-    ///             as in DenseGenMatProd.
+    ///             as in DenseSymMatProd.
     /// \param nev_ Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
     ///             where \f$n\f$ is the size of matrix.
     /// \param ncv_ Parameter that controls the convergence speed of the algorithm.
