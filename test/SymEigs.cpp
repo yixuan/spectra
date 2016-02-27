@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include <SymEigsSolver.h>
-#include <MatOp/DenseGenMatProd.h>
+#include <MatOp/DenseSymMatProd.h>
 
 using namespace Spectra;
 
@@ -18,8 +18,8 @@ void run_test(const Matrix &mat, int k, int m)
     // Eigen::SelfAdjointEigenSolver<MatrixXd> eig(mat);
     // std::cout << "all eigenvalues = \n" << eig.eigenvalues().transpose() << "\n";
 
-    DenseGenMatProd<double> op(mat);
-    SymEigsSolver<double, SelectionRule, DenseGenMatProd<double>> eigs(&op, k, m);
+    DenseSymMatProd<double> op(mat);
+    SymEigsSolver< double, SelectionRule, DenseSymMatProd<double> > eigs(&op, k, m);
     eigs.init();
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();

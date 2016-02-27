@@ -7,6 +7,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using Eigen::MatrixXcd;
 using Eigen::VectorXcd;
+using Eigen::Lower;
 typedef Eigen::Map<VectorXd> MapVec;
 
 void eigs_sym_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
@@ -74,7 +75,7 @@ void eigs_sym_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
     {
         MapVec vec_in(&workd[ipntr[0] - 1], n);
         MapVec vec_out(&workd[ipntr[1] - 1], n);
-        vec_out.noalias() = M * vec_in;
+        vec_out.noalias() = M.selfadjointView<Lower>() * vec_in;
 
         saupd(ido, bmat, n, which,
               nev, tol, resid,

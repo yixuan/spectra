@@ -18,8 +18,8 @@ void eigs_sym_Cpp(MatrixXd &M, VectorXd &init_resid, int k, int m,
     double start, end;
     start = get_wall_time();
 
-    DenseGenMatProd<double> op(M);
-    SymEigsSolver< double, LARGEST_MAGN, DenseGenMatProd<double> > eigs(&op, k, m);
+    DenseSymMatProd<double> op(M);
+    SymEigsSolver< double, LARGEST_MAGN, DenseSymMatProd<double> > eigs(&op, k, m);
     eigs.init(init_resid.data());
 
     int nconv = eigs.compute();
