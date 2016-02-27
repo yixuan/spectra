@@ -65,7 +65,7 @@ public:
     {
         MapVec x(x_in, m_mat.cols());
         MapVec y(y_out, m_mat.rows());
-        y.noalias() = m_mat.selfadjointView<Uplo>() * x;
+        y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
     }
 };
 
