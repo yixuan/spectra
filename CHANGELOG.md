@@ -1,4 +1,6 @@
 ## [Unreleased]
+
+## [0.2.0] - 2016-02-28
 ### Added
 - Benchmark script now outputs number of matrix operations
 - Added this change log
