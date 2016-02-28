@@ -2,9 +2,9 @@
 ### Added
 - Benchmark script now outputs number of matrix operations
 - Added this change log
-- Added a simple built-in random number generator, so that we can make
-  the algorithm deterministic
-- Added wrapper class `DenseSymMatProd` for symmetric matrices
+- Added a simple built-in random number generator, so that the algorithm
+  was made to be deterministic
+- Added the wrapper class `DenseSymMatProd` for symmetric matrices
 
 ### Changed
 - Improved Arnoldi factorization
