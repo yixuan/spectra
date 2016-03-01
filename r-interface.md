@@ -5,13 +5,10 @@ title: R Interface
 
 # R Interface
 
-### The rARPACK Package
+### The RSpectra Package
 
-[rARPACK](http://cran.r-project.org/package=rARPACK) is the R interface of Spectra.
-Originally rARPACK is a wrapper for the ARPACK library (as the name indicates),
-and starting from version 0.8-0 it uses Spectra as the backend.
-
-rARPACK provides functions `eigs()` and `eigs_sym()` for eigenvalue problems,
+[RSpectra](http://cran.r-project.org/package=RSpectra) is the R interface of Spectra.
+It provides functions `eigs()` and `eigs_sym()` for eigenvalue problems,
 and `svds()` for truncated (partial) SVD. These functions are generic, meaning
 that different matrix types in R, including sparse matrices, are supported.
 
@@ -30,7 +27,8 @@ Below is a list of implemented ones:
 
 We first generate some matrices:
 
-<pre><code class="r">library(Matrix)
+<pre><code class="r">library(RSpectra)
+library(Matrix)
 n = 20
 k = 5
 
@@ -45,7 +43,7 @@ General matrices have complex eigenvalues:
 eigs(A2, k, opts = list(retvec = FALSE))  ## eigenvalues only
 </code></pre>
 
-rARPACK also works on sparse matrices:
+RSpectra also works on sparse matrices:
 
 <pre><code class="r">A1[sample(n^2, n^2 / 2)] = 0
 A3 = as(A1, "dgCMatrix")
@@ -109,6 +107,6 @@ svds(Asp2, k, nu = 0, nv = 0)
 ### Reference
 
 The function-by-function reference can be found in
-[this manual](https://cran.r-project.org/web/packages/rARPACK/rARPACK.pdf)
-and in the built-in help system of R by typing `?rARPACK::eigs` and
-`?rARPACK::svds`
+[this manual](https://cran.r-project.org/web/packages/RSpectra/RSpectra.pdf)
+and in the built-in help system of R by typing `?RSpectra::eigs` and
+`?RSpectra::svds`

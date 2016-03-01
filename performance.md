@@ -22,7 +22,7 @@ libraries, based on the following environment setting:
 - ARPACK: ARPACK-NG 3.3.0
 - R: version 3.2.3
 - R packages
-  - rARPACK 0.9-0
+  - RSpectra 0.11-0
   - svd 0.3.3-2
   - irlba 2.0.0
   - microbenchmark 1.4-2.1
@@ -46,7 +46,7 @@ tested cases, and general eigen solver is almost identical to ARPACK.
 ### Comparison with SVD solvers
 
 The R interface of Spectra,
-[rARPACK](http://cran.r-project.org/package=rARPACK), is compared with
+[RSpectra](http://cran.r-project.org/package=RSpectra), is compared with
 other SVD solvers in R.
 
 <img src="{{ '/img/benchmark-svd-small.png' | prepend: site.baseurl }}" class="img-responsive" />
@@ -56,7 +56,7 @@ other SVD solvers in R.
 The figures are generated using the following R code:
 
 <pre><code class="r">library(Matrix)
-library(rARPACK)
+library(RSpectra)
 library(svd)
 library(irlba)
 library(microbenchmark)
