@@ -3,6 +3,13 @@
 - Added the wrapper classes `SparseSymMatProd` and `SparseSymShiftSolve`
   for sparse symmetric matrices
 - Added the wrapper class `SparseGenRealShiftSolve` for general sparse matrices
+- Added tests for sparse matrices
+- Using Travis CI for automatic testing
+
+### Changed
+- Updated included [Catch](https://github.com/philsquared/Catch) to v1.4.0
+
+
 
 ## [0.2.0] - 2016-02-28
 ### Added
@@ -23,6 +30,8 @@
 - Updated copyright information
 - **API change**: Default operator of `SymEigsSolver` was changed from
   `DenseGenMatProd` to `DenseSymMatProd`
+
+
 
 ## [0.1.0] - 2015-12-19
 ### Added
