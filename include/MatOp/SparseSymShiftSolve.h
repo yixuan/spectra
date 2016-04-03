@@ -4,11 +4,13 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef SPARSE_SYM_MAT_PROD_H
-#define SPARSE_SYM_MAT_PROD_H
+#ifndef SPARSE_SYM_SHIFT_SOLVE_H
+#define SPARSE_SYM_SHIFT_SOLVE_H
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
+#include <Eigen/SparseCholesky>
+#include <stdexcept>
 
 namespace Spectra {
 
@@ -16,12 +18,12 @@ namespace Spectra {
 ///
 /// \ingroup MatOp
 ///
-/// This class defines the matrix-vector multiplication operation on a
-/// sparse real symmetric matrix \f$A\f$, i.e., calculating \f$y=Ax\f$ for any vector
-/// \f$x\f$. It is mainly used in the SymEigsSolver eigen solver.
+/// This class defines the shift-solve operation on a sparse real symmetric matrix \f$A\f$,
+/// i.e., calculating \f$y=(A-\sigma I)^{-1}x\f$ for any real \f$\sigma\f$ and
+/// vector \f$x\f$. It is mainly used in the SymEigsShiftSolver eigen solver.
 ///
 template <typename Scalar, int Uplo = Eigen::Lower>
-class SparseSymMatProd
+class SparseSymShiftSolve
 {
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
@@ -29,6 +31,8 @@ private:
     typedef Eigen::SparseMatrix<Scalar> SparseMatrix;
 
     const SparseMatrix& m_mat;
+    const int m_n;
+    Eigen::SimplicialLDLT<SparseMatrix, Uplo> m_solver;
 
 public:
     ///
@@ -37,35 +41,48 @@ public:
     /// \param mat_ An **Eigen** sparse matrix object, whose type is
     /// `Eigen::SparseMatrix<Scalar, ...>`.
     ///
-    SparseSymMatProd(const SparseMatrix& mat_) :
-        m_mat(mat_)
-    {}
+    SparseSymShiftSolve(const SparseMatrix& mat_) :
+        m_mat(mat_),
+        m_n(mat_.rows())
+    {
+        if(mat_.rows() != mat_.cols())
+            throw std::invalid_argument("SparseSymShiftSolve: matrix must be square");
+    }
 
     ///
     /// Return the number of rows of the underlying matrix.
     ///
-    int rows() const { return m_mat.rows(); }
+    int rows() const { return m_n; }
     ///
     /// Return the number of columns of the underlying matrix.
     ///
-    int cols() const { return m_mat.cols(); }
+    int cols() const { return m_n; }
 
     ///
-    /// Perform the matrix-vector multiplication operation \f$y=Ax\f$.
+    /// Set the real shift \f$\sigma\f$.
+    ///
+    void set_shift(Scalar sigma)
+    {
+        m_solver.setShift(-sigma);
+        m_solver.compute(m_mat);
+    }
+
+    ///
+    /// Perform the shift-solve operation \f$y=(A-\sigma I)^{-1}x\f$.
     ///
     /// \param x_in  Pointer to the \f$x\f$ vector.
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
-    // y_out = A * x_in
+    // y_out = inv(A - sigma * I) * x_in
     void perform_op(Scalar* x_in, Scalar* y_out) const
     {
-        MapVec x(x_in, m_mat.cols());
-        MapVec y(y_out, m_mat.rows());
-        y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
+        MapVec x(x_in,  m_n);
+        MapVec y(y_out, m_n);
+        y.noalias() = m_solver.solve(x);
     }
 };
 
 
 } // namespace Spectra
 
-#endif // SPARSE_SYM_MAT_PROD_H
+#endif // SPARSE_SYM_SHIFT_SOLVE_H
