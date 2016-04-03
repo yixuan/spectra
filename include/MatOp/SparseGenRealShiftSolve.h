@@ -9,7 +9,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <Eigen/SparseCholesky>
+#include <Eigen/SparseLU>
 #include <stdexcept>
 
 namespace Spectra {
