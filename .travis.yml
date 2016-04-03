@@ -11,11 +11,15 @@ addons:
     packages:
       - g++-5
       - clang
-      - libeigen3-dev
 
 before_install:
   - if [ "$CXX" = "g++" ]; then export CXX="g++-5"; fi
   - $CXX --version
+
+install:
+  - wget http://bitbucket.org/eigen/eigen/get/3.2.8.tar.gz
+  - tar xzf 3.2.8.tar.gz
+  - mv eigen-eigen-07105f7124f9/Eigen include/
 
 script:
   - cd test
