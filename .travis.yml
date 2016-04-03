@@ -4,13 +4,18 @@ compiler:
   - clang
   - gcc
 
-install:
-  - wget http://bitbucket.org/eigen/eigen/get/3.2.8.tar.gz
-  - tar xzf 3.2.8.tar.gz
-  - mv eigen-eigen-07105f7124f9/Eigen include/
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-5
+      - clang
+      - libeigen3-dev
 
-before_script:
-  - $(CXX) --version
+before_install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-5"; fi
+  - $CXX --version
 
 script:
   - cd test
