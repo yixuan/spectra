@@ -1,5 +1,7 @@
 # <a href="http://yixuan.cos.name/spectra"><img src="http://yixuan.cos.name/spectra/img/logo.png" width="200px" /></a>
 
+[![Build Status](https://travis-ci.org/yixuan/spectra.svg?branch=master)](https://travis-ci.org/yixuan/spectra)
+
 [**Spectra**](http://yixuan.cos.name/spectra) stands for **Sp**arse **E**igenvalue **C**omputation **T**oolkit
 as a **R**edesigned **A**RPACK. It is a C++ library for large scale eigenvalue
 problems, built on top of [Eigen](http://eigen.tuxfamily.org),

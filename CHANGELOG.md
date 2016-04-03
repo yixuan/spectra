@@ -4,7 +4,7 @@
   for sparse symmetric matrices
 - Added the wrapper class `SparseGenRealShiftSolve` for general sparse matrices
 - Added tests for sparse matrices
-- Using Travis CI for automatic testing
+- Using Travis CI for automatic unit test
 
 ### Changed
 - Updated included [Catch](https://github.com/philsquared/Catch) to v1.4.0
