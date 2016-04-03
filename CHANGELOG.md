@@ -1,4 +1,8 @@
 ## [Unreleased]
+### Added
+- Added the wrapper classes `SparseSymMatProd` and `SparseSymShiftSolve`
+  for sparse symmetric matrices
+- Added the wrapper class `SparseGenRealShiftSolve` for general sparse matrices
 
 ## [0.2.0] - 2016-02-28
 ### Added
