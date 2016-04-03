@@ -18,8 +18,8 @@ namespace Spectra {
 ///
 /// This class defines the matrix-vector multiplication operation on a
 /// sparse real matrix \f$A\f$, i.e., calculating \f$y=Ax\f$ for any vector
-/// \f$x\f$. It is mainly used in the GenEigsSolver and
-/// SymEigsSolver eigen solvers.
+/// \f$x\f$. It is mainly used in the GenEigsSolver and SymEigsSolver
+/// eigen solvers.
 ///
 template <typename Scalar>
 class SparseGenMatProd
