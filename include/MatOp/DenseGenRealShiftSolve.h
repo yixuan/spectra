@@ -45,7 +45,7 @@ public:
     /// `Eigen::MatrixXf`), or its mapped version
     /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
     ///
-    DenseGenRealShiftSolve(ConstGenericMatrix &mat_) :
+    DenseGenRealShiftSolve(ConstGenericMatrix& mat_) :
         m_mat(mat_.data(), mat_.rows(), mat_.cols()),
         m_n(mat_.rows())
     {
@@ -56,11 +56,11 @@ public:
     ///
     /// Return the number of rows of the underlying matrix.
     ///
-    int rows() { return m_n; }
+    int rows() const { return m_n; }
     ///
     /// Return the number of columns of the underlying matrix.
     ///
-    int cols() { return m_n; }
+    int cols() const { return m_n; }
 
     ///
     /// Set the real shift \f$\sigma\f$.
@@ -77,7 +77,7 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = inv(A - sigma * I) * x_in
-    void perform_op(Scalar *x_in, Scalar *y_out)
+    void perform_op(Scalar* x_in, Scalar* y_out) const
     {
         MapVec x(x_in,  m_n);
         MapVec y(y_out, m_n);

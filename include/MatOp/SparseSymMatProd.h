@@ -57,7 +57,7 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = A * x_in
-    void perform_op(Scalar *x_in, Scalar *y_out) const
+    void perform_op(Scalar* x_in, Scalar* y_out) const
     {
         MapVec x(x_in, m_mat.cols());
         MapVec y(y_out, m_mat.rows());
