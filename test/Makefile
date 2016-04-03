@@ -1,5 +1,5 @@
-CXXFLAGS = -std=c++11 -Wall -O2
-CPPFLAGS = -I/usr/include/eigen3 -I../include
+CXXFLAGS = -std=c++11 -Wall -O2 -Wno-parentheses -Wno-deprecated-declarations
+CPPFLAGS = -I../include
 LDFLAGS =
 LIBS =
 
