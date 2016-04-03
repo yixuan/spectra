@@ -132,7 +132,7 @@ private:
                               // e.g. ~= 1e-16 for the "double" type
 
     // Arnoldi factorization starting from step-k
-    void factorize_from(int from_k, int to_m, const Vector &fk)
+    void factorize_from(int from_k, int to_m, const Vector& fk)
     {
         if(to_m <= from_k) return;
 
@@ -436,7 +436,7 @@ public:
     ///             in each iteration. This parameter must satisfy \f$nev+2 \le ncv \le n\f$,
     ///             and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
     ///
-    GenEigsSolver(OpType *op_, int nev_, int ncv_) :
+    GenEigsSolver(OpType* op_, int nev_, int ncv_) :
         m_op(op_),
         m_n(m_op->rows()),
         m_nev(nev_),
@@ -462,7 +462,7 @@ public:
     /// to find eigenvalues. This function allows the user to provide the initial
     /// residual vector.
     ///
-    void init(const Scalar *init_resid)
+    void init(const Scalar* init_resid)
     {
         // Reset all matrices/vectors to zero
         m_fac_V.resize(m_n, m_ncv);
@@ -705,7 +705,7 @@ public:
     ///               and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
     /// \param sigma_ The real-valued shift.
     ///
-    GenEigsRealShiftSolver(OpType *op_, int nev_, int ncv_, Scalar sigma_) :
+    GenEigsRealShiftSolver(OpType* op_, int nev_, int ncv_, Scalar sigma_) :
         GenEigsSolver<Scalar, SelectionRule, OpType>(op_, nev_, ncv_),
         sigma(sigma_)
     {
@@ -815,7 +815,7 @@ public:
     /// \param sigmar_ The real part of the shift.
     /// \param sigmai_ The imaginary part of the shift.
     ///
-    GenEigsComplexShiftSolver(OpType *op_, int nev_, int ncv_, Scalar sigmar_, Scalar sigmai_) :
+    GenEigsComplexShiftSolver(OpType* op_, int nev_, int ncv_, Scalar sigmar_, Scalar sigmai_) :
         GenEigsSolver<Scalar, SelectionRule, OpType>(op_, nev_, ncv_),
         sigmar(sigmar_), sigmai(sigmai_)
     {

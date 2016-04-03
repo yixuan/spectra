@@ -40,16 +40,16 @@ private:
 
     bool m_computed;
 
-    static bool is_much_smaller_than(const Scalar &x, const Scalar &y,
-        const Scalar &prec = Eigen::NumTraits<Scalar>::dummy_precision())
+    static bool is_much_smaller_than(const Scalar& x, const Scalar& y,
+        const Scalar& prec = Eigen::NumTraits<Scalar>::dummy_precision())
     {
         return Eigen::numext::abs2(x) <= Eigen::numext::abs2(y) * prec * prec;
     }
 
     // Adapted from Eigen/src/Eigenvaleus/SelfAdjointEigenSolver.h
-    static void tridiagonal_qr_step(RealScalar *diag,
-                                    RealScalar *subdiag, Index start,
-                                    Index end, Scalar *matrixQ,
+    static void tridiagonal_qr_step(RealScalar* diag,
+                                    RealScalar* subdiag, Index start,
+                                    Index end, Scalar* matrixQ,
                                     Index n)
     {
         RealScalar td = (diag[end-1] - diag[end]) * RealScalar(0.5);
@@ -132,8 +132,8 @@ public:
         int iter = 0; // total number of iterations
         int info = 0;
 
-        Scalar *maind = m_main_diag.data();
-        Scalar *subd = m_sub_diag.data();
+        Scalar* maind = m_main_diag.data();
+        Scalar* subd = m_sub_diag.data();
 
         while(end > 0)
         {

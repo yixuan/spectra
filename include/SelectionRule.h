@@ -102,7 +102,7 @@ template <typename Scalar, int SelectionRule>
 class SortingTarget
 {
 public:
-    static typename ElemType<Scalar>::type get(const Scalar &val)
+    static typename ElemType<Scalar>::type get(const Scalar& val)
     {
         throw std::invalid_argument("incompatible selection rule");
         return -std::abs(val);
@@ -115,7 +115,7 @@ template <typename Scalar>
 class SortingTarget<Scalar, LARGEST_MAGN>
 {
 public:
-    static typename ElemType<Scalar>::type get(const Scalar &val)
+    static typename ElemType<Scalar>::type get(const Scalar& val)
     {
         return -std::abs(val);
     }
@@ -127,7 +127,7 @@ template <typename RealType>
 class SortingTarget<std::complex<RealType>, LARGEST_REAL>
 {
 public:
-    static RealType get(const std::complex<RealType> &val)
+    static RealType get(const std::complex<RealType>& val)
     {
         return -val.real();
     }
@@ -139,7 +139,7 @@ template <typename RealType>
 class SortingTarget<std::complex<RealType>, LARGEST_IMAG>
 {
 public:
-    static RealType get(const std::complex<RealType> &val)
+    static RealType get(const std::complex<RealType>& val)
     {
         return -std::abs(val.imag());
     }
@@ -151,7 +151,7 @@ template <typename Scalar>
 class SortingTarget<Scalar, LARGEST_ALGE>
 {
 public:
-    static Scalar get(const Scalar &val)
+    static Scalar get(const Scalar& val)
     {
         return -val;
     }
@@ -165,7 +165,7 @@ template <typename Scalar>
 class SortingTarget<Scalar, BOTH_ENDS>
 {
 public:
-    static Scalar get(const Scalar &val)
+    static Scalar get(const Scalar& val)
     {
         return -val;
     }
@@ -177,7 +177,7 @@ template <typename Scalar>
 class SortingTarget<Scalar, SMALLEST_MAGN>
 {
 public:
-    static typename ElemType<Scalar>::type get(const Scalar &val)
+    static typename ElemType<Scalar>::type get(const Scalar& val)
     {
         return std::abs(val);
     }
@@ -189,7 +189,7 @@ template <typename RealType>
 class SortingTarget<std::complex<RealType>, SMALLEST_REAL>
 {
 public:
-    static RealType get(const std::complex<RealType> &val)
+    static RealType get(const std::complex<RealType>& val)
     {
         return val.real();
     }
@@ -201,7 +201,7 @@ template <typename RealType>
 class SortingTarget<std::complex<RealType>, SMALLEST_IMAG>
 {
 public:
-    static RealType get(const std::complex<RealType> &val)
+    static RealType get(const std::complex<RealType>& val)
     {
         return std::abs(val.imag());
     }
@@ -213,7 +213,7 @@ template <typename Scalar>
 class SortingTarget<Scalar, SMALLEST_ALGE>
 {
 public:
-    static Scalar get(const Scalar &val)
+    static Scalar get(const Scalar& val)
     {
         return val;
     }
@@ -224,7 +224,7 @@ template <typename PairType>
 class PairComparator
 {
 public:
-    bool operator() (const PairType &v1, const PairType &v2)
+    bool operator() (const PairType& v1, const PairType& v2)
     {
         return v1.first < v2.first;
     }

@@ -216,13 +216,13 @@ public:
         m_n(0), m_computed(false)
     {}
 
-    UpperHessenbergEigen(ConstGenericMatrix &mat) :
+    UpperHessenbergEigen(ConstGenericMatrix& mat) :
         m_n(mat.rows()), m_computed(false)
     {
         compute(mat);
     }
 
-    void compute(ConstGenericMatrix &mat)
+    void compute(ConstGenericMatrix& mat)
     {
         if(mat.rows() != mat.cols())
             throw std::invalid_argument("UpperHessenbergEigen: matrix must be square");

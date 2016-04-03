@@ -45,10 +45,10 @@ private:
     const Scalar m_eps_abs;
     bool m_computed;      // Whether matrix has been factorized
 
-    void compute_reflector(const Scalar &x1, const Scalar &x2, const Scalar &x3, Index ind)
+    void compute_reflector(const Scalar& x1, const Scalar& x2, const Scalar& x3, Index ind)
     {
-        Scalar *u = m_ref_u.data() + 3 * ind;
-        unsigned char *nr = m_ref_nr.data();
+        Scalar* u = m_ref_u.data() + 3 * ind;
+        unsigned char* nr = m_ref_nr.data();
         // In general case the reflector affects 3 rows
         nr[ind] = 3;
         // If x3 is zero, decrease nr by 1
@@ -80,7 +80,7 @@ private:
         u[2] = x3 / x_norm;
     }
 
-    void compute_reflector(const Scalar *x, Index ind)
+    void compute_reflector(const Scalar* x, Index ind)
     {
         compute_reflector(x[0], x[1], x[2], ind);
     }
@@ -157,14 +157,14 @@ private:
         if(m_ref_nr[u_ind] == 1)
             return;
 
-        Scalar *u = m_ref_u.data() + 3 * u_ind;
+        Scalar* u = m_ref_u.data() + 3 * u_ind;
 
         const Index nrow = X.rows();
         const Index ncol = X.cols();
         const Scalar u0_2 = 2 * u[0];
         const Scalar u1_2 = 2 * u[1];
 
-        Scalar *xptr = X.data();
+        Scalar* xptr = X.data();
         if(m_ref_nr[u_ind] == 2 || nrow == 2)
         {
             for(Index i = 0; i < ncol; i++, xptr += stride)
@@ -187,7 +187,7 @@ private:
 
     // x is a pointer to a vector
     // Px = x - 2 * dot(x, u) * u
-    void apply_PX(Scalar *x, Index u_ind)
+    void apply_PX(Scalar* x, Index u_ind)
     {
         if(m_ref_nr[u_ind] == 1)
             return;
@@ -212,7 +212,7 @@ private:
         if(m_ref_nr[u_ind] == 1)
             return;
 
-        Scalar *u = m_ref_u.data() + 3 * u_ind;
+        Scalar* u = m_ref_u.data() + 3 * u_ind;
         const int nrow = X.rows();
         const int ncol = X.cols();
         const Scalar u0_2 = 2 * u[0];
@@ -231,7 +231,7 @@ private:
                 X1[i] -= tmp * u[1];
             }
         } else {
-            Scalar *X2 = X1 + stride;  // X2 => X.col(2)
+            Scalar* X2 = X1 + stride;  // X2 => X.col(2)
             const Scalar u2_2 = 2 * u[2];
             for(Index i = 0; i < nrow; i++)
             {
@@ -252,7 +252,7 @@ public:
         m_computed(false)
     {}
 
-    DoubleShiftQR(ConstGenericMatrix &mat, Scalar s, Scalar t) :
+    DoubleShiftQR(ConstGenericMatrix& mat, Scalar s, Scalar t) :
         m_n(mat.rows()),
         m_mat_H(m_n, m_n),
         m_shift_s(s),
@@ -267,7 +267,7 @@ public:
         compute(mat, s, t);
     }
 
-    void compute(ConstGenericMatrix &mat, Scalar s, Scalar t)
+    void compute(ConstGenericMatrix& mat, Scalar s, Scalar t)
     {
         if(mat.rows() != mat.cols())
             throw std::invalid_argument("DoubleShiftQR: matrix must be square");
@@ -287,7 +287,7 @@ public:
         std::vector<int> zero_ind;
         zero_ind.reserve(m_n - 1);
         zero_ind.push_back(0);
-        Scalar *Hii = m_mat_H.data();
+        Scalar* Hii = m_mat_H.data();
         for(Index i = 0; i < m_n - 2; i++, Hii += (m_n + 1))
         {
             // Hii[1] => m_mat_H(i + 1, i)
@@ -324,12 +324,12 @@ public:
 
     // Q = P0 * P1 * ...
     // Q'y = P_{n-2} * ... * P1 * P0 * y
-    void apply_QtY(Vector &y)
+    void apply_QtY(Vector& y)
     {
         if(!m_computed)
             throw std::logic_error("DoubleShiftQR: need to call compute() first");
 
-        Scalar *y_ptr = y.data();
+        Scalar* y_ptr = y.data();
         for(Index i = 0; i < m_n - 1; i++, y_ptr++)
         {
             apply_PX(y_ptr, i);

@@ -165,7 +165,7 @@ private:
     typedef Eigen::SelfAdjointEigenSolver<Matrix> EigenSolver;
 
 protected:
-    OpType *m_op;          // object to conduct matrix operation,
+    OpType* m_op;          // object to conduct matrix operation,
                            // e.g. matrix-vector product
 
 private:
@@ -198,7 +198,7 @@ private:
                            // e.g. ~= 1e-16 for the "double" type
 
     // Arnoldi factorization starting from step-k
-    void factorize_from(int from_k, int to_m, const Vector &fk)
+    void factorize_from(int from_k, int to_m, const Vector& fk)
     {
         if(to_m <= from_k) return;
 
@@ -465,7 +465,7 @@ public:
     ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
-    SymEigsSolver(OpType *op_, int nev_, int ncv_) :
+    SymEigsSolver(OpType* op_, int nev_, int ncv_) :
         m_op(op_),
         m_n(m_op->rows()),
         m_nev(nev_),
@@ -491,7 +491,7 @@ public:
     /// to find eigenvalues. This function allows the user to provide the initial
     /// residual vector.
     ///
-    void init(const Scalar *init_resid)
+    void init(const Scalar* init_resid)
     {
         // Reset all matrices/vectors to zero
         m_fac_V.resize(m_n, m_ncv);
@@ -848,7 +848,7 @@ public:
     ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
     /// \param sigma_ The value of the shift.
     ///
-    SymEigsShiftSolver(OpType *op_, int nev_, int ncv_, Scalar sigma_) :
+    SymEigsShiftSolver(OpType* op_, int nev_, int ncv_, Scalar sigma_) :
         SymEigsSolver<Scalar, SelectionRule, OpType>(op_, nev_, ncv_),
         sigma(sigma_)
     {

@@ -72,7 +72,7 @@ public:
     /// Only the upper triangular and the lower subdiagonal parts of
     /// the matrix are used.
     ///
-    UpperHessenbergQR(ConstGenericMatrix &mat) :
+    UpperHessenbergQR(ConstGenericMatrix& mat) :
         m_n(mat.rows()),
         m_mat_T(m_n, m_n),
         m_rot_cos(m_n - 1),
@@ -91,7 +91,7 @@ public:
     /// Only the upper triangular and the lower subdiagonal parts of
     /// the matrix are used.
     ///
-    virtual void compute(ConstGenericMatrix &mat)
+    virtual void compute(ConstGenericMatrix& mat)
     {
         m_n = mat.rows();
         m_mat_T.resize(m_n, m_n);
@@ -217,7 +217,7 @@ public:
     /// the template parameter `Scalar` defined.
     ///
     // Y -> QY = G1 * G2 * ... * Y
-    void apply_QY(Vector &Y)
+    void apply_QY(Vector& Y)
     {
         if(!m_computed)
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
@@ -243,7 +243,7 @@ public:
     /// the template parameter `Scalar` defined.
     ///
     // Y -> Q'Y = G_{n-1}' * ... * G2' * G1' * Y
-    void apply_QtY(Vector &Y)
+    void apply_QtY(Vector& Y)
     {
         if(!m_computed)
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
@@ -439,7 +439,7 @@ public:
     /// Only the major- and sub- diagonal parts of
     /// the matrix are used.
     ///
-    TridiagQR(ConstGenericMatrix &mat) :
+    TridiagQR(ConstGenericMatrix& mat) :
         UpperHessenbergQR<Scalar>()
     {
         this->compute(mat);
@@ -454,7 +454,7 @@ public:
     /// Only the major- and sub- diagonal parts of
     /// the matrix are used.
     ///
-    void compute(ConstGenericMatrix &mat)
+    void compute(ConstGenericMatrix& mat)
     {
         this->m_n = mat.rows();
         this->m_mat_T.resize(this->m_n, this->m_n);
