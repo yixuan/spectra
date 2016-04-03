@@ -50,7 +50,7 @@ SpMatrix sprand(int size, double prob = 0.5)
 }
 
 template <typename MatType, int SelectionRule>
-void run_test(const MatType& mat, int k, int m)
+void run_test(const MatType& mat, int k, int m, bool allow_fail = false)
 {
     typename OpTypeTrait<MatType>::OpType op(mat);
     GenEigsSolver<double, SelectionRule, typename OpTypeTrait<MatType>::OpType>
@@ -60,17 +60,31 @@ void run_test(const MatType& mat, int k, int m)
     int niter = eigs.num_iterations();
     int nops  = eigs.num_operations();
 
-    INFO( "nconv = " << nconv );
-    INFO( "niter = " << niter );
-    INFO( "nops  = " << nops );
-    REQUIRE( eigs.info() == SUCCESSFUL );
+    if(allow_fail)
+    {
+        if( eigs.info() != SUCCESSFUL )
+        {
+            WARN( "FAILED on this test" );
+            std::cout << "nconv = " << nconv << std::endl;
+            std::cout << "niter = " << niter << std::endl;
+            std::cout << "nops  = " << nops  << std::endl;
+            return;
+        }
+    } else {
+        INFO( "nconv = " << nconv );
+        INFO( "niter = " << niter );
+        INFO( "nops  = " << nops );
+        REQUIRE( eigs.info() == SUCCESSFUL );
+    }
 
     ComplexVector evals = eigs.eigenvalues();
     ComplexMatrix evecs = eigs.eigenvectors();
-    ComplexMatrix err = mat * evecs - evecs * evals.asDiagonal();
 
-    INFO( "||AU - UD||_inf = " << err.array().abs().maxCoeff() );
-    REQUIRE( err.array().abs().maxCoeff() == Approx(0.0) );
+    ComplexMatrix resid = mat * evecs - evecs * evals.asDiagonal();
+    const double err = err.array().abs().maxCoeff();
+
+    INFO( "||AU - UD||_inf = " << err );
+    REQUIRE( err == Approx(0.0) );
 }
 
 template <typename MatType>
@@ -106,7 +120,7 @@ TEST_CASE("Eigensolver of general real matrix [10x10]", "[eigs_gen]")
 {
     std::srand(123);
 
-    Matrix A = Eigen::MatrixXd::Random(10, 10);
+    const Matrix A = Eigen::MatrixXd::Random(10, 10);
     int k = 3;
     int m = 6;
 
@@ -117,7 +131,7 @@ TEST_CASE("Eigensolver of general real matrix [100x100]", "[eigs_gen]")
 {
     std::srand(123);
 
-    Matrix A = Eigen::MatrixXd::Random(100, 100);
+    const Matrix A = Eigen::MatrixXd::Random(100, 100);
     int k = 10;
     int m = 20;
 
@@ -128,7 +142,7 @@ TEST_CASE("Eigensolver of general real matrix [1000x1000]", "[eigs_gen]")
 {
     std::srand(123);
 
-    Matrix A = Eigen::MatrixXd::Random(1000, 1000);
+    const Matrix A = Eigen::MatrixXd::Random(1000, 1000);
     int k = 20;
     int m = 50;
 

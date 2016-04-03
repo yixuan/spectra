@@ -67,12 +67,11 @@ void run_test(const MatType& mat, int k, int m)
     Vector evals = eigs.eigenvalues();
     Matrix evecs = eigs.eigenvectors();
 
-    // std::cout << "computed eigenvalues D = \n" << evals.transpose() << "\n";
-    // std::cout << "computed eigenvectors U = \n" << evecs << "\n\n";
     Matrix err = mat.template selfadjointView<Eigen::Lower>() * evecs - evecs * evals.asDiagonal();
+    const double err = resid.array().abs().maxCoeff();
 
-    INFO( "||AU - UD||_inf = " << err.array().abs().maxCoeff() );
-    REQUIRE( err.array().abs().maxCoeff() == Approx(0.0) );
+    INFO( "||AU - UD||_inf = " << err );
+    REQUIRE( err == Approx(0.0) );
 }
 
 template <typename MatType>
