@@ -1,0 +1,18 @@
+language: cpp
+
+compiler:
+  - clang
+  - gcc
+
+install:
+  - wget http://bitbucket.org/eigen/eigen/get/3.2.8.tar.gz
+  - tar xzf 3.2.8.tar.gz
+  - mv eigen-eigen-07105f7124f9/Eigen include/
+
+before_script:
+  - $(CXX) --version
+
+script:
+  - cd test
+  - make all
+  - make test
