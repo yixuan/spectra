@@ -81,7 +81,7 @@ void run_test(const MatType& mat, int k, int m, bool allow_fail = false)
     ComplexMatrix evecs = eigs.eigenvectors();
 
     ComplexMatrix resid = mat * evecs - evecs * evals.asDiagonal();
-    const double err = err.array().abs().maxCoeff();
+    const double err = resid.array().abs().maxCoeff();
 
     INFO( "||AU - UD||_inf = " << err );
     REQUIRE( err == Approx(0.0) );
@@ -104,7 +104,7 @@ void run_test_sets(const MatType& A, int k, int m)
     }
     SECTION( "Smallest Magnitude" )
     {
-        run_test<MatType, SMALLEST_MAGN>(A, k, m);
+        run_test<MatType, SMALLEST_MAGN>(A, k, m, true);
     }
     SECTION( "Smallest Real Part" )
     {
@@ -112,7 +112,7 @@ void run_test_sets(const MatType& A, int k, int m)
     }
     SECTION( "Smallest Imaginary Part" )
     {
-        run_test<MatType, SMALLEST_IMAG>(A, k, m);
+        run_test<MatType, SMALLEST_IMAG>(A, k, m, true);
     }
 }
 

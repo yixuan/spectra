@@ -67,7 +67,7 @@ void run_test(const MatType& mat, int k, int m)
     Vector evals = eigs.eigenvalues();
     Matrix evecs = eigs.eigenvectors();
 
-    Matrix err = mat.template selfadjointView<Eigen::Lower>() * evecs - evecs * evals.asDiagonal();
+    Matrix resid = mat.template selfadjointView<Eigen::Lower>() * evecs - evecs * evals.asDiagonal();
     const double err = resid.array().abs().maxCoeff();
 
     INFO( "||AU - UD||_inf = " << err );
