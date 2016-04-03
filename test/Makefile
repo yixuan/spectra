@@ -1,6 +1,5 @@
-CXX = g++
 CXXFLAGS = -std=c++11 -Wall -O2
-CPPFLAGS = -I../include
+CPPFLAGS = -I/usr/include/eigen3 -I../include
 LDFLAGS =
 LIBS =
 
