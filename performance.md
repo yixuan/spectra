@@ -15,17 +15,17 @@ libraries, based on the following environment setting:
 
 <h4><span class="label label-success">Software</span></h4>
 
-- OS: Fedora 23 64-bit
-- Compiler: GCC 5.3.1 with flag `g++ -Wall -O2 -mavx`
-- Spectra: version 0.1.0
-- BLAS: OpenBLAS 0.2.15, single threaded
+- OS: Fedora 24 64-bit
+- Compiler: GCC 6.1.1 with flag `g++ -Wall -O2 -mtune=native -mavx`
+- Spectra: version 0.2.0
+- BLAS: OpenBLAS 0.2.18, single threaded
 - ARPACK: ARPACK-NG 3.3.0
-- R: version 3.2.3
+- R: version 3.3.0
 - R packages
-  - RSpectra 0.11-0
-  - svd 0.3.3-2
+  - RSpectra 0.12-0
+  - svd 0.4
   - irlba 2.0.0
-  - microbenchmark 1.4-2.1
+  - microbenchmark 1.4.2.1
 
 ### Comparison with ARPACK
 
