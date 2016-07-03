@@ -1,4 +1,4 @@
-CXXFLAGS = -std=c++11 -Wall -O2 -Wno-parentheses -Wno-deprecated-declarations
+CXXFLAGS = -std=c++11 -Wall -O2 -Wno-parentheses -Wno-deprecated-declarations -Wno-ignored-attributes
 CPPFLAGS = -I../include
 LDFLAGS =
 LIBS =
