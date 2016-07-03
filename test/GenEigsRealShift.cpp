@@ -3,7 +3,7 @@
 #include <iostream>
 #include <random> // Requires C++ 11
 
-#include <GenEigsSolver.h>
+#include <GenEigsRealShiftSolver.h>
 #include <MatOp/DenseGenRealShiftSolve.h>
 #include <MatOp/SparseGenRealShiftSolve.h>
 

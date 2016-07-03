@@ -3,7 +3,7 @@
 #include <iostream>
 #include <random> // Requires C++ 11
 
-#include <SymEigsSolver.h>
+#include <SymEigsShiftSolver.h>
 #include <MatOp/DenseSymShiftSolve.h>
 #include <MatOp/SparseSymShiftSolve.h>
 

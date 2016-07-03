@@ -1,7 +1,7 @@
 #include <Eigen/Core>
 #include <iostream>
 
-#include <GenEigsSolver.h>
+#include <GenEigsComplexShiftSolver.h>
 #include <MatOp/DenseGenComplexShiftSolve.h>
 
 using namespace Spectra;
