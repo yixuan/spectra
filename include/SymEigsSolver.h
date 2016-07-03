@@ -15,9 +15,9 @@
 #include <limits>     // std::numeric_limits
 #include <stdexcept>  // std::invalid_argument
 
-#include "SelectionRule.h"
-#include "CompInfo.h"
-#include "SimpleRandom.h"
+#include "Util/SelectionRule.h"
+#include "Util/CompInfo.h"
+#include "Util/SimpleRandom.h"
 #include "LinAlg/UpperHessenbergQR.h"
 #include "LinAlg/TridiagEigen.h"
 #include "MatOp/DenseSymMatProd.h"
