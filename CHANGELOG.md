@@ -1,4 +1,8 @@
 ## [Unreleased]
+
+
+
+## [0.3.0] - 2016-07-03
 ### Added
 - Added the wrapper classes `SparseSymMatProd` and `SparseSymShiftSolve`
   for sparse symmetric matrices
@@ -7,8 +11,11 @@
 - Using Travis CI for automatic unit test
 
 ### Changed
-- Updated included [Catch](https://github.com/philsquared/Catch) to v1.4.0
-
+- Updated included [Catch](https://github.com/philsquared/Catch) to v1.5.6
+- **API change**: Each eigen solver was moved to its own header file.
+  For example to use `SymEigsShiftSolver` one needs to include
+  `<SymEigsShiftSolver.h>`
+- Header files for internal use were relocated
 
 
 ## [0.2.0] - 2016-02-28
