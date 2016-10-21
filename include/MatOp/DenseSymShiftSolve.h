@@ -88,4 +88,4 @@ public:
 
 } // namespace Spectra
 
-#endif // DENSESYMSHIFTSOLVE_H
+#endif // DENSE_SYM_SHIFT_SOLVE_H
