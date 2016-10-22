@@ -89,6 +89,8 @@ public:
         m_Bop(Bop_)
     {}
 
+    /// \cond
+
     ~SymGEigsSolver()
     {
         delete this->m_op;
@@ -112,6 +114,8 @@ public:
     {
         return SymGEigsSolver<Scalar, SelectionRule, OpType, BOpType, GEIGS_CHOLESKY>::eigenvectors(this->m_nev);
     }
+
+    /// \endcond
 };
 
 

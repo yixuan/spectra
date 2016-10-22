@@ -9,6 +9,8 @@
 
 #include <Eigen/Core>
 
+/// \cond
+
 namespace Spectra {
 
 
@@ -78,5 +80,7 @@ public:
 
 
 } // namespace Spectra
+
+/// \endcond
 
 #endif // SIMPLE_RANDOM_H
