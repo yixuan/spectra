@@ -39,10 +39,8 @@ public:
     ///
     /// Constructor to create the matrix operation object.
     ///
-    /// \param mat_ An **Eigen** matrix object, whose type can be
-    /// `Eigen::Matrix<Scalar, ...>` (e.g. `Eigen::MatrixXd` and
-    /// `Eigen::MatrixXf`), or its mapped version
-    /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
+    /// \param op_  Pointer to the \f$A\f$ matrix operation object.
+    /// \param Bop_ Pointer to the \f$B\f$ matrix operation object.
     ///
     SymGEigsCholeskyOp(OpType& op_, BOpType& Bop_) :
         m_op(op_), m_Bop(Bop_), m_cache(op_.rows())
