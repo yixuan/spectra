@@ -166,6 +166,7 @@ private:
         this->m_ritz_val.head(this->m_nev) = m_ritz_val_org;
         SymEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair(sort_rule);
     }
+    
 public:
     ///
     /// Constructor to create a eigen solver object using the shift-and-invert mode.
