@@ -17,6 +17,11 @@ namespace Spectra {
 ///
 /// \ingroup MatOp
 ///
+/// This class defines the operations related to Cholesky decomposition on a
+/// positive definite matrix, \f$A=LL'\f$, where \f$L\f$ is a lower triangular
+/// matrix. It is mainly used in the SymGEigsSolver generalized eigen solver
+/// in the Cholesky decomposition mode.
+///
 template <typename Scalar>
 class DenseCholesky
 {
@@ -29,7 +34,7 @@ private:
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
     const int m_n;
-    Eigen::LLT<Matrix> m_solver;
+    Eigen::LLT<Matrix> m_decomp;
 
 public:
     ///
@@ -46,7 +51,7 @@ public:
         if(mat_.rows() != mat_.cols())
             throw std::invalid_argument("DenseCholesky: matrix must be square");
 
-        m_solver.compute(mat_);
+        m_decomp.compute(mat_);
     }
 
     ///
@@ -58,18 +63,32 @@ public:
     ///
     int cols() const { return m_n; }
 
+    ///
+    /// Perform the lower triangular solving operation \f$y=L^{-1}x\f$.
+    ///
+    /// \param x_in  Pointer to the \f$x\f$ vector.
+    /// \param y_out Pointer to the \f$y\f$ vector.
+    ///
+    // y_out = inv(L) * x_in
     void lower_triangular_solve(Scalar* x_in, Scalar* y_out) const
     {
         MapVec x(x_in,  m_n);
         MapVec y(y_out, m_n);
-        y.noalias() = m_solver.matrixL().solve(x);
+        y.noalias() = m_decomp.matrixL().solve(x);
     }
 
+    ///
+    /// Perform the upper triangular solving operation \f$y=(L')^{-1}x\f$.
+    ///
+    /// \param x_in  Pointer to the \f$x\f$ vector.
+    /// \param y_out Pointer to the \f$y\f$ vector.
+    ///
+    // y_out = inv(L') * x_in
     void upper_triangular_solve(Scalar* x_in, Scalar* y_out) const
     {
         MapVec x(x_in,  m_n);
         MapVec y(y_out, m_n);
-        y.noalias() = m_solver.matrixU().solve(x);
+        y.noalias() = m_decomp.matrixU().solve(x);
     }
 };
 
