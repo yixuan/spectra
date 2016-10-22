@@ -22,7 +22,7 @@ namespace Spectra {
 /// matrix. It is mainly used in the SymGEigsSolver generalized eigen solver
 /// in the Cholesky decomposition mode.
 ///
-template <typename Scalar>
+template <typename Scalar, int Uplo = Eigen::Lower>
 class DenseCholesky
 {
 private:
@@ -34,7 +34,7 @@ private:
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
     const int m_n;
-    Eigen::LLT<Matrix> m_decomp;
+    Eigen::LLT<Matrix, Uplo> m_decomp;
 
 public:
     ///
