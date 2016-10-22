@@ -1,5 +1,6 @@
 ## [Unreleased]
-
+### Added
+- Added an `Uplo` template parameter to the `DenseSymShiftSolve` class
 
 
 ## [0.3.0] - 2016-07-03
