@@ -2,6 +2,9 @@
 ### Added
 - Added an `Uplo` template parameter to the `DenseSymShiftSolve` class
 
+### Changed
+- Updated included [Catch](https://github.com/philsquared/Catch) to v1.5.7
+
 
 ## [0.3.0] - 2016-07-03
 ### Added
