@@ -8,7 +8,8 @@
 #define SPARSE_CHOLESKY_H
 
 #include <Eigen/Core>
-#include <Eigen/Cholesky>
+#include <Eigen/SparseCore>
+#include <Eigen/SparseCholesky>
 #include <stdexcept>
 
 namespace Spectra {
