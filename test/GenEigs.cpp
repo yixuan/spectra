@@ -32,15 +32,15 @@ struct OpTypeTrait<SpMatrix>
 };
 
 // Generate random sparse matrix
-SpMatrix sprand(int size, double prob = 0.5)
+SpMatrix gen_sparse_data(int n, double prob = 0.5)
 {
-    SpMatrix mat(size, size);
+    SpMatrix mat(n, n);
     std::default_random_engine gen;
     gen.seed(0);
     std::uniform_real_distribution<double> distr(-1.0, 1.0);
-    for(int i = 0; i < size; i++)
+    for(int i = 0; i < n; i++)
     {
-        for(int j = 0; j < size; j++)
+        for(int j = 0; j < n; j++)
         {
             if(distr(gen) < prob)
                 mat.insert(i, j) = distr(gen);
@@ -49,6 +49,8 @@ SpMatrix sprand(int size, double prob = 0.5)
     return mat;
 }
 
+
+
 template <typename MatType, int SelectionRule>
 void run_test(const MatType& mat, int k, int m, bool allow_fail = false)
 {
@@ -56,7 +58,7 @@ void run_test(const MatType& mat, int k, int m, bool allow_fail = false)
     GenEigsSolver<double, SelectionRule, typename OpTypeTrait<MatType>::OpType>
         eigs(&op, k, m);
     eigs.init();
-    int nconv = eigs.compute();
+    int nconv = eigs.compute(500); // maxit = 500 to reduce running time for failed cases
     int niter = eigs.num_iterations();
     int nops  = eigs.num_operations();
 
@@ -153,7 +155,7 @@ TEST_CASE("Eigensolver of sparse real matrix [10x10]", "[eigs_gen]")
 {
     std::srand(123);
 
-    const SpMatrix A = sprand(10, 0.5);
+    const SpMatrix A = gen_sparse_data(10, 0.5);
     int k = 3;
     int m = 6;
 
@@ -164,7 +166,7 @@ TEST_CASE("Eigensolver of sparse real matrix [100x100]", "[eigs_gen]")
 {
     std::srand(123);
 
-    const SpMatrix A = sprand(100, 0.5);
+    const SpMatrix A = gen_sparse_data(100, 0.5);
     int k = 10;
     int m = 20;
 
@@ -175,7 +177,7 @@ TEST_CASE("Eigensolver of sparse real matrix [1000x1000]", "[eigs_gen]")
 {
     std::srand(123);
 
-    const SpMatrix A = sprand(1000, 0.5);
+    const SpMatrix A = gen_sparse_data(1000, 0.5);
     int k = 20;
     int m = 50;
 

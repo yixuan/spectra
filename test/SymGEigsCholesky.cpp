@@ -178,6 +178,7 @@ TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [10x10]", "[g
 {
     std::srand(123);
 
+    // Eigen solver only uses the lower triangle
     SpMatrix A, B;
     gen_sparse_data(10, A, B);
     int k = 3;
@@ -190,6 +191,7 @@ TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [100x100]", "
 {
     std::srand(123);
 
+    // Eigen solver only uses the lower triangle
     SpMatrix A, B;
     gen_sparse_data(100, A, B);
     int k = 10;
@@ -202,6 +204,7 @@ TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [1000x1000]",
 {
     std::srand(123);
 
+    // Eigen solver only uses the lower triangle
     SpMatrix A, B;
     gen_sparse_data(1000, A, B);
     int k = 20;

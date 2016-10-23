@@ -29,16 +29,24 @@ struct OpTypeTrait<SpMatrix>
     typedef SparseSymShiftSolve<double> OpType;
 };
 
-// Generate random sparse matrix
-SpMatrix sprand(int size, double prob = 0.5)
+// Generate data for testing
+Matrix gen_dense_data(int n)
 {
-    SpMatrix mat(size, size);
+    const Matrix mat = Eigen::MatrixXd::Random(n, n);
+    return mat + mat.transpose();
+}
+
+SpMatrix gen_sparse_data(int n, double prob = 0.5)
+{
+    // Eigen solver only uses the lower triangle of mat,
+    // so we don't need to make mat symmetric here.
+    SpMatrix mat(n, n);
     std::default_random_engine gen;
     gen.seed(0);
     std::uniform_real_distribution<double> distr(-1.0, 1.0);
-    for(int i = 0; i < size; i++)
+    for(int i = 0; i < n; i++)
     {
-        for(int j = 0; j < size; j++)
+        for(int j = 0; j < n; j++)
         {
             if(distr(gen) < prob)
                 mat.insert(i, j) = distr(gen);
@@ -48,6 +56,7 @@ SpMatrix sprand(int size, double prob = 0.5)
 }
 
 
+
 template <typename MatType, int SelectionRule>
 void run_test(const MatType& mat, int k, int m, double sigma, bool allow_fail = false)
 {
@@ -55,7 +64,7 @@ void run_test(const MatType& mat, int k, int m, double sigma, bool allow_fail = 
     SymEigsShiftSolver<double, SelectionRule, typename OpTypeTrait<MatType>::OpType>
         eigs(&op, k, m, sigma);
     eigs.init();
-    int nconv = eigs.compute();
+    int nconv = eigs.compute(150); // maxit = 150 to reduce running time for failed cases
     int niter = eigs.num_iterations();
     int nops  = eigs.num_operations();
 
@@ -115,39 +124,36 @@ TEST_CASE("Eigensolver of symmetric real matrix [10x10]", "[eigs_sym]")
 {
     std::srand(123);
 
-    const Matrix A = Eigen::MatrixXd::Random(10, 10);
-    const Matrix M = A + A.transpose();
+    const Matrix A = gen_dense_data(10);
     int k = 3;
     int m = 6;
     double sigma = 1.0;
 
-    run_test_sets(M, k, m, sigma);
+    run_test_sets(A, k, m, sigma);
 }
 
 TEST_CASE("Eigensolver of symmetric real matrix [100x100]", "[eigs_sym]")
 {
     std::srand(123);
 
-    const Matrix A = Eigen::MatrixXd::Random(100, 100);
-    const Matrix M = A + A.transpose();
+    const Matrix A = gen_dense_data(100);
     int k = 10;
     int m = 20;
     double sigma = 10.0;
 
-    run_test_sets(M, k, m, sigma);
+    run_test_sets(A, k, m, sigma);
 }
 
 TEST_CASE("Eigensolver of symmetric real matrix [1000x1000]", "[eigs_sym]")
 {
     std::srand(123);
 
-    const Matrix A = Eigen::MatrixXd::Random(1000, 1000);
-    const Matrix M = A + A.transpose();
+    const Matrix A = gen_dense_data(1000);
     int k = 20;
     int m = 50;
     double sigma = 100.0;
 
-    run_test_sets(M, k, m, sigma);
+    run_test_sets(A, k, m, sigma);
 }
 
 TEST_CASE("Eigensolver of sparse symmetric real matrix [10x10]", "[eigs_sym]")
@@ -155,12 +161,12 @@ TEST_CASE("Eigensolver of sparse symmetric real matrix [10x10]", "[eigs_sym]")
     std::srand(123);
 
     // Eigen solver only uses the lower triangle
-    const SpMatrix M = sprand(10, 0.5);
+    const SpMatrix A = gen_sparse_data(10, 0.5);
     int k = 3;
     int m = 6;
     double sigma = 1.0;
 
-    run_test_sets(M, k, m, sigma);
+    run_test_sets(A, k, m, sigma);
 }
 
 TEST_CASE("Eigensolver of sparse symmetric real matrix [100x100]", "[eigs_sym]")
@@ -168,12 +174,12 @@ TEST_CASE("Eigensolver of sparse symmetric real matrix [100x100]", "[eigs_sym]")
     std::srand(123);
 
     // Eigen solver only uses the lower triangle
-    const SpMatrix M = sprand(100, 0.5);
+    const SpMatrix A = gen_sparse_data(100, 0.5);
     int k = 10;
     int m = 20;
     double sigma = 10.0;
 
-    run_test_sets(M, k, m, sigma);
+    run_test_sets(A, k, m, sigma);
 }
 
 TEST_CASE("Eigensolver of sparse symmetric real matrix [1000x1000]", "[eigs_sym]")
@@ -181,10 +187,10 @@ TEST_CASE("Eigensolver of sparse symmetric real matrix [1000x1000]", "[eigs_sym]
     std::srand(123);
 
     // Eigen solver only uses the lower triangle
-    const SpMatrix M = sprand(1000, 0.5);
+    const SpMatrix A = gen_sparse_data(1000, 0.5);
     int k = 20;
     int m = 50;
     double sigma = 100.0;
 
-    run_test_sets(M, k, m, sigma);
+    run_test_sets(A, k, m, sigma);
 }
