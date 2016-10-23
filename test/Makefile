@@ -8,14 +8,14 @@ HEADERS = $(wildcard ../include/MatOp/*.h) $(wildcard ../include/LinAlg/*.h) $(w
 
 .PHONY: all test clean
 
-all: QR.out Eigen.out SymEigs.out SymEigsShift.out SymGEigs.out GenEigs.out GenEigsRealShift.out GenEigsComplexShift.out
+all: QR.out Eigen.out SymEigs.out SymEigsShift.out SymGEigsCholesky.out GenEigs.out GenEigsRealShift.out GenEigsComplexShift.out
 
 test:
 	-./QR.out
 	-./Eigen.out
 	-./SymEigs.out
 	-./SymEigsShift.out
-	-./SymGEigs.out
+	-./SymGEigsCholesky.out
 	-./GenEigs.out
 	-./GenEigsRealShift.out
 	-./GenEigsComplexShift.out
