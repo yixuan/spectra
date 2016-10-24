@@ -14,11 +14,11 @@ addons:
       - ubuntu-toolchain-r-test
       - llvm-toolchain-precise-3.8
     packages:
-      - g++-5
+      - g++-6
       - clang-3.8
 
 before_install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-5"; fi
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-6"; fi
   - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
   - $CXX --version
 
