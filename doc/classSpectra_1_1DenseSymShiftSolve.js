@@ -1,8 +1,8 @@
 var classSpectra_1_1DenseSymShiftSolve =
 [
-    [ "DenseSymShiftSolve", "classSpectra_1_1DenseSymShiftSolve.html#a31a3281a1826bb51def6906fbca1a53d", null ],
-    [ "rows", "classSpectra_1_1DenseSymShiftSolve.html#a8babd3c00bd15da77c32aec1815b3d30", null ],
-    [ "cols", "classSpectra_1_1DenseSymShiftSolve.html#a274c68d2d9633cfe85d56e9d668ecee8", null ],
-    [ "set_shift", "classSpectra_1_1DenseSymShiftSolve.html#ad58307086ce175ba0a910a29b031636b", null ],
-    [ "perform_op", "classSpectra_1_1DenseSymShiftSolve.html#a5807e87c824da11c13973b2985fc1054", null ]
+    [ "DenseSymShiftSolve", "classSpectra_1_1DenseSymShiftSolve.html#a719842ef5d5a2b627f64d0eec1f8c1f0", null ],
+    [ "rows", "classSpectra_1_1DenseSymShiftSolve.html#a4499da3b53764d8301b14dc96f0fa8ec", null ],
+    [ "cols", "classSpectra_1_1DenseSymShiftSolve.html#a5bb573011dd17a4c5b0dfb9424cbb8e3", null ],
+    [ "set_shift", "classSpectra_1_1DenseSymShiftSolve.html#a3d730c57fb462a8a4258f7d1f6cbede9", null ],
+    [ "perform_op", "classSpectra_1_1DenseSymShiftSolve.html#ac0e208adeb32f1323e47b3b6a7b9da4b", null ]
 ];

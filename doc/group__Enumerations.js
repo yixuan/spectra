@@ -5,6 +5,13 @@ var group__Enumerations =
       [ "NOT_COMPUTED", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba535bfda50eb1bc734ca18b5ac7d36af6", null ],
       [ "NOT_CONVERGING", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4baa9ea091773f727ee4c3bf16dda648d2f", null ]
     ] ],
+    [ "GEIGS_MODE", "group__Enumerations.html#ga982c36b6b5b322cdb18ce05adb9106e0", [
+      [ "GEIGS_CHOLESKY", "group__Enumerations.html#gga982c36b6b5b322cdb18ce05adb9106e0aeea529bb6b9cdd997ed57f63fa3aae94", null ],
+      [ "GEIGS_REGULAR_INVERSE", "group__Enumerations.html#gga982c36b6b5b322cdb18ce05adb9106e0a8b658d5f958a4359743eb348d885fec4", null ],
+      [ "GEIGS_SHIFT_INVERT", "group__Enumerations.html#gga982c36b6b5b322cdb18ce05adb9106e0a69cf8aeece7ccf628e1e25d2dccaebc3", null ],
+      [ "GEIGS_BUCKLING", "group__Enumerations.html#gga982c36b6b5b322cdb18ce05adb9106e0ae4fd268a433173738f80a40833523425", null ],
+      [ "GEIGS_CAYLEY", "group__Enumerations.html#gga982c36b6b5b322cdb18ce05adb9106e0aacc29e7cf08f1219697c10d51a010565", null ]
+    ] ],
     [ "SELECT_EIGENVALUE", "group__Enumerations.html#ga455238b33ba7ae7498e873f1074790d5", [
       [ "LARGEST_MAGN", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a337b865327555ae670efc43ebdfc8c2d", null ],
       [ "LARGEST_REAL", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a2632c6262ba0916aa2ec693c17cf4cdf", null ],

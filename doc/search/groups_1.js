@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['matrix_20operations',['Matrix Operations',['../group__MatOp.html',1,'']]]
+  ['generalized_20eigen_20solvers',['Generalized Eigen Solvers',['../group__GEigenSolver.html',1,'']]]
 ];
