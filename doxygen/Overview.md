@@ -56,12 +56,12 @@ for general matrices. Member functions of this object can then be called to
 conduct the computation and retrieve the eigenvalues and/or eigenvectors.
 
 Below is a list of the available eigen solvers in **Spectra**:
-- \link Spectra::SymEigsSolver SymEigsSolver \endlink: for real symmetric matrices
-- \link Spectra::GenEigsSolver GenEigsSolver \endlink: for general real matrices
-- \link Spectra::SymEigsShiftSolver SymEigsShiftSolver \endlink: for real symmetric matrices using the shift-and-invert mode
-- \link Spectra::GenEigsRealShiftSolver GenEigsRealShiftSolver \endlink: for general real matrices using the shift-and-invert mode,
+- \link Spectra::SymEigsSolver SymEigsSolver \endlink: For real symmetric matrices
+- \link Spectra::GenEigsSolver GenEigsSolver \endlink: For general real matrices
+- \link Spectra::SymEigsShiftSolver SymEigsShiftSolver \endlink: For real symmetric matrices using the shift-and-invert mode
+- \link Spectra::GenEigsRealShiftSolver GenEigsRealShiftSolver \endlink: For general real matrices using the shift-and-invert mode,
 with a real-valued shift
-- \link Spectra::GenEigsComplexShiftSolver GenEigsComplexShiftSolver \endlink: for general real matrices using the shift-and-invert mode,
+- \link Spectra::GenEigsComplexShiftSolver GenEigsComplexShiftSolver \endlink: For general real matrices using the shift-and-invert mode,
 with a complex-valued shift
 
 ## Examples
@@ -94,6 +94,54 @@ int main()
 
     // Retrieve results
     Eigen::VectorXd evalues;
+    if(eigs.info() == SUCCESSFUL)
+        evalues = eigs.eigenvalues();
+
+    std::cout << "Eigenvalues found:\n" << evalues << std::endl;
+
+    return 0;
+}
+~~~~~~~~~~
+
+Sparse matrix is supported via classes such as Spectra::SparseGenMatProd and Spectra::SparseSymMatProd.
+
+~~~~~~~~~~{.cpp}
+#include <Eigen/Core>
+#include <Eigen/SparseCore>
+#include <GenEigsSolver.h>
+#include <MatOp/SparseGenMatProd.h>
+#include <iostream>
+
+using namespace Spectra;
+
+int main()
+{
+    // A band matrix with 1 on the main diagonal, 2 on the below-main subdiagonal,
+    // and 3 on the above-main subdiagonal
+    const int n = 10;
+    Eigen::SparseMatrix<double> M(n, n);
+    M.reserve(Eigen::VectorXi::Constant(n, 3));
+    for(int i = 0; i < n; i++)
+    {
+        M.insert(i, i) = 1.0;
+        if(i > 0)
+            M.insert(i - 1, i) = 3.0;
+        if(i < n - 1)
+            M.insert(i + 1, i) = 2.0;
+    }
+
+    // Construct matrix operation object using the wrapper class SparseGenMatProd
+    SparseGenMatProd<double> op(M);
+
+    // Construct eigen solver object, requesting the largest three eigenvalues
+    GenEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op, 3, 6);
+
+    // Initialize and compute
+    eigs.init();
+    int nconv = eigs.compute();
+
+    // Retrieve results
+    Eigen::VectorXcd evalues;
     if(eigs.info() == SUCCESSFUL)
         evalues = eigs.eigenvalues();
 

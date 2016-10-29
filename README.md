@@ -61,16 +61,16 @@ eigenvalues and/or eigenvectors.
 
 Below is a list of the available eigen solvers in **Spectra**:
 - [SymEigsSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1SymEigsSolver.html):
-for real symmetric matrices
+For real symmetric matrices
 - [GenEigsSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1GenEigsSolver.html):
-for general real matrices
+For general real matrices
 - [SymEigsShiftSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1SymEigsShiftSolver.html):
-for real symmetric matrices using the shift-and-invert mode
+For real symmetric matrices using the shift-and-invert mode
 - [GenEigsRealShiftSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
-for general real matrices using the shift-and-invert mode,
+For general real matrices using the shift-and-invert mode,
 with a real-valued shift
 - [GenEigsComplexShiftSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
-for general real matrices using the shift-and-invert mode,
+For general real matrices using the shift-and-invert mode,
 with a complex-valued shift
 
 ## Examples

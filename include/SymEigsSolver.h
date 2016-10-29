@@ -35,16 +35,16 @@ namespace Spectra {
 ///
 /// \ingroup EigenSolver
 ///
-/// This class implements the eigen solver for real symmetric matrices.
+/// This class implements the eigen solver for real symmetric matrices, i.e.,
+/// to solve \f$Ax=\lambda x\f$ where \f$A\f$ is symmetric.
 ///
 /// **Spectra** is designed to calculate a specified number (\f$k\f$)
 /// of eigenvalues of a large square matrix (\f$A\f$). Usually \f$k\f$ is much
 /// less than the size of the matrix (\f$n\f$), so that only a few eigenvalues
 /// and eigenvectors are computed.
 ///
-/// This class implements the eigen solver of a real symmetric matrix, but
-/// rather than providing the whole matrix, the algorithm only requires the
-/// matrix-vector multiplication operation of \f$A\f$. Therefore, users of
+/// Rather than providing the whole \f$A\f$ matrix, the algorithm only requires
+/// the matrix-vector multiplication operation of \f$A\f$. Therefore, users of
 /// this solver need to supply a class that computes the result of \f$Av\f$
 /// for any given vector \f$v\f$. The name of this class should be given to
 /// the template parameter `OpType`, and instance of this class passed to
@@ -54,7 +54,8 @@ namespace Spectra {
 /// for example `Eigen::MatrixXd`, then there is an easy way to construct such
 /// matrix operation class, by using the built-in wrapper class DenseSymMatProd
 /// which wraps an existing matrix object in **Eigen**. This is also the
-/// default template parameter for SymEigsSolver.
+/// default template parameter for SymEigsSolver. For sparse matrices, the
+/// wrapper class SparseSymMatProd can be used similarly.
 ///
 /// If the users need to define their own matrix-vector multiplication operation
 /// class, it should implement all the public member functions as in DenseSymMatProd.
@@ -67,7 +68,8 @@ namespace Spectra {
 ///                       The full list of enumeration values can be found in
 ///                       \ref Enumerations.
 /// \tparam OpType        The name of the matrix operation class. Users could either
-///                       use the DenseSymMatProd wrapper class, or define their
+///                       use the wrapper classes such as DenseSymMatProd and
+///                       SparseSymMatProd, or define their
 ///                       own that impelemnts all the public member functions as in
 ///                       DenseSymMatProd.
 ///
@@ -453,7 +455,7 @@ public:
     /// \param op_  Pointer to the matrix operation object, which should implement
     ///             the matrix-vector multiplication operation of \f$A\f$:
     ///             calculating \f$Ay\f$ for any vector \f$y\f$. Users could either
-    ///             create the object from the DenseSymMatProd wrapper class, or
+    ///             create the object from the wrapper class such as DenseSymMatProd, or
     ///             define their own that impelemnts all the public member functions
     ///             as in DenseSymMatProd.
     /// \param nev_ Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
@@ -532,8 +534,8 @@ public:
     /// Providing a random initial residual vector.
     ///
     /// This overloaded function generates a random initial residual vector
-    /// for the algorithm. Elements in the vector follow independent Uniform(-0.5, 0.5)
-    /// distributions.
+    /// (with a fixed random seed) for the algorithm. Elements in the vector
+    /// follow independent Uniform(-0.5, 0.5) distribution.
     ///
     void init()
     {

@@ -29,7 +29,8 @@ namespace Spectra {
 ///
 /// \ingroup EigenSolver
 ///
-/// This class implements the eigen solver for general real matrices.
+/// This class implements the eigen solver for general real matrices, i.e.,
+/// to solve \f$Ax=\lambda x\f$ for a possibly non-symmetric \f$A\f$ matrix.
 ///
 /// Most of the background information documented in the SymEigsSolver class
 /// also applies to the GenEigsSolver class here, except that the eigenvalues
@@ -43,7 +44,8 @@ namespace Spectra {
 ///                       The full list of enumeration values can be found in
 ///                       \ref Enumerations.
 /// \tparam OpType        The name of the matrix operation class. Users could either
-///                       use the DenseGenMatProd wrapper class, or define their
+///                       use the wrapper classes such as DenseGenMatProd and
+///                       SparseGenMatProd, or define their
 ///                       own that impelemnts all the public member functions as in
 ///                       DenseGenMatProd.
 ///
@@ -83,6 +85,53 @@ namespace Spectra {
 /// }
 /// \endcode
 ///
+/// And also an example for sparse matrices:
+///
+/// \code{.cpp}
+/// #include <Eigen/Core>
+/// #include <Eigen/SparseCore>
+/// #include <GenEigsSolver.h>
+/// #include <MatOp/SparseGenMatProd.h>
+/// #include <iostream>
+///
+/// using namespace Spectra;
+///
+/// int main()
+/// {
+///     // A band matrix with 1 on the main diagonal, 2 on the below-main subdiagonal,
+///     // and 3 on the above-main subdiagonal
+///     const int n = 10;
+///     Eigen::SparseMatrix<double> M(n, n);
+///     M.reserve(Eigen::VectorXi::Constant(n, 3));
+///     for(int i = 0; i < n; i++)
+///     {
+///         M.insert(i, i) = 1.0;
+///         if(i > 0)
+///             M.insert(i - 1, i) = 3.0;
+///         if(i < n - 1)
+///             M.insert(i + 1, i) = 2.0;
+///     }
+///
+///     // Construct matrix operation object using the wrapper class SparseGenMatProd
+///     SparseGenMatProd<double> op(M);
+///
+///     // Construct eigen solver object, requesting the largest three eigenvalues
+///     GenEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op, 3, 6);
+///
+///     // Initialize and compute
+///     eigs.init();
+///     int nconv = eigs.compute();
+///
+///     // Retrieve results
+///     Eigen::VectorXcd evalues;
+///     if(eigs.info() == SUCCESSFUL)
+///         evalues = eigs.eigenvalues();
+///
+///     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
+///
+///     return 0;
+/// }
+/// \endcode
 template < typename Scalar = double,
            int SelectionRule = LARGEST_MAGN,
            typename OpType = DenseGenMatProd<double> >
@@ -423,7 +472,7 @@ public:
     /// \param op_  Pointer to the matrix operation object, which should implement
     ///             the matrix-vector multiplication operation of \f$A\f$:
     ///             calculating \f$Ay\f$ for any vector \f$y\f$. Users could either
-    ///             create the object from the DenseGenMatProd wrapper class, or
+    ///             create the object from the wrapper class such as DenseGenMatProd, or
     ///             define their own that impelemnts all the public member functions
     ///             as in DenseGenMatProd.
     /// \param nev_ Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-2\f$,
@@ -499,8 +548,8 @@ public:
     /// Providing a random initial residual vector.
     ///
     /// This overloaded function generates a random initial residual vector
-    /// for the algorithm. Elements in the vector follow independent Uniform(-0.5, 0.5)
-    /// distributions.
+    /// (with a fixed random seed) for the algorithm. Elements in the vector
+    /// follow independent Uniform(-0.5, 0.5) distribution.
     ///
     void init()
     {

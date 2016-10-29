@@ -60,7 +60,8 @@ namespace Spectra {
 ///                       The full list of enumeration values can be found in
 ///                       \ref Enumerations.
 /// \tparam OpType        The name of the matrix operation class. Users could either
-///                       use the DenseSymShiftSolve wrapper class, or define their
+///                       use the wrapper classes such as DenseSymShiftSolve and
+///                       SparseSymShiftSolve, or define their
 ///                       own that impelemnts all the public member functions as in
 ///                       DenseSymShiftSolve.
 ///
@@ -166,7 +167,7 @@ private:
         this->m_ritz_val.head(this->m_nev) = m_ritz_val_org;
         SymEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair(sort_rule);
     }
-    
+
 public:
     ///
     /// Constructor to create a eigen solver object using the shift-and-invert mode.
@@ -174,7 +175,7 @@ public:
     /// \param op_    Pointer to the matrix operation object, which should implement
     ///               the shift-solve operation of \f$A\f$: calculating
     ///               \f$(A-\sigma I)^{-1}y\f$ for any vector \f$y\f$. Users could either
-    ///               create the object from the DenseSymShiftSolve wrapper class, or
+    ///               create the object from the wrapper class such as DenseSymShiftSolve, or
     ///               define their own that impelemnts all the public member functions
     ///               as in DenseSymShiftSolve.
     /// \param nev_   Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
