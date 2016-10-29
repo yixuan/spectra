@@ -63,6 +63,7 @@ Below is a list of the available eigen solvers in **Spectra**:
 with a real-valued shift
 - \link Spectra::GenEigsComplexShiftSolver GenEigsComplexShiftSolver \endlink: For general real matrices using the shift-and-invert mode,
 with a complex-valued shift
+- \link Spectra::SymGEigsSolver SymGEigsSolver \endlink: For generalized eigen solver for real symmetric matrices
 
 ## Examples
 
