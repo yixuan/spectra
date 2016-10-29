@@ -1,9 +1,15 @@
 ## [Unreleased]
 ### Added
 - Added an `Uplo` template parameter to the `DenseSymShiftSolve` class
+- Added the generalized eigen solver `SymGEigsSolver` in Cholesky mode
+- Added the wrapper classes `DenseCholesky` and `SparseCholesky` that can be
+  used in `SymGEigsSolver`
+- Added test code for generalized eigen solver
 
 ### Changed
 - Updated included [Catch](https://github.com/philsquared/Catch) to v1.5.7
+- Improved documentation
+- Updated Travis CI script
 
 
 ## [0.3.0] - 2016-07-03
