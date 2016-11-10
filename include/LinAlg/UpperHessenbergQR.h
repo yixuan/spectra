@@ -8,7 +8,7 @@
 #define UPPER_HESSENBERG_QR_H
 
 #include <Eigen/Core>
-#include <cmath>      // std::sqrt
+//#include <cmath>      // std::sqrt
 #include <algorithm>  // std::fill, std::copy
 #include <limits>     // std::numeric_limits
 #include <stdexcept>  // std::logic_error
@@ -112,7 +112,7 @@ public:
 
             xi = Tii[0];  // mat_T(i, i)
             xj = Tii[1];  // mat_T(i + 1, i)
-            r = std::sqrt(xi * xi + xj * xj);
+            r = sqrt(xi * xi + xj * xj);
             if(r <= eps)
             {
                 r = 0;
@@ -477,7 +477,7 @@ public:
         {
             // Tii[0] == T[i, i]
             // Tii[1] == T[i + 1, i]
-            r = std::sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
+            r = sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
             if(r <= eps)
             {
                 r = 0;
@@ -527,7 +527,7 @@ public:
             // this->m_mat_T(i + 1, i + 2) *= (*c);
         }
         // For i = n - 2
-        r = std::sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
+        r = sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
         if(r <= eps)
         {
             r = 0;

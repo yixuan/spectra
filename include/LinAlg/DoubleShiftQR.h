@@ -10,7 +10,7 @@
 #include <Eigen/Core>
 #include <vector>     // std::vector
 #include <algorithm>  // std::min, std::fill, std::copy
-#include <cmath>      // std::abs, std::sqrt, std::pow
+//#include <cmath>      // std::abs, std::sqrt, std::pow
 #include <limits>     // std::numeric_limits
 #include <stdexcept>  // std::invalid_argument, std::logic_error
 
@@ -52,10 +52,10 @@ private:
         // In general case the reflector affects 3 rows
         nr[ind] = 3;
         // If x3 is zero, decrease nr by 1
-        if(std::abs(x3) < m_prec)
+        if(abs(x3) < m_prec)
         {
             // If x2 is also zero, nr will be 1, and we can exit this function
-            if(std::abs(x2) < m_prec)
+            if(abs(x2) < m_prec)
             {
                 nr[ind] = 1;
                 return;
@@ -67,8 +67,8 @@ private:
         // x1' = x1 - rho * ||x||
         // rho = -sign(x1), if x1 == 0, we choose rho = 1
         Scalar tmp = x2 * x2 + x3 * x3;
-        Scalar x1_new = x1 - ((x1 <= 0) - (x1 > 0)) * std::sqrt(x1 * x1 + tmp);
-        Scalar x_norm = std::sqrt(x1_new * x1_new + tmp);
+        Scalar x1_new = x1 - ((x1 <= 0) - (x1 > 0)) * sqrt(x1 * x1 + tmp);
+        Scalar x_norm = sqrt(x1_new * x1_new + tmp);
         // Double check the norm of new x
         if(x_norm < m_prec)
         {
@@ -247,8 +247,8 @@ public:
     DoubleShiftQR(Index size) :
         m_n(size),
         m_prec(std::numeric_limits<Scalar>::epsilon()),
-        m_eps_rel(std::pow(m_prec, Scalar(0.75))),
-        m_eps_abs(std::min(std::pow(m_prec, Scalar(0.75)), m_n * m_prec)),
+        m_eps_rel(pow(m_prec, Scalar(0.75))),
+        m_eps_abs(min(pow(m_prec, Scalar(0.75)), m_n * m_prec)),
         m_computed(false)
     {}
 
@@ -260,8 +260,8 @@ public:
         m_ref_u(3, m_n),
         m_ref_nr(m_n),
         m_prec(std::numeric_limits<Scalar>::epsilon()),
-        m_eps_rel(std::pow(m_prec, Scalar(0.75))),
-        m_eps_abs(std::min(std::pow(m_prec, Scalar(0.75)), m_n * m_prec)),
+        m_eps_rel(pow(m_prec, Scalar(0.75))),
+        m_eps_abs(min(pow(m_prec, Scalar(0.75)), m_n * m_prec)),
         m_computed(false)
     {
         compute(mat, s, t);
@@ -291,8 +291,8 @@ public:
         for(Index i = 0; i < m_n - 2; i++, Hii += (m_n + 1))
         {
             // Hii[1] => m_mat_H(i + 1, i)
-            const Scalar h = std::abs(Hii[1]);
-            if(h <= m_eps_abs || h <= m_eps_rel * (std::abs(Hii[0]) + std::abs(Hii[m_n + 1])))
+            const Scalar h = abs(Hii[1]);
+            if(h <= m_eps_abs || h <= m_eps_rel * (abs(Hii[0]) + abs(Hii[m_n + 1])))
             {
                 Hii[1] = 0;
                 zero_ind.push_back(i + 1);

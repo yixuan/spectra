@@ -10,7 +10,7 @@
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
 #include <vector>     // std::vector
-#include <cmath>      // std::abs, std::pow
+//#include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min, std::copy
 #include <limits>     // std::numeric_limits
 #include <stdexcept>  // std::invalid_argument
@@ -341,7 +341,7 @@ private:
         int nev_new = m_nev;
 
         for(int i = m_nev; i < m_ncv; i++)
-            if(std::abs(m_ritz_est[i]) < m_prec)  nev_new++;
+            if(abs(static_cast<Scalar>(m_ritz_est[i])) < m_prec)  nev_new++;
 
         // Adjust nev_new, according to dsaup2.f line 677~684 in ARPACK
         nev_new += std::min(nconv, (m_ncv - nev_new) / 2);
@@ -456,7 +456,7 @@ public:
     ///             the matrix-vector multiplication operation of \f$A\f$:
     ///             calculating \f$Ay\f$ for any vector \f$y\f$. Users could either
     ///             create the object from the wrapper class such as DenseSymMatProd, or
-    ///             define their own that impelemnts all the public member functions
+    ///             define their own that impelements all the public member functions
     ///             as in DenseSymMatProd.
     /// \param nev_ Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
     ///             where \f$n\f$ is the size of matrix.
@@ -474,7 +474,7 @@ public:
         m_nmatop(0),
         m_niter(0),
         m_info(NOT_COMPUTED),
-        m_prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3))
+        m_prec(pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3))
     {
         if(nev_ < 1 || nev_ > m_n - 1)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");

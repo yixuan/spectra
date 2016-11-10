@@ -46,7 +46,7 @@ private:
     static Complex cdiv(const Scalar& xr, const Scalar& xi, const Scalar& yr, const Scalar& yi)
     {
         Scalar r, d;
-        if(std::abs(yr) > std::abs(yi))
+        if(abs(yr) > abs(yi))
         {
             r = yi/yr;
             d = yr + r*yi;
@@ -111,14 +111,14 @@ private:
                             Scalar denom = (m_eivalues.coeff(i).real() - p) * (m_eivalues.coeff(i).real() - p) + m_eivalues.coeff(i).imag() * m_eivalues.coeff(i).imag();
                             Scalar t = (x * lastr - lastw * r) / denom;
                             m_matT.coeffRef(i,n) = t;
-                            if(std::abs(x) > std::abs(lastw))
+                            if(abs(x) > abs(lastw))
                                 m_matT.coeffRef(i+1,n) = (-r - w * t) / x;
                             else
                                 m_matT.coeffRef(i+1,n) = (-lastr - y * t) / lastw;
                         }
 
                         // Overflow control
-                        Scalar t = std::abs(m_matT.coeff(i,n));
+                        Scalar t = abs(m_matT.coeff(i,n));
                         if((eps * t) * t > Scalar(1))
                             m_matT.col(n).tail(size-i) /= t;
                     }
@@ -128,7 +128,7 @@ private:
                 Index l = n-1;
 
                 // Last vector component imaginary so matrix is triangular
-                if(std::abs(m_matT.coeff(n,n-1)) > std::abs(m_matT.coeff(n-1,n)))
+                if(abs(m_matT.coeff(n,n-1)) > abs(m_matT.coeff(n-1,n)))
                 {
                     m_matT.coeffRef(n-1,n-1) = q / m_matT.coeff(n,n-1);
                     m_matT.coeffRef(n-1,n) = -(m_matT.coeff(n,n) - p) / m_matT.coeff(n,n-1);
@@ -170,12 +170,12 @@ private:
                             Scalar vr = (m_eivalues.coeff(i).real() - p) * (m_eivalues.coeff(i).real() - p) + m_eivalues.coeff(i).imag() * m_eivalues.coeff(i).imag() - q * q;
                             Scalar vi = (m_eivalues.coeff(i).real() - p) * Scalar(2) * q;
                             if((vr == 0.0) && (vi == 0.0))
-                                vr = eps * norm * (std::abs(w) + std::abs(q) + std::abs(x) + std::abs(y) + std::abs(lastw));
+                                vr = eps * norm * (abs(w) + abs(q) + abs(x) + abs(y) + abs(lastw));
 
                             Complex cc = cdiv(x*lastra-lastw*ra+q*sa, x*lastsa-lastw*sa-q*ra, vr, vi);
                             m_matT.coeffRef(i,n-1) = cc.real();
                             m_matT.coeffRef(i,n) = cc.imag();
-                            if(std::abs(x) > (std::abs(lastw) + std::abs(q)))
+                            if(abs(x) > (abs(lastw) + abs(q)))
                             {
                                 m_matT.coeffRef(i+1,n-1) = (-ra - w * m_matT.coeff(i,n-1) + q * m_matT.coeff(i,n)) / x;
                                 m_matT.coeffRef(i+1,n) = (-sa - w * m_matT.coeff(i,n) - q * m_matT.coeff(i,n-1)) / x;
@@ -189,7 +189,7 @@ private:
                         }
 
                         // Overflow control
-                        Scalar t = std::max(std::abs(m_matT.coeff(i,n-1)), std::abs(m_matT.coeff(i,n)));
+                        Scalar t = max(abs(m_matT.coeff(i,n-1)), abs(m_matT.coeff(i,n)));
                         if((eps * t) * t > Scalar(1))
                             m_matT.block(i, n-1, size-i, 2) /= t;
 
@@ -249,7 +249,7 @@ public:
             else  // Complex eigenvalues
             {
                 Scalar p = Scalar(0.5) * (m_matT.coeff(i, i) - m_matT.coeff(i+1, i+1));
-                Scalar z = std::sqrt(std::abs(p * p + m_matT.coeff(i+1, i) * m_matT.coeff(i, i+1)));
+                Scalar z = sqrt(abs(p * p + m_matT.coeff(i+1, i) * m_matT.coeff(i, i+1)));
                 m_eivalues.coeffRef(i)   = Complex(m_matT.coeff(i+1, i+1) + p, z);
                 m_eivalues.coeffRef(i+1) = Complex(m_matT.coeff(i+1, i+1) + p, -z);
                 i += 2;
@@ -276,12 +276,12 @@ public:
             throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
 
         Index n = m_eivec.cols();
-        const Scalar prec = std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3);
+        const Scalar prec = pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3);
 
         ComplexMatrix matV(n, n);
         for(Index j = 0; j < n; ++j)
         {
-            if(std::abs(m_eivalues.coeff(j).imag()) <= prec || j + 1 == n)
+            if(abs(m_eivalues.coeff(j).imag()) <= prec || j + 1 == n)
             {
                 // we have a real eigen value
                 matV.col(j) = m_eivec.col(j).template cast<Complex>();

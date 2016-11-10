@@ -61,7 +61,7 @@ private:
         // This explain the following, somewhat more complicated, version:
         RealScalar mu = diag[end];
         if(td == 0)
-            mu -= std::abs(e);
+            mu -= abs(e);
         else
         {
             RealScalar e2 = Eigen::numext::abs2(subdiag[end-1]);
@@ -138,7 +138,7 @@ public:
         while(end > 0)
         {
             for(Index i = start; i < end; i++)
-                if(is_much_smaller_than(std::abs(subd[i]), (std::abs(maind[i]) + std::abs(maind[i + 1]))))
+                if(is_much_smaller_than(abs(subd[i]), (abs(maind[i]) + abs(maind[i + 1]))))
                     subd[i] = 0;
 
             // find the largest unreduced block

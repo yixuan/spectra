@@ -61,14 +61,14 @@ private:
         // We can use this identity to back-solve lambdai
 
         // Select an arbitrary real shift value
-        Scalar r = sigmar + std::sin(sigmar);
+        Scalar r = sigmar + sin(sigmar);
         this->m_op->set_shift(r, 0);
 
         // Calculate inv(A - r * I) * vi
         ComplexArray v;
         Array v_real, v_imag;
         Array lhs_real(this->m_n), lhs_imag(this->m_n);
-        Scalar eps = std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3);
+        Scalar eps = pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3);
         for(int i = 0; i < this->m_nev; i++)
         {
             v = this->m_fac_V * this->m_ritz_vec.col(i);
@@ -82,7 +82,7 @@ private:
                               Complex(r, 0);
             this->m_ritz_val[i] = lambdai;
 
-            if(std::abs(lambdai.imag()) > eps)
+            if(abs(lambdai.imag()) > eps)
             {
                 this->m_ritz_val[i + 1] = std::conj(lambdai);
                 i++;

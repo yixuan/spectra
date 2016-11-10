@@ -9,9 +9,9 @@
 
 #include <Eigen/Core>
 #include <vector>     // std::vector
-#include <cmath>      // std::abs, std::pow
+//#include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min, std::copy
-#include <complex>    // std::complex, std::conj, std::norm
+#include <complex>    // std::complex, std::conj, std::norm, std::abs
 #include <limits>     // std::numeric_limits
 #include <stdexcept>  // std::invalid_argument
 
@@ -259,7 +259,7 @@ private:
 
     static bool is_complex(Complex v, Scalar eps)
     {
-        return std::abs(v.imag()) > eps;
+        return abs(v.imag()) > eps;
     }
 
     static bool is_conj(Complex v1, Complex v2, Scalar eps)
@@ -351,7 +351,7 @@ private:
         int nev_new = m_nev;
 
         for(int i = m_nev; i < m_ncv; i++)
-            if(std::abs(m_ritz_est[i]) < m_prec)  nev_new++;
+            if(abs(m_ritz_est[i]) < m_prec)  nev_new++;
 
         // Increase nev by one if m_ritz_val[nev - 1] and
         // m_ritz_val[nev] are conjugate pairs
@@ -491,7 +491,7 @@ public:
         m_nmatop(0),
         m_niter(0),
         m_info(NOT_COMPUTED),
-        m_prec(std::pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3))
+        m_prec(pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3))
     {
         if(nev_ < 1 || nev_ > m_n - 2)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 2, n is the size of matrix");
