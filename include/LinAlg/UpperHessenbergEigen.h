@@ -45,6 +45,8 @@ private:
     // Complex scalar division
     static Complex cdiv(const Scalar& xr, const Scalar& xi, const Scalar& yr, const Scalar& yi)
     {
+        using std::abs;
+
         Scalar r, d;
         if(abs(yr) > abs(yi))
         {
@@ -60,8 +62,10 @@ private:
 
     void doComputeEigenvectors()
     {
+        using std::abs;
+
         const Index size = m_eivec.cols();
-        const Scalar eps = std::numeric_limits<Scalar>::epsilon();
+        const Scalar eps = Eigen::NumTraits<Scalar>::epsilon();
 
         // inefficient! this is already computed in RealSchur
         Scalar norm(0);
@@ -189,7 +193,7 @@ private:
                         }
 
                         // Overflow control
-                        Scalar t = max(abs(m_matT.coeff(i,n-1)), abs(m_matT.coeff(i,n)));
+                        Scalar t = std::max(abs(m_matT.coeff(i,n-1)), abs(m_matT.coeff(i,n)));
                         if((eps * t) * t > Scalar(1))
                             m_matT.block(i, n-1, size-i, 2) /= t;
 
@@ -224,6 +228,9 @@ public:
 
     void compute(ConstGenericMatrix& mat)
     {
+        using std::abs;
+        using std::sqrt;
+
         if(mat.rows() != mat.cols())
             throw std::invalid_argument("UpperHessenbergEigen: matrix must be square");
 
@@ -272,11 +279,13 @@ public:
 
     ComplexMatrix eigenvectors()
     {
+        using std::abs;
+
         if(!m_computed)
             throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
 
         Index n = m_eivec.cols();
-        const Scalar prec = pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3);
+        const Scalar prec = Eigen::numext::pow(Eigen::NumTraits<Scalar>::epsilon(), Scalar(2.0) / 3);
 
         ComplexMatrix matV(n, n);
         for(Index j = 0; j < n; ++j)

@@ -10,8 +10,7 @@
 #include <Eigen/Core>
 #include <vector>     // std::vector
 #include <algorithm>  // std::min, std::fill, std::copy
-//#include <cmath>      // std::abs, std::sqrt, std::pow
-#include <limits>     // std::numeric_limits
+#include <cmath>      // std::abs, std::sqrt, std::pow
 #include <stdexcept>  // std::invalid_argument, std::logic_error
 
 namespace Spectra {
@@ -47,6 +46,9 @@ private:
 
     void compute_reflector(const Scalar& x1, const Scalar& x2, const Scalar& x3, Index ind)
     {
+        using std::abs;
+        using std::sqrt;
+
         Scalar* u = m_ref_u.data() + 3 * ind;
         unsigned char* nr = m_ref_nr.data();
         // In general case the reflector affects 3 rows
@@ -246,9 +248,9 @@ private:
 public:
     DoubleShiftQR(Index size) :
         m_n(size),
-        m_prec(std::numeric_limits<Scalar>::epsilon()),
-        m_eps_rel(pow(m_prec, Scalar(0.75))),
-        m_eps_abs(min(pow(m_prec, Scalar(0.75)), m_n * m_prec)),
+        m_prec(Eigen::NumTraits<Scalar>::epsilon()),
+        m_eps_rel(Eigen::numext::pow(m_prec, Scalar(0.75))),
+        m_eps_abs(std::min(Eigen::numext::pow(m_prec, Scalar(0.75)), m_n * m_prec)),
         m_computed(false)
     {}
 
@@ -259,9 +261,9 @@ public:
         m_shift_t(t),
         m_ref_u(3, m_n),
         m_ref_nr(m_n),
-        m_prec(std::numeric_limits<Scalar>::epsilon()),
-        m_eps_rel(pow(m_prec, Scalar(0.75))),
-        m_eps_abs(min(pow(m_prec, Scalar(0.75)), m_n * m_prec)),
+        m_prec(Eigen::NumTraits<Scalar>::epsilon()),
+        m_eps_rel(Eigen::numext::pow(m_prec, Scalar(0.75))),
+        m_eps_abs(std::min(Eigen::numext::pow(m_prec, Scalar(0.75)), m_n * m_prec)),
         m_computed(false)
     {
         compute(mat, s, t);
@@ -269,6 +271,8 @@ public:
 
     void compute(ConstGenericMatrix& mat, Scalar s, Scalar t)
     {
+        using std::abs;
+
         if(mat.rows() != mat.cols())
             throw std::invalid_argument("DoubleShiftQR: matrix must be square");
 

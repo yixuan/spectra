@@ -8,9 +8,8 @@
 #define UPPER_HESSENBERG_QR_H
 
 #include <Eigen/Core>
-//#include <cmath>      // std::sqrt
+#include <cmath>      // std::sqrt
 #include <algorithm>  // std::fill, std::copy
-#include <limits>     // std::numeric_limits
 #include <stdexcept>  // std::logic_error
 
 namespace Spectra {
@@ -93,6 +92,8 @@ public:
     ///
     virtual void compute(ConstGenericMatrix& mat)
     {
+        using std::sqrt;
+
         m_n = mat.rows();
         m_mat_T.resize(m_n, m_n);
         m_rot_cos.resize(m_n - 1);
@@ -100,7 +101,7 @@ public:
 
         std::copy(mat.data(), mat.data() + mat.size(), m_mat_T.data());
 
-        Scalar xi, xj, r, c, s, eps = std::numeric_limits<Scalar>::epsilon();
+        Scalar xi, xj, r, c, s, eps = Eigen::NumTraits<Scalar>::epsilon();
         Scalar *Tii, *ptr;
         for(Index i = 0; i < m_n - 1; i++)
         {
@@ -456,6 +457,8 @@ public:
     ///
     void compute(ConstGenericMatrix& mat)
     {
+        using std::sqrt;
+
         this->m_n = mat.rows();
         this->m_mat_T.resize(this->m_n, this->m_n);
         this->m_rot_cos.resize(this->m_n - 1);
@@ -472,7 +475,7 @@ public:
                *c = this->m_rot_cos.data(),  // pointer to the cosine vector
                *s = this->m_rot_sin.data(),  // pointer to the sine vector
                r, tmp,
-               eps = std::numeric_limits<Scalar>::epsilon();
+               eps = Eigen::NumTraits<Scalar>::epsilon();
         for(Index i = 0; i < this->m_n - 2; i++)
         {
             // Tii[0] == T[i, i]

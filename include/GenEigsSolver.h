@@ -9,10 +9,9 @@
 
 #include <Eigen/Core>
 #include <vector>     // std::vector
-//#include <cmath>      // std::abs, std::pow
+#include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min, std::copy
 #include <complex>    // std::complex, std::conj, std::norm, std::abs
-#include <limits>     // std::numeric_limits
 #include <stdexcept>  // std::invalid_argument
 
 #include "Util/SelectionRule.h"
@@ -259,17 +258,21 @@ private:
 
     static bool is_complex(Complex v, Scalar eps)
     {
+        using std::abs;
         return abs(v.imag()) > eps;
     }
 
     static bool is_conj(Complex v1, Complex v2, Scalar eps)
     {
-        return std::abs(v1 - std::conj(v2)) < eps;
+        using std::abs;
+        return abs(v1 - Eigen::numext::conj(v2)) < eps;
     }
 
     // Implicitly restarted Arnoldi factorization
     void restart(int k)
     {
+        using std::norm;
+
         if(k >= m_ncv)
             return;
 
@@ -288,7 +291,7 @@ private:
                 //
                 // (H - mu * I) * (H - conj(mu) * I) = Q1 * Q2 * R2 * R1 = Q * R
                 Scalar s = 2 * m_ritz_val[i].real();
-                Scalar t = std::norm(m_ritz_val[i]);
+                Scalar t = norm(m_ritz_val[i]);
 
                 decomp_ds.compute(m_fac_H, s, t);
 
@@ -348,6 +351,8 @@ private:
     // Return the adjusted nev for restarting
     int nev_adjusted(int nconv)
     {
+        using std::abs;
+
         int nev_new = m_nev;
 
         for(int i = m_nev; i < m_ncv; i++)
@@ -491,7 +496,7 @@ public:
         m_nmatop(0),
         m_niter(0),
         m_info(NOT_COMPUTED),
-        m_prec(pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3))
+        m_prec(Eigen::numext::pow(Eigen::NumTraits<Scalar>::epsilon(), Scalar(2.0) / 3))
     {
         if(nev_ < 1 || nev_ > m_n - 2)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 2, n is the size of matrix");

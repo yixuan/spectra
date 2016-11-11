@@ -52,6 +52,8 @@ private:
                                     Index end, Scalar* matrixQ,
                                     Index n)
     {
+        using std::abs;
+
         RealScalar td = (diag[end-1] - diag[end]) * RealScalar(0.5);
         RealScalar e = subdiag[end-1];
         // Note that thanks to scaling, e^2 or td^2 cannot overflow, however they can still
@@ -118,6 +120,8 @@ public:
 
     void compute(ConstGenericMatrix &mat)
     {
+        using std::abs;
+
         if(mat.rows() != mat.cols())
             throw std::invalid_argument("TridiagEigen: matrix must be square");
 

@@ -48,6 +48,9 @@ private:
     // First transform back the ritz values, and then sort
     void sort_ritzpair(int sort_rule)
     {
+        using std::abs;
+        using std::sin;
+
         // The eigenvalus we get from the iteration is
         //     nu = 0.5 * (1 / (lambda - sigma)) + 1 / (lambda - conj(sigma)))
         // So the eigenvalues of the original problem is
@@ -68,7 +71,7 @@ private:
         ComplexArray v;
         Array v_real, v_imag;
         Array lhs_real(this->m_n), lhs_imag(this->m_n);
-        Scalar eps = pow(std::numeric_limits<Scalar>::epsilon(), Scalar(2.0) / 3);
+        Scalar eps = Eigen::numext::pow(Eigen::NumTraits<Scalar>::epsilon(), Scalar(2.0) / 3);
         for(int i = 0; i < this->m_nev; i++)
         {
             v = this->m_fac_V * this->m_ritz_vec.col(i);
@@ -84,7 +87,7 @@ private:
 
             if(abs(lambdai.imag()) > eps)
             {
-                this->m_ritz_val[i + 1] = std::conj(lambdai);
+                this->m_ritz_val[i + 1] = Eigen::numext::conj(lambdai);
                 i++;
             }
         }

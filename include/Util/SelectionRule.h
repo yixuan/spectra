@@ -8,7 +8,7 @@
 #define SELECTION_RULE_H
 
 #include <vector>     // std::vector
-//#include <cmath>      // std::abs
+#include <cmath>      // std::abs
 #include <algorithm>  // std::sort
 #include <complex>    // std::complex
 #include <utility>    // std::pair
@@ -104,6 +104,7 @@ class SortingTarget
 public:
     static typename ElemType<Scalar>::type get(const Scalar& val)
     {
+        using std::abs;
         throw std::invalid_argument("incompatible selection rule");
         return -abs(val);
     }
@@ -117,6 +118,7 @@ class SortingTarget<Scalar, LARGEST_MAGN>
 public:
     static typename ElemType<Scalar>::type get(const Scalar& val)
     {
+        using std::abs;
         return -abs(val);
     }
 };
@@ -141,6 +143,7 @@ class SortingTarget<std::complex<RealType>, LARGEST_IMAG>
 public:
     static RealType get(const std::complex<RealType>& val)
     {
+        using std::abs;
         return -abs(val.imag());
     }
 };
@@ -179,6 +182,7 @@ class SortingTarget<Scalar, SMALLEST_MAGN>
 public:
     static typename ElemType<Scalar>::type get(const Scalar& val)
     {
+        using std::abs;
         return abs(val);
     }
 };
@@ -203,6 +207,7 @@ class SortingTarget<std::complex<RealType>, SMALLEST_IMAG>
 public:
     static RealType get(const std::complex<RealType>& val)
     {
+        using std::abs;
         return abs(val.imag());
     }
 };
