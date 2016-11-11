@@ -7,6 +7,13 @@
 - Added test code for generalized eigen solver
 
 ### Changed
+- Allowing basic math functions such as `abs()` and `sqrt()` to be overloaded
+  (avoid using `std::abs` and `std::sqrt` directly), thanks to
+  [@jdbancal](https://github.com/jdbancal). This makes it possible to use
+  user-defined float number types with Spectra
+- Replaced other `std` functions by their Eigen counterparts, for example using
+  `Eigen::NumTraits<Scalar>::epsilon()` to substitute
+  `std::numeric_limits<Scalar>::epsilon()`
 - Updated included [Catch](https://github.com/philsquared/Catch) to v1.5.7
 - Improved documentation
 - Updated Travis CI script
