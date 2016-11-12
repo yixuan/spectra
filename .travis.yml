@@ -23,9 +23,9 @@ before_install:
   - $CXX --version
 
 install:
-  - wget http://bitbucket.org/eigen/eigen/get/3.2.10.tar.gz
-  - tar xzf 3.2.10.tar.gz
-  - mv eigen-eigen-b9cd8366d4e8/Eigen include/
+  - wget http://bitbucket.org/eigen/eigen/get/3.3.0.tar.gz
+  - tar xzf 3.3.0.tar.gz
+  - mv eigen-eigen-26667be4f70b/Eigen include/
 
 script:
   - cd test
