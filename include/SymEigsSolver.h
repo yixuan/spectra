@@ -165,37 +165,38 @@ private:
     typedef Eigen::SelfAdjointEigenSolver<Matrix> EigenSolver;
 
 protected:
-    OpType* m_op;          // object to conduct matrix operation,
-                           // e.g. matrix-vector product
+    OpType* m_op;            // object to conduct matrix operation,
+                             // e.g. matrix-vector product
 
 private:
-    const int m_n;         // dimension of matrix A
+    const int m_n;           // dimension of matrix A
 
 protected:
-    const int m_nev;       // number of eigenvalues requested
+    const int m_nev;         // number of eigenvalues requested
 
 private:
-    const int m_ncv;       // number of ritz values
-    int m_nmatop;          // number of matrix operations called
-    int m_niter;           // number of restarting iterations
+    const int m_ncv;         // number of ritz values
+    int m_nmatop;            // number of matrix operations called
+    int m_niter;             // number of restarting iterations
 
-    Matrix m_fac_V;        // V matrix in the Arnoldi factorization
-    Matrix m_fac_H;        // H matrix in the Arnoldi factorization
-    Vector m_fac_f;        // residual in the Arnoldi factorization
+    Matrix m_fac_V;          // V matrix in the Arnoldi factorization
+    Matrix m_fac_H;          // H matrix in the Arnoldi factorization
+    Vector m_fac_f;          // residual in the Arnoldi factorization
 
 protected:
-    Vector m_ritz_val;     // ritz values
+    Vector m_ritz_val;       // ritz values
 
 private:
-    Matrix m_ritz_vec;     // ritz vectors
-    Vector m_ritz_est;     // last row of m_ritz_vec
-    BoolArray m_ritz_conv; // indicator of the convergence of ritz values
-    int m_info;            // status of the computation
+    Matrix m_ritz_vec;       // ritz vectors
+    Vector m_ritz_est;       // last row of m_ritz_vec
+    BoolArray m_ritz_conv;   // indicator of the convergence of ritz values
+    int m_info;              // status of the computation
 
-    const Scalar m_prec;   // precision parameter used to test convergence
-                           // m_prec = epsilon^(2/3)
-                           // epsilon is the machine precision,
-                           // e.g. ~= 1e-16 for the "double" type
+    const Scalar m_eps;      // the machine precision,
+                             // e.g. ~= 1e-16 for the "double" type
+    const Scalar m_approx_0; // a number that is approximately zero
+                             // m_approx_0 = m_eps^(2/3)
+                             // used to test the orthogonality of vectors
 
     // Arnoldi factorization starting from step-k
     void factorize_from(int from_k, int to_m, const Vector& fk)
@@ -215,7 +216,7 @@ private:
             // If beta = 0, then the next V is not full rank
             // We need to generate a new residual vector that is orthogonal
             // to the current V, which we call a restart
-            if(beta < m_prec)
+            if(beta < m_eps)
             {
                 SimpleRandom<Scalar> rng(2 * i);
                 m_fac_f.noalias() = rng.random_vec(m_n);
@@ -262,7 +263,7 @@ private:
             Vector Vf = V.transpose() * m_fac_f;
             // If not, iteratively correct the residual
             int count = 0;
-            while(count < 5 && Vf.cwiseAbs().maxCoeff() > m_prec * beta)
+            while(count < 5 && Vf.cwiseAbs().maxCoeff() > m_approx_0 * beta)
             {
                 // f <- f - V * Vf
                 m_fac_f.noalias() -= V * Vf;
@@ -325,8 +326,8 @@ private:
     // Calculate the number of converged Ritz values
     int num_converged(Scalar tol)
     {
-        // thresh = tol * max(m_prec, abs(theta)), theta for ritz value
-        Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(m_prec);
+        // thresh = tol * max(m_approx_0, abs(theta)), theta for ritz value
+        Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(m_approx_0);
         Array resid =  m_ritz_est.head(m_nev).array().abs() * m_fac_f.norm();
         // Converged "wanted" ritz values
         m_ritz_conv = (resid < thresh);
@@ -342,7 +343,7 @@ private:
         int nev_new = m_nev;
 
         for(int i = m_nev; i < m_ncv; i++)
-            if(abs(m_ritz_est[i]) < m_prec)  nev_new++;
+            if(abs(m_ritz_est[i]) < m_eps)  nev_new++;
 
         // Adjust nev_new, according to dsaup2.f line 677~684 in ARPACK
         nev_new += std::min(nconv, (m_ncv - nev_new) / 2);
@@ -475,7 +476,8 @@ public:
         m_nmatop(0),
         m_niter(0),
         m_info(NOT_COMPUTED),
-        m_prec(Eigen::numext::pow(Eigen::NumTraits<Scalar>::epsilon(), Scalar(2.0) / 3))
+        m_eps(Eigen::NumTraits<Scalar>::epsilon()),
+        m_approx_0(Eigen::numext::pow(m_eps, Scalar(2.0) / 3))
     {
         if(nev_ < 1 || nev_ > m_n - 1)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
@@ -518,7 +520,7 @@ public:
         Vector v(m_n);
         std::copy(init_resid, init_resid + m_n, v.data());
         Scalar vnorm = v.norm();
-        if(vnorm < m_prec)
+        if(vnorm < m_eps)
             throw std::invalid_argument("initial residual vector cannot be zero");
         v /= vnorm;
 
