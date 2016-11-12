@@ -39,7 +39,8 @@ private:
                           // 3 - A general reflector
                           // 2 - A Givens rotation
                           // 1 - An identity transformation
-    const Scalar m_prec;  // Approximately zero
+    const Scalar m_eps;   // the machine precision,
+                          // e.g. ~= 1e-16 for the "double" type
     const Scalar m_eps_rel;
     const Scalar m_eps_abs;
     bool m_computed;      // Whether matrix has been factorized
@@ -47,32 +48,34 @@ private:
     void compute_reflector(const Scalar& x1, const Scalar& x2, const Scalar& x3, Index ind)
     {
         using std::abs;
-        using std::sqrt;
 
         Scalar* u = m_ref_u.data() + 3 * ind;
         unsigned char* nr = m_ref_nr.data();
         // In general case the reflector affects 3 rows
         nr[ind] = 3;
+        Scalar x2x3 = Scalar(0);
         // If x3 is zero, decrease nr by 1
-        if(abs(x3) < m_prec)
+        if(abs(x3) < m_eps)
         {
             // If x2 is also zero, nr will be 1, and we can exit this function
-            if(abs(x2) < m_prec)
+            if(abs(x2) < m_eps)
             {
                 nr[ind] = 1;
                 return;
             } else {
                 nr[ind] = 2;
             }
+            x2x3 = abs(x2);
+        } else {
+            x2x3 = Eigen::numext::hypot(x2, x3);
         }
 
         // x1' = x1 - rho * ||x||
         // rho = -sign(x1), if x1 == 0, we choose rho = 1
-        Scalar tmp = x2 * x2 + x3 * x3;
-        Scalar x1_new = x1 - ((x1 <= 0) - (x1 > 0)) * sqrt(x1 * x1 + tmp);
-        Scalar x_norm = sqrt(x1_new * x1_new + tmp);
+        Scalar x1_new = x1 - ((x1 <= 0) - (x1 > 0)) * Eigen::numext::hypot(x1, x2x3);
+        Scalar x_norm = Eigen::numext::hypot(x1_new, x2x3);
         // Double check the norm of new x
-        if(x_norm < m_prec)
+        if(x_norm < m_eps)
         {
             nr[ind] = 1;
             return;
@@ -248,9 +251,9 @@ private:
 public:
     DoubleShiftQR(Index size) :
         m_n(size),
-        m_prec(Eigen::NumTraits<Scalar>::epsilon()),
-        m_eps_rel(Eigen::numext::pow(m_prec, Scalar(0.75))),
-        m_eps_abs(std::min(Eigen::numext::pow(m_prec, Scalar(0.75)), m_n * m_prec)),
+        m_eps(Eigen::NumTraits<Scalar>::epsilon()),
+        m_eps_rel(Eigen::numext::pow(m_eps, Scalar(0.75))),
+        m_eps_abs(std::min(m_eps_rel, m_n * m_eps)),
         m_computed(false)
     {}
 
@@ -261,9 +264,9 @@ public:
         m_shift_t(t),
         m_ref_u(3, m_n),
         m_ref_nr(m_n),
-        m_prec(Eigen::NumTraits<Scalar>::epsilon()),
-        m_eps_rel(Eigen::numext::pow(m_prec, Scalar(0.75))),
-        m_eps_abs(std::min(Eigen::numext::pow(m_prec, Scalar(0.75)), m_n * m_prec)),
+        m_eps(Eigen::NumTraits<Scalar>::epsilon()),
+        m_eps_rel(Eigen::numext::pow(m_eps, Scalar(0.75))),
+        m_eps_abs(std::min(m_eps_rel, m_n * m_eps)),
         m_computed(false)
     {
         compute(mat, s, t);
