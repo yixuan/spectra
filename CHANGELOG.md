@@ -14,6 +14,11 @@
 - Replaced other `std` functions by their Eigen counterparts, for example using
   `Eigen::NumTraits<Scalar>::epsilon()` to substitute
   `std::numeric_limits<Scalar>::epsilon()`
+- Fixed an out-of-bound [bug](https://github.com/yixuan/spectra/issues/14)
+  detected by [@jdbancal](https://github.com/jdbancal)
+- Improved numerical stability, e.g. the function `hypot(x, y)` is used to
+  compute `sqrt(x^2 + y^2)`
+- More careful in using "approximate zero" constants
 - Updated included [Catch](https://github.com/philsquared/Catch) to v1.5.7
 - Improved documentation
 - Updated Travis CI script
