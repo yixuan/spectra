@@ -92,8 +92,6 @@ public:
     ///
     virtual void compute(ConstGenericMatrix& mat)
     {
-        using std::sqrt;
-
         m_n = mat.rows();
         m_mat_T.resize(m_n, m_n);
         m_rot_cos.resize(m_n - 1);
@@ -113,7 +111,7 @@ public:
 
             xi = Tii[0];  // mat_T(i, i)
             xj = Tii[1];  // mat_T(i + 1, i)
-            r = sqrt(xi * xi + xj * xj);
+            r = Eigen::numext::hypot(xi, xj);
             if(r <= eps)
             {
                 r = 0;
@@ -457,8 +455,6 @@ public:
     ///
     void compute(ConstGenericMatrix& mat)
     {
-        using std::sqrt;
-
         this->m_n = mat.rows();
         this->m_mat_T.resize(this->m_n, this->m_n);
         this->m_rot_cos.resize(this->m_n - 1);
@@ -480,7 +476,7 @@ public:
         {
             // Tii[0] == T[i, i]
             // Tii[1] == T[i + 1, i]
-            r = sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
+            r = Eigen::numext::hypot(Tii[0], Tii[1]);
             if(r <= eps)
             {
                 r = 0;
@@ -530,7 +526,7 @@ public:
             // this->m_mat_T(i + 1, i + 2) *= (*c);
         }
         // For i = n - 2
-        r = sqrt(Tii[0] * Tii[0] + Tii[1] * Tii[1]);
+        r = Eigen::numext::hypot(Tii[0], Tii[1]);
         if(r <= eps)
         {
             r = 0;
