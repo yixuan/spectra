@@ -29,5 +29,5 @@ install:
 
 script:
   - cd test
-  - make all
+  - make -j 4 all
   - make test
