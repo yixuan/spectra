@@ -40,12 +40,6 @@ private:
 
     bool m_computed;
 
-    static bool is_much_smaller_than(const Scalar& x, const Scalar& y, const Scalar& prec)
-    {
-        using std::abs;
-        return abs(x) <= abs(y) * prec;
-    }
-
     // Adapted from Eigen/src/Eigenvaleus/SelfAdjointEigenSolver.h
     static void tridiagonal_qr_step(RealScalar* diag,
                                     RealScalar* subdiag, Index start,
@@ -74,36 +68,37 @@ private:
 
         RealScalar x = diag[start] - mu;
         RealScalar z = subdiag[start];
+        Eigen::Map<Matrix> q(matrixQ, n, n);
         for(Index k = start; k < end; ++k)
         {
             Eigen::JacobiRotation<RealScalar> rot;
             rot.makeGivens(x, z);
 
-            // do T = G' T G
-            RealScalar sdk = rot.s() * diag[k] + rot.c() * subdiag[k];
-            RealScalar dkp1 = rot.s() * subdiag[k] + rot.c() * diag[k + 1];
+            const RealScalar s = rot.s();
+            const RealScalar c = rot.c();
 
-            diag[k] = rot.c() * (rot.c() * diag[k] - rot.s() * subdiag[k]) - rot.s() * (rot.c() * subdiag[k] - rot.s() * diag[k + 1]);
-            diag[k + 1] = rot.s() * sdk + rot.c() * dkp1;
-            subdiag[k] = rot.c() * sdk - rot.s() * dkp1;
+            // do T = G' T G
+            RealScalar sdk = s * diag[k] + c * subdiag[k];
+            RealScalar dkp1 = s * subdiag[k] + c * diag[k + 1];
+
+            diag[k] = c * (c * diag[k] - s * subdiag[k]) - s * (c * subdiag[k] - s * diag[k + 1]);
+            diag[k + 1] = s * sdk + c * dkp1;
+            subdiag[k] = c * sdk - s * dkp1;
 
             if(k > start)
-                subdiag[k - 1] = rot.c() * subdiag[k - 1] - rot.s() * z;
+                subdiag[k - 1] = c * subdiag[k - 1] - s * z;
 
             x = subdiag[k];
 
             if(k < end - 1)
             {
-                z = -rot.s() * subdiag[k+1];
-                subdiag[k + 1] = rot.c() * subdiag[k + 1];
+                z = -s * subdiag[k+1];
+                subdiag[k + 1] = c * subdiag[k + 1];
             }
 
             // apply the givens rotation to the unit matrix Q = Q * G
             if(matrixQ)
-            {
-                Eigen::Map<Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> > q(matrixQ, n, n);
                 q.applyOnTheRight(k, k + 1, rot);
-            }
         }
     }
 
@@ -151,8 +146,8 @@ public:
         while(end > 0)
         {
             for(Index i = start; i < end; i++)
-                if(is_much_smaller_than(abs(subdiag[i]), abs(diag[i]) + abs(diag[i + 1]), precision) ||
-                   abs(subdiag[i]) <= considerAsZero)
+                if(abs(subdiag[i]) <= considerAsZero ||
+                   abs(subdiag[i]) <= (abs(diag[i]) + abs(diag[i + 1])) * precision)
                     subdiag[i] = 0;
 
             // find the largest unreduced block
