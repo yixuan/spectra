@@ -1,4 +1,7 @@
 ## [Unreleased]
+
+
+## [0.4.0] - 2016-11-14
 ### Added
 - Added an `Uplo` template parameter to the `DenseSymShiftSolve` class
 - Added the generalized eigen solver `SymGEigsSolver` in Cholesky mode
@@ -59,7 +62,6 @@
 - Updated copyright information
 - **API change**: Default operator of `SymEigsSolver` was changed from
   `DenseGenMatProd` to `DenseSymMatProd`
-
 
 
 ## [0.1.0] - 2015-12-19
