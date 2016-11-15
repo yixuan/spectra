@@ -140,8 +140,11 @@ public:
         int iter = 0; // total number of iterations
         int info = 0; // 0 for success, 1 for failure
 
-        const Scalar considerAsZero = Eigen::NumTraits<Scalar>::epsilon();
-        const Scalar precision = Scalar(2) * considerAsZero;
+        const Scalar eps = Eigen::NumTraits<Scalar>::epsilon();
+        // Ideally this should be std::numeric_limits<Scalar>::min() as in Eigen,
+        // but to allow for other float types, here we use eps^2
+        const Scalar considerAsZero = eps * eps;
+        const Scalar precision = Scalar(2) * eps;
 
         while(end > 0)
         {
@@ -173,7 +176,7 @@ public:
         }
 
         if(info > 0)
-            throw std::logic_error("TridiagEigen: failed to compute all the eigenvalues");
+            throw std::runtime_error("TridiagEigen: eigen decomposition failed");
 
         // Scale eigenvalues back
         m_main_diag *= scale;

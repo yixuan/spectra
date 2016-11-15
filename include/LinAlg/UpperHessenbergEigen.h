@@ -280,13 +280,12 @@ public:
         if(!m_computed)
             throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
 
-        const Scalar precision = Scalar(2) * Eigen::NumTraits<Scalar>::epsilon();
         Index n = m_eivec.cols();
-
         ComplexMatrix matV(n, n);
         for(Index j = 0; j < n; ++j)
         {
-            if(abs(Eigen::numext::imag(m_eivalues.coeff(j))) <= abs(Eigen::numext::real(m_eivalues.coeff(j))) * precision || j + 1 == n)
+            // imaginary part of real eigenvalue is already set to exact zero
+            if(Eigen::numext::imag(m_eivalues.coeff(j)) == Scalar(0) || j + 1 == n)
             {
                 // we have a real eigen value
                 matV.col(j) = m_eivec.col(j).template cast<Complex>();
