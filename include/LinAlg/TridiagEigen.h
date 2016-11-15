@@ -12,7 +12,7 @@
 #define TRIDIAG_EIGEN_H
 
 #include <Eigen/Core>
-#include <Eigen/Eigenvalues>
+#include <Eigen/Jacobi>
 #include <stdexcept>
 
 namespace Spectra {
@@ -40,10 +40,10 @@ private:
 
     bool m_computed;
 
-    static bool is_much_smaller_than(const Scalar& x, const Scalar& y,
-        const Scalar& prec = Eigen::NumTraits<Scalar>::dummy_precision())
+    static bool is_much_smaller_than(const Scalar& x, const Scalar& y, const Scalar& prec)
     {
-        return Eigen::numext::abs2(x) <= Eigen::numext::abs2(y) * prec * prec;
+        using std::abs;
+        return abs(x) <= abs(y) * prec;
     }
 
     // Adapted from Eigen/src/Eigenvaleus/SelfAdjointEigenSolver.h
@@ -62,14 +62,14 @@ private:
         //   RealScalar mu = diag[end] - e2 / (td + (td>0 ? 1 : -1) * sqrt(td*td + e2));
         // This explain the following, somewhat more complicated, version:
         RealScalar mu = diag[end];
-        if(td == 0)
+        if(td == Scalar(0))
             mu -= abs(e);
         else
         {
             RealScalar e2 = Eigen::numext::abs2(subdiag[end-1]);
             RealScalar h = Eigen::numext::hypot(td, e);
-            if(e2==0)  mu -= (e / (td + (td>0 ? 1 : -1))) * (e / h);
-            else       mu -= e2 / (td + (td>0 ? h : -h));
+            if(e2==RealScalar(0)) mu -= (e / (td + (td>RealScalar(0) ? RealScalar(1) : RealScalar(-1)))) * (e / h);
+            else                  mu -= e2 / (td + (td>RealScalar(0) ? h : -h));
         }
 
         RealScalar x = diag[start] - mu;
@@ -131,22 +131,32 @@ public:
         m_evecs.resize(m_n, m_n);
         m_evecs.setIdentity();
 
+        // Scale matrix to improve stability
+        const Scalar scale = std::max(m_main_diag.cwiseAbs().maxCoeff(),
+                                      m_sub_diag.cwiseAbs().maxCoeff());
+        m_main_diag /= scale;
+        m_sub_diag /= scale;
+
+        Scalar* diag = m_main_diag.data();
+        Scalar* subdiag = m_sub_diag.data();
+
         Index end = m_n - 1;
         Index start = 0;
         int iter = 0; // total number of iterations
-        int info = 0;
+        int info = 0; // 0 for success, 1 for failure
 
-        Scalar* maind = m_main_diag.data();
-        Scalar* subd = m_sub_diag.data();
+        const Scalar considerAsZero = Eigen::NumTraits<Scalar>::epsilon();
+        const Scalar precision = Scalar(2) * considerAsZero;
 
         while(end > 0)
         {
             for(Index i = start; i < end; i++)
-                if(is_much_smaller_than(abs(subd[i]), (abs(maind[i]) + abs(maind[i + 1]))))
-                    subd[i] = 0;
+                if(is_much_smaller_than(abs(subdiag[i]), abs(diag[i]) + abs(diag[i + 1]), precision) ||
+                   abs(subdiag[i]) <= considerAsZero)
+                    subdiag[i] = 0;
 
             // find the largest unreduced block
-            while(end > 0 && subd[end - 1] == 0)
+            while(end > 0 && subdiag[end - 1] == Scalar(0))
                 end--;
 
             if(end <= 0)
@@ -161,14 +171,17 @@ public:
             }
 
             start = end - 1;
-            while(start > 0 && subd[start - 1] != 0)
+            while(start > 0 && subdiag[start - 1] != Scalar(0))
                 start--;
 
-            tridiagonal_qr_step(maind, subd, start, end, m_evecs.data(), m_n);
+            tridiagonal_qr_step(diag, subdiag, start, end, m_evecs.data(), m_n);
         }
 
         if(info > 0)
             throw std::logic_error("TridiagEigen: failed to compute all the eigenvalues");
+
+        // Scale eigenvalues back
+        m_main_diag *= scale;
 
         m_computed = true;
     }
