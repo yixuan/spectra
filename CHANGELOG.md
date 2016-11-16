@@ -1,4 +1,8 @@
 ## [Unreleased]
+### Changed
+- Improved the numerical precision and stability of some internal linear
+  algebra classes, including `TridiagEigen`, `UpperHessenbergEigen`, and
+  `DoubleShiftQR`
 
 
 ## [0.4.0] - 2016-11-14
@@ -19,9 +23,9 @@
   `std::numeric_limits<Scalar>::epsilon()`
 - Fixed an out-of-bound [bug](https://github.com/yixuan/spectra/issues/14)
   detected by [@jdbancal](https://github.com/jdbancal)
-- Improved numerical stability, e.g. the function `hypot(x, y)` is used to
-  compute `sqrt(x^2 + y^2)`
-- More careful in using "approximate zero" constants
+- Improved the numerical stability of several operations, e.g. the function
+  `hypot(x, y)` is used to compute `sqrt(x^2 + y^2)`
+- More careful use of "approximate zero" constants
 - Updated included [Catch](https://github.com/philsquared/Catch) to v1.5.7
 - Improved documentation
 - Updated Travis CI script
