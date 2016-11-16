@@ -109,7 +109,7 @@ void run_test_sets(const MatType& A, int k, int m, double sigma)
     }
     SECTION( "Smallest Real Part" )
     {
-        run_test<MatType, SMALLEST_REAL>(A, k, m, sigma, true);
+        run_test<MatType, SMALLEST_REAL>(A, k, m, sigma);
     }
     SECTION( "Smallest Imaginary Part" )
     {
@@ -123,7 +123,7 @@ TEST_CASE("Eigensolver of general real matrix [10x10]", "[eigs_gen]")
 
     const Matrix A = Eigen::MatrixXd::Random(10, 10);
     int k = 3;
-    int m = 6;
+    int m = 8;
     double sigma = 1.0;
 
     run_test_sets(A, k, m, sigma);
@@ -171,7 +171,7 @@ TEST_CASE("Eigensolver of sparse real matrix [100x100]", "[eigs_gen]")
 
     const SpMatrix A = gen_sparse_data(100, 0.5);
     int k = 10;
-    int m = 20;
+    int m = 30;
     double sigma = 10.0;
 
     run_test_sets(A, k, m, sigma);
