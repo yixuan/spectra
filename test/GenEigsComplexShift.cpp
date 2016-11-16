@@ -83,11 +83,11 @@ void run_test_sets(const Matrix &A, int k, int m, double sigmar, double sigmai)
 
 TEST_CASE("Eigensolver of general real matrix [10x10]", "[eigs_gen]")
 {
-    srand(123);
+    std::srand(123);
 
     Matrix A = Eigen::MatrixXd::Random(10, 10);
     int k = 3;
-    int m = 6;
+    int m = 8;
     double sigmar = 2.0;
     double sigmai = 1.0;
 
@@ -96,7 +96,7 @@ TEST_CASE("Eigensolver of general real matrix [10x10]", "[eigs_gen]")
 
 TEST_CASE("Eigensolver of general real matrix [100x100]", "[eigs_gen]")
 {
-    srand(123);
+    std::srand(123);
 
     Matrix A = Eigen::MatrixXd::Random(100, 100);
     int k = 10;
@@ -109,7 +109,7 @@ TEST_CASE("Eigensolver of general real matrix [100x100]", "[eigs_gen]")
 
 TEST_CASE("Eigensolver of general real matrix [1000x1000]", "[eigs_gen]")
 {
-    srand(123);
+    std::srand(123);
 
     Matrix A = Eigen::MatrixXd::Random(1000, 1000);
     int k = 20;
