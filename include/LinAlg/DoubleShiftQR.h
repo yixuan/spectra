@@ -252,8 +252,8 @@ public:
     DoubleShiftQR(Index size) :
         m_n(size),
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
-        m_eps_rel(Eigen::numext::pow(m_eps, Scalar(0.75))),
-        m_eps_abs(std::min(m_eps_rel, m_n * m_eps)),
+        m_eps_rel(m_eps),
+        m_eps_abs(m_eps),
         m_computed(false)
     {}
 
@@ -265,8 +265,8 @@ public:
         m_ref_u(3, m_n),
         m_ref_nr(m_n),
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
-        m_eps_rel(Eigen::numext::pow(m_eps, Scalar(0.75))),
-        m_eps_abs(std::min(m_eps_rel, m_n * m_eps)),
+        m_eps_rel(m_eps),
+        m_eps_abs(m_eps),
         m_computed(false)
     {
         compute(mat, s, t);
