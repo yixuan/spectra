@@ -217,10 +217,12 @@ public:
             throw std::invalid_argument("UpperHessenbergEigen: matrix must be square");
 
         m_n = mat.rows();
+        // Scale matrix prior to the Schur decomposition
+        const Scalar scale = mat.cwiseAbs().maxCoeff();
 
         // Reduce to real Schur form
         Matrix Q = Matrix::Identity(m_n, m_n);
-        m_realSchur.computeFromHessenberg(mat, Q, true);
+        m_realSchur.computeFromHessenberg(mat / scale, Q, true);
         if(m_realSchur.info() != Eigen::Success)
             throw std::runtime_error("UpperHessenbergEigen: eigen decomposition failed");
 
@@ -261,6 +263,9 @@ public:
 
         // Compute eigenvectors
         doComputeEigenvectors();
+
+        // Scale eigenvalues back
+        m_eivalues *= scale;
 
         m_computed = true;
     }
