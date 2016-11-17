@@ -363,7 +363,8 @@ private:
         if(nev_new > m_ncv - 2)
             nev_new = m_ncv - 2;
 
-        // Examine conjugate pairs again
+        // Increase nev by one if ritz_val[nev - 1] and
+        // ritz_val[nev] are conjugate pairs
         if(is_complex(m_ritz_val[nev_new - 1]) &&
            is_conj(m_ritz_val[nev_new - 1], m_ritz_val[nev_new]))
         {
