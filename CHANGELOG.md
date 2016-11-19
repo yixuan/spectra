@@ -3,6 +3,13 @@
 - Improved the numerical precision and stability of some internal linear
   algebra classes, including `TridiagEigen`, `UpperHessenbergEigen`, and
   `DoubleShiftQR`
+- **API change**: The matrix operation object in `GenEigsComplexShiftSolver`
+  now requires an additional (overloaded) function
+  `void perform_op(Complex* x_in, Complex* y_out)`. See the
+  `DenseGenComplexShiftSolve` class as an example
+- Fixed a [bug](https://github.com/yixuan/spectra/issues/15) that
+  `GenEigsComplexShiftSolver` gave wrong results when transforming back the
+  eigenvalues, discovered by [@jdbancal](https://github.com/jdbancal)
 
 
 ## [0.4.0] - 2016-11-14
@@ -14,6 +21,9 @@
 - Added test code for generalized eigen solver
 
 ### Changed
+- Updated included [Catch](https://github.com/philsquared/Catch) to v1.5.7
+- Improved documentation
+- Updated Travis CI script
 - Allowing basic math functions such as `abs()` and `sqrt()` to be overloaded
   (avoid using `std::abs` and `std::sqrt` directly), thanks to
   [@jdbancal](https://github.com/jdbancal). This makes it possible to use
@@ -21,14 +31,11 @@
 - Replaced other `std` functions by their Eigen counterparts, for example using
   `Eigen::NumTraits<Scalar>::epsilon()` to substitute
   `std::numeric_limits<Scalar>::epsilon()`
-- Fixed an out-of-bound [bug](https://github.com/yixuan/spectra/issues/14)
-  detected by [@jdbancal](https://github.com/jdbancal)
 - Improved the numerical stability of several operations, e.g. the function
   `hypot(x, y)` is used to compute `sqrt(x^2 + y^2)`
 - More careful use of "approximate zero" constants
-- Updated included [Catch](https://github.com/philsquared/Catch) to v1.5.7
-- Improved documentation
-- Updated Travis CI script
+- Fixed an out-of-bound [bug](https://github.com/yixuan/spectra/issues/14)
+  detected by [@jdbancal](https://github.com/jdbancal)
 
 
 ## [0.3.0] - 2016-07-03
