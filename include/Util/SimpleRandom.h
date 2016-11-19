@@ -64,6 +64,12 @@ public:
         m_rand(init_seed ? (init_seed & m_max) : 1)
     {}
 
+    Scalar random()
+    {
+        m_rand = next_long_rand(m_rand);
+        return Scalar(m_rand) / Scalar(m_max) - Scalar(0.5);
+    }
+
     // Vector of random numbers of type Scalar
     // Ranging from -0.5 to 0.5
     Vector random_vec(const int len)
