@@ -49,7 +49,7 @@ private:
     void sort_ritzpair(int sort_rule)
     {
         using std::abs;
-        using std::sin;
+        using std::sqrt;
 
         // The eigenvalus we get from the iteration is
         //     nu = 0.5 * (1 / (lambda - sigma)) + 1 / (lambda - conj(sigma)))
@@ -60,35 +60,49 @@ private:
         // We need to pick up the correct root
         // Let vi be the i-th eigenvector, then A * vi = lambdai * vi
         // and inv(A - r * I) * vi = 1 / (lambdai - r) * vi
-        // where r is any real value.
+        // where r is any shift value.
         // We can use this identity to back-solve lambdai
 
-        // Select an arbitrary real shift value
-        Scalar r = sigmar + sin(sigmar);
-        this->m_op->set_shift(r, 0);
+        // Select a random shift value
+        SimpleRandom<Scalar> rng(0);
+        Scalar shiftr = rng.random() * sigmar + rng.random();
+        Scalar shifti = rng.random() * sigmai + rng.random();
+        this->m_op->set_shift(shiftr, shifti);
 
         // Calculate inv(A - r * I) * vi
-        ComplexArray v;
-        Array v_real, v_imag;
-        Array lhs_real(this->m_n), lhs_imag(this->m_n);
-        Scalar eps = Eigen::numext::pow(Eigen::NumTraits<Scalar>::epsilon(), Scalar(2.0) / 3);
+        ComplexArray v(this->m_n), OPv(this->m_n);
+        Scalar eps = Eigen::NumTraits<Scalar>::epsilon();
         for(int i = 0; i < this->m_nev; i++)
         {
             v = this->m_fac_V * this->m_ritz_vec.col(i);
-            v_real = v.real();
-            v_imag = v.imag();
+            this->m_op->perform_op(v.data(), OPv.data());
 
-            this->m_op->perform_op(v_real.data(), lhs_real.data());
-            this->m_op->perform_op(v_imag.data(), lhs_imag.data());
+            // Two roots computed from the quadratic equation
+            Complex nu = this->m_ritz_val[i];
+            Complex root_part1 = sigmar + Scalar(0.5) / nu;
+            Complex root_part2 = Scalar(0.5) * sqrt(Scalar(1) - Scalar(4) * sigmai * sigmai * (nu * nu)) / nu;
+            Complex root1 = root_part1 + root_part2;
+            Complex root2 = root_part1 - root_part2;
 
-            Complex lambdai = Complex(v_real[0], v_imag[0]) / Complex(lhs_real[0], lhs_imag[0]) +
-                              Complex(r, 0);
+            // Root computed from the linear equation
+            // Technically we can directly use this root, but its precision is usually
+            // lower than the one computed from the quadratic equation
+            int loc;
+            OPv.cwiseAbs().maxCoeff(&loc);
+            Complex lambdai = v[loc] / OPv[loc] + Complex(shiftr, shifti);
+
+            if(abs(root1 - lambdai) < abs(root2 - lambdai))
+                lambdai = root1;
+            else
+                lambdai = root2;
             this->m_ritz_val[i] = lambdai;
 
-            if(abs(lambdai.imag()) > eps)
+            if(abs(Eigen::numext::imag(lambdai)) > eps)
             {
                 this->m_ritz_val[i + 1] = Eigen::numext::conj(lambdai);
                 i++;
+            } else {
+                this->m_ritz_val[i] = Complex(Eigen::numext::real(lambdai), Scalar(0));
             }
         }
 
