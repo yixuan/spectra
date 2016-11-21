@@ -77,7 +77,7 @@ public:
     ///
     void set_shift(Scalar sigmar, Scalar sigmai)
     {
-        m_solver.compute(m_mat - Complex(sigmar, sigmai) * ComplexMatrix::Identity(m_n, m_n));
+        m_solver.compute(m_mat.template cast<Complex>() - Complex(sigmar, sigmai) * ComplexMatrix::Identity(m_n, m_n));
         m_x_cache.resize(m_n);
         m_x_cache.setZero();
     }
