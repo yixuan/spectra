@@ -1,8 +1,8 @@
-./QR
-./Eigen
-./SymEigs
-./SymEigsShift
-./SymGEigsCholesky
-./GenEigs
-./GenEigsRealShift
-./GenEigsComplexShift
+QR
+Eigen
+SymEigs
+SymEigsShift
+SymGEigsCholesky
+GenEigs
+GenEigsRealShift
+GenEigsComplexShift
