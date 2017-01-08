@@ -71,7 +71,7 @@ void run_test(const MatType& mat, int k, int m)
     INFO( "nconv = " << nconv );
     INFO( "niter = " << niter );
     INFO( "nops  = " << nops  );
-    REQUIRE( eigs.info() == SUCCESSFUL );
+    REQUIRE( (eigs.info()) == SUCCESSFUL );
 
     Vector evals = eigs.eigenvalues();
     Matrix evecs = eigs.eigenvectors();

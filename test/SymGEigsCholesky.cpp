@@ -111,7 +111,7 @@ void run_test(const MatType& A, const MatType& B, int k, int m, bool allow_fail 
         INFO( "nconv = " << nconv );
         INFO( "niter = " << niter );
         INFO( "nops  = " << nops );
-        REQUIRE( eigs.info() == SUCCESSFUL );
+        REQUIRE( (eigs.info()) == SUCCESSFUL );
     }
 
     Vector evals = eigs.eigenvalues();

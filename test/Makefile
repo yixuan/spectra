@@ -1,5 +1,5 @@
 CXXFLAGS = -std=c++11 -Wall -O2
-CPPFLAGS = -I../include
+CPPFLAGS = -I../include -I/usr/local/include/eigen3
 LDFLAGS =
 LIBS =
 
@@ -8,20 +8,17 @@ HEADERS = $(wildcard ../include/MatOp/*.h) $(wildcard ../include/LinAlg/*.h) $(w
 
 .PHONY: all test clean
 
-all: QR.out Eigen.out SymEigs.out SymEigsShift.out SymGEigsCholesky.out GenEigs.out GenEigsRealShift.out GenEigsComplexShift.out
+all: QR Eigen SymEigs SymEigsShift SymGEigsCholesky GenEigs GenEigsRealShift GenEigsComplexShift
 
 test:
-	-./QR.out
-	-./Eigen.out
-	-./SymEigs.out
-	-./SymEigsShift.out
-	-./SymGEigsCholesky.out
-	-./GenEigs.out
-	-./GenEigsRealShift.out
-	-./GenEigsComplexShift.out
-
-%.out: %.cpp $(HEADERS)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@ $(LDFLAGS) $(LIBS)
+	-./QR
+	-./Eigen
+	-./SymEigs
+	-./SymEigsShift
+	-./SymGEigsCholesky
+	-./GenEigs
+	-./GenEigsRealShift
+	-./GenEigsComplexShift
 
 clean:
-	-rm *.out
+	-rm 

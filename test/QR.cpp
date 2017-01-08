@@ -28,11 +28,11 @@ void run_test(MatrixType &H)
     // Test orthogonality
     MatrixXd QtQ = Q.transpose() * Q;
     INFO( "||Q'Q - I||_inf = " << (QtQ - I).cwiseAbs().maxCoeff() );
-    REQUIRE( (QtQ - I).cwiseAbs().maxCoeff() == Approx(0.0) );
+    REQUIRE( ((QtQ - I).cwiseAbs().maxCoeff()) == Approx(0.0) );
 
     MatrixXd QQt = Q * Q.transpose();
     INFO( "||QQ' - I||_inf = " << (QQt - I).cwiseAbs().maxCoeff() );
-    REQUIRE( (QQt - I).cwiseAbs().maxCoeff() == Approx(0.0) );
+    REQUIRE( ((QQt - I).cwiseAbs().maxCoeff()) == Approx(0.0) );
 
     // Calculate R = Q'H
     MatrixXd R = decomp.matrix_R();
