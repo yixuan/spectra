@@ -20,13 +20,13 @@ namespace Spectra {
 /// sparse real symmetric matrix \f$A\f$, i.e., calculating \f$y=Ax\f$ for any vector
 /// \f$x\f$. It is mainly used in the SymEigsSolver eigen solver.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower>
+template <typename Scalar, int Uplo = Eigen::Lower, int Flags = 0, typename StorageIndex = int>
 class SparseSymMatProd
 {
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
     typedef Eigen::Map<Vector> MapVec;
-    typedef Eigen::SparseMatrix<Scalar> SparseMatrix;
+    typedef Eigen::SparseMatrix<Scalar, Flags, StorageIndex> SparseMatrix;
 
     const SparseMatrix& m_mat;
 

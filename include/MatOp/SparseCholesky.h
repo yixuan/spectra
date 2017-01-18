@@ -23,13 +23,13 @@ namespace Spectra {
 /// matrix. It is mainly used in the SymGEigsSolver generalized eigen solver
 /// in the Cholesky decomposition mode.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower>
+template <typename Scalar, int Uplo = Eigen::Lower, int Flags = 0, typename StorageIndex = int>
 class SparseCholesky
 {
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
     typedef Eigen::Map<Vector> MapVec;
-    typedef Eigen::SparseMatrix<Scalar> SparseMatrix;
+    typedef Eigen::SparseMatrix<Scalar, Flags, StorageIndex> SparseMatrix;
 
     const int m_n;
     Eigen::SimplicialLLT<SparseMatrix, Uplo> m_decomp;
