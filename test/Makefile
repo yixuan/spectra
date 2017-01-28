@@ -21,4 +21,4 @@ test:
 	-./GenEigsComplexShift
 
 clean:
-	-rm 
+	$(RM) QR Eigen SymEigs SymEigsShift SymGEigsCholesky GenEigs GenEigsRealShift GenEigsComplexShift *.o
