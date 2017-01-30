@@ -28,8 +28,9 @@ class DenseCholesky
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Map<const Matrix> MapMat;
-    typedef Eigen::Map< Eigen::Matrix<Scalar, Eigen::Dynamic, 1> > MapVec;
+    typedef Eigen::Map<const Matrix> MapConstMat;
+    typedef Eigen::Map<const Vector> MapConstVec;
+    typedef Eigen::Map<Vector> MapVec;
 
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
@@ -70,10 +71,10 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = inv(L) * x_in
-    void lower_triangular_solve(Scalar* x_in, Scalar* y_out) const
+    void lower_triangular_solve(const Scalar* x_in, Scalar* y_out) const
     {
-        MapVec x(x_in,  m_n);
-        MapVec y(y_out, m_n);
+        MapConstVec x(x_in,  m_n);
+        MapVec      y(y_out, m_n);
         y.noalias() = m_decomp.matrixL().solve(x);
     }
 
@@ -84,10 +85,10 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = inv(L') * x_in
-    void upper_triangular_solve(Scalar* x_in, Scalar* y_out) const
+    void upper_triangular_solve(const Scalar* x_in, Scalar* y_out) const
     {
-        MapVec x(x_in,  m_n);
-        MapVec y(y_out, m_n);
+        MapConstVec x(x_in,  m_n);
+        MapVec      y(y_out, m_n);
         y.noalias() = m_decomp.matrixU().solve(x);
     }
 };

@@ -27,6 +27,7 @@ class SparseSymShiftSolve
 {
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
+    typedef Eigen::Map<const Vector> MapConstVec;
     typedef Eigen::Map<Vector> MapVec;
     typedef Eigen::SparseMatrix<Scalar, Flags, StorageIndex> SparseMatrix;
 
@@ -74,10 +75,10 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = inv(A - sigma * I) * x_in
-    void perform_op(Scalar* x_in, Scalar* y_out) const
+    void perform_op(const Scalar* x_in, Scalar* y_out) const
     {
-        MapVec x(x_in,  m_n);
-        MapVec y(y_out, m_n);
+        MapConstVec x(x_in,  m_n);
+        MapVec      y(y_out, m_n);
         y.noalias() = m_solver.solve(x);
     }
 };

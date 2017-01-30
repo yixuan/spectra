@@ -62,7 +62,7 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = inv(L) * A * inv(L') * x_in
-    void perform_op(Scalar* x_in, Scalar* y_out)
+    void perform_op(const Scalar* x_in, Scalar* y_out)
     {
         m_Bop.upper_triangular_solve(x_in, y_out);
         m_op.perform_op(y_out, m_cache.data());

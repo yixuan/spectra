@@ -25,12 +25,13 @@ class DenseSymMatProd
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Map<const Matrix> MapMat;
-    typedef Eigen::Map< Eigen::Matrix<Scalar, Eigen::Dynamic, 1> > MapVec;
+    typedef Eigen::Map<const Matrix> MapConstMat;
+    typedef Eigen::Map<const Vector> MapConstVec;
+    typedef Eigen::Map<Vector> MapVec;
 
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
-    const MapMat m_mat;
+    const MapConstMat m_mat;
 
 public:
     ///
@@ -61,10 +62,10 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = A * x_in
-    void perform_op(Scalar* x_in, Scalar* y_out) const
+    void perform_op(const Scalar* x_in, Scalar* y_out) const
     {
-        MapVec x(x_in, m_mat.cols());
-        MapVec y(y_out, m_mat.rows());
+        MapConstVec x(x_in,  m_mat.cols());
+        MapVec      y(y_out, m_mat.rows());
         y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
     }
 };

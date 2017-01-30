@@ -27,18 +27,22 @@ class DenseGenComplexShiftSolve
 {
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Map<const Matrix> MapMat;
-    typedef Eigen::Map< Eigen::Matrix<Scalar, Eigen::Dynamic, 1> > MapVec;
+    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
+    typedef Eigen::Map<const Matrix> MapConstMat;
+    typedef Eigen::Map<const Vector> MapConstVec;
+    typedef Eigen::Map<Vector> MapVec;
 
     typedef std::complex<Scalar> Complex;
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic> ComplexMatrix;
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, 1> ComplexVector;
+    typedef Eigen::Map<const ComplexVector> MapConstComplexVec;
     typedef Eigen::Map<ComplexVector> MapComplexVec;
+
     typedef Eigen::PartialPivLU<ComplexMatrix> ComplexSolver;
 
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
-    const MapMat m_mat;
+    const MapConstMat m_mat;
     const int m_n;
     ComplexSolver m_solver;
     ComplexVector m_x_cache;
@@ -90,9 +94,9 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = Re( inv(A - sigma * I) * x_in )
-    void perform_op(Scalar* x_in, Scalar* y_out)
+    void perform_op(const Scalar* x_in, Scalar* y_out)
     {
-        m_x_cache.real() = MapVec(x_in, m_n);
+        m_x_cache.real() = MapConstVec(x_in, m_n);
         MapVec y(y_out, m_n);
         y.noalias() = m_solver.solve(m_x_cache).real();
     }
@@ -107,10 +111,10 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = inv(A - sigma * I) * x_in
-    void perform_op(Complex* x_in, Complex* y_out) const
+    void perform_op(const Complex* x_in, Complex* y_out) const
     {
-        MapComplexVec x(x_in, m_n);
-        MapComplexVec y(y_out, m_n);
+        MapConstComplexVec x(x_in,  m_n);
+        MapComplexVec      y(y_out, m_n);
         y.noalias() = m_solver.solve(x);
     }
 };
