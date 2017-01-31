@@ -10,6 +10,7 @@
 #include "SymEigsSolver.h"
 #include "Util/GEigsMode.h"
 #include "MatOp/SymGEigsCholeskyOp.h"
+#include "MatOp/SymGEigsRegInvOp.h"
 
 
 namespace Spectra {
@@ -230,6 +231,87 @@ public:
         return SymGEigsSolver<Scalar, SelectionRule, OpType, BOpType, GEIGS_CHOLESKY>::eigenvectors(this->m_nev);
     }
 
+    /// \endcond
+};
+
+
+
+// Partial specialization for GEigsMode = GEIGS_REGULAR_INVERSE
+template < typename Scalar,
+           int SelectionRule,
+           typename OpType,
+           typename BOpType >
+class SymGEigsSolver<Scalar, SelectionRule, OpType, BOpType, GEIGS_REGULAR_INVERSE>:
+    public SymEigsSolver< Scalar, SelectionRule, SymGEigsRegInvOp<Scalar, OpType, BOpType> >
+{
+private:
+    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
+    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
+    typedef Eigen::Map<Matrix> MapMat;
+    typedef Eigen::Map<Vector> MapVec;
+
+    BOpType* m_Bop;
+    Vector   m_cache;  // temporary working space
+
+    // In generalized eigenvalue problem Ax=lambda*Bx, define the inner product to be <x, y> = x'By
+    virtual Scalar inner_product(const Vector& x, const Vector& y)
+    {
+        m_Bop->mat_prod(y.data(), m_cache.data());
+        return x.dot(m_cache);
+    }
+    virtual Scalar inner_product(const MapVec& x, const Vector& y)
+    {
+        m_Bop->mat_prod(y.data(), m_cache.data());
+        return x.dot(m_cache);
+    }
+    virtual Vector inner_product(const MapMat& x, const Vector& y)
+    {
+        m_Bop->mat_prod(y.data(), m_cache.data());
+        return x.transpose() * m_cache;
+    }
+    // B-norm of a vector
+    virtual Scalar norm(const Vector& x)
+    {
+        using std::sqrt;
+        return sqrt(inner_product(x, x));
+    }
+
+public:
+    ///
+    /// Constructor to create a solver object.
+    ///
+    /// \param op_  Pointer to the \f$A\f$ matrix operation object. It
+    ///             should implement the matrix-vector multiplication operation of \f$A\f$:
+    ///             calculating \f$Ay\f$ for any vector \f$y\f$. Users could either
+    ///             create the object from the wrapper classes such as DenseSymMatProd, or
+    ///             define their own that impelemnts all the public member functions
+    ///             as in DenseSymMatProd.
+    /// \param Bop_ Pointer to the \f$B\f$ matrix operation object. It should
+    ///             implement the multiplication operation \f$By\f$ and the linear equation
+    ///             solving operation \f$B^{-1}y\f$. Users could either
+    ///             create the object from the wrapper classes such as SparseRegularInverse, or
+    ///             define their own that impelemnts all the public member functions
+    ///             as in SparseRegularInverse.
+    /// \param nev_ Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///             where \f$n\f$ is the size of matrix.
+    /// \param ncv_ Parameter that controls the convergence speed of the algorithm.
+    ///             Typically a larger `ncv_` means faster convergence, but it may
+    ///             also result in greater memory use and more matrix operations
+    ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    ///
+    SymGEigsSolver(OpType* op_, BOpType* Bop_, int nev_, int ncv_) :
+        SymEigsSolver< Scalar, SelectionRule, SymGEigsRegInvOp<Scalar, OpType, BOpType> >(
+            new SymGEigsRegInvOp<Scalar, OpType, BOpType>(*op_, *Bop_), nev_, ncv_
+        ),
+        m_Bop(Bop_), m_cache(op_->rows())
+    {}
+
+    /// \cond
+    ~SymGEigsSolver()
+    {
+        delete this->m_op;
+    }
     /// \endcond
 };
 
