@@ -1,4 +1,4 @@
-CXXFLAGS = -std=c++11 -Wall -O2
+CXXFLAGS = -std=c++11 -Wall -O2 -Wno-parentheses -Wno-misleading-indentation
 CPPFLAGS = -I../include
 LDFLAGS =
 LIBS =
