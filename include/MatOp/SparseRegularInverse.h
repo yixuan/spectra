@@ -18,9 +18,8 @@ namespace Spectra {
 ///
 /// \ingroup MatOp
 ///
-/// This class defines matrix operations related to a generalized eigen solver
-/// in the regular inverse mode. For a generalized eigenvalue problem \f$Ax=\lambda Bx\f$,
-/// where \f$A\f$ is symmetric and \f$B\f$ is sparse and positive definite,
+/// This class defines matrix operations required by the generalized eigen solver
+/// in the regular inverse mode. For a sparse and positive definite matrix \f$B\f$,
 /// it implements the matrix-vector product \f$y=Bx\f$ and the linear equation
 /// solving operation \f$y=B^{-1}x\f$.
 ///

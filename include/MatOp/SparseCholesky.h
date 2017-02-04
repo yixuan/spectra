@@ -19,7 +19,7 @@ namespace Spectra {
 /// \ingroup MatOp
 ///
 /// This class defines the operations related to Cholesky decomposition on a
-/// sparse positive definite matrix, \f$A=LL'\f$, where \f$L\f$ is a lower triangular
+/// sparse positive definite matrix, \f$B=LL'\f$, where \f$L\f$ is a lower triangular
 /// matrix. It is mainly used in the SymGEigsSolver generalized eigen solver
 /// in the Cholesky decomposition mode.
 ///

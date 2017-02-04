@@ -34,11 +34,13 @@ namespace Spectra {
 /// - The Cholesky mode assumes that \f$B\f$ can be factorized using Cholesky
 ///   decomposition, which is the preferred mode when the decomposition is
 ///   available. (This can be easily done in Eigen using the dense or sparse
-///   Cholesky solver)
-///   See \ref SymGEigsSolver<Scalar, SelectionRule, OpType, BOpType, GEIGS_CHOLESKY> "SymGEigsSolver (Cholesky mode)" for this mode.
-/// - The regular inverse mode requires the operation \f$B^{-1}v\f$, i.e., to
-///   solve the linear equation \f$Bx=v\f$. Currently this mode has not been
-///   implemented yet.
+///   Cholesky solver.)
+///   See \ref SymGEigsSolver<Scalar, SelectionRule, OpType, BOpType, GEIGS_CHOLESKY> "SymGEigsSolver (Cholesky mode)" for more details.
+/// - The regular inverse mode requires the matrix-vector product \f$Bv\f$ and the
+///   linear equation solving operation \f$B^{-1}v\f$. This mode should only be
+///   used when the Cholesky decomposition of \f$B\f$ is hard to implement, or
+///   when computing \f$B^{-1}v\f$ is much faster than the Cholesky decomposition.
+///   See \ref SymGEigsSolver<Scalar, SelectionRule, OpType, BOpType, GEIGS_REGULAR_INVERSE> "SymGEigsSolver (Regular inverse mode)" for more details.
 
 // Empty class template
 template < typename Scalar,
@@ -178,15 +180,15 @@ public:
     ///
     /// \param op_  Pointer to the \f$A\f$ matrix operation object. It
     ///             should implement the matrix-vector multiplication operation of \f$A\f$:
-    ///             calculating \f$Ay\f$ for any vector \f$y\f$. Users could either
+    ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
     ///             create the object from the wrapper classes such as DenseSymMatProd, or
     ///             define their own that impelemnts all the public member functions
     ///             as in DenseSymMatProd.
     /// \param Bop_ Pointer to the \f$B\f$ matrix operation object. It
     ///             represents a Cholesky decomposition of \f$B\f$, and should
     ///             implement the lower and upper triangular solving operations:
-    ///             calculating \f$L^{-1}y\f$ and \f$(L')^{-1}y\f$ for any vector
-    ///             \f$y\f$, where \f$LL'=B\f$. Users could either
+    ///             calculating \f$L^{-1}v\f$ and \f$(L')^{-1}v\f$ for any vector
+    ///             \f$v\f$, where \f$LL'=B\f$. Users could either
     ///             create the object from the wrapper classes such as DenseCholesky, or
     ///             define their own that impelemnts all the public member functions
     ///             as in DenseCholesky.
@@ -236,6 +238,45 @@ public:
 
 
 
+///
+/// \ingroup GEigenSolver
+///
+/// This class implements the generalized eigen solver for real symmetric
+/// matrices in the regular inverse mode, i.e., to solve \f$Ax=\lambda Bx\f$
+/// where \f$A\f$ is symmetric, and \f$B\f$ is positive definite with the operations
+/// defined below.
+///
+/// This solver requires two matrix operation objects: one for \f$A\f$ that implements
+/// the matrix multiplication \f$Av\f$, and one for \f$B\f$ that implements the
+/// matrix-vector product \f$Bv\f$ and the linear equation solving operation \f$B^{-1}v\f$.
+///
+/// If \f$A\f$ and \f$B\f$ are stored as Eigen matrices, then the first operation
+/// can be created using the DenseSymMatProd or SparseSymMatProd classes, and
+/// the second operation can be created using the SparseRegularInverse class. There is no
+/// wrapper class for a dense \f$B\f$ matrix since in this case the Cholesky mode
+/// is always preferred. If the users need to define their own operation classes, then they
+/// should implement all the public member functions as in those built-in classes.
+///
+/// \tparam Scalar        The element type of the matrix.
+///                       Currently supported types are `float`, `double` and `long double`.
+/// \tparam SelectionRule An enumeration value indicating the selection rule of
+///                       the requested eigenvalues, for example `LARGEST_MAGN`
+///                       to retrieve eigenvalues with the largest magnitude.
+///                       The full list of enumeration values can be found in
+///                       \ref Enumerations.
+/// \tparam OpType        The name of the matrix operation class for \f$A\f$. Users could either
+///                       use the wrapper classes such as DenseSymMatProd and
+///                       SparseSymMatProd, or define their
+///                       own that impelemnts all the public member functions as in
+///                       DenseSymMatProd.
+/// \tparam BOpType       The name of the matrix operation class for \f$B\f$. Users could either
+///                       use the wrapper class SparseRegularInverse, or define their
+///                       own that impelemnts all the public member functions as in
+///                       SparseRegularInverse.
+/// \tparam GEigsMode     Mode of the generalized eigen solver. In this solver
+///                       it is Spectra::GEIGS_REGULAR_INVERSE.
+///
+
 // Partial specialization for GEigsMode = GEIGS_REGULAR_INVERSE
 template < typename Scalar,
            int SelectionRule,
@@ -282,14 +323,14 @@ public:
     ///
     /// \param op_  Pointer to the \f$A\f$ matrix operation object. It
     ///             should implement the matrix-vector multiplication operation of \f$A\f$:
-    ///             calculating \f$Ay\f$ for any vector \f$y\f$. Users could either
+    ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
     ///             create the object from the wrapper classes such as DenseSymMatProd, or
     ///             define their own that impelemnts all the public member functions
     ///             as in DenseSymMatProd.
     /// \param Bop_ Pointer to the \f$B\f$ matrix operation object. It should
-    ///             implement the multiplication operation \f$By\f$ and the linear equation
-    ///             solving operation \f$B^{-1}y\f$. Users could either
-    ///             create the object from the wrapper classes such as SparseRegularInverse, or
+    ///             implement the multiplication operation \f$Bv\f$ and the linear equation
+    ///             solving operation \f$B^{-1}v\f$ for any vector \f$v\f$. Users could either
+    ///             create the object from the wrapper class SparseRegularInverse, or
     ///             define their own that impelemnts all the public member functions
     ///             as in SparseRegularInverse.
     /// \param nev_ Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,

@@ -174,7 +174,7 @@ public:
     ///
     /// \param op_    Pointer to the matrix operation object, which should implement
     ///               the shift-solve operation of \f$A\f$: calculating
-    ///               \f$(A-\sigma I)^{-1}y\f$ for any vector \f$y\f$. Users could either
+    ///               \f$(A-\sigma I)^{-1}v\f$ for any vector \f$v\f$. Users could either
     ///               create the object from the wrapper class such as DenseSymShiftSolve, or
     ///               define their own that impelemnts all the public member functions
     ///               as in DenseSymShiftSolve.

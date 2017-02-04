@@ -114,7 +114,7 @@ public:
     ///
     /// \param op_     Pointer to the matrix operation object. This class should implement
     ///                the complex shift-solve operation of \f$A\f$: calculating
-    ///                \f$\mathrm{Re}\{(A-\sigma I)^{-1}y\}\f$ for any vector \f$y\f$. Users could either
+    ///                \f$\mathrm{Re}\{(A-\sigma I)^{-1}v\}\f$ for any vector \f$v\f$. Users could either
     ///                create the object from the DenseGenComplexShiftSolve wrapper class, or
     ///                define their own that impelemnts all the public member functions
     ///                as in DenseGenComplexShiftSolve.
