@@ -9,8 +9,8 @@
 
 #include "SymEigsSolver.h"
 #include "Util/GEigsMode.h"
-#include "MatOp/SymGEigsCholeskyOp.h"
-#include "MatOp/SymGEigsRegInvOp.h"
+#include "MatOp/internal/SymGEigsCholeskyOp.h"
+#include "MatOp/internal/SymGEigsRegInvOp.h"
 
 
 namespace Spectra {
