@@ -57,6 +57,8 @@ with a real-valued shift
 - [GenEigsComplexShiftSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
 For general real matrices using the shift-and-invert mode,
 with a complex-valued shift
+- [SymGEigsSolver](http://yixuan.cos.name/spectra/doc/classSpectra_1_1SymGEigsSolver.html):
+For generalized eigen solver for real symmetric matrices
 
 ### Examples
 
