@@ -1,4 +1,7 @@
 ## [Unreleased]
+
+
+## [0.5.0] - 2017-02-04
 ### Added
 - Added the generalized eigen solver `SymGEigsSolver` in the regular inverse mode
 - Added the wrapper class `SparseRegularInverse` that can be used with
