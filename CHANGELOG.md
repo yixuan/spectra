@@ -19,6 +19,7 @@
   `GenEigsComplexShiftSolver` gave wrong results when transforming back the
   eigenvalues, discovered by [@jdbancal](https://github.com/jdbancal)
 - Updated included [Catch](https://github.com/philsquared/Catch) to v1.7.0
+- Documentation improvement
 
 
 ## [0.4.0] - 2016-11-14
