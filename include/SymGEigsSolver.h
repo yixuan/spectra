@@ -295,23 +295,23 @@ private:
     Vector   m_cache;  // temporary working space
 
     // In generalized eigenvalue problem Ax=lambda*Bx, define the inner product to be <x, y> = x'By
-    virtual Scalar inner_product(const Vector& x, const Vector& y)
+    Scalar inner_product(const Vector& x, const Vector& y)
     {
         m_Bop->mat_prod(y.data(), m_cache.data());
         return x.dot(m_cache);
     }
-    virtual Scalar inner_product(const MapVec& x, const Vector& y)
+    Scalar inner_product(const MapVec& x, const Vector& y)
     {
         m_Bop->mat_prod(y.data(), m_cache.data());
         return x.dot(m_cache);
     }
-    virtual Vector inner_product(const MapMat& x, const Vector& y)
+    Vector inner_product(const MapMat& x, const Vector& y)
     {
         m_Bop->mat_prod(y.data(), m_cache.data());
         return x.transpose() * m_cache;
     }
     // B-norm of a vector
-    virtual Scalar norm(const Vector& x)
+    Scalar norm(const Vector& x)
     {
         using std::sqrt;
         return sqrt(inner_product(x, x));
