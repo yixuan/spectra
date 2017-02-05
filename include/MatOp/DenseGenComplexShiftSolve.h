@@ -35,8 +35,6 @@ private:
     typedef std::complex<Scalar> Complex;
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic> ComplexMatrix;
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, 1> ComplexVector;
-    typedef Eigen::Map<const ComplexVector> MapConstComplexVec;
-    typedef Eigen::Map<ComplexVector> MapComplexVec;
 
     typedef Eigen::PartialPivLU<ComplexMatrix> ComplexSolver;
 
@@ -99,23 +97,6 @@ public:
         m_x_cache.real() = MapConstVec(x_in, m_n);
         MapVec y(y_out, m_n);
         y.noalias() = m_solver.solve(m_x_cache).real();
-    }
-
-    ///
-    /// Perform the complex shift-solve operation
-    /// \f$y=(A-\sigma I)^{-1}x\f$. Note that here both \f$x\f$ and \f$y\f$ can
-    /// be complex numbers. This additional operation is needed in the
-    /// GenEigsComplexShiftSolver solver to transform back the eigenvalues.
-    ///
-    /// \param x_in  Pointer to the \f$x\f$ vector.
-    /// \param y_out Pointer to the \f$y\f$ vector.
-    ///
-    // y_out = inv(A - sigma * I) * x_in
-    void perform_op(const Complex* x_in, Complex* y_out) const
-    {
-        MapConstComplexVec x(x_in,  m_n);
-        MapComplexVec      y(y_out, m_n);
-        y.noalias() = m_solver.solve(x);
     }
 };
 
