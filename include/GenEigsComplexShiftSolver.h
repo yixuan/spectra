@@ -38,9 +38,10 @@ template <typename Scalar = double,
 class GenEigsComplexShiftSolver: public GenEigsSolver<Scalar, SelectionRule, OpType>
 {
 private:
-    typedef Eigen::Array<Scalar, Eigen::Dynamic, 1> Array;
     typedef std::complex<Scalar> Complex;
-    typedef Eigen::Array<Complex, Eigen::Dynamic, 1> ComplexArray;
+    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
+    typedef Eigen::Matrix<Complex, Eigen::Dynamic, 1> ComplexVector;
+
 
     Scalar sigmar;
     Scalar sigmai;
@@ -50,32 +51,41 @@ private:
     {
         using std::abs;
         using std::sqrt;
+        using std::norm;
 
         // The eigenvalus we get from the iteration is
-        //     nu = 0.5 * (1 / (lambda - sigma)) + 1 / (lambda - conj(sigma)))
+        //     nu = 0.5 * (1 / (lambda - sigma) + 1 / (lambda - conj(sigma)))
         // So the eigenvalues of the original problem is
         //                       1 \pm sqrt(1 - 4 * nu^2 * sigmai^2)
         //     lambda = sigmar + -----------------------------------
         //                                     2 * nu
-        // We need to pick up the correct root
-        // Let vi be the i-th eigenvector, then A * vi = lambdai * vi
-        // and inv(A - r * I) * vi = 1 / (lambdai - r) * vi
+        // We need to pick the correct root
+        // Let (lambdaj, vj) be the j-th eigen pair, then A * vj = lambdaj * vj
+        // and inv(A - r * I) * vj = 1 / (lambdaj - r) * vj
         // where r is any shift value.
-        // We can use this identity to back-solve lambdai
+        // We can use this identity to determine lambdaj
+        //
+        // op(v) computes Re(inv(A - r * I) * v) for any real v
+        // If r is real, then op(v) is also real. Let a = Re(vj), b = Im(vj),
+        // then op(vj) = op(a) + op(b) * i
+        // By comparing op(vj) and [1 / (lambdaj - r) * vj], we can determine
+        // which one is the correct root
 
         // Select a random shift value
         SimpleRandom<Scalar> rng(0);
         Scalar shiftr = rng.random() * sigmar + rng.random();
-        Scalar shifti = rng.random() * sigmai + rng.random();
-        this->m_op->set_shift(shiftr, shifti);
+        Complex shift = Complex(shiftr, Scalar(0));
+        this->m_op->set_shift(shiftr, Scalar(0));
 
-        // Calculate inv(A - r * I) * vi
-        ComplexArray v(this->m_n), OPv(this->m_n);
+        // Calculate inv(A - r * I) * vj
+        Vector v_real(this->m_n), v_imag(this->m_n), OPv_real(this->m_n), OPv_imag(this->m_n);
         Scalar eps = Eigen::NumTraits<Scalar>::epsilon();
         for(int i = 0; i < this->m_nev; i++)
         {
-            v = this->m_fac_V * this->m_ritz_vec.col(i);
-            this->m_op->perform_op(v.data(), OPv.data());
+            v_real.noalias() = this->m_fac_V * this->m_ritz_vec.col(i).real();
+            v_imag.noalias() = this->m_fac_V * this->m_ritz_vec.col(i).imag();
+            this->m_op->perform_op(v_real.data(), OPv_real.data());
+            this->m_op->perform_op(v_imag.data(), OPv_imag.data());
 
             // Two roots computed from the quadratic equation
             Complex nu = this->m_ritz_val[i];
@@ -84,25 +94,26 @@ private:
             Complex root1 = root_part1 + root_part2;
             Complex root2 = root_part1 - root_part2;
 
-            // Root computed from the linear equation
-            // Technically we can directly use this root, but its precision is usually
-            // lower than the one computed from the quadratic equation
-            int loc;
-            OPv.cwiseAbs().maxCoeff(&loc);
-            Complex lambdai = v[loc] / OPv[loc] + Complex(shiftr, shifti);
-
-            if(abs(root1 - lambdai) < abs(root2 - lambdai))
-                lambdai = root1;
-            else
-                lambdai = root2;
-            this->m_ritz_val[i] = lambdai;
-
-            if(abs(Eigen::numext::imag(lambdai)) > eps)
+            // Test roots
+            Scalar err1 = Scalar(0), err2 = Scalar(0);
+            for(int k = 0; k < this->m_n; k++)
             {
-                this->m_ritz_val[i + 1] = Eigen::numext::conj(lambdai);
+                Complex rhs1 = Complex(v_real[k], v_imag[k]) / (root1 - shift);
+                Complex rhs2 = Complex(v_real[k], v_imag[k]) / (root2 - shift);
+                Complex OPv = Complex(OPv_real[k], OPv_imag[k]);
+                err1 += norm(OPv - rhs1);
+                err2 += norm(OPv - rhs2);
+            }
+
+            Complex lambdaj = (err1 < err2) ? root1 : root2;
+            this->m_ritz_val[i] = lambdaj;
+
+            if(abs(Eigen::numext::imag(lambdaj)) > eps)
+            {
+                this->m_ritz_val[i + 1] = Eigen::numext::conj(lambdaj);
                 i++;
             } else {
-                this->m_ritz_val[i] = Complex(Eigen::numext::real(lambdai), Scalar(0));
+                this->m_ritz_val[i] = Complex(Eigen::numext::real(lambdaj), Scalar(0));
             }
         }
 
