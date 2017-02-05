@@ -20,11 +20,11 @@ libraries, based on the following environment setting:
 - Spectra: version 0.5.0
 - BLAS: OpenBLAS 0.2.19, single threaded
 - ARPACK: ARPACK-NG 3.3.0
-- R: version 3.3.0
+- R: version 3.3.2
 - R packages
   - RSpectra 0.12-0
   - svd 0.4
-  - irlba 2.0.0
+  - irlba 2.1.2
   - microbenchmark 1.4.2.1
 
 ### Comparison with ARPACK
@@ -104,5 +104,6 @@ ggplot(dat, aes(x = expr, y = medtime)) +
     scale_y_continuous("Median Elapsed time (ms)") +
     scale_x_discrete("Functions") +
     ggtitle(sprintf("Top-%d SVD on %dx%d Matrix", k, n, p)) +
-    theme_bw(base_size = 20)
+    theme_bw(base_size = 20) +
+    theme(plot.title = element_text(hjust = 0.5))
 </code></pre>
