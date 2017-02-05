@@ -1,7 +1,7 @@
 ## [Unreleased]
 
 
-## [0.5.0] - 2017-02-04
+## [0.5.0] - 2017-02-05
 ### Added
 - Added the generalized eigen solver `SymGEigsSolver` in the regular inverse mode
 - Added the wrapper class `SparseRegularInverse` that can be used with
@@ -14,10 +14,6 @@
   `DoubleShiftQR`
 - **API change**: The `x_in` argument in matrix operation functions, e.g.
   `perform_op()`, is now labelled to be constant
-- **API change**: The matrix operation object in `GenEigsComplexShiftSolver`
-  now requires an additional (overloaded) function
-  `void perform_op(const Complex* x_in, Complex* y_out)`. See the
-  `DenseGenComplexShiftSolve` class for an example
 - Fixed a [bug](https://github.com/yixuan/spectra/issues/15) that
   `GenEigsComplexShiftSolver` gave wrong results when transforming back the
   eigenvalues, discovered by [@jdbancal](https://github.com/jdbancal)
