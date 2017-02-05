@@ -32,7 +32,6 @@ var NAVTREEINDEX0 =
 "classSpectra_1_1DenseCholesky.html#afcb9290f47bc6b530841af6c616653ab":[0,2,0,1],
 "classSpectra_1_1DenseGenComplexShiftSolve.html":[0,2,1],
 "classSpectra_1_1DenseGenComplexShiftSolve.html#a22f6bb1969eafbc02a5872af1798b473":[0,2,1,2],
-"classSpectra_1_1DenseGenComplexShiftSolve.html#a24c0ad54355073b2e7d7538d6aa601ca":[0,2,1,5],
 "classSpectra_1_1DenseGenComplexShiftSolve.html#a57be6786123b23fcc63c1cffd3045c56":[0,2,1,3],
 "classSpectra_1_1DenseGenComplexShiftSolve.html#a81ea33e4cc6418bf8791bdb3a80314e0":[0,2,1,0],
 "classSpectra_1_1DenseGenComplexShiftSolve.html#ad22896eb27ea95112652a393a3d2dcfa":[0,2,1,1],
