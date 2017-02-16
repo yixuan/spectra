@@ -1,4 +1,4 @@
-// Copyright (C) 2016 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2017 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -27,18 +27,20 @@ class DenseGenComplexShiftSolve
 {
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Map<const Matrix> MapMat;
-    typedef Eigen::Map< Eigen::Matrix<Scalar, Eigen::Dynamic, 1> > MapVec;
+    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
+    typedef Eigen::Map<const Matrix> MapConstMat;
+    typedef Eigen::Map<const Vector> MapConstVec;
+    typedef Eigen::Map<Vector> MapVec;
 
     typedef std::complex<Scalar> Complex;
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic> ComplexMatrix;
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, 1> ComplexVector;
-    typedef Eigen::Map<ComplexVector> MapComplexVec;
+
     typedef Eigen::PartialPivLU<ComplexMatrix> ComplexSolver;
 
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
-    const MapMat m_mat;
+    const MapConstMat m_mat;
     const int m_n;
     ComplexSolver m_solver;
     ComplexVector m_x_cache;
@@ -90,28 +92,11 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = Re( inv(A - sigma * I) * x_in )
-    void perform_op(Scalar* x_in, Scalar* y_out)
+    void perform_op(const Scalar* x_in, Scalar* y_out)
     {
-        m_x_cache.real() = MapVec(x_in, m_n);
+        m_x_cache.real() = MapConstVec(x_in, m_n);
         MapVec y(y_out, m_n);
         y.noalias() = m_solver.solve(m_x_cache).real();
-    }
-
-    ///
-    /// Perform the complex shift-solve operation
-    /// \f$y=(A-\sigma I)^{-1}x\f$. Note that here both \f$x\f$ and \f$y\f$ can
-    /// be complex numbers. This additional operation is needed in the
-    /// GenEigsComplexShiftSolver solver to transform back the eigenvalues.
-    ///
-    /// \param x_in  Pointer to the \f$x\f$ vector.
-    /// \param y_out Pointer to the \f$y\f$ vector.
-    ///
-    // y_out = inv(A - sigma * I) * x_in
-    void perform_op(Complex* x_in, Complex* y_out) const
-    {
-        MapComplexVec x(x_in, m_n);
-        MapComplexVec y(y_out, m_n);
-        y.noalias() = m_solver.solve(x);
     }
 };
 

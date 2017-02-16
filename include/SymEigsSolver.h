@@ -1,4 +1,4 @@
-// Copyright (C) 2016 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2017 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -201,10 +201,10 @@ private:
     {
         if(to_m <= from_k) return;
 
-        m_fac_f = fk;
+        m_fac_f.noalias() = fk;
 
         Vector w(m_n);
-        Scalar beta = m_fac_f.norm(), Hii = 0.0;
+        Scalar beta = norm(m_fac_f), Hii = 0.0;
         // Keep the upperleft k x k submatrix of H and set other elements to 0
         m_fac_H.rightCols(m_ncv - from_k).setZero();
         m_fac_H.block(from_k, 0, m_ncv - from_k, from_k).setZero();
@@ -220,10 +220,10 @@ private:
                 m_fac_f.noalias() = rng.random_vec(m_n);
                 // f <- f - V * V' * f, so that f is orthogonal to V
                 MapMat V(m_fac_V.data(), m_n, i); // The first i columns
-                Vector Vf = V.transpose() * m_fac_f;
+                Vector Vf = inner_product(V, m_fac_f);
                 m_fac_f.noalias() -= V * Vf;
                 // beta <- ||f||
-                beta = m_fac_f.norm();
+                beta = norm(m_fac_f);
 
                 restart = true;
             }
@@ -242,7 +242,7 @@ private:
             m_op->perform_op(v.data(), w.data());
             m_nmatop++;
 
-            Hii = v.dot(w);
+            Hii = inner_product(v, w);
             m_fac_H(i - 1, i) = m_fac_H(i, i - 1); // Due to symmetry
             m_fac_H(i, i) = Hii;
 
@@ -253,12 +253,12 @@ private:
             else
                 m_fac_f.noalias() = w - m_fac_H(i, i - 1) * m_fac_V.col(i - 1) - Hii * v;
 
-            beta = m_fac_f.norm();
+            beta = norm(m_fac_f);
 
             // f/||f|| is going to be the next column of V, so we need to test
             // whether V' * (f/||f||) ~= 0
             MapMat V(m_fac_V.data(), m_n, i + 1); // The first (i+1) columns
-            Vector Vf = V.transpose() * m_fac_f;
+            Vector Vf = inner_product(V, m_fac_f);
             // If not, iteratively correct the residual
             int count = 0;
             while(count < 5 && Vf.cwiseAbs().maxCoeff() > m_approx_0 * beta)
@@ -270,9 +270,9 @@ private:
                 m_fac_H(i, i - 1) = m_fac_H(i - 1, i);
                 m_fac_H(i, i) += Vf[i];
                 // beta <- ||f||
-                beta = m_fac_f.norm();
+                beta = norm(m_fac_f);
 
-                Vf.noalias() = V.transpose() * m_fac_f;
+                Vf.noalias() = inner_product(V, m_fac_f);
                 count++;
             }
         }
@@ -326,7 +326,7 @@ private:
     {
         // thresh = tol * max(m_approx_0, abs(theta)), theta for ritz value
         Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(m_approx_0);
-        Array resid =  m_ritz_est.head(m_nev).array().abs() * m_fac_f.norm();
+        Array resid =  m_ritz_est.head(m_nev).array().abs() * norm(m_fac_f);
         // Converged "wanted" ritz values
         m_ritz_conv = (resid < thresh);
 
@@ -401,6 +401,15 @@ private:
     }
 
 protected:
+    // In generalized eigenvalue problem Ax=lambda*Bx, define the inner product to be <x, y> = x'By
+    // For regular eigenvalue problems, it is the usual inner product <x, y> = x'y
+    virtual Scalar inner_product(const Vector& x, const Vector& y) { return x.dot(y); }
+    virtual Scalar inner_product(const MapVec& x, const Vector& y) { return x.dot(y); }
+    virtual Vector inner_product(const MapMat& x, const Vector& y) { return x.transpose() * y; }
+
+    // B-norm of a vector. For regular eigenvalue problems it is simply the L2 norm
+    virtual Scalar norm(const Vector& x) { return x.norm(); }
+
     // Sort the first nev Ritz pairs in the specified order
     // This is used to return the final results
     virtual void sort_ritzpair(int sort_rule)
@@ -457,7 +466,7 @@ public:
     ///
     /// \param op_  Pointer to the matrix operation object, which should implement
     ///             the matrix-vector multiplication operation of \f$A\f$:
-    ///             calculating \f$Ay\f$ for any vector \f$y\f$. Users could either
+    ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
     ///             create the object from the wrapper class such as DenseSymMatProd, or
     ///             define their own that impelements all the public member functions
     ///             as in DenseSymMatProd.
@@ -520,7 +529,7 @@ public:
 
         Vector v(m_n);
         std::copy(init_resid, init_resid + m_n, v.data());
-        Scalar vnorm = v.norm();
+        Scalar vnorm = norm(v);
         if(vnorm < m_eps)
             throw std::invalid_argument("initial residual vector cannot be zero");
         v /= vnorm;
@@ -529,8 +538,8 @@ public:
         m_op->perform_op(v.data(), w.data());
         m_nmatop++;
 
-        m_fac_H(0, 0) = v.dot(w);
-        m_fac_f = w - v * m_fac_H(0, 0);
+        m_fac_H(0, 0) = inner_product(v, w);
+        m_fac_f.noalias() = w - v * m_fac_H(0, 0);
         m_fac_V.col(0) = v;
     }
 

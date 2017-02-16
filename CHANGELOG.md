@@ -1,24 +1,33 @@
 ## [Unreleased]
+
+
+## [0.5.0] - 2017-02-05
+### Added
+- Added the generalized eigen solver `SymGEigsSolver` in the regular inverse mode
+- Added the wrapper class `SparseRegularInverse` that can be used with
+  `SymGEigsSolver` in the regular inverse mode
+- Added test code for generalized eigen solver in the regular inverse mode
+
 ### Changed
 - Improved the numerical precision and stability of some internal linear
   algebra classes, including `TridiagEigen`, `UpperHessenbergEigen`, and
   `DoubleShiftQR`
-- **API change**: The matrix operation object in `GenEigsComplexShiftSolver`
-  now requires an additional (overloaded) function
-  `void perform_op(Complex* x_in, Complex* y_out)`. See the
-  `DenseGenComplexShiftSolve` class as an example
+- **API change**: The `x_in` argument in matrix operation functions, e.g.
+  `perform_op()`, is now labelled to be constant
 - Fixed a [bug](https://github.com/yixuan/spectra/issues/15) that
   `GenEigsComplexShiftSolver` gave wrong results when transforming back the
   eigenvalues, discovered by [@jdbancal](https://github.com/jdbancal)
+- Updated included [Catch](https://github.com/philsquared/Catch) to v1.7.0
+- Documentation improvement
 
 
 ## [0.4.0] - 2016-11-14
 ### Added
 - Added an `Uplo` template parameter to the `DenseSymShiftSolve` class
-- Added the generalized eigen solver `SymGEigsSolver` in Cholesky mode
+- Added the generalized eigen solver `SymGEigsSolver` in the Cholesky mode
 - Added the wrapper classes `DenseCholesky` and `SparseCholesky` that can be
-  used in `SymGEigsSolver`
-- Added test code for generalized eigen solver
+  used with `SymGEigsSolver` in the Cholesky mode
+- Added test code for generalized eigen solver in the Cholesky mode
 
 ### Changed
 - Updated included [Catch](https://github.com/philsquared/Catch) to v1.5.7

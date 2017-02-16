@@ -1,4 +1,4 @@
-// Copyright (C) 2016 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2017 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -465,7 +465,7 @@ public:
     ///
     /// \param op_  Pointer to the matrix operation object, which should implement
     ///             the matrix-vector multiplication operation of \f$A\f$:
-    ///             calculating \f$Ay\f$ for any vector \f$y\f$. Users could either
+    ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
     ///             create the object from the wrapper class such as DenseGenMatProd, or
     ///             define their own that impelemnts all the public member functions
     ///             as in DenseGenMatProd.

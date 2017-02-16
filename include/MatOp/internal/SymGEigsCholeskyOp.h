@@ -1,4 +1,4 @@
-// Copyright (C) 2016 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2017 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -8,8 +8,8 @@
 #define SYM_GEIGS_CHOLESKY_OP_H
 
 #include <Eigen/Core>
-#include "DenseSymMatProd.h"
-#include "DenseCholesky.h"
+#include "../DenseSymMatProd.h"
+#include "../DenseCholesky.h"
 
 namespace Spectra {
 
@@ -62,7 +62,7 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = inv(L) * A * inv(L') * x_in
-    void perform_op(Scalar* x_in, Scalar* y_out)
+    void perform_op(const Scalar* x_in, Scalar* y_out)
     {
         m_Bop.upper_triangular_solve(x_in, y_out);
         m_op.perform_op(y_out, m_cache.data());

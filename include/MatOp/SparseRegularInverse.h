@@ -1,15 +1,15 @@
-// Copyright (C) 2016-2017 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2017 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef SPARSE_CHOLESKY_H
-#define SPARSE_CHOLESKY_H
+#ifndef SPARSE_REGULAR_INVERSE_H
+#define SPARSE_REGULAR_INVERSE_H
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <Eigen/SparseCholesky>
+#include <Eigen/IterativeLinearSolvers>
 #include <stdexcept>
 
 namespace Spectra {
@@ -18,13 +18,16 @@ namespace Spectra {
 ///
 /// \ingroup MatOp
 ///
-/// This class defines the operations related to Cholesky decomposition on a
-/// sparse positive definite matrix, \f$B=LL'\f$, where \f$L\f$ is a lower triangular
-/// matrix. It is mainly used in the SymGEigsSolver generalized eigen solver
-/// in the Cholesky decomposition mode.
+/// This class defines matrix operations required by the generalized eigen solver
+/// in the regular inverse mode. For a sparse and positive definite matrix \f$B\f$,
+/// it implements the matrix-vector product \f$y=Bx\f$ and the linear equation
+/// solving operation \f$y=B^{-1}x\f$.
+///
+/// This class is intended to be used with the SymGEigsSolver generalized eigen solver
+/// in the regular inverse mode.
 ///
 template <typename Scalar, int Uplo = Eigen::Lower, int Flags = 0, typename StorageIndex = int>
-class SparseCholesky
+class SparseRegularInverse
 {
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
@@ -33,7 +36,8 @@ private:
     typedef Eigen::SparseMatrix<Scalar, Flags, StorageIndex> SparseMatrix;
 
     const int m_n;
-    Eigen::SimplicialLLT<SparseMatrix, Uplo> m_decomp;
+    const SparseMatrix& m_mat;
+    Eigen::ConjugateGradient<SparseMatrix> m_cg;
 
 public:
     ///
@@ -42,13 +46,13 @@ public:
     /// \param mat_ An **Eigen** sparse matrix object, whose type is
     /// `Eigen::SparseMatrix<Scalar, ...>`.
     ///
-    SparseCholesky(const SparseMatrix& mat_) :
-        m_n(mat_.rows())
+    SparseRegularInverse(const SparseMatrix& mat_) :
+        m_n(mat_.rows()), m_mat(mat_)
     {
         if(mat_.rows() != mat_.cols())
-            throw std::invalid_argument("SparseCholesky: matrix must be square");
+            throw std::invalid_argument("SparseRegularInverse: matrix must be square");
 
-        m_decomp.compute(mat_);
+        m_cg.compute(mat_);
     }
 
     ///
@@ -61,37 +65,35 @@ public:
     int cols() const { return m_n; }
 
     ///
-    /// Perform the lower triangular solving operation \f$y=L^{-1}x\f$.
+    /// Perform the solving operation \f$y=B^{-1}x\f$.
     ///
     /// \param x_in  Pointer to the \f$x\f$ vector.
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
-    // y_out = inv(L) * x_in
-    void lower_triangular_solve(const Scalar* x_in, Scalar* y_out) const
+    // y_out = inv(B) * x_in
+    void solve(const Scalar* x_in, Scalar* y_out) const
     {
         MapConstVec x(x_in,  m_n);
         MapVec      y(y_out, m_n);
-        y.noalias() = m_decomp.permutationP() * x;
-        m_decomp.matrixL().solveInPlace(y);
+        y.noalias() = m_cg.solve(x);
     }
 
     ///
-    /// Perform the upper triangular solving operation \f$y=(L')^{-1}x\f$.
+    /// Perform the matrix-vector multiplication operation \f$y=Bx\f$.
     ///
     /// \param x_in  Pointer to the \f$x\f$ vector.
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
-    // y_out = inv(L') * x_in
-    void upper_triangular_solve(const Scalar* x_in, Scalar* y_out) const
+    // y_out = B * x_in
+    void mat_prod(const Scalar* x_in, Scalar* y_out) const
     {
         MapConstVec x(x_in,  m_n);
         MapVec      y(y_out, m_n);
-        y.noalias() = m_decomp.matrixU().solve(x);
-        y = m_decomp.permutationPinv() * y;
+        y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
     }
 };
 
 
 } // namespace Spectra
 
-#endif // SPARSE_CHOLESKY_H
+#endif // SPARSE_REGULAR_INVERSE_H
