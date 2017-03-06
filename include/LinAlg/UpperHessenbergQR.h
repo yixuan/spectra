@@ -80,6 +80,11 @@ public:
     {
         compute(mat);
     }
+    
+    ///
+    /// We have virtual functions, so need a virtual destructor
+    ///
+    virtual ~UpperHessenbergQR(){};
 
     ///
     /// Conduct the QR factorization of an upper Hessenberg matrix.
