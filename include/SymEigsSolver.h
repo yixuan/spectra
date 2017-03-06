@@ -685,6 +685,12 @@ public:
     {
         return eigenvectors(m_nev);
     }
+    
+    ///
+    /// We have virtual methods, so need a virtual destructor
+    ///
+    virtual ~SymEigsSolver(){};
+    
 };
 
 
