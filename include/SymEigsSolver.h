@@ -601,7 +601,7 @@ public:
     }
 
     ///
-    /// Retuning the status of the computation.
+    /// Returning the status of the computation.
     /// The full list of enumeration values can be found in \ref Enumerations.
     ///
     int info() { return m_info; }
@@ -685,12 +685,12 @@ public:
     {
         return eigenvectors(m_nev);
     }
-    
+
     ///
     /// We have virtual methods, so need a virtual destructor
     ///
     virtual ~SymEigsSolver(){};
-    
+
 };
 
 
