@@ -34,6 +34,7 @@ private:
 
     const int m_n;
     Eigen::SimplicialLLT<SparseMatrix, Uplo> m_decomp;
+    int m_info;  // status of the decomposition
 
 public:
     ///
