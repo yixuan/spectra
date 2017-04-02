@@ -91,6 +91,9 @@ void run_test(const MatType& A, const MatType& B, int k, int m, bool allow_fail 
     typedef typename BOpTypeTrait<MatType>::OpType BOpType;
     OpType op(A);
     BOpType Bop(B);
+    // Make sure B is positive definite and the decomposition is successful
+    REQUIRE( Bop.info() == SUCCESSFUL );
+
     SymGEigsSolver<double, SelectionRule, OpType, BOpType, GEIGS_CHOLESKY> eigs(&op, &Bop, k, m);
     eigs.init();
     int nconv = eigs.compute(100); // maxit = 100 to reduce running time for failed cases
