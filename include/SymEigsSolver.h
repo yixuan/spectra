@@ -609,17 +609,17 @@ public:
     /// Returns the status of the computation.
     /// The full list of enumeration values can be found in \ref Enumerations.
     ///
-    int info() { return m_info; }
+    int info() const { return m_info; }
 
     ///
     /// Returns the number of iterations used in the computation.
     ///
-    int num_iterations() { return m_niter; }
+    int num_iterations() const { return m_niter; }
 
     ///
     /// Returns the number of matrix operations used in the computation.
     ///
-    int num_operations() { return m_nmatop; }
+    int num_operations() const { return m_nmatop; }
 
     ///
     /// Returns the converged eigenvalues.
@@ -628,7 +628,7 @@ public:
     /// Returned vector type will be `Eigen::Vector<Scalar, ...>`, depending on
     /// the template parameter `Scalar` defined.
     ///
-    Vector eigenvalues()
+    Vector eigenvalues() const
     {
         int nconv = m_ritz_conv.cast<int>().sum();
         Vector res(nconv);
@@ -658,7 +658,7 @@ public:
     /// Returned matrix type will be `Eigen::Matrix<Scalar, ...>`,
     /// depending on the template parameter `Scalar` defined.
     ///
-    Matrix eigenvectors(int nvec)
+    Matrix eigenvectors(int nvec) const
     {
         int nconv = m_ritz_conv.cast<int>().sum();
         nvec = std::min(nvec, nconv);
@@ -686,7 +686,7 @@ public:
     ///
     /// Returns all converged eigenvectors.
     ///
-    Matrix eigenvectors()
+    Matrix eigenvectors() const
     {
         return eigenvectors(m_nev);
     }
