@@ -49,19 +49,28 @@ public:
             throw std::invalid_argument("SparseCholesky: matrix must be square");
 
         m_decomp.compute(mat_);
+        m_info = (m_decomp.info() == Eigen::Success) ?
+                 SUCCESSFUL :
+                 NUMERICAL_ISSUE;
     }
 
     ///
-    /// Return the number of rows of the underlying matrix.
+    /// Returns the number of rows of the underlying matrix.
     ///
     int rows() const { return m_n; }
     ///
-    /// Return the number of columns of the underlying matrix.
+    /// Returns the number of columns of the underlying matrix.
     ///
     int cols() const { return m_n; }
 
     ///
-    /// Perform the lower triangular solving operation \f$y=L^{-1}x\f$.
+    /// Returns the status of the computation.
+    /// The full list of enumeration values can be found in \ref Enumerations.
+    ///
+    int info() const { return m_info; }
+
+    ///
+    /// Performs the lower triangular solving operation \f$y=L^{-1}x\f$.
     ///
     /// \param x_in  Pointer to the \f$x\f$ vector.
     /// \param y_out Pointer to the \f$y\f$ vector.
@@ -76,7 +85,7 @@ public:
     }
 
     ///
-    /// Perform the upper triangular solving operation \f$y=(L')^{-1}x\f$.
+    /// Performs the upper triangular solving operation \f$y=(L')^{-1}x\f$.
     ///
     /// \param x_in  Pointer to the \f$x\f$ vector.
     /// \param y_out Pointer to the \f$y\f$ vector.
