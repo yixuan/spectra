@@ -332,7 +332,7 @@ private:
         retrieve_ritzpair();
     }
 
-    // Calculate the number of converged Ritz values
+    // Calculates the number of converged Ritz values
     int num_converged(Scalar tol)
     {
         // thresh = tol * max(m_approx_0, abs(theta)), theta for ritz value
@@ -344,7 +344,7 @@ private:
         return m_ritz_conv.cast<int>().sum();
     }
 
-    // Return the adjusted nev for restarting
+    // Returns the adjusted nev for restarting
     int nev_adjusted(int nconv)
     {
         using std::abs;
@@ -353,7 +353,7 @@ private:
         for(int i = m_nev; i < m_ncv; i++)
             if(abs(m_ritz_est[i]) < m_eps)  nev_new++;
 
-        // Adjust nev_new again, according to dnaup2.f line 660~674 in ARPACK
+        // Adjust nev_new, according to dnaup2.f line 660~674 in ARPACK
         nev_new += std::min(nconv, (m_ncv - nev_new) / 2);
         if(nev_new == 1 && m_ncv >= 6)
             nev_new = m_ncv / 2;
@@ -374,7 +374,7 @@ private:
         return nev_new;
     }
 
-    // Retrieve and sort ritz values and ritz vectors
+    // Retrieves and sorts ritz values and ritz vectors
     void retrieve_ritzpair()
     {
         UpperHessenbergEigen<Scalar> decomp(m_fac_H);
@@ -397,7 +397,7 @@ private:
     }
 
 protected:
-    // Sort the first nev Ritz pairs in the specified order
+    // Sorts the first nev Ritz pairs in the specified order
     // This is used to return the final results
     virtual void sort_ritzpair(int sort_rule)
     {
@@ -496,7 +496,12 @@ public:
     }
 
     ///
-    /// Providing the initial residual vector for the algorithm.
+    /// Virtual destructor
+    ///
+    virtual ~GenEigsSolver() {}
+
+    ///
+    /// Initializes the solver by providing an initial residual vector.
     ///
     /// \param init_resid Pointer to the initial residual vector.
     ///
@@ -523,6 +528,7 @@ public:
         m_ritz_est.setZero();
         m_ritz_conv.setZero();
 
+        // Set the initial vector
         Vector v(m_n);
         std::copy(init_resid, init_resid + m_n, v.data());
         Scalar vnorm = v.norm();
@@ -540,7 +546,7 @@ public:
     }
 
     ///
-    /// Providing a random initial residual vector.
+    /// Initializes the solver by providing a random initial residual vector.
     ///
     /// This overloaded function generates a random initial residual vector
     /// (with a fixed random seed) for the algorithm. Elements in the vector
@@ -554,7 +560,7 @@ public:
     }
 
     ///
-    /// Conducting the major computation procedure.
+    /// Conducts the major computation procedure.
     ///
     /// \param maxit      Maximum number of iterations allowed in the algorithm.
     /// \param tol        Precision parameter for the calculated eigenvalues.
@@ -599,23 +605,23 @@ public:
     }
 
     ///
-    /// Retuning the status of the computation.
+    /// Returns the status of the computation.
     /// The full list of enumeration values can be found in \ref Enumerations.
     ///
     int info() { return m_info; }
 
     ///
-    /// Returning the number of iterations used in the computation.
+    /// Returns the number of iterations used in the computation.
     ///
     int num_iterations() { return m_niter; }
 
     ///
-    /// Returning the number of matrix operations used in the computation.
+    /// Returns the number of matrix operations used in the computation.
     ///
     int num_operations() { return m_nmatop; }
 
     ///
-    /// Returning the converged eigenvalues.
+    /// Returns the converged eigenvalues.
     ///
     /// \return A complex-valued vector containing the eigenvalues.
     /// Returned vector type will be `Eigen::Vector<std::complex<Scalar>, ...>`, depending on
@@ -643,7 +649,7 @@ public:
     }
 
     ///
-    /// Returning the eigenvectors associated with the converged eigenvalues.
+    /// Returns the eigenvectors associated with the converged eigenvalues.
     ///
     /// \param nvec The number of eigenvectors to return.
     ///
@@ -677,7 +683,7 @@ public:
     }
 
     ///
-    /// Returning all converged eigenvectors.
+    /// Returns all converged eigenvectors.
     ///
     ComplexMatrix eigenvectors()
     {

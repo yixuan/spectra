@@ -321,7 +321,7 @@ private:
         retrieve_ritzpair();
     }
 
-    // Calculate the number of converged Ritz values
+    // Calculates the number of converged Ritz values
     int num_converged(Scalar tol)
     {
         // thresh = tol * max(m_approx_0, abs(theta)), theta for ritz value
@@ -333,13 +333,12 @@ private:
         return m_ritz_conv.cast<int>().sum();
     }
 
-    // Return the adjusted nev for restarting
+    // Returns the adjusted nev for restarting
     int nev_adjusted(int nconv)
     {
         using std::abs;
 
         int nev_new = m_nev;
-
         for(int i = m_nev; i < m_ncv; i++)
             if(abs(m_ritz_est[i]) < m_eps)  nev_new++;
 
@@ -356,7 +355,7 @@ private:
         return nev_new;
     }
 
-    // Retrieve and sort ritz values and ritz vectors
+    // Retrieves and sorts ritz values and ritz vectors
     void retrieve_ritzpair()
     {
         TridiagEigen<Scalar> decomp(m_fac_H);
@@ -410,7 +409,7 @@ protected:
     // B-norm of a vector. For regular eigenvalue problems it is simply the L2 norm
     virtual Scalar norm(const Vector& x) { return x.norm(); }
 
-    // Sort the first nev Ritz pairs in the specified order
+    // Sorts the first nev Ritz pairs in the specified order
     // This is used to return the final results
     virtual void sort_ritzpair(int sort_rule)
     {
@@ -497,7 +496,12 @@ public:
     }
 
     ///
-    /// Providing the initial residual vector for the algorithm.
+    /// Virtual destructor
+    ///
+    virtual ~SymEigsSolver() {}
+
+    ///
+    /// Initializes the solver by providing an initial residual vector.
     ///
     /// \param init_resid Pointer to the initial residual vector.
     ///
@@ -527,6 +531,7 @@ public:
         m_nmatop = 0;
         m_niter = 0;
 
+        // Set the initial vector
         Vector v(m_n);
         std::copy(init_resid, init_resid + m_n, v.data());
         Scalar vnorm = norm(v);
@@ -544,7 +549,7 @@ public:
     }
 
     ///
-    /// Providing a random initial residual vector.
+    /// Initializes the solver by providing a random initial residual vector.
     ///
     /// This overloaded function generates a random initial residual vector
     /// (with a fixed random seed) for the algorithm. Elements in the vector
@@ -558,7 +563,7 @@ public:
     }
 
     ///
-    /// Conducting the major computation procedure.
+    /// Conducts the major computation procedure.
     ///
     /// \param maxit      Maximum number of iterations allowed in the algorithm.
     /// \param tol        Precision parameter for the calculated eigenvalues.
@@ -601,23 +606,23 @@ public:
     }
 
     ///
-    /// Returning the status of the computation.
+    /// Returns the status of the computation.
     /// The full list of enumeration values can be found in \ref Enumerations.
     ///
     int info() { return m_info; }
 
     ///
-    /// Returning the number of iterations used in the computation.
+    /// Returns the number of iterations used in the computation.
     ///
     int num_iterations() { return m_niter; }
 
     ///
-    /// Returning the number of matrix operations used in the computation.
+    /// Returns the number of matrix operations used in the computation.
     ///
     int num_operations() { return m_nmatop; }
 
     ///
-    /// Returning the converged eigenvalues.
+    /// Returns the converged eigenvalues.
     ///
     /// \return A vector containing the eigenvalues.
     /// Returned vector type will be `Eigen::Vector<Scalar, ...>`, depending on
@@ -645,7 +650,7 @@ public:
     }
 
     ///
-    /// Returning the eigenvectors associated with the converged eigenvalues.
+    /// Returns the eigenvectors associated with the converged eigenvalues.
     ///
     /// \param nvec The number of eigenvectors to return.
     ///
@@ -679,18 +684,12 @@ public:
     }
 
     ///
-    /// Returning all converged eigenvectors.
+    /// Returns all converged eigenvectors.
     ///
     Matrix eigenvectors()
     {
         return eigenvectors(m_nev);
     }
-
-    ///
-    /// We have virtual methods, so need a virtual destructor
-    ///
-    virtual ~SymEigsSolver(){};
-
 };
 
 

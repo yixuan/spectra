@@ -211,6 +211,7 @@ public:
 
     ~SymGEigsSolver()
     {
+        // m_op contains the constructed SymGEigsCholeskyOp object
         delete this->m_op;
     }
 
@@ -351,6 +352,7 @@ public:
     /// \cond
     ~SymGEigsSolver()
     {
+        // m_op contains the constructed SymGEigsRegInvOp object
         delete this->m_op;
     }
     /// \endcond
