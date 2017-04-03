@@ -9,6 +9,7 @@
 
 ### Changed
 - Documentation updates
+- Update project URL to be [http://spectralib.org](http://spectralib.org).
 
 
 ## [0.5.0] - 2017-02-05
