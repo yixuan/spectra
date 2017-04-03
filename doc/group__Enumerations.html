@@ -99,7 +99,9 @@ Enumerations</h2></td></tr>
 <br />
 &#160;&#160;<a class="el" href="group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba535bfda50eb1bc734ca18b5ac7d36af6">Spectra::NOT_COMPUTED</a>, 
 <br />
-&#160;&#160;<a class="el" href="group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4baa9ea091773f727ee4c3bf16dda648d2f">Spectra::NOT_CONVERGING</a>
+&#160;&#160;<a class="el" href="group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4baa9ea091773f727ee4c3bf16dda648d2f">Spectra::NOT_CONVERGING</a>, 
+<br />
+&#160;&#160;<a class="el" href="group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba140ca2895b78125a92aded319bb5849c">Spectra::NUMERICAL_ISSUE</a>
 <br />
  }</td></tr>
 <tr class="separator:ga6096571d2f7e1f0b62336e39d512ae4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -175,11 +177,13 @@ Enumerations</h2></td></tr>
 </div><div class="memdoc">
 <p>The enumeration to report the status of computation. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga6096571d2f7e1f0b62336e39d512ae4ba79882c7474aed8cd8ebddc8cd4aa5185"></a>SUCCESSFUL&#160;</td><td class="fielddoc"><p>Computatoin was successful. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga6096571d2f7e1f0b62336e39d512ae4ba79882c7474aed8cd8ebddc8cd4aa5185"></a>SUCCESSFUL&#160;</td><td class="fielddoc"><p>Computation was successful. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="gga6096571d2f7e1f0b62336e39d512ae4ba535bfda50eb1bc734ca18b5ac7d36af6"></a>NOT_COMPUTED&#160;</td><td class="fielddoc"><p>Computation has not been conducted. Users should call the <code>compute()</code> member function of solvers. </p>
+<tr><td class="fieldname"><a id="gga6096571d2f7e1f0b62336e39d512ae4ba535bfda50eb1bc734ca18b5ac7d36af6"></a>NOT_COMPUTED&#160;</td><td class="fielddoc"><p>Used in eigen solvers, indicating that computation has not been conducted. Users should call the <code>compute()</code> member function of solvers. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="gga6096571d2f7e1f0b62336e39d512ae4baa9ea091773f727ee4c3bf16dda648d2f"></a>NOT_CONVERGING&#160;</td><td class="fielddoc"><p>Some eigenvalues did not converge. The <code>compute()</code> function returns the number of converged eigenvalues. </p>
+<tr><td class="fieldname"><a id="gga6096571d2f7e1f0b62336e39d512ae4baa9ea091773f727ee4c3bf16dda648d2f"></a>NOT_CONVERGING&#160;</td><td class="fielddoc"><p>Used in eigen solvers, indicating that some eigenvalues did not converge. The <code>compute()</code> function returns the number of converged eigenvalues. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga6096571d2f7e1f0b62336e39d512ae4ba140ca2895b78125a92aded319bb5849c"></a>NUMERICAL_ISSUE&#160;</td><td class="fielddoc"><p>Used in Cholesky decomposition, indicating that the matrix is not positive definite. </p>
 </td></tr>
 </table>
 

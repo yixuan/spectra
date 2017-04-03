@@ -3,7 +3,8 @@ var group__Enumerations =
     [ "COMPUTATION_INFO", "group__Enumerations.html#ga6096571d2f7e1f0b62336e39d512ae4b", [
       [ "SUCCESSFUL", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba79882c7474aed8cd8ebddc8cd4aa5185", null ],
       [ "NOT_COMPUTED", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba535bfda50eb1bc734ca18b5ac7d36af6", null ],
-      [ "NOT_CONVERGING", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4baa9ea091773f727ee4c3bf16dda648d2f", null ]
+      [ "NOT_CONVERGING", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4baa9ea091773f727ee4c3bf16dda648d2f", null ],
+      [ "NUMERICAL_ISSUE", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba140ca2895b78125a92aded319bb5849c", null ]
     ] ],
     [ "GEIGS_MODE", "group__Enumerations.html#ga982c36b6b5b322cdb18ce05adb9106e0", [
       [ "GEIGS_CHOLESKY", "group__Enumerations.html#gga982c36b6b5b322cdb18ce05adb9106e0aeea529bb6b9cdd997ed57f63fa3aae94", null ],

@@ -8,29 +8,31 @@ var group__EigenSolver =
     ] ],
     [ "GenEigsSolver", "classSpectra_1_1GenEigsSolver.html", [
       [ "GenEigsSolver", "classSpectra_1_1GenEigsSolver.html#aab5b020a70aaad0819904a23f7c67894", null ],
+      [ "~GenEigsSolver", "classSpectra_1_1GenEigsSolver.html#a46d105a5d9d765fbdd3f6c4cd2058bfa", null ],
       [ "init", "classSpectra_1_1GenEigsSolver.html#a9b98ce65ddf08cd600585e982a3cc15f", null ],
       [ "init", "classSpectra_1_1GenEigsSolver.html#a7480a89931c401111c69ed83d62d5c69", null ],
       [ "compute", "classSpectra_1_1GenEigsSolver.html#a75b6986cb7e62d80eba284227d01f3f8", null ],
-      [ "info", "classSpectra_1_1GenEigsSolver.html#ab9a6ec758ab4657eeec93abbda3983ce", null ],
-      [ "num_iterations", "classSpectra_1_1GenEigsSolver.html#a3bd3fc9eb721adcdf51825501953574d", null ],
-      [ "num_operations", "classSpectra_1_1GenEigsSolver.html#afbe5efbfc3966bc595bae6851cc18641", null ],
-      [ "eigenvalues", "classSpectra_1_1GenEigsSolver.html#afd7b3fc546bd6009e5172b959be03ba9", null ],
-      [ "eigenvectors", "classSpectra_1_1GenEigsSolver.html#a8d086ec71a8abaa6d1b868c9c0f58896", null ],
-      [ "eigenvectors", "classSpectra_1_1GenEigsSolver.html#aa149092d0a11d35f68082b65c5175bd7", null ]
+      [ "info", "classSpectra_1_1GenEigsSolver.html#a3058a9d635198a0f6a882a0ede303bce", null ],
+      [ "num_iterations", "classSpectra_1_1GenEigsSolver.html#a106b44e3d94c21cca6a833f61ef614b9", null ],
+      [ "num_operations", "classSpectra_1_1GenEigsSolver.html#a29856932eaf9d1f21a7cfb93f5369ba8", null ],
+      [ "eigenvalues", "classSpectra_1_1GenEigsSolver.html#a8e7aac81b6089873907e13dbf1efd546", null ],
+      [ "eigenvectors", "classSpectra_1_1GenEigsSolver.html#ac92497833a7e3f0d3b1f290840228e6e", null ],
+      [ "eigenvectors", "classSpectra_1_1GenEigsSolver.html#a29cc09670c3c1ac047b169c0588f157d", null ]
     ] ],
     [ "SymEigsShiftSolver", "classSpectra_1_1SymEigsShiftSolver.html", [
       [ "SymEigsShiftSolver", "classSpectra_1_1SymEigsShiftSolver.html#ae8101360fe4038944bafcd2eb05cc81c", null ]
     ] ],
     [ "SymEigsSolver", "classSpectra_1_1SymEigsSolver.html", [
       [ "SymEigsSolver", "classSpectra_1_1SymEigsSolver.html#aa43d8837ab70c5a102d4366ff3b0c490", null ],
+      [ "~SymEigsSolver", "classSpectra_1_1SymEigsSolver.html#af296ce9cdfea5eb42a08486ce79aa4a4", null ],
       [ "init", "classSpectra_1_1SymEigsSolver.html#aaf2ef756971d56fb6a432efdf9c9a059", null ],
       [ "init", "classSpectra_1_1SymEigsSolver.html#a5720333d68d6146388f1e6ef8233ffd5", null ],
       [ "compute", "classSpectra_1_1SymEigsSolver.html#acd644fd8368d2f944774fe32200f44f5", null ],
-      [ "info", "classSpectra_1_1SymEigsSolver.html#ad4b9dd8ca2fd121b1fec9572f25f6d47", null ],
-      [ "num_iterations", "classSpectra_1_1SymEigsSolver.html#a81df0bff7918c929f5d5bc7b6c35f27d", null ],
-      [ "num_operations", "classSpectra_1_1SymEigsSolver.html#a08594fdd5e1d5d09cd54be3b06e07f03", null ],
-      [ "eigenvalues", "classSpectra_1_1SymEigsSolver.html#a2d6bc02156838467b83ae5bfeaf92a53", null ],
-      [ "eigenvectors", "classSpectra_1_1SymEigsSolver.html#abdf7545fcb1deadfe188ec56edb08deb", null ],
-      [ "eigenvectors", "classSpectra_1_1SymEigsSolver.html#a55d9a17fafdaf3497a22c088e68f1116", null ]
+      [ "info", "classSpectra_1_1SymEigsSolver.html#a89e1af48f7edd96d56095d0e4ee34a0a", null ],
+      [ "num_iterations", "classSpectra_1_1SymEigsSolver.html#ab7a133dfe228914ae52514be5f37e4e0", null ],
+      [ "num_operations", "classSpectra_1_1SymEigsSolver.html#af931b9caba7048a7a8115fa97111a72d", null ],
+      [ "eigenvalues", "classSpectra_1_1SymEigsSolver.html#afa7b5509449ff3efef7c900bd1559e21", null ],
+      [ "eigenvectors", "classSpectra_1_1SymEigsSolver.html#a152e6ed2f0939e2d77121ada64e6fd94", null ],
+      [ "eigenvectors", "classSpectra_1_1SymEigsSolver.html#af384fabd3f263e0e1350b61bc27155ff", null ]
     ] ]
 ];

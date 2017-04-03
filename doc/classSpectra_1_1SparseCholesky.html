@@ -103,6 +103,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af8c63c2225eee44454d8367cadbfb209"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a310978adda7202f7d8e9c3919294fe4a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseCholesky.html#a310978adda7202f7d8e9c3919294fe4a">cols</a> () const</td></tr>
 <tr class="separator:a310978adda7202f7d8e9c3919294fe4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a363f36cc39520bc34bf092030a43da49"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseCholesky.html#a363f36cc39520bc34bf092030a43da49">info</a> () const</td></tr>
+<tr class="separator:a363f36cc39520bc34bf092030a43da49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a942cf621ca4f3906850bb2b4cfb86fd7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseCholesky.html#a942cf621ca4f3906850bb2b4cfb86fd7">lower_triangular_solve</a> (const Scalar *x_in, Scalar *y_out) const</td></tr>
 <tr class="separator:a942cf621ca4f3906850bb2b4cfb86fd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1034a3dec4b44405001b49436ba9d237"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseCholesky.html#a1034a3dec4b44405001b49436ba9d237">upper_triangular_solve</a> (const Scalar *x_in, Scalar *y_out) const</td></tr>
@@ -149,7 +151,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00045">45</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00046">46</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -178,9 +180,9 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Return the number of rows of the underlying matrix. </p>
+<p>Returns the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00057">57</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00061">61</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -208,9 +210,39 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Return the number of columns of the underlying matrix. </p>
+<p>Returns the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00061">61</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00065">65</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
+
+</div>
+</div>
+<a id="a363f36cc39520bc34bf092030a43da49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a363f36cc39520bc34bf092030a43da49">&#9670;&nbsp;</a></span>info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename StorageIndex  = int&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classSpectra_1_1SparseCholesky.html">Spectra::SparseCholesky</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::info </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returns the status of the computation. The full list of enumeration values can be found in <a class="el" href="group__Enumerations.html">Enumerations</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00071">71</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -249,7 +281,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Perform the lower triangular solving operation \(y=L^{-1}x\).</p>
+<p>Performs the lower triangular solving operation \(y=L^{-1}x\).</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">x_in</td><td>Pointer to the \(x\) vector. </td></tr>
@@ -258,7 +290,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00070">70</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00080">80</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -297,7 +329,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Perform the upper triangular solving operation \(y=(L&#39;)^{-1}x\).</p>
+<p>Performs the upper triangular solving operation \(y=(L&#39;)^{-1}x\).</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">x_in</td><td>Pointer to the \(x\) vector. </td></tr>
@@ -306,7 +338,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00085">85</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00095">95</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
 
 </div>
 </div>

@@ -103,6 +103,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afcb9290f47bc6b530841af6c616653ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a4115870bc09675b301abf7185a1172"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#a2a4115870bc09675b301abf7185a1172">cols</a> () const</td></tr>
 <tr class="separator:a2a4115870bc09675b301abf7185a1172"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9027f39715516a9c18986ac8c750f35f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#a9027f39715516a9c18986ac8c750f35f">info</a> () const</td></tr>
+<tr class="separator:a9027f39715516a9c18986ac8c750f35f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4bbeacb485268a9f758d0d755faca88"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#af4bbeacb485268a9f758d0d755faca88">lower_triangular_solve</a> (const Scalar *x_in, Scalar *y_out) const</td></tr>
 <tr class="separator:af4bbeacb485268a9f758d0d755faca88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7852fa8b61099c8e85f134c624b10833"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#a7852fa8b61099c8e85f134c624b10833">upper_triangular_solve</a> (const Scalar *x_in, Scalar *y_out) const</td></tr>
@@ -149,7 +151,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00049">49</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00050">50</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -178,9 +180,9 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Return the number of rows of the underlying matrix. </p>
+<p>Returns the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00061">61</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00066">66</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -208,9 +210,39 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Return the number of columns of the underlying matrix. </p>
+<p>Returns the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00065">65</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00070">70</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+
+</div>
+</div>
+<a id="a9027f39715516a9c18986ac8c750f35f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9027f39715516a9c18986ac8c750f35f">&#9670;&nbsp;</a></span>info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classSpectra_1_1DenseCholesky.html">Spectra::DenseCholesky</a>&lt; Scalar, Uplo &gt;::info </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Returns the status of the computation. The full list of enumeration values can be found in <a class="el" href="group__Enumerations.html">Enumerations</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00076">76</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -249,7 +281,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Perform the lower triangular solving operation \(y=L^{-1}x\).</p>
+<p>Performs the lower triangular solving operation \(y=L^{-1}x\).</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">x_in</td><td>Pointer to the \(x\) vector. </td></tr>
@@ -258,7 +290,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00074">74</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00085">85</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -297,7 +329,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Perform the upper triangular solving operation \(y=(L&#39;)^{-1}x\).</p>
+<p>Performs the upper triangular solving operation \(y=(L&#39;)^{-1}x\).</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">x_in</td><td>Pointer to the \(x\) vector. </td></tr>
@@ -306,7 +338,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00088">88</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00099">99</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
