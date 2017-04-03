@@ -17,7 +17,7 @@ namespace Spectra {
 ///
 enum COMPUTATION_INFO
 {
-    SUCCESSFUL = 0,    ///< Computatoin was successful.
+    SUCCESSFUL = 0,    ///< Computation was successful.
 
     NOT_COMPUTED,      ///< Used in eigen solvers, indicating that computation
                        ///< has not been conducted. Users should call
