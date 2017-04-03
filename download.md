@@ -18,9 +18,9 @@ of Eigen as dependency.
 </button>
 </a>
 
-<a href="http://bitbucket.org/eigen/eigen/get/3.3.2.tar.gz">
+<a href="https://bitbucket.org/eigen/eigen/get/3.3.3.tar.gz">
 <button type="button" class="btn btn-success btn-sm">
-<span class="glyphicon glyphicon-download"></span> Download Eigen 3.3.2
+<span class="glyphicon glyphicon-download"></span> Download Eigen 3.3.3
 </button>
 </a>
 

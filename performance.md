@@ -46,7 +46,7 @@ tested cases, and general eigen solver is almost identical to ARPACK.
 ### Comparison with SVD solvers
 
 The R interface of Spectra,
-[RSpectra](http://cran.r-project.org/package=RSpectra), is compared with
+[RSpectra](https://CRAN.R-project.org/package=RSpectra), is compared with
 other SVD solvers in R.
 
 <img src="{{ '/img/benchmark-svd-small.png' | prepend: site.baseurl }}" class="img-responsive" />

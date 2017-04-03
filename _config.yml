@@ -10,7 +10,7 @@ title: Spectra - C++ Library For Large Scale Eigenvalue Problems
 email: yixuan.qiu@cos.name
 description: A header-only C++ library for large scale eigenvalue problems
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://spectralib.org/" # the base hostname & protocol for your site
+url: "https://spectralib.org/" # the base hostname & protocol for your site
 
 # Build settings
 markdown: kramdown

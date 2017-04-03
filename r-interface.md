@@ -7,7 +7,7 @@ title: R Interface
 
 ### The RSpectra Package
 
-[RSpectra](http://cran.r-project.org/package=RSpectra) is the R interface of Spectra.
+[RSpectra](https://CRAN.R-project.org/package=RSpectra) is the R interface of Spectra.
 It provides functions `eigs()` and `eigs_sym()` for eigenvalue problems,
 and `svds()` for truncated (partial) SVD. These functions are generic, meaning
 that different matrix types in R, including sparse matrices, are supported.

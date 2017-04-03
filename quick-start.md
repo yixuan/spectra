@@ -31,12 +31,12 @@ matrix-vector multiplication `y = A * x` or the shift-solve operation
 `y = inv(A - σ * I) * x`. Spectra has defined a number of
 helper classes to quickly create such operations from a matrix object.
 See the documentation of
-[DenseGenMatProd](http://spectralib.org/doc/classSpectra_1_1DenseGenMatProd.html),
-[DenseSymShiftSolve](http://spectralib.org/doc/classSpectra_1_1DenseSymShiftSolve.html), etc.
+[DenseGenMatProd](https://spectralib.org/doc/classSpectra_1_1DenseGenMatProd.html),
+[DenseSymShiftSolve](https://spectralib.org/doc/classSpectra_1_1DenseSymShiftSolve.html), etc.
 2. Create an object of one of the eigen solver classes, for example
-[SymEigsSolver](http://spectralib.org/doc/classSpectra_1_1SymEigsSolver.html)
+[SymEigsSolver](https://spectralib.org/doc/classSpectra_1_1SymEigsSolver.html)
 for symmetric matrices, and
-[GenEigsSolver](http://spectralib.org/doc/classSpectra_1_1GenEigsSolver.html)
+[GenEigsSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsSolver.html)
 for general matrices. Member functions
 of this object can then be called to conduct the computation and to retrieve the
 eigenvalues and/or eigenvectors.
@@ -45,19 +45,19 @@ eigenvalues and/or eigenvectors.
 
 Below is a list of the available eigen solvers in Spectra:
 
-- [SymEigsSolver](http://spectralib.org/doc/classSpectra_1_1SymEigsSolver.html):
+- [SymEigsSolver](https://spectralib.org/doc/classSpectra_1_1SymEigsSolver.html):
 For real symmetric matrices
-- [GenEigsSolver](http://spectralib.org/doc/classSpectra_1_1GenEigsSolver.html):
+- [GenEigsSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsSolver.html):
 For general real matrices
-- [SymEigsShiftSolver](http://spectralib.org/doc/classSpectra_1_1SymEigsShiftSolver.html):
+- [SymEigsShiftSolver](https://spectralib.org/doc/classSpectra_1_1SymEigsShiftSolver.html):
 For real symmetric matrices using the shift-and-invert mode
-- [GenEigsRealShiftSolver](http://spectralib.org/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
+- [GenEigsRealShiftSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
 For general real matrices using the shift-and-invert mode,
 with a real-valued shift
-- [GenEigsComplexShiftSolver](http://spectralib.org/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
+- [GenEigsComplexShiftSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
 For general real matrices using the shift-and-invert mode,
 with a complex-valued shift
-- [SymGEigsSolver](http://spectralib.org/doc/classSpectra_1_1SymGEigsSolver.html):
+- [SymGEigsSolver](https://spectralib.org/doc/classSpectra_1_1SymGEigsSolver.html):
 For generalized eigen solver for real symmetric matrices
 
 ### Examples
