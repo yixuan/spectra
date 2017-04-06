@@ -1,5 +1,7 @@
-CXXFLAGS = -std=c++11 -Wall -O2 -Wno-parentheses -Wno-misleading-indentation
-CPPFLAGS = -I../include
+
+CXXFLAGS = -std=c++11 -Wall -O2
+CPPFLAGS = -I../include -I/usr/local/include/eigen3
+
 LDFLAGS =
 LIBS =
 
@@ -25,5 +27,6 @@ test:
 %.out: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@ $(LDFLAGS) $(LIBS)
 
+
 clean:
-	-rm *.out
+	$(RM) QR Eigen SymEigs SymEigsShift SymGEigsCholesky GenEigs GenEigsRealShift GenEigsComplexShift *.o

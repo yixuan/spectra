@@ -1,6 +1,6 @@
 CXX = g++
-CXXFLAGS = -Wall -O2
-CPPFLAGS = -I../include -I.
+CXXFLAGS = -Wall -O3 -DNDEBUG
+CPPFLAGS = -I../include -I. -I/usr/local/include/eigen3
 FC = gfortran
 FFLAGS = -O3
 LDFLAGS =
