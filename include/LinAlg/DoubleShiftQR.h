@@ -49,7 +49,7 @@ private:
     {
         using std::abs;
 
-        Scalar* u = m_ref_u.data() + 3 * ind;
+        Scalar* u = &m_ref_u.coeffRef(0, ind);
         unsigned char* nr = m_ref_nr.data();
         // In general case the reflector affects 3 rows
         nr[ind] = 3;
@@ -99,7 +99,7 @@ private:
         // If block size == 1, there is no need to apply reflectors
         if(bsize == 1)
         {
-            m_ref_nr[il] = 1;
+            m_ref_nr.coeffRef(il) = 1;
             return;
         }
 
@@ -118,7 +118,7 @@ private:
             apply_PX(m_mat_H.block(il, il, 2, m_n - il), m_n, il);
             apply_XP(m_mat_H.block(0, il, il + 2, 2), m_n, il);
 
-            m_ref_nr[il + 1] = 1;
+            m_ref_nr.coeffRef(il + 1) = 1;
             return;
         }
 
@@ -152,17 +152,17 @@ private:
         apply_PX(m_mat_H.block(iu - 1, iu - 2, 2, m_n - iu + 2), m_n, iu - 1);
         apply_XP(m_mat_H.block(0, iu - 1, il + bsize, 2), m_n, iu - 1);
 
-        m_ref_nr[iu] = 1;
+        m_ref_nr.coeffRef(iu) = 1;
     }
 
     // P = I - 2 * u * u' = P'
     // PX = X - 2 * u * (u'X)
     void apply_PX(GenericMatrix X, Index stride, Index u_ind)
     {
-        if(m_ref_nr[u_ind] == 1)
+        if(m_ref_nr.coeff(u_ind) == 1)
             return;
 
-        Scalar* u = m_ref_u.data() + 3 * u_ind;
+        Scalar* u = &m_ref_u.coeffRef(0, u_ind);
 
         const Index nrow = X.rows();
         const Index ncol = X.cols();
@@ -194,15 +194,15 @@ private:
     // Px = x - 2 * dot(x, u) * u
     void apply_PX(Scalar* x, Index u_ind)
     {
-        if(m_ref_nr[u_ind] == 1)
+        if(m_ref_nr.coeff(u_ind) == 1)
             return;
 
-        Scalar u0 = m_ref_u(0, u_ind),
-               u1 = m_ref_u(1, u_ind),
-               u2 = m_ref_u(2, u_ind);
+        Scalar u0 = m_ref_u.coeff(0, u_ind),
+               u1 = m_ref_u.coeff(1, u_ind),
+               u2 = m_ref_u.coeff(2, u_ind);
 
         // When the reflector only contains two elements, u2 has been set to zero
-        bool nr_is_2 = (m_ref_nr[u_ind] == 2);
+        bool nr_is_2 = (m_ref_nr.coeff(u_ind) == 2);
         Scalar dot2 = x[0] * u0 + x[1] * u1 + (nr_is_2 ? 0 : (x[2] * u2));
         dot2 *= 2;
         x[0] -= dot2 * u0;
@@ -214,17 +214,17 @@ private:
     // XP = X - 2 * (X * u) * u'
     void apply_XP(GenericMatrix X, Index stride, Index u_ind)
     {
-        if(m_ref_nr[u_ind] == 1)
+        if(m_ref_nr.coeff(u_ind) == 1)
             return;
 
-        Scalar* u = m_ref_u.data() + 3 * u_ind;
+        Scalar* u = &m_ref_u.coeffRef(0, u_ind);
         const int nrow = X.rows();
         const int ncol = X.cols();
         const Scalar u0_2 = 2 * u[0];
         const Scalar u1_2 = 2 * u[1];
         Scalar *X0 = X.data(), *X1 = X0 + stride;  // X0 => X.col(0), X1 => X.col(1)
 
-        if(m_ref_nr[u_ind] == 2 || ncol == 2)
+        if(m_ref_nr.coeff(u_ind) == 2 || ncol == 2)
         {
             // tmp = 2 * u0 * X0 + 2 * u1 * X1
             // X0 => X0 - u0 * tmp
