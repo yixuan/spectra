@@ -187,6 +187,8 @@ private:
         m_fac_f = fk;
 
         Vector w(m_n);
+        Vector Vf;
+
         Scalar beta = m_fac_f.norm();
         // Keep the upperleft k x k submatrix of H and set other elements to 0
         m_fac_H.rightCols(m_ncv - from_k).setZero();
@@ -203,7 +205,7 @@ private:
                 m_fac_f.noalias() = rng.random_vec(m_n);
                 // f <- f - V * V' * f, so that f is orthogonal to V
                 MapMat V(m_fac_V.data(), m_n, i); // The first i columns
-                Vector Vf = V.transpose() * m_fac_f;
+                Vf.noalias() = V.transpose() * m_fac_f;
                 m_fac_f.noalias() -= V * Vf;
                 // beta <- ||f||
                 beta = m_fac_f.norm();
@@ -240,7 +242,7 @@ private:
 
             // f/||f|| is going to be the next column of V, so we need to test
             // whether V' * (f/||f||) ~= 0
-            Vector Vf = Vs.transpose() * m_fac_f;
+            Vf.noalias() = Vs.transpose() * m_fac_f;
             // If not, iteratively correct the residual
             int count = 0;
             while(count < 5 && Vf.cwiseAbs().maxCoeff() > m_approx_0 * beta)
@@ -286,8 +288,8 @@ private:
                 // H <- R2 * Q2 + conj(mu) * I = Q2' * H * Q2
                 //
                 // (H - mu * I) * (H - conj(mu) * I) = Q1 * Q2 * R2 * R1 = Q * R
-                Scalar s = 2 * m_ritz_val[i].real();
-                Scalar t = norm(m_ritz_val[i]);
+                const Scalar s = 2 * m_ritz_val[i].real();
+                const Scalar t = norm(m_ritz_val[i]);
 
                 decomp_ds.compute(m_fac_H, s, t);
 
@@ -327,7 +329,7 @@ private:
         Vs.col(k).noalias() = m_fac_V * Q.col(k);
         m_fac_V.leftCols(k + 1).noalias() = Vs;
 
-        Vector fk = m_fac_f * Q(m_ncv - 1, k - 1) + m_fac_V.col(k) * m_fac_H(k, k - 1);
+        const Vector fk = m_fac_f * Q(m_ncv - 1, k - 1) + m_fac_V.col(k) * m_fac_H(k, k - 1);
         factorize_from(k, m_ncv, fk);
         retrieve_ritzpair();
     }
@@ -378,7 +380,7 @@ private:
     void retrieve_ritzpair()
     {
         UpperHessenbergEigen<Scalar> decomp(m_fac_H);
-        ComplexVector evals = decomp.eigenvalues();
+        const ComplexVector & evals = decomp.eigenvalues();
         ComplexMatrix evecs = decomp.eigenvectors();
 
         SortEigenvalue<Complex, SelectionRule> sorting(evals.data(), evals.size());
