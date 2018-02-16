@@ -203,7 +203,7 @@ private:
 
         m_fac_f.noalias() = fk;
 
-        Vector Vf;
+        Vector Vf(to_m); // pre-allocate Vf
         Vector w(m_n);
         Scalar beta = norm(m_fac_f), Hii = 0.0;
         // Keep the upperleft k x k submatrix of H and set other elements to 0
@@ -221,8 +221,8 @@ private:
                 m_fac_f.noalias() = rng.random_vec(m_n);
                 // f <- f - V * V' * f, so that f is orthogonal to V
                 MapMat V(m_fac_V.data(), m_n, i); // The first i columns
-                Vf = inner_product(V, m_fac_f);
-                m_fac_f.noalias() -= V * Vf;
+                Vf.head(i) = inner_product(V, m_fac_f);
+                m_fac_f.noalias() -= V * Vf.head(i);
                 // beta <- ||f||
                 beta = norm(m_fac_f);
 
@@ -258,14 +258,15 @@ private:
 
             // f/||f|| is going to be the next column of V, so we need to test
             // whether V' * (f/||f||) ~= 0
-            MapMat V(m_fac_V.data(), m_n, i + 1); // The first (i+1) columns
-            Vf = inner_product(V, m_fac_f);
+            const int i1 = i + 1;
+            MapMat V(m_fac_V.data(), m_n, i1); // The first (i+1) columns
+            Vf.head(i1) = inner_product(V, m_fac_f);
             // If not, iteratively correct the residual
             int count = 0;
-            while(count < 5 && Vf.cwiseAbs().maxCoeff() > m_approx_0 * beta)
+            while(count < 5 && Vf.head(i1).cwiseAbs().maxCoeff() > m_approx_0 * beta)
             {
                 // f <- f - V * Vf
-                m_fac_f.noalias() -= V * Vf;
+                m_fac_f.noalias() -= V * Vf.head(i1);
                 // h <- h + Vf
                 m_fac_H(i - 1, i) += Vf[i - 1];
                 m_fac_H(i, i - 1) = m_fac_H(i - 1, i);
@@ -273,7 +274,7 @@ private:
                 // beta <- ||f||
                 beta = norm(m_fac_f);
 
-                Vf.noalias() = inner_product(V, m_fac_f);
+                Vf.head(i1).noalias() = inner_product(V, m_fac_f);
                 count++;
             }
         }
