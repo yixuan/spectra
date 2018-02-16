@@ -187,7 +187,7 @@ private:
         m_fac_f = fk;
 
         Vector w(m_n);
-        Vector Vf;
+        Vector Vf(to_m); // pre-allocate vector
 
         Scalar beta = m_fac_f.norm();
         // Keep the upperleft k x k submatrix of H and set other elements to 0
@@ -205,8 +205,8 @@ private:
                 m_fac_f.noalias() = rng.random_vec(m_n);
                 // f <- f - V * V' * f, so that f is orthogonal to V
                 MapMat V(m_fac_V.data(), m_n, i); // The first i columns
-                Vf.noalias() = V.transpose() * m_fac_f;
-                m_fac_f.noalias() -= V * Vf;
+                Vf.head(i).noalias() = V.transpose() * m_fac_f;
+                m_fac_f.noalias() -= V * Vf.head(i);
                 // beta <- ||f||
                 beta = m_fac_f.norm();
 
@@ -226,10 +226,11 @@ private:
             m_op->perform_op(&m_fac_V(0, i), w.data());
             m_nmatop++;
 
+            const int i1 = i + 1;
             // First i+1 columns of V
-            MapMat Vs(m_fac_V.data(), m_n, i + 1);
+            MapMat Vs(m_fac_V.data(), m_n, i1);
             // h = m_fac_H(0:i, i)
-            MapVec h(&m_fac_H(0, i), i + 1);
+            MapVec h(&m_fac_H(0, i), i1);
             // h <- V' * w
             h.noalias() = Vs.transpose() * w;
 
@@ -242,19 +243,19 @@ private:
 
             // f/||f|| is going to be the next column of V, so we need to test
             // whether V' * (f/||f||) ~= 0
-            Vf.noalias() = Vs.transpose() * m_fac_f;
+            Vf.head(i1).noalias() = Vs.transpose() * m_fac_f;
             // If not, iteratively correct the residual
             int count = 0;
-            while(count < 5 && Vf.cwiseAbs().maxCoeff() > m_approx_0 * beta)
+            while(count < 5 && Vf.head(i1).cwiseAbs().maxCoeff() > m_approx_0 * beta)
             {
                 // f <- f - V * Vf
-                m_fac_f.noalias() -= Vs * Vf;
+                m_fac_f.noalias() -= Vs * Vf.head(i1);
                 // h <- h + Vf
-                h.noalias() += Vf;
+                h.noalias() += Vf.head(i1);
                 // beta <- ||f||
                 beta = m_fac_f.norm();
 
-                Vf.noalias() = Vs.transpose() * m_fac_f;
+                Vf.head(i1).noalias() = Vs.transpose() * m_fac_f;
                 count++;
             }
         }
