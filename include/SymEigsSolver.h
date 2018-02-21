@@ -203,7 +203,8 @@ private:
 
         m_fac_f.noalias() = fk;
 
-        Vector Vf(to_m); // pre-allocate Vf
+        // Pre-allocate Vf
+        Vector Vf(to_m);
         Vector w(m_n);
         Scalar beta = norm(m_fac_f), Hii = 0.0;
         // Keep the upperleft k x k submatrix of H and set other elements to 0
@@ -361,8 +362,8 @@ private:
     void retrieve_ritzpair()
     {
         TridiagEigen<Scalar> decomp(m_fac_H);
-        const Vector & evals = decomp.eigenvalues();
-        const Matrix & evecs = decomp.eigenvectors();
+        const Vector& evals = decomp.eigenvalues();
+        const Matrix& evecs = decomp.eigenvectors();
 
         SortEigenvalue<Scalar, SelectionRule> sorting(evals.data(), evals.size());
         std::vector<int> ind = sorting.index();

@@ -186,8 +186,9 @@ private:
 
         m_fac_f = fk;
 
+        // Pre-allocate Vf
+        Vector Vf(to_m);
         Vector w(m_n);
-        Vector Vf(to_m); // pre-allocate vector
 
         Scalar beta = m_fac_f.norm();
         // Keep the upperleft k x k submatrix of H and set other elements to 0
@@ -381,7 +382,7 @@ private:
     void retrieve_ritzpair()
     {
         UpperHessenbergEigen<Scalar> decomp(m_fac_H);
-        const ComplexVector & evals = decomp.eigenvalues();
+        const ComplexVector& evals = decomp.eigenvalues();
         ComplexMatrix evecs = decomp.eigenvectors();
 
         SortEigenvalue<Complex, SelectionRule> sorting(evals.data(), evals.size());

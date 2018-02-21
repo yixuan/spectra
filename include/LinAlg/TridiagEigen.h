@@ -184,7 +184,7 @@ public:
         m_computed = true;
     }
 
-    const Vector & eigenvalues() const
+    const Vector& eigenvalues() const
     {
         if(!m_computed)
             throw std::logic_error("TridiagEigen: need to call compute() first");
@@ -193,7 +193,7 @@ public:
         return m_main_diag;
     }
 
-    const Matrix & eigenvectors() const
+    const Matrix& eigenvectors() const
     {
         if(!m_computed)
             throw std::logic_error("TridiagEigen: need to call compute() first");

@@ -161,7 +161,7 @@ public:
     /// \return Returned matrix type will be `Eigen::Matrix<Scalar, ...>`, depending on
     /// the template parameter `Scalar` defined.
     ///
-    const Matrix & matrix_R() const
+    const Matrix& matrix_R() const
     {
         if(!m_computed)
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
