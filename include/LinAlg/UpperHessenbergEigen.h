@@ -270,7 +270,7 @@ public:
         m_computed = true;
     }
 
-    ComplexVector eigenvalues()
+    const ComplexVector & eigenvalues() const
     {
         if(!m_computed)
             throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
