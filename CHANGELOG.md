@@ -9,7 +9,10 @@
 
 ### Changed
 - Documentation updates
-- Update project URL to be [https://spectralib.org](https://spectralib.org).
+- Updated project URL to be [https://spectralib.org](https://spectralib.org)
+- Some internal improvements, such as pre-allocating vectors in loops, and changing
+  return type to reference, thanks to
+  [Angelos Mantzaflaris](https://github.com/filiatra)
 
 
 ## [0.5.0] - 2017-02-05
