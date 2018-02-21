@@ -6,6 +6,8 @@
   the status of Cholesky decomposition
 - Added the `info()` member function to `DenseCholesky` and `SparseCholesky` to
   report the status of the decomposition
+- Added a missing `#include` item in `SparseCholesky.h`, thanks to
+  [Maxim Torgonsky](https://github.com/kriolog)
 
 ### Changed
 - Documentation updates
