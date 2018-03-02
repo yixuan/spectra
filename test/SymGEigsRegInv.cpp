@@ -85,7 +85,7 @@ void run_test(const SpMatrix& A, const SpMatrix& B, int k, int m, bool allow_fai
     const double err = resid.array().abs().maxCoeff();
 
     INFO( "||AU - BUD||_inf = " << err );
-    REQUIRE( err == Approx(0.0) );
+    REQUIRE( err == Approx(0.0).margin(1e-9) );
 }
 
 void run_test_sets(const SpMatrix& A, const SpMatrix& B, int k, int m)

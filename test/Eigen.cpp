@@ -31,7 +31,7 @@ TEST_CASE("Eigen decomposition of upper Hessenberg matrix", "[Eigen]")
     MatrixXcd err = H * evecs - evecs * evals.asDiagonal();
 
     INFO( "||HU - UD||_inf = " << err.cwiseAbs().maxCoeff() );
-    REQUIRE( err.cwiseAbs().maxCoeff() == Approx(0.0) );
+    REQUIRE( err.cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12) );
 
     clock_t t1, t2;
     t1 = clock();
@@ -75,7 +75,7 @@ TEST_CASE("Eigen decomposition of symmetric tridiagonal matrix", "[Eigen]")
     MatrixXd err = H * evecs - evecs * evals.asDiagonal();
 
     INFO( "||HU - UD||_inf = " << err.cwiseAbs().maxCoeff() );
-    REQUIRE( err.cwiseAbs().maxCoeff() == Approx(0.0) );
+    REQUIRE( err.cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12) );
 
     clock_t t1, t2;
     t1 = clock();

@@ -49,7 +49,7 @@ void run_test(const Matrix &mat, int k, int m, double sigmar, double sigmai, boo
 
     INFO( "||AU - UD||_inf = " << err );
     INFO( "||AU - UD||_2 colwise =" << resid.colwise().norm() );
-    REQUIRE( err == Approx(0.0) );
+    REQUIRE( err == Approx(0.0).margin(1e-9) );
 }
 
 
