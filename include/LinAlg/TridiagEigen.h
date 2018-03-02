@@ -15,6 +15,8 @@
 #include <Eigen/Jacobi>
 #include <stdexcept>
 
+#include "../Util/TypeTraits.h"
+
 namespace Spectra {
 
 
@@ -140,11 +142,8 @@ public:
         int iter = 0; // total number of iterations
         int info = 0; // 0 for success, 1 for failure
 
-        const Scalar eps = Eigen::NumTraits<Scalar>::epsilon();
-        // Ideally this should be std::numeric_limits<Scalar>::min() as in Eigen,
-        // but to allow for other float types, here we use eps^2
-        const Scalar considerAsZero = eps * eps;
-        const Scalar precision = Scalar(2) * eps;
+        const Scalar considerAsZero = TypeTraits<Scalar>::min();
+        const Scalar precision = Scalar(2) * Eigen::NumTraits<Scalar>::epsilon();
 
         while(end > 0)
         {
