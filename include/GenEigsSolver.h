@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2018 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -290,7 +290,7 @@ private:
                 // H <- R2 * Q2 + conj(mu) * I = Q2' * H * Q2
                 //
                 // (H - mu * I) * (H - conj(mu) * I) = Q1 * Q2 * R2 * R1 = Q * R
-                const Scalar s = 2 * m_ritz_val[i].real();
+                const Scalar s = Scalar(2) * m_ritz_val[i].real();
                 const Scalar t = norm(m_ritz_val[i]);
 
                 decomp_ds.compute(m_fac_H, s, t);
@@ -301,7 +301,7 @@ private:
                 // Matrix Q = Matrix::Identity(m_ncv, m_ncv);
                 // decomp_ds.apply_YQ(Q);
                 // m_fac_H = Q.transpose() * m_fac_H * Q;
-                m_fac_H = decomp_ds.matrix_QtHQ();
+                m_fac_H.noalias() = decomp_ds.matrix_QtHQ();
 
                 i++;
             } else {
@@ -312,7 +312,7 @@ private:
                 // Q -> Q * Qi
                 decomp_hb.apply_YQ(Q);
                 // H -> Q'HQ = RQ + mu * I
-                m_fac_H = decomp_hb.matrix_RQ();
+                m_fac_H.noalias() = decomp_hb.matrix_RQ();
                 m_fac_H.diagonal().array() += m_ritz_val[i].real();
             }
         }

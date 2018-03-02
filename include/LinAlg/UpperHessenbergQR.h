@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2018 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -227,7 +227,7 @@ public:
             Yi1 = Yi + m_n;  // RQ(0, i + 1)
             for(Index j = 0; j < i + 2; j++)
             {
-                Scalar tmp = Yi[j];
+                const Scalar tmp = Yi[j];
                 Yi[j]  = (*c) * tmp - (*s) * Yi1[j];
                 Yi1[j] = (*s) * tmp + (*c) * Yi1[j];
             }

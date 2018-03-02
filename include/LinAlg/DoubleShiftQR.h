@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2018 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -98,7 +98,7 @@ private:
     void update_block(Index il, Index iu)
     {
         // Block size
-        Index bsize = iu - il + 1;
+        const Index bsize = iu - il + 1;
 
         // If block size == 1, there is no need to apply reflectors
         if(bsize == 1)
@@ -107,15 +107,18 @@ private:
             return;
         }
 
+        const Scalar x00 = m_mat_H.coeff(il, il),
+                     x01 = m_mat_H.coeff(il, il + 1),
+                     x10 = m_mat_H.coeff(il + 1, il),
+                     x11 = m_mat_H.coeff(il + 1, il + 1);
+        // m00 = x00 * (x00 - s) + x01 * x10 + t
+        const Scalar m00 = x00 * (x00 - m_shift_s) + x01 * x10 + m_shift_t;
+        // m10 = x10 * (x00 + x11 - s)
+        const Scalar m10 = x10 * (x00 + x11 - m_shift_s);
+
         // For block size == 2, do a Givens rotation on M = X * X - s * X + t * I
         if(bsize == 2)
         {
-            // m00 = x00 * (x00 - s) + x01 * x10 + t
-            Scalar m00 = m_mat_H.coeff(il, il) * (m_mat_H.coeff(il, il) - m_shift_s) +
-                         m_mat_H.coeff(il, il + 1) * m_mat_H.coeff(il + 1, il) +
-                         m_shift_t;
-            // m10 = x10 * (x00 + x11 - s)
-            Scalar m10 = m_mat_H.coeff(il + 1, il) * (m_mat_H.coeff(il, il) + m_mat_H.coeff(il + 1, il + 1) - m_shift_s);
             // This causes nr=2
             compute_reflector(m00, m10, 0, il);
             // Apply the reflector to X
@@ -127,12 +130,8 @@ private:
         }
 
         // For block size >=3, use the regular strategy
-        Scalar m00 = m_mat_H.coeff(il, il) * (m_mat_H.coeff(il, il) - m_shift_s) +
-                     m_mat_H.coeff(il, il + 1) * m_mat_H.coeff(il + 1, il) +
-                     m_shift_t;
-        Scalar m10 = m_mat_H.coeff(il + 1, il) * (m_mat_H.coeff(il, il) + m_mat_H.coeff(il + 1, il + 1) - m_shift_s);
         // m20 = x21 * x10
-        Scalar m20 = m_mat_H.coeff(il + 2, il + 1) * m_mat_H.coeff(il + 1, il);
+        const Scalar m20 = m_mat_H.coeff(il + 2, il + 1) * m_mat_H.coeff(il + 1, il);
         compute_reflector(m00, m10, m20, il);
 
         // Apply the first reflector
@@ -163,33 +162,36 @@ private:
     // PX = X - 2 * u * (u'X)
     void apply_PX(GenericMatrix X, Index stride, Index u_ind)
     {
-        if(m_ref_nr.coeff(u_ind) == 1)
+        const Index nr = m_ref_nr.coeff(u_ind);
+        if(nr == 1)
             return;
 
-        Scalar* u = &m_ref_u.coeffRef(0, u_ind);
+        const Scalar u0 = m_ref_u.coeff(0, u_ind),
+                     u1 = m_ref_u.coeff(1, u_ind);
+        const Scalar u0_2 = Scalar(2) * u0,
+                     u1_2 = Scalar(2) * u1;
 
         const Index nrow = X.rows();
         const Index ncol = X.cols();
-        const Scalar u0_2 = 2 * u[0];
-        const Scalar u1_2 = 2 * u[1];
 
         Scalar* xptr = X.data();
-        if(m_ref_nr[u_ind] == 2 || nrow == 2)
+        if(nr == 2 || nrow == 2)
         {
             for(Index i = 0; i < ncol; i++, xptr += stride)
             {
-                Scalar tmp = u0_2 * xptr[0] + u1_2 * xptr[1];
-                xptr[0] -= tmp * u[0];
-                xptr[1] -= tmp * u[1];
+                const Scalar tmp = u0_2 * xptr[0] + u1_2 * xptr[1];
+                xptr[0] -= tmp * u0;
+                xptr[1] -= tmp * u1;
             }
         } else {
-            const Scalar u2_2 = 2 * u[2];
+            const Scalar u2 = m_ref_u.coeff(2, u_ind);
+            const Scalar u2_2 = Scalar(2) * u2;
             for(Index i = 0; i < ncol; i++, xptr += stride)
             {
-                Scalar tmp = u0_2 * xptr[0] + u1_2 * xptr[1] + u2_2 * xptr[2];
-                xptr[0] -= tmp * u[0];
-                xptr[1] -= tmp * u[1];
-                xptr[2] -= tmp * u[2];
+                const Scalar tmp = u0_2 * xptr[0] + u1_2 * xptr[1] + u2_2 * xptr[2];
+                xptr[0] -= tmp * u0;
+                xptr[1] -= tmp * u1;
+                xptr[2] -= tmp * u2;
             }
         }
     }
@@ -198,17 +200,17 @@ private:
     // Px = x - 2 * dot(x, u) * u
     void apply_PX(Scalar* x, Index u_ind)
     {
-        if(m_ref_nr.coeff(u_ind) == 1)
+        const Index nr = m_ref_nr.coeff(u_ind);
+        if(nr == 1)
             return;
 
-        Scalar u0 = m_ref_u.coeff(0, u_ind),
-               u1 = m_ref_u.coeff(1, u_ind),
-               u2 = m_ref_u.coeff(2, u_ind);
+        const Scalar u0 = m_ref_u.coeff(0, u_ind),
+                     u1 = m_ref_u.coeff(1, u_ind),
+                     u2 = m_ref_u.coeff(2, u_ind);
 
         // When the reflector only contains two elements, u2 has been set to zero
-        bool nr_is_2 = (m_ref_nr.coeff(u_ind) == 2);
-        Scalar dot2 = x[0] * u0 + x[1] * u1 + (nr_is_2 ? 0 : (x[2] * u2));
-        dot2 *= 2;
+        const bool nr_is_2 = (nr == 2);
+        const Scalar dot2 = Scalar(2) * (x[0] * u0 + x[1] * u1 + (nr_is_2 ? 0 : (x[2] * u2)));
         x[0] -= dot2 * u0;
         x[1] -= dot2 * u1;
         if(!nr_is_2)
@@ -218,36 +220,40 @@ private:
     // XP = X - 2 * (X * u) * u'
     void apply_XP(GenericMatrix X, Index stride, Index u_ind)
     {
-        if(m_ref_nr.coeff(u_ind) == 1)
+        const Index nr = m_ref_nr.coeff(u_ind);
+        if(nr == 1)
             return;
 
-        Scalar* u = &m_ref_u.coeffRef(0, u_ind);
+        const Scalar u0 = m_ref_u.coeff(0, u_ind),
+                     u1 = m_ref_u.coeff(1, u_ind);
+        const Scalar u0_2 = Scalar(2) * u0,
+                     u1_2 = Scalar(2) * u1;
+
         const int nrow = X.rows();
         const int ncol = X.cols();
-        const Scalar u0_2 = 2 * u[0];
-        const Scalar u1_2 = 2 * u[1];
         Scalar *X0 = X.data(), *X1 = X0 + stride;  // X0 => X.col(0), X1 => X.col(1)
 
-        if(m_ref_nr.coeff(u_ind) == 2 || ncol == 2)
+        if(nr == 2 || ncol == 2)
         {
             // tmp = 2 * u0 * X0 + 2 * u1 * X1
             // X0 => X0 - u0 * tmp
             // X1 => X1 - u1 * tmp
             for(Index i = 0; i < nrow; i++)
             {
-                Scalar tmp = u0_2 * X0[i] + u1_2 * X1[i];
-                X0[i] -= tmp * u[0];
-                X1[i] -= tmp * u[1];
+                const Scalar tmp = u0_2 * X0[i] + u1_2 * X1[i];
+                X0[i] -= tmp * u0;
+                X1[i] -= tmp * u1;
             }
         } else {
             Scalar* X2 = X1 + stride;  // X2 => X.col(2)
-            const Scalar u2_2 = 2 * u[2];
+            const Scalar u2 = m_ref_u.coeff(2, u_ind);
+            const Scalar u2_2 = Scalar(2) * u2;
             for(Index i = 0; i < nrow; i++)
             {
-                Scalar tmp = u0_2 * X0[i] + u1_2 * X1[i] + u2_2 * X2[i];
-                X0[i] -= tmp * u[0];
-                X1[i] -= tmp * u[1];
-                X2[i] -= tmp * u[2];
+                const Scalar tmp = u0_2 * X0[i] + u1_2 * X1[i] + u2_2 * X2[i];
+                X0[i] -= tmp * u0;
+                X1[i] -= tmp * u1;
+                X2[i] -= tmp * u2;
             }
         }
     }
@@ -258,7 +264,7 @@ public:
         m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
         m_eps_rel(m_eps),
-        m_eps_abs(m_near_0),
+        m_eps_abs(m_near_0 * (m_n / m_eps)),
         m_computed(false)
     {}
 
@@ -272,20 +278,20 @@ public:
         m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
         m_eps_rel(m_eps),
-        m_eps_abs(m_near_0),
+        m_eps_abs(m_near_0 * (m_n / m_eps)),
         m_computed(false)
     {
         compute(mat, s, t);
     }
 
-    void compute(ConstGenericMatrix& mat, Scalar s, Scalar t)
+    void compute(ConstGenericMatrix& mat, const Scalar& s, const Scalar& t)
     {
         using std::abs;
 
-        if(mat.rows() != mat.cols())
+        m_n = mat.rows();
+        if(m_n != mat.cols())
             throw std::invalid_argument("DoubleShiftQR: matrix must be square");
 
-        m_n = mat.rows();
         m_mat_H.resize(m_n, m_n);
         m_shift_s = s;
         m_shift_t = t;
@@ -293,7 +299,7 @@ public:
         m_ref_nr.resize(m_n);
 
         // Make a copy of mat
-        std::copy(mat.data(), mat.data() + mat.size(), m_mat_H.data());
+        m_mat_H.noalias() = mat;
 
         // Obtain the indices of zero elements in the subdiagonal,
         // so that H can be divided into several blocks
@@ -305,7 +311,7 @@ public:
         {
             // Hii[1] => m_mat_H(i + 1, i)
             const Scalar h = abs(Hii[1]);
-            if(h <= m_eps_abs || h <= m_eps_rel * (abs(Hii[0]) + abs(Hii[m_n + 1])))
+            if(h <= 0 || h <= m_eps_rel * (abs(Hii[0]) + abs(Hii[m_n + 1])))
             {
                 Hii[1] = 0;
                 zero_ind.push_back(i + 1);
@@ -318,8 +324,8 @@ public:
 
         for(std::vector<int>::size_type i = 0; i < zero_ind.size() - 1; i++)
         {
-            Index start = zero_ind[i];
-            Index end = zero_ind[i + 1] - 1;
+            const Index start = zero_ind[i];
+            const Index end = zero_ind[i + 1] - 1;
             // Compute refelctors and update each block
             update_block(start, end);
         }
@@ -327,7 +333,7 @@ public:
         m_computed = true;
     }
 
-    Matrix matrix_QtHQ()
+    const Matrix& matrix_QtHQ() const
     {
         if(!m_computed)
             throw std::logic_error("DoubleShiftQR: need to call compute() first");
@@ -343,7 +349,8 @@ public:
             throw std::logic_error("DoubleShiftQR: need to call compute() first");
 
         Scalar* y_ptr = y.data();
-        for(Index i = 0; i < m_n - 1; i++, y_ptr++)
+        const Index n1 = m_n - 1;
+        for(Index i = 0; i < n1; i++, y_ptr++)
         {
             apply_PX(y_ptr, i);
         }
@@ -356,12 +363,13 @@ public:
         if(!m_computed)
             throw std::logic_error("DoubleShiftQR: need to call compute() first");
 
-        Index nrow = Y.rows();
-        for(Index i = 0; i < m_n - 2; i++)
+        const Index nrow = Y.rows();
+        const Index n2 = m_n - 2;
+        for(Index i = 0; i < n2; i++)
         {
             apply_XP(Y.block(0, i, nrow, 3), nrow, i);
         }
-        apply_XP(Y.block(0, m_n - 2, nrow, 2), nrow, m_n - 2);
+        apply_XP(Y.block(0, n2, nrow, 2), nrow, n2);
     }
 };
 
