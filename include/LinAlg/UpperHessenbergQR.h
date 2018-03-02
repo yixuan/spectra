@@ -52,6 +52,41 @@ protected:
     Array m_rot_cos;
     Array m_rot_sin;
     bool m_computed;
+
+    // Given x and y, compute 1) r = sqrt(x^2 + y^2), 2) c = x / r, 3) s = -y / r
+    // If both x and y are zero, set c = 1 and s = 0
+    // We must implement it in a numerically stable way
+    static void cos_sin_xy(const Scalar& x, const Scalar& y, Scalar& r, Scalar& c, Scalar& s)
+    {
+        using std::abs;
+        using std::sqrt;
+
+        const Scalar xsign = (x > Scalar(0)) - (x < Scalar(0));
+        const Scalar ysign = (y > Scalar(0)) - (y < Scalar(0));
+        const Scalar xabs = x * xsign;
+        const Scalar yabs = y * ysign;
+        if(xabs > yabs)
+        {
+            // In this case xabs != 0
+            const Scalar ratio = yabs / xabs;  // so that 0 <= ratio < 1
+            const Scalar common = sqrt(Scalar(1) + ratio * ratio);
+            c = xsign / common;
+            r = xabs * common;
+            s = -y / r;
+        } else {
+            if(yabs == Scalar(0))
+            {
+                r = Scalar(0); c = Scalar(1); s = Scalar(0);
+                return;
+            }
+            const Scalar ratio = xabs / yabs;  // so that 0 <= ratio <= 1
+            const Scalar common = sqrt(Scalar(1) + ratio * ratio);
+            s = -ysign / common;
+            r = yabs * common;
+            c = x / r;
+        }
+    }
+
 public:
     ///
     /// Default constructor. Computation can
@@ -80,7 +115,7 @@ public:
     {
         compute(mat);
     }
-    
+
     ///
     /// We have virtual functions, so need a virtual destructor
     ///
@@ -104,9 +139,10 @@ public:
 
         std::copy(mat.data(), mat.data() + mat.size(), m_mat_T.data());
 
-        Scalar xi, xj, r, c, s, eps = Eigen::NumTraits<Scalar>::epsilon();
+        Scalar xi, xj, r, c, s;
         Scalar *Tii, *ptr;
-        for(Index i = 0; i < m_n - 1; i++)
+        const Index n1 = m_n - 1;
+        for(Index i = 0; i < n1; i++)
         {
             Tii = &m_mat_T(i, i);
 
@@ -116,16 +152,10 @@ public:
 
             xi = Tii[0];  // mat_T(i, i)
             xj = Tii[1];  // mat_T(i + 1, i)
-            r = Eigen::numext::hypot(xi, xj);
-            if(r <= eps)
-            {
-                r = 0;
-                m_rot_cos[i] = c = 1;
-                m_rot_sin[i] = s = 0;
-            } else {
-                m_rot_cos[i] = c = xi / r;
-                m_rot_sin[i] = s = -xj / r;
-            }
+            cos_sin_xy(xi, xj, r, c, s);
+            m_rot_cos[i] = c;
+            m_rot_sin[i] = s;
+
             // For a complete QR decomposition,
             // we first obtain the rotation matrix
             // G = [ cos  sin]
@@ -134,8 +164,8 @@ public:
 
             // Gt << c, -s, s, c;
             // m_mat_T.block(i, i, 2, m_n - i) = Gt * m_mat_T.block(i, i, 2, m_n - i);
-            Tii[0] = r;    // m_mat_T(i, i)     => r
-            Tii[1] = 0;    // m_mat_T(i + 1, i) => 0
+            Tii[0] = r;  // m_mat_T(i, i)     => r
+            Tii[1] = 0;  // m_mat_T(i + 1, i) => 0
             ptr = Tii + m_n; // m_mat_T(i, k), k = i+1, i+2, ..., n-1
             for(Index j = i + 1; j < m_n; j++, ptr += m_n)
             {
@@ -184,8 +214,8 @@ public:
         // Make a copy of the R matrix
         Matrix RQ = m_mat_T.template triangularView<Eigen::Upper>();
 
-        Scalar *c = m_rot_cos.data(),
-               *s = m_rot_sin.data();
+        const Scalar *c = m_rot_cos.data(),
+                     *s = m_rot_sin.data();
         for(Index i = 0; i < m_n - 1; i++)
         {
             // RQ[, i:(i + 1)] = RQ[, i:(i + 1)] * Gi
@@ -279,8 +309,8 @@ public:
         if(!m_computed)
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
-        Scalar *c = m_rot_cos.data() + m_n - 2,
-               *s = m_rot_sin.data() + m_n - 2;
+        const Scalar *c = m_rot_cos.data() + m_n - 2,
+                     *s = m_rot_sin.data() + m_n - 2;
         RowVector Yi(Y.cols()), Yi1(Y.cols());
         for(Index i = m_n - 2; i >= 0; i--)
         {
@@ -311,8 +341,8 @@ public:
         if(!m_computed)
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
-        Scalar *c = m_rot_cos.data(),
-               *s = m_rot_sin.data();
+        const Scalar *c = m_rot_cos.data(),
+                     *s = m_rot_sin.data();
         RowVector Yi(Y.cols()), Yi1(Y.cols());
         for(Index i = 0; i < m_n - 1; i++)
         {
@@ -343,8 +373,8 @@ public:
         if(!m_computed)
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
-        Scalar *c = m_rot_cos.data(),
-               *s = m_rot_sin.data();
+        const Scalar *c = m_rot_cos.data(),
+                     *s = m_rot_sin.data();
         /*Vector Yi(Y.rows());
         for(Index i = 0; i < m_n - 1; i++)
         {
@@ -358,8 +388,9 @@ public:
             s++;
         }*/
         Scalar *Y_col_i, *Y_col_i1;
-        Index nrow = Y.rows();
-        for(Index i = 0; i < m_n - 1; i++)
+        const Index n1 = m_n - 1;
+        const Index nrow = Y.rows();
+        for(Index i = 0; i < n1; i++)
         {
             Y_col_i  = &Y(0, i);
             Y_col_i1 = &Y(0, i + 1);
@@ -389,8 +420,8 @@ public:
         if(!m_computed)
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
-        Scalar *c = m_rot_cos.data() + m_n - 2,
-               *s = m_rot_sin.data() + m_n - 2;
+        const Scalar *c = m_rot_cos.data() + m_n - 2,
+                     *s = m_rot_sin.data() + m_n - 2;
         Vector Yi(Y.rows());
         for(Index i = m_n - 2; i >= 0; i--)
         {
@@ -466,31 +497,24 @@ public:
         this->m_rot_sin.resize(this->m_n - 1);
 
         this->m_mat_T.setZero();
-        this->m_mat_T.diagonal() = mat.diagonal();
-        this->m_mat_T.diagonal(1) = mat.diagonal(-1);
-        this->m_mat_T.diagonal(-1) = mat.diagonal(-1);
+        this->m_mat_T.diagonal().noalias() = mat.diagonal();
+        this->m_mat_T.diagonal(1).noalias() = mat.diagonal(-1);
+        this->m_mat_T.diagonal(-1).noalias() = mat.diagonal(-1);
 
         // A number of pointers to avoid repeated address calculation
         Scalar *Tii = this->m_mat_T.data(),  // pointer to T[i, i]
-               *ptr,                       // some location relative to Tii
+               *ptr,                         // some location relative to Tii
                *c = this->m_rot_cos.data(),  // pointer to the cosine vector
                *s = this->m_rot_sin.data(),  // pointer to the sine vector
-               r, tmp,
-               eps = Eigen::NumTraits<Scalar>::epsilon();
-        for(Index i = 0; i < this->m_n - 2; i++)
+               r, tmp;
+        const Index n2 = this->m_n - 2;
+        for(Index i = 0; i < n2; i++)
         {
             // Tii[0] == T[i, i]
             // Tii[1] == T[i + 1, i]
-            r = Eigen::numext::hypot(Tii[0], Tii[1]);
-            if(r <= eps)
-            {
-                r = 0;
-                *c = 1;
-                *s = 0;
-            } else {
-                *c =  Tii[0] / r;
-                *s = -Tii[1] / r;
-            }
+            // r = sqrt(T[i, i]^2 + T[i + 1, i]^2)
+            // c = T[i, i] / r, s = -T[i + 1, i] / r
+            this->cos_sin_xy(Tii[0], Tii[1], r, *c, *s);
 
             // For a complete QR decomposition,
             // we first obtain the rotation matrix
@@ -502,7 +526,7 @@ public:
             // The updated value of T[i, i] is known to be r
             // The updated value of T[i + 1, i] is known to be 0
             Tii[0] = r;
-            Tii[1] = 0;
+            Tii[1] = Scalar(0);
             // Update T[i, i + 1] and T[i + 1, i + 1]
             // ptr[0] == T[i, i + 1]
             // ptr[1] == T[i + 1, i + 1]
@@ -531,16 +555,7 @@ public:
             // this->m_mat_T(i + 1, i + 2) *= (*c);
         }
         // For i = n - 2
-        r = Eigen::numext::hypot(Tii[0], Tii[1]);
-        if(r <= eps)
-        {
-            r = 0;
-            *c = 1;
-            *s = 0;
-        } else {
-            *c =  Tii[0] / r;
-            *s = -Tii[1] / r;
-        }
+        this->cos_sin_xy(Tii[0], Tii[1], r, *c, *s);
         Tii[0] = r;
         Tii[1] = 0;
         ptr = Tii + this->m_n;  // points to T[i - 2, i - 1]
@@ -566,8 +581,8 @@ public:
         // Make a copy of the R matrix
         Matrix RQ(this->m_n, this->m_n);
         RQ.setZero();
-        RQ.diagonal() = this->m_mat_T.diagonal();
-        RQ.diagonal(1) = this->m_mat_T.diagonal(1);
+        RQ.diagonal().noalias() = this->m_mat_T.diagonal();
+        RQ.diagonal(1).noalias() = this->m_mat_T.diagonal(1);
 
         // [m11  m12] will point to RQ[i:(i+1), i:(i+1)]
         // [m21  m22]
