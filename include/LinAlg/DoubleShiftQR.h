@@ -13,6 +13,8 @@
 #include <cmath>      // std::abs, std::sqrt, std::pow
 #include <stdexcept>  // std::invalid_argument, std::logic_error
 
+#include "../Util/TypeTraits.h"
+
 namespace Spectra {
 
 
@@ -30,20 +32,22 @@ private:
     typedef Eigen::Ref<Matrix> GenericMatrix;
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
-    Index m_n;            // Dimension of the matrix
-    Matrix m_mat_H;       // A copy of the matrix to be factorized
-    Scalar m_shift_s;     // Shift constant
-    Scalar m_shift_t;     // Shift constant
-    Matrix3X m_ref_u;     // Householder reflectors
-    IntArray m_ref_nr;    // How many rows does each reflector affects
-                          // 3 - A general reflector
-                          // 2 - A Givens rotation
-                          // 1 - An identity transformation
-    const Scalar m_eps;   // the machine precision,
-                          // e.g. ~= 1e-16 for the "double" type
+    Index m_n;             // Dimension of the matrix
+    Matrix m_mat_H;        // A copy of the matrix to be factorized
+    Scalar m_shift_s;      // Shift constant
+    Scalar m_shift_t;      // Shift constant
+    Matrix3X m_ref_u;      // Householder reflectors
+    IntArray m_ref_nr;     // How many rows does each reflector affects
+                           // 3 - A general reflector
+                           // 2 - A Givens rotation
+                           // 1 - An identity transformation
+    const Scalar m_near_0; // a very small value, but 1.0 / m_safe_min does not overflow
+                           // ~= 1e-307 for the "double" type
+    const Scalar m_eps;    // the machine precision,
+                           // e.g. ~= 1e-16 for the "double" type
     const Scalar m_eps_rel;
     const Scalar m_eps_abs;
-    bool m_computed;      // Whether matrix has been factorized
+    bool m_computed;       // Whether matrix has been factorized
 
     void compute_reflector(const Scalar& x1, const Scalar& x2, const Scalar& x3, Index ind)
     {
@@ -55,10 +59,10 @@ private:
         nr[ind] = 3;
         Scalar x2x3 = Scalar(0);
         // If x3 is zero, decrease nr by 1
-        if(abs(x3) < m_eps)
+        if(abs(x3) < m_near_0)
         {
             // If x2 is also zero, nr will be 1, and we can exit this function
-            if(abs(x2) < m_eps)
+            if(abs(x2) < m_near_0)
             {
                 nr[ind] = 1;
                 return;
@@ -75,7 +79,7 @@ private:
         Scalar x1_new = x1 - ((x1 <= 0) - (x1 > 0)) * Eigen::numext::hypot(x1, x2x3);
         Scalar x_norm = Eigen::numext::hypot(x1_new, x2x3);
         // Double check the norm of new x
-        if(x_norm < m_eps)
+        if(x_norm < m_near_0)
         {
             nr[ind] = 1;
             return;
@@ -251,9 +255,10 @@ private:
 public:
     DoubleShiftQR(Index size) :
         m_n(size),
+        m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
         m_eps_rel(m_eps),
-        m_eps_abs(m_eps),
+        m_eps_abs(m_near_0),
         m_computed(false)
     {}
 
@@ -264,9 +269,10 @@ public:
         m_shift_t(t),
         m_ref_u(3, m_n),
         m_ref_nr(m_n),
+        m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
         m_eps_rel(m_eps),
-        m_eps_abs(m_eps),
+        m_eps_abs(m_near_0),
         m_computed(false)
     {
         compute(mat, s, t);

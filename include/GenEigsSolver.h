@@ -14,6 +14,7 @@
 #include <complex>    // std::complex, std::conj, std::norm, std::abs
 #include <stdexcept>  // std::invalid_argument
 
+#include "Util/TypeTraits.h"
 #include "Util/SelectionRule.h"
 #include "Util/CompInfo.h"
 #include "Util/SimpleRandom.h"
@@ -172,12 +173,11 @@ private:
     BoolArray m_ritz_conv;    // indicator of the convergence of ritz values
     int m_info;               // status of the computation
 
+    const Scalar m_near_0;    // a very small value, but 1.0 / m_safe_min does not overflow
+                              // ~= 1e-307 for the "double" type
     const Scalar m_eps;       // the machine precision,
                               // e.g. ~= 1e-16 for the "double" type
-    const Scalar m_approx_0;  // a number that is approximately zero
-                              // m_eps23 = m_eps^(2/3)
-                              // used to test whether a number is complex, and
-                              // to test the orthogonality of vectors
+    const Scalar m_eps23;     // m_eps^(2/3), used to test the convergence
 
     // Arnoldi factorization starting from step-k
     void factorize_from(int from_k, int to_m, const Vector& fk)
@@ -200,7 +200,7 @@ private:
             // If beta = 0, then the next V is not full rank
             // We need to generate a new residual vector that is orthogonal
             // to the current V, which we call a restart
-            if(beta < m_eps)
+            if(beta < m_near_0)
             {
                 SimpleRandom<Scalar> rng(2 * i);
                 m_fac_f.noalias() = rng.random_vec(m_n);
@@ -247,7 +247,7 @@ private:
             Vf.head(i1).noalias() = Vs.transpose() * m_fac_f;
             // If not, iteratively correct the residual
             int count = 0;
-            while(count < 5 && Vf.head(i1).cwiseAbs().maxCoeff() > m_approx_0 * beta)
+            while(count < 5 && Vf.head(i1).cwiseAbs().maxCoeff() > m_eps * beta)
             {
                 // f <- f - V * Vf
                 m_fac_f.noalias() -= Vs * Vf.head(i1);
@@ -339,8 +339,8 @@ private:
     // Calculates the number of converged Ritz values
     int num_converged(Scalar tol)
     {
-        // thresh = tol * max(m_approx_0, abs(theta)), theta for ritz value
-        Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(m_approx_0);
+        // thresh = tol * max(m_eps23, abs(theta)), theta for ritz value
+        Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(m_eps23);
         Array resid = m_ritz_est.head(m_nev).array().abs() * m_fac_f.norm();
         // Converged "wanted" ritz values
         m_ritz_conv = (resid < thresh);
@@ -355,7 +355,7 @@ private:
 
         int nev_new = m_nev;
         for(int i = m_nev; i < m_ncv; i++)
-            if(abs(m_ritz_est[i]) < m_eps)  nev_new++;
+            if(abs(m_ritz_est[i]) < m_near_0)  nev_new++;
 
         // Adjust nev_new, according to dnaup2.f line 660~674 in ARPACK
         nev_new += std::min(nconv, (m_ncv - nev_new) / 2);
@@ -489,8 +489,9 @@ public:
         m_nmatop(0),
         m_niter(0),
         m_info(NOT_COMPUTED),
+        m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
-        m_approx_0(Eigen::numext::pow(m_eps, Scalar(2.0) / 3))
+        m_eps23(Eigen::numext::pow(m_eps, Scalar(2.0) / 3))
     {
         if(nev_ < 1 || nev_ > m_n - 2)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 2, n is the size of matrix");
@@ -536,7 +537,7 @@ public:
         Vector v(m_n);
         std::copy(init_resid, init_resid + m_n, v.data());
         Scalar vnorm = v.norm();
-        if(vnorm < m_eps)
+        if(vnorm < m_near_0)
             throw std::invalid_argument("initial residual vector cannot be zero");
         v /= vnorm;
 
