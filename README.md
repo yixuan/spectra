@@ -93,7 +93,7 @@ int main()
     Eigen::MatrixXd A = Eigen::MatrixXd::Random(10, 10);
     Eigen::MatrixXd M = A + A.transpose();
 
-    // Construct matrix operation object using the wrapper class DenseGenMatProd
+    // Construct matrix operation object using the wrapper class DenseSymMatProd
     DenseSymMatProd<double> op(M);
 
     // Construct eigen solver object, requesting the largest three eigenvalues
