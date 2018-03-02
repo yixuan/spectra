@@ -13,14 +13,14 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise-3.8
+      - llvm-toolchain-trusty-5.0
     packages:
-      - g++-6
-      - clang-3.8
+      - g++-7
+      - clang-5.0
 
 before_install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-6"; fi
-  - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8"; fi
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-7"; fi
+  - if [ "$CXX" = "clang++" ]; then export CXX="clang++-5.0"; fi
   - $CXX --version
 
 install:
