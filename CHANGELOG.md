@@ -8,6 +8,8 @@
   report the status of the decomposition
 - Added a missing `#include` item in `SparseCholesky.h`, thanks to
   [Maxim Torgonsky](https://github.com/kriolog)
+- Added a `TypeTraits` class to retrieve additional numeric limits of scalar value
+  types
 
 ### Changed
 - Documentation updates
@@ -15,6 +17,10 @@
 - Some internal improvements, such as pre-allocating vectors in loops, and changing
   return type to reference, thanks to
   [Angelos Mantzaflaris](https://github.com/filiatra)
+- Improved the accuracy of both symmetric and general eigen solvers
+- Updated included [Catch2](https://github.com/catchorg/Catch2) to v2.1.2
+- Updated testing code using the new API of Catch2
+- Updated Travis CI script
 
 
 ## [0.5.0] - 2017-02-05
