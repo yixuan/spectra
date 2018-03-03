@@ -18,7 +18,7 @@
   return type to reference, thanks to
   [Angelos Mantzaflaris](https://github.com/filiatra)
 - Improved the accuracy of both symmetric and general eigen solvers
-- Updated included [Catch2](https://github.com/catchorg/Catch2) to v2.1.2
+- Updated included [Catch2](https://github.com/catchorg/Catch2) to v2.0.1
 - Updated testing code using the new API of Catch2
 - Updated Travis CI script
 
