@@ -33,8 +33,8 @@ class SimpleRandom
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
 
-    const int m_a;     // multiplier
-    const long m_max;  // 2^31 - 1
+    const unsigned int m_a;     // multiplier
+    const unsigned long m_max;  // 2^31 - 1
     long m_rand;
 
     inline long next_long_rand(long seed)
@@ -44,13 +44,13 @@ private:
         lo = m_a * (long)(seed & 0xFFFF);
         hi = m_a * (long)((unsigned long)seed >> 16);
         lo += (hi & 0x7FFF) << 16;
-        if((long)lo > m_max)
+        if(lo > m_max)
         {
             lo &= m_max;
             ++lo;
         }
         lo += hi >> 15;
-        if((long)lo > m_max)
+        if(lo > m_max)
         {
             lo &= m_max;
             ++lo;
