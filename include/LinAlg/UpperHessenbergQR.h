@@ -33,7 +33,6 @@ class UpperHessenbergQR
 {
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, 2, 2> Matrix22;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
     typedef Eigen::Matrix<Scalar, 1, Eigen::Dynamic> RowVector;
     typedef Eigen::Array<Scalar, Eigen::Dynamic, 1> Array;
@@ -203,19 +202,20 @@ public:
     }
 
     ///
-    /// Return the \f$RQ\f$ matrix, the multiplication of \f$R\f$ and \f$Q\f$,
-    /// which is an upper Hessenberg matrix.
+    /// Overwrite `dest` with the \f$RQ\f$ matrix, the multiplication of \f$R\f$ and \f$Q\f$.
+    /// \f$RQ\f$ is an upper Hessenberg matrix.
     ///
-    /// \return Returned matrix type will be `Eigen::Matrix<Scalar, ...>`, depending on
-    /// the template parameter `Scalar` defined.
+    /// \param mat The matrix to be overwritten, whose type should be `Eigen::Matrix<Scalar, ...>`,
+    /// depending on the template parameter `Scalar` defined.
     ///
-    virtual Matrix matrix_RQ() const
+    virtual void matrix_RQ(Matrix& dest) const
     {
         if(!m_computed)
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
         // Make a copy of the R matrix
-        Matrix RQ = m_mat_T.template triangularView<Eigen::Upper>();
+        dest.resize(m_n, m_n);
+        dest.noalias() = m_mat_T;
 
         const Index n1 = m_n - 1;
         for(Index i = 0; i < n1; i++)
@@ -226,7 +226,7 @@ public:
             // Gi = [ cos[i]  sin[i]]
             //      [-sin[i]  cos[i]]
             Scalar *Yi, *Yi1;
-            Yi = &RQ.coeffRef(0, i);
+            Yi = &dest.coeffRef(0, i);
             Yi1 = Yi + m_n;  // RQ(0, i + 1)
             const Index i2 = i + 2;
             for(Index j = 0; j < i2; j++)
@@ -236,12 +236,10 @@ public:
                 Yi1[j] = s * tmp + c * Yi1[j];
             }
 
-            /* Vector Yi = RQ.block(0, i, i + 2, 1);
-            RQ.block(0, i, i + 2, 1)     = c * Yi - s * RQ.block(0, i + 1, i + 2, 1);
-            RQ.block(0, i + 1, i + 2, 1) = s * Yi + c * RQ.block(0, i + 1, i + 2, 1); */
+            /* Vector dest = RQ.block(0, i, i + 2, 1);
+            dest.block(0, i, i + 2, 1)     = c * Yi - s * dest.block(0, i + 1, i + 2, 1);
+            dest.block(0, i + 1, i + 2, 1) = s * Yi + c * dest.block(0, i + 1, i + 2, 1); */
         }
-
-        return RQ;
     }
 
     ///
@@ -450,9 +448,15 @@ class TridiagQR: public UpperHessenbergQR<Scalar>
 {
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
+    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
     typedef typename Matrix::Index Index;
+
+    Vector m_T_diag;   // diagonal elements of T
+    Vector m_T_lsub;   // lower subdiagonal of T
+    Vector m_T_usub;   // upper subdiagonal of T
+    Vector m_T_usub2;  // 2nd upper subdiagonal of T
 
 public:
     ///
@@ -494,29 +498,29 @@ public:
         if(this->m_n != mat.cols())
             throw std::invalid_argument("TridiagQR: matrix must be square");
 
-        this->m_mat_T.resize(this->m_n, this->m_n);
+        m_T_diag.resize(this->m_n);
+        m_T_lsub.resize(this->m_n - 1);
+        m_T_usub.resize(this->m_n - 1);
+        m_T_usub2.resize(this->m_n - 2);
         this->m_rot_cos.resize(this->m_n - 1);
         this->m_rot_sin.resize(this->m_n - 1);
 
-        this->m_mat_T.setZero();
-        this->m_mat_T.diagonal().noalias() = mat.diagonal();
-        this->m_mat_T.diagonal(1).noalias() = mat.diagonal(-1);
-        this->m_mat_T.diagonal(-1).noalias() = mat.diagonal(-1);
+        m_T_diag.noalias() = mat.diagonal();
+        m_T_lsub.noalias() = mat.diagonal(-1);
+        m_T_usub.noalias() = mat.diagonal(-1);
 
         // A number of pointers to avoid repeated address calculation
-        Scalar *Tii = this->m_mat_T.data(),  // pointer to T[i, i]
-               *ptr,                         // some location relative to Tii
-               *c = this->m_rot_cos.data(),  // pointer to the cosine vector
+        Scalar *c = this->m_rot_cos.data(),  // pointer to the cosine vector
                *s = this->m_rot_sin.data(),  // pointer to the sine vector
-               r, tmp;
-        const Index n2 = this->m_n - 2;
-        for(Index i = 0; i < n2; i++)
+               r;
+        const Index n1 = this->m_n - 1;
+        for(Index i = 0; i < n1; i++)
         {
-            // Tii[0] == T[i, i]
-            // Tii[1] == T[i + 1, i]
+            // diag[i] == T[i, i]
+            // lsub[i] == T[i + 1, i]
             // r = sqrt(T[i, i]^2 + T[i + 1, i]^2)
             // c = T[i, i] / r, s = -T[i + 1, i] / r
-            this->compute_rotation(Tii[0], Tii[1], r, *c, *s);
+            this->compute_rotation(m_T_diag.coeff(i), m_T_lsub.coeff(i), r, *c, *s);
 
             // For a complete QR decomposition,
             // we first obtain the rotation matrix
@@ -527,43 +531,32 @@ public:
             // Update T[i, i] and T[i + 1, i]
             // The updated value of T[i, i] is known to be r
             // The updated value of T[i + 1, i] is known to be 0
-            Tii[0] = r;
-            Tii[1] = Scalar(0);
+            m_T_diag.coeffRef(i) = r;
+            m_T_lsub.coeffRef(i) = Scalar(0);
             // Update T[i, i + 1] and T[i + 1, i + 1]
-            // ptr[0] == T[i, i + 1]
-            // ptr[1] == T[i + 1, i + 1]
-            ptr = Tii + this->m_n;
-            tmp = *ptr;
-            ptr[0] = (*c) * tmp - (*s) * ptr[1];
-            ptr[1] = (*s) * tmp + (*c) * ptr[1];
+            // usub[i] == T[i, i + 1]
+            // diag[i + 1] == T[i + 1, i + 1]
+            const Scalar tmp = m_T_usub.coeff(i);
+            m_T_usub.coeffRef(i)     = (*c) * tmp - (*s) * m_T_diag.coeff(i + 1);
+            m_T_diag.coeffRef(i + 1) = (*s) * tmp + (*c) * m_T_diag.coeff(i + 1);
             // Update T[i, i + 2] and T[i + 1, i + 2]
-            // ptr[0] == T[i, i + 2] == 0
-            // ptr[1] == T[i + 1, i + 2]
-            ptr += this->m_n;
-            ptr[0] = -(*s) * ptr[1];
-            ptr[1] *= (*c);
+            // usub2[i] == T[i, i + 2]
+            // usub[i + 1] == T[i + 1, i + 2]
+            if(i < n1 - 1)
+            {
+                m_T_usub2.coeffRef(i) = -(*s) * m_T_usub.coeff(i + 1);
+                m_T_usub.coeffRef(i + 1) *= (*c);
+            }
 
-            // Move from T[i, i] to T[i + 1, i + 1]
-            Tii += this->m_n + 1;
-            // Increase c and s by 1
             c++;
             s++;
-
 
             // If we do not need to calculate the R matrix, then
             // only the cos and sin sequences are required.
             // In such case we only update T[i + 1, (i + 1):(i + 2)]
-            // this->m_mat_T(i + 1, i + 1) = (*c) * this->mat_T(i + 1, i + 1) + (*s) * this->m_mat_T(i, i + 1);
-            // this->m_mat_T(i + 1, i + 2) *= (*c);
+            // T[i + 1, i + 1] = c * T[i + 1, i + 1] + s * T[i, i + 1];
+            // T[i + 1, i + 2] *= c;
         }
-        // For i = n - 2
-        this->compute_rotation(Tii[0], Tii[1], r, *c, *s);
-        Tii[0] = r;
-        Tii[1] = 0;
-        ptr = Tii + this->m_n;  // points to T[i - 2, i - 1]
-        tmp = *ptr;
-        ptr[0] = (*c) * tmp - (*s) * ptr[1];
-        ptr[1] = (*s) * tmp + (*c) * ptr[1];
 
         this->m_computed = true;
     }
@@ -580,54 +573,55 @@ public:
         if(!this->m_computed)
             throw std::logic_error("TridiagQR: need to call compute() first");
 
-        return this->m_mat_T;
+        Matrix R = Matrix::Zero(this->m_n, this->m_n);
+        R.diagonal().noalias() = m_T_diag;
+        R.diagonal(1).noalias() = m_T_usub;
+        R.diagonal(2).noalias() = m_T_usub2;
+
+        return R;
     }
 
     ///
-    /// Return the \f$RQ\f$ matrix, the multiplication of \f$R\f$ and \f$Q\f$,
-    /// which is a tridiagonal matrix.
+    /// Overwrite `dest` with the \f$RQ\f$ matrix, the multiplication of \f$R\f$ and \f$Q\f$.
+    /// \f$RQ\f$ is an upper Hessenberg matrix.
     ///
-    /// \return Returned matrix type will be `Eigen::Matrix<Scalar, ...>`, depending on
-    /// the template parameter `Scalar` defined.
+    /// \param mat The matrix to be overwritten, whose type should be `Eigen::Matrix<Scalar, ...>`,
+    /// depending on the template parameter `Scalar` defined.
     ///
-    Matrix matrix_RQ() const
+    void matrix_RQ(Matrix& dest) const
     {
         if(!this->m_computed)
             throw std::logic_error("TridiagQR: need to call compute() first");
 
         // Make a copy of the R matrix
-        Matrix RQ(this->m_n, this->m_n);
-        RQ.setZero();
-        RQ.diagonal().noalias() = this->m_mat_T.diagonal();
-        RQ.diagonal(1).noalias() = this->m_mat_T.diagonal(1);
+        dest.resize(this->m_n, this->m_n);
+        dest.setZero();
+        dest.diagonal().noalias() = m_T_diag;
+        // The upper diagonal refers to m_T_usub
+        // The 2nd upper subdiagonal will be zero in RQ
 
-        // [m11  m12] will point to RQ[i:(i+1), i:(i+1)]
-        // [m21  m22]
-        Scalar *m11 = RQ.data(), *m12, *m21, *m22;
-        const Scalar *c = this->m_rot_cos.data(),
-                     *s = this->m_rot_sin.data();
-        for(Index i = 0; i < this->m_n - 1; i++)
+        // [m11  m12] points to RQ[i:(i+1), i:(i+1)]
+        // [0    m22]
+        //
+        // Gi = [ cos[i]  sin[i]]
+        //      [-sin[i]  cos[i]]
+        const Index n1 = this->m_n - 1;
+        for(Index i = 0; i < n1; i++)
         {
-            m21 = m11 + 1;
-            m12 = m11 + this->m_n;
-            m22 = m12 + 1;
-            const Scalar tmp = *m21;
+            const Scalar c = this->m_rot_cos.coeff(i);
+            const Scalar s = this->m_rot_sin.coeff(i);
+            const Scalar m11 = dest.coeff(i, i),
+                         m12 = m_T_usub.coeff(i),
+                         m22 = m_T_diag.coeff(i + 1);
 
-            // Update diagonal and the below-subdiagonal
-            *m11 = (*c) * (*m11) - (*s) * (*m12);
-            *m21 = (*c) * tmp - (*s) * (*m22);
-            *m22 = (*s) * tmp + (*c) * (*m22);
-
-            // Move m11 to RQ[i+1, i+1]
-            m11 = m22;
-            c++;
-            s++;
+            // Update the diagonal and the lower subdiagonal of dest
+            dest.coeffRef(i    , i    ) = c * m11 - s * m12;
+            dest.coeffRef(i + 1, i    ) =         - s * m22;
+            dest.coeffRef(i + 1, i + 1) =           c * m22;
         }
 
-        // Copy the below-subdiagonal to above-subdiagonal
-        RQ.diagonal(1) = RQ.diagonal(-1);
-
-        return RQ;
+        // Copy the lower subdiagonal to upper subdiagonal
+        dest.diagonal(1).noalias() = dest.diagonal(-1);
     }
 };
 

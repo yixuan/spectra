@@ -312,7 +312,7 @@ private:
                 // Q -> Q * Qi
                 decomp_hb.apply_YQ(Q);
                 // H -> Q'HQ = RQ + mu * I
-                m_fac_H.noalias() = decomp_hb.matrix_RQ();
+                decomp_hb.matrix_RQ(m_fac_H);
                 m_fac_H.diagonal().array() += m_ritz_val[i].real();
             }
         }

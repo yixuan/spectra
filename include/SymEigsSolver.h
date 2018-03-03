@@ -302,7 +302,7 @@ private:
             // H -> Q'HQ
             // Since QR = H - mu * I, we have H = QR + mu * I
             // and therefore Q'HQ = RQ + mu * I
-            m_fac_H = decomp.matrix_RQ();
+            decomp.matrix_RQ(m_fac_H);
             m_fac_H.diagonal().array() += m_ritz_val[i];
         }
         // V -> VQ, only need to update the first k+1 columns
