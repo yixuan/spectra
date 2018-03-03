@@ -299,7 +299,7 @@ public:
         m_ref_nr.resize(m_n);
 
         // Make a copy of mat
-        m_mat_H.noalias() = mat;
+        std::copy(mat.data(), mat.data() + mat.size(), m_mat_H.data());
 
         // Obtain the indices of zero elements in the subdiagonal,
         // so that H can be divided into several blocks

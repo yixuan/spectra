@@ -56,9 +56,8 @@ protected:
     // Given x and y, compute 1) r = sqrt(x^2 + y^2), 2) c = x / r, 3) s = -y / r
     // If both x and y are zero, set c = 1 and s = 0
     // We must implement it in a numerically stable way
-    static void cos_sin_xy(const Scalar& x, const Scalar& y, Scalar& r, Scalar& c, Scalar& s)
+    static void compute_rotation(const Scalar& x, const Scalar& y, Scalar& r, Scalar& c, Scalar& s)
     {
-        using std::abs;
         using std::sqrt;
 
         const Scalar xsign = (x > Scalar(0)) - (x < Scalar(0));
@@ -133,10 +132,14 @@ public:
     virtual void compute(ConstGenericMatrix& mat)
     {
         m_n = mat.rows();
+        if(m_n != mat.cols())
+            throw std::invalid_argument("UpperHessenbergQR: matrix must be square");
+
         m_mat_T.resize(m_n, m_n);
         m_rot_cos.resize(m_n - 1);
         m_rot_sin.resize(m_n - 1);
 
+        // Make a copy of mat
         std::copy(mat.data(), mat.data() + mat.size(), m_mat_T.data());
 
         Scalar xi, xj, r, c, s;
@@ -144,7 +147,7 @@ public:
         const Index n1 = m_n - 1;
         for(Index i = 0; i < n1; i++)
         {
-            Tii = &m_mat_T(i, i);
+            Tii = &m_mat_T.coeffRef(i, i);
 
             // Make sure mat_T is upper Hessenberg
             // Zero the elements below mat_T(i + 1, i)
@@ -152,7 +155,7 @@ public:
 
             xi = Tii[0];  // mat_T(i, i)
             xj = Tii[1];  // mat_T(i + 1, i)
-            cos_sin_xy(xi, xj, r, c, s);
+            compute_rotation(xi, xj, r, c, s);
             m_rot_cos[i] = c;
             m_rot_sin[i] = s;
 
@@ -492,6 +495,9 @@ public:
     void compute(ConstGenericMatrix& mat)
     {
         this->m_n = mat.rows();
+        if(this->m_n != mat.cols())
+            throw std::invalid_argument("TridiagQR: matrix must be square");
+
         this->m_mat_T.resize(this->m_n, this->m_n);
         this->m_rot_cos.resize(this->m_n - 1);
         this->m_rot_sin.resize(this->m_n - 1);
@@ -514,7 +520,7 @@ public:
             // Tii[1] == T[i + 1, i]
             // r = sqrt(T[i, i]^2 + T[i + 1, i]^2)
             // c = T[i, i] / r, s = -T[i + 1, i] / r
-            this->cos_sin_xy(Tii[0], Tii[1], r, *c, *s);
+            this->compute_rotation(Tii[0], Tii[1], r, *c, *s);
 
             // For a complete QR decomposition,
             // we first obtain the rotation matrix
@@ -555,7 +561,7 @@ public:
             // this->m_mat_T(i + 1, i + 2) *= (*c);
         }
         // For i = n - 2
-        this->cos_sin_xy(Tii[0], Tii[1], r, *c, *s);
+        this->compute_rotation(Tii[0], Tii[1], r, *c, *s);
         Tii[0] = r;
         Tii[1] = 0;
         ptr = Tii + this->m_n;  // points to T[i - 2, i - 1]

@@ -109,30 +109,30 @@ public:
         m_n(0), m_computed(false)
     {}
 
-    TridiagEigen(ConstGenericMatrix &mat) :
+    TridiagEigen(ConstGenericMatrix& mat) :
         m_n(mat.rows()), m_computed(false)
     {
         compute(mat);
     }
 
-    void compute(ConstGenericMatrix &mat)
+    void compute(ConstGenericMatrix& mat)
     {
         using std::abs;
 
-        if(mat.rows() != mat.cols())
+        m_n = mat.rows();
+        if(m_n != mat.cols())
             throw std::invalid_argument("TridiagEigen: matrix must be square");
 
-        m_n = mat.rows();
-        m_main_diag = mat.diagonal();
-        m_sub_diag = mat.diagonal(-1);
+        m_main_diag.resize(m_n);
+        m_sub_diag.resize(m_n - 1);
         m_evecs.resize(m_n, m_n);
         m_evecs.setIdentity();
 
         // Scale matrix to improve stability
         const Scalar scale = std::max(m_main_diag.cwiseAbs().maxCoeff(),
                                       m_sub_diag.cwiseAbs().maxCoeff());
-        m_main_diag /= scale;
-        m_sub_diag /= scale;
+        m_main_diag.noalias() = mat.diagonal() / scale;
+        m_sub_diag.noalias() = mat.diagonal(-1) / scale;
 
         Scalar* diag = m_main_diag.data();
         Scalar* subdiag = m_sub_diag.data();
