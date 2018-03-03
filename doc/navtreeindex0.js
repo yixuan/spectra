@@ -23,6 +23,7 @@ var NAVTREEINDEX0 =
 "SymEigsShiftSolver_8h_source.html":[2,0,5],
 "SymEigsSolver_8h_source.html":[2,0,6],
 "SymGEigsSolver_8h_source.html":[2,0,7],
+"TypeTraits_8h_source.html":[2,0,1,4],
 "annotated.html":[1,0],
 "classSpectra_1_1DenseCholesky.html":[0,2,0],
 "classSpectra_1_1DenseCholesky.html#a1cbe35f1ce6d671f06445abe134d0f74":[0,2,0,0],
