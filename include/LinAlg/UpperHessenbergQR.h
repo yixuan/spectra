@@ -215,7 +215,7 @@ public:
 
         // Make a copy of the R matrix
         dest.resize(m_n, m_n);
-        dest.noalias() = m_mat_T;
+        std::copy(m_mat_T.data(), m_mat_T.data() + m_mat_T.size(), dest.data());
 
         const Index n1 = m_n - 1;
         for(Index i = 0; i < n1; i++)
@@ -507,7 +507,7 @@ public:
 
         m_T_diag.noalias() = mat.diagonal();
         m_T_lsub.noalias() = mat.diagonal(-1);
-        m_T_usub.noalias() = mat.diagonal(-1);
+        m_T_usub.noalias() = m_T_lsub;
 
         // A number of pointers to avoid repeated address calculation
         Scalar *c = this->m_rot_cos.data(),  // pointer to the cosine vector
