@@ -85,7 +85,7 @@ void run_test(const MatType& mat, int k, int m, double sigma, bool allow_fail = 
     const double err = resid.array().abs().maxCoeff();
 
     INFO( "||AU - UD||_inf = " << err );
-    REQUIRE( err == Approx(0.0).margin(1e-9) );
+    REQUIRE( err == Approx(0.0).margin(1e-8) );
 }
 
 template <typename MatType>
