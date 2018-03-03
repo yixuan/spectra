@@ -46,10 +46,12 @@ void run_test(MatrixType &H)
     REQUIRE( (H - Q * R).cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12) );
 
     // Test RQ
-    MatrixXd rq = R;
-    decomp.apply_YQ(rq);
-    INFO( "max error of RQ = " << (decomp.matrix_RQ() - rq).cwiseAbs().maxCoeff() );
-    REQUIRE( (decomp.matrix_RQ() - rq).cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12) );
+    MatrixXd RQ_true = R;
+    decomp.apply_YQ(RQ_true);
+    MatrixXd RQ;
+    decomp.matrix_RQ(RQ);
+    INFO( "max error of RQ = " << (RQ - RQ_true).cwiseAbs().maxCoeff() );
+    REQUIRE( (RQ - RQ_true).cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12) );
 
     // Test "apply" functions
     MatrixXd Y = MatrixXd::Random(n, n);
