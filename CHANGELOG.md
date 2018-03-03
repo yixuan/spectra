@@ -1,4 +1,4 @@
-## [Unreleased]
+## [0.6.0] - 2018-03-03
 ### Added
 - Added virtual destructors to the `SymEigsSolver` and `UpperHessenbergQR` classes
   to fix compiler warnings, by [Julian Kent](https://github.com/jkflying)
@@ -13,13 +13,14 @@
 
 ### Changed
 - Documentation updates
-- Updated project URL to be [https://spectralib.org](https://spectralib.org)
+- Updated the project URL to [https://spectralib.org](https://spectralib.org)
 - Some internal improvements, such as pre-allocating vectors in loops, and changing
   return type to reference, thanks to
   [Angelos Mantzaflaris](https://github.com/filiatra)
-- Improved the accuracy of both symmetric and general eigen solvers
-- Updated included [Catch2](https://github.com/catchorg/Catch2) to v2.0.1
-- Updated testing code using the new API of Catch2
+- Improved the accuracy of symmetric and general eigen solvers
+- Reduced the memory use of `UpperHessenbergQR` and `TridiagQR` decompositions
+- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.0.1
+- Updated the testing code using the new API of Catch2
 - Updated Travis CI script
 
 
