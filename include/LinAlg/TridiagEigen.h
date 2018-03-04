@@ -129,8 +129,8 @@ public:
         m_evecs.setIdentity();
 
         // Scale matrix to improve stability
-        const Scalar scale = std::max(m_main_diag.cwiseAbs().maxCoeff(),
-                                      m_sub_diag.cwiseAbs().maxCoeff());
+        const Scalar scale = std::max(mat.diagonal().cwiseAbs().maxCoeff(),
+                                      mat.diagonal(-1).cwiseAbs().maxCoeff());
         m_main_diag.noalias() = mat.diagonal() / scale;
         m_sub_diag.noalias() = mat.diagonal(-1) / scale;
 
