@@ -1,3 +1,9 @@
+## [0.6.1] - 2018-03-03
+### Changed
+- Fixed a bug of uninitialized memory
+- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.1.2
+
+
 ## [0.6.0] - 2018-03-03
 ### Added
 - Added virtual destructors to the `SymEigsSolver` and `UpperHessenbergQR` classes
