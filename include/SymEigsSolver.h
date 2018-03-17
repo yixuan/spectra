@@ -9,7 +9,7 @@
 
 #include <Eigen/Core>
 #include <vector>     // std::vector
-#include <cmath>      // std::abs, std::pow
+#include <cmath>      // std::abs, std::pow, std::sqrt
 #include <algorithm>  // std::min, std::copy
 #include <stdexcept>  // std::invalid_argument
 
@@ -164,46 +164,38 @@ private:
     typedef Eigen::Map<Vector> MapVec;
 
 protected:
-    OpType* m_op;            // object to conduct matrix operation,
-                             // e.g. matrix-vector product
+    OpType*      m_op;         // object to conduct matrix operation,
+                               // e.g. matrix-vector product
+    const int    m_n;          // dimension of matrix A
+    const int    m_nev;        // number of eigenvalues requested
+    const int    m_ncv;        // dimension of Krylov subspace in the Lanczos method
+    int          m_nmatop;     // number of matrix operations called
+    int          m_niter;      // number of restarting iterations
+
+    Matrix       m_fac_V;      // V matrix in the Lanczos factorization
+    Matrix       m_fac_H;      // H matrix in the Lanczos factorization
+    Vector       m_fac_f;      // residual in the Lanczos factorization
+    Vector       m_ritz_val;   // Ritz values
 
 private:
-    const int m_n;           // dimension of matrix A
+    Matrix       m_ritz_vec;   // Ritz vectors
+    Vector       m_ritz_est;   // last row of m_ritz_vec, also called the Ritz estimates
+    BoolArray    m_ritz_conv;  // indicator of the convergence of Ritz values
+    int          m_info;       // status of the computation
 
-protected:
-    const int m_nev;         // number of eigenvalues requested
+    const Scalar m_near_0;     // a very small value, but 1.0 / m_near_0 does not overflow
+                               // ~= 1e-307 for the "double" type
+    const Scalar m_eps;        // the machine precision, ~= 1e-16 for the "double" type
+    const Scalar m_eps23;      // m_eps^(2/3), used to test the convergence
 
-private:
-    const int m_ncv;         // number of ritz values
-    int m_nmatop;            // number of matrix operations called
-    int m_niter;             // number of restarting iterations
-
-    Matrix m_fac_V;          // V matrix in the Arnoldi factorization
-    Matrix m_fac_H;          // H matrix in the Arnoldi factorization
-    Vector m_fac_f;          // residual in the Arnoldi factorization
-
-protected:
-    Vector m_ritz_val;       // ritz values
-
-private:
-    Matrix m_ritz_vec;       // ritz vectors
-    Vector m_ritz_est;       // last row of m_ritz_vec
-    BoolArray m_ritz_conv;   // indicator of the convergence of ritz values
-    int m_info;              // status of the computation
-
-    const Scalar m_near_0;   // a very small value, but 1.0 / m_safe_min does not overflow
-                             // ~= 1e-307 for the "double" type
-    const Scalar m_eps;      // the machine precision,
-                             // e.g. ~= 1e-16 for the "double" type
-    const Scalar m_eps23;    // m_eps^(2/3), used to test the convergence
-
-    // Arnoldi factorization starting from step-k
+    // Lanczos factorization starting from step-k
     void factorize_from(int from_k, int to_m, const Vector& fk)
     {
         using std::sqrt;
 
         if(to_m <= from_k) return;
 
+        const Scalar sqrtn = sqrt(Scalar(m_n));
         m_fac_f.noalias() = fk;
 
         // Pre-allocate Vf
@@ -272,7 +264,7 @@ private:
                 // likely to fail. In particular, if beta=0, then the test is ensured to fail.
                 // Hence when this happens, we force f to be zero, and then restart in the
                 // next iteration.
-                if(beta < sqrt(Scalar(m_n)) * m_eps)
+                if(beta < sqrtn * m_eps)
                 {
                     m_fac_f.setZero();
                     beta = Scalar(0);
@@ -295,7 +287,7 @@ private:
         }
     }
 
-    // Implicitly restarted Arnoldi factorization
+    // Implicitly restarted Lanczos factorization
     void restart(int k)
     {
         if(k >= m_ncv)
@@ -339,10 +331,10 @@ private:
     // Calculates the number of converged Ritz values
     int num_converged(Scalar tol)
     {
-        // thresh = tol * max(m_eps23, abs(theta)), theta for ritz value
+        // thresh = tol * max(m_eps23, abs(theta)), theta for Ritz value
         Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(m_eps23);
         Array resid =  m_ritz_est.head(m_nev).array().abs() * norm(m_fac_f);
-        // Converged "wanted" ritz values
+        // Converged "wanted" Ritz values
         m_ritz_conv = (resid < thresh);
 
         return m_ritz_conv.cast<int>().sum();
@@ -370,7 +362,7 @@ private:
         return nev_new;
     }
 
-    // Retrieves and sorts ritz values and ritz vectors
+    // Retrieves and sorts Ritz values and Ritz vectors
     void retrieve_ritzpair()
     {
         TridiagEigen<Scalar> decomp(m_fac_H);
@@ -402,7 +394,7 @@ private:
             }
         }
 
-        // Copy the ritz values and vectors to m_ritz_val and m_ritz_vec, respectively
+        // Copy the Ritz values and vectors to m_ritz_val and m_ritz_vec, respectively
         for(int i = 0; i < m_ncv; i++)
         {
             m_ritz_val[i] = evals[ind[i]];
@@ -410,7 +402,7 @@ private:
         }
         for(int i = 0; i < m_nev; i++)
         {
-            m_ritz_vec.col(i) = evecs.col(ind[i]);
+            m_ritz_vec.col(i).noalias() = evecs.col(ind[i]);
         }
     }
 
@@ -465,7 +457,7 @@ protected:
         for(int i = 0; i < m_nev; i++)
         {
             new_ritz_val[i] = m_ritz_val[ind[i]];
-            new_ritz_vec.col(i) = m_ritz_vec.col(ind[i]);
+            new_ritz_vec.col(i).noalias() = m_ritz_vec.col(ind[i]);
             new_ritz_conv[i] = m_ritz_conv[ind[i]];
         }
 
@@ -478,25 +470,25 @@ public:
     ///
     /// Constructor to create a solver object.
     ///
-    /// \param op_  Pointer to the matrix operation object, which should implement
+    /// \param op   Pointer to the matrix operation object, which should implement
     ///             the matrix-vector multiplication operation of \f$A\f$:
     ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
     ///             create the object from the wrapper class such as DenseSymMatProd, or
     ///             define their own that impelements all the public member functions
     ///             as in DenseSymMatProd.
-    /// \param nev_ Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
     ///             where \f$n\f$ is the size of matrix.
-    /// \param ncv_ Parameter that controls the convergence speed of the algorithm.
-    ///             Typically a larger `ncv_` means faster convergence, but it may
+    /// \param ncv  Parameter that controls the convergence speed of the algorithm.
+    ///             Typically a larger `ncv` means faster convergence, but it may
     ///             also result in greater memory use and more matrix operations
     ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
-    SymEigsSolver(OpType* op_, int nev_, int ncv_) :
-        m_op(op_),
+    SymEigsSolver(OpType* op, int nev, int ncv) :
+        m_op(op),
         m_n(m_op->rows()),
-        m_nev(nev_),
-        m_ncv(ncv_ > m_n ? m_n : ncv_),
+        m_nev(nev),
+        m_ncv(ncv > m_n ? m_n : ncv),
         m_nmatop(0),
         m_niter(0),
         m_info(NOT_COMPUTED),
@@ -504,10 +496,10 @@ public:
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
         m_eps23(Eigen::numext::pow(m_eps, Scalar(2.0) / 3))
     {
-        if(nev_ < 1 || nev_ > m_n - 1)
+        if(nev < 1 || nev > m_n - 1)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
 
-        if(ncv_ <= nev_ || ncv_ > m_n)
+        if(ncv <= nev || ncv > m_n)
             throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
     }
 
@@ -550,7 +542,7 @@ public:
         // Set the initial vector
         Vector v(m_n);
         std::copy(init_resid, init_resid + m_n, v.data());
-        Scalar vnorm = norm(v);
+        const Scalar vnorm = norm(v);
         if(vnorm < m_near_0)
             throw std::invalid_argument("initial residual vector cannot be zero");
         v /= vnorm;
@@ -651,7 +643,7 @@ public:
     ///
     Vector eigenvalues() const
     {
-        int nconv = m_ritz_conv.cast<int>().sum();
+        const int nconv = m_ritz_conv.cast<int>().sum();
         Vector res(nconv);
 
         if(!nconv)
@@ -681,7 +673,7 @@ public:
     ///
     Matrix eigenvectors(int nvec) const
     {
-        int nconv = m_ritz_conv.cast<int>().sum();
+        const int nconv = m_ritz_conv.cast<int>().sum();
         nvec = std::min(nvec, nconv);
         Matrix res(m_n, nvec);
 
@@ -694,7 +686,7 @@ public:
         {
             if(m_ritz_conv[i])
             {
-                ritz_vec_conv.col(j) = m_ritz_vec.col(i);
+                ritz_vec_conv.col(j).noalias() = m_ritz_vec.col(i);
                 j++;
             }
         }
