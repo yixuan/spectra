@@ -200,6 +200,8 @@ private:
     // Arnoldi factorization starting from step-k
     void factorize_from(int from_k, int to_m, const Vector& fk)
     {
+        using std::sqrt;
+
         if(to_m <= from_k) return;
 
         m_fac_f.noalias() = fk;
@@ -207,7 +209,7 @@ private:
         // Pre-allocate Vf
         Vector Vf(to_m);
         Vector w(m_n);
-        Scalar beta = norm(m_fac_f), Hii = 0.0;
+        Scalar beta = norm(m_fac_f), Hii = Scalar(0);
         // Keep the upperleft k x k submatrix of H and set other elements to 0
         m_fac_H.rightCols(m_ncv - from_k).setZero();
         m_fac_H.block(from_k, 0, m_ncv - from_k, from_k).setZero();
@@ -223,7 +225,7 @@ private:
                 m_fac_f.noalias() = rng.random_vec(m_n);
                 // f <- f - V * V' * f, so that f is orthogonal to V
                 MapMat V(m_fac_V.data(), m_n, i); // The first i columns
-                Vf.head(i) = inner_product(V, m_fac_f);
+                Vf.head(i).noalias() = inner_product(V, m_fac_f);
                 m_fac_f.noalias() -= V * Vf.head(i);
                 // beta <- ||f||
                 beta = norm(m_fac_f);
@@ -236,10 +238,7 @@ private:
             v.noalias() = m_fac_f / beta;
 
             // Note that H[i+1, i] equals to the unrestarted beta
-            if(restart)
-                m_fac_H(i, i - 1) = 0.0;
-            else
-                m_fac_H(i, i - 1) = beta;
+            m_fac_H(i, i - 1) = restart ? Scalar(0) : beta;
 
             // w <- A * v
             m_op->perform_op(v.data(), w.data());
@@ -262,11 +261,24 @@ private:
             // whether V' * (f/||f||) ~= 0
             const int i1 = i + 1;
             MapMat V(m_fac_V.data(), m_n, i1); // The first (i+1) columns
-            Vf.head(i1) = inner_product(V, m_fac_f);
+            Vf.head(i1).noalias() = inner_product(V, m_fac_f);
+            Scalar ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
             // If not, iteratively correct the residual
             int count = 0;
-            while(count < 5 && Vf.head(i1).cwiseAbs().maxCoeff() > m_eps * beta)
+            while(count < 5 && ortho_err > m_eps * beta)
             {
+                // There is an edge case: when beta=||f|| is close to zero, f mostly consists
+                // of noises of rounding errors, so the test [ortho_err < eps * beta] is very
+                // likely to fail. In particular, if beta=0, then the test is ensured to fail.
+                // Hence when this happens, we force f to be zero, and then restart in the
+                // next iteration.
+                if(beta < sqrt(Scalar(m_n)) * m_eps)
+                {
+                    m_fac_f.setZero();
+                    beta = Scalar(0);
+                    break;
+                }
+
                 // f <- f - V * Vf
                 m_fac_f.noalias() -= V * Vf.head(i1);
                 // h <- h + Vf
@@ -277,6 +289,7 @@ private:
                 beta = norm(m_fac_f);
 
                 Vf.head(i1).noalias() = inner_product(V, m_fac_f);
+                ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
                 count++;
             }
         }
@@ -309,13 +322,11 @@ private:
         // Q has some elements being zero
         // The first (ncv - k + i) elements of the i-th column of Q are non-zero
         Matrix Vs(m_n, k + 1);
-        int nnz;
         for(int i = 0; i < k; i++)
         {
-            nnz = m_ncv - k + i + 1;
-            MapMat V(m_fac_V.data(), m_n, nnz);
+            const int nnz = m_ncv - k + i + 1;
             MapVec q(&Q(0, i), nnz);
-            Vs.col(i).noalias() = V * q;
+            Vs.col(i).noalias() = m_fac_V.leftCols(nnz) * q;
         }
         Vs.col(k).noalias() = m_fac_V * Q.col(k);
         m_fac_V.leftCols(k + 1).noalias() = Vs;
@@ -550,7 +561,12 @@ public:
 
         m_fac_H(0, 0) = inner_product(v, w);
         m_fac_f.noalias() = w - v * m_fac_H(0, 0);
-        m_fac_V.col(0) = v;
+        m_fac_V.col(0).noalias() = v;
+
+        // In some cases f is zero in exact arithmetics, but due to rounding errors
+        // it may contain tiny fluctuations. When this happens, we force f to be zero.
+        if(m_fac_f.cwiseAbs().maxCoeff() < m_eps)
+            m_fac_f.setZero();
     }
 
     ///
