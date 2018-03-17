@@ -342,7 +342,6 @@ private:
         // Q has some elements being zero
         // The first (ncv - k + i) elements of the i-th column of Q are non-zero
         Matrix Vs(m_n, k + 1);
-        int nnz;
         for(int i = 0; i < k; i++)
         {
             const int nnz = m_ncv - k + i + 1;
