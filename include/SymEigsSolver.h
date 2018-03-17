@@ -671,7 +671,7 @@ public:
     /// Returned matrix type will be `Eigen::Matrix<Scalar, ...>`,
     /// depending on the template parameter `Scalar` defined.
     ///
-    Matrix eigenvectors(int nvec) const
+    virtual Matrix eigenvectors(int nvec) const
     {
         const int nconv = m_ritz_conv.cast<int>().sum();
         nvec = std::min(nvec, nconv);
@@ -699,7 +699,7 @@ public:
     ///
     /// Returns all converged eigenvectors.
     ///
-    Matrix eigenvectors() const
+    virtual Matrix eigenvectors() const
     {
         return eigenvectors(m_nev);
     }
