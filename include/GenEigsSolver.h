@@ -182,14 +182,15 @@ private:
     // Arnoldi factorization starting from step-k
     void factorize_from(int from_k, int to_m, const Vector& fk)
     {
+        using std::sqrt;
+
         if(to_m <= from_k) return;
 
-        m_fac_f = fk;
+        m_fac_f.noalias() = fk;
 
         // Pre-allocate Vf
         Vector Vf(to_m);
         Vector w(m_n);
-
         Scalar beta = m_fac_f.norm();
         // Keep the upperleft k x k submatrix of H and set other elements to 0
         m_fac_H.rightCols(m_ncv - from_k).setZero();
@@ -218,10 +219,7 @@ private:
             m_fac_V.col(i).noalias() = m_fac_f / beta; // The (i+1)-th column
 
             // Note that H[i+1, i] equals to the unrestarted beta
-            if(restart)
-                m_fac_H(i, i - 1) = 0.0;
-            else
-                m_fac_H(i, i - 1) = beta;
+            m_fac_H(i, i - 1) = restart ? Scalar(0) : beta;
 
             // w <- A * v, v = m_fac_V.col(i)
             m_op->perform_op(&m_fac_V(0, i), w.data());
@@ -237,18 +235,41 @@ private:
 
             // f <- w - V * h
             m_fac_f.noalias() = w - Vs * h;
+
+            // In some cases f is zero in exact arithmetics, but due to rounding errors
+            // it may contain tiny fluctuations. When this happens, we force f to be zero,
+            // and then restart in the next iteration
+            if(m_fac_f.cwiseAbs().maxCoeff() < m_eps)
+            {
+                m_fac_f.setZero();
+                beta = Scalar(0);
+                continue;
+            }
             beta = m_fac_f.norm();
 
-            if(beta > 0.717 * h.norm())
+            if(beta > Scalar(0.717) * h.norm())
                 continue;
 
             // f/||f|| is going to be the next column of V, so we need to test
             // whether V' * (f/||f||) ~= 0
             Vf.head(i1).noalias() = Vs.transpose() * m_fac_f;
+            Scalar ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
             // If not, iteratively correct the residual
             int count = 0;
-            while(count < 5 && Vf.head(i1).cwiseAbs().maxCoeff() > m_eps * beta)
+            while(count < 5 && ortho_err > m_eps * beta)
             {
+                // There is an edge case: when beta=||f|| is close to zero, f mostly consists
+                // of noises of rounding errors, so the test [ortho_err < eps * beta] is very
+                // likely to fail. In particular, if beta=0, then the test is ensured to fail.
+                // Hence when this happens, we force f to be zero, and then restart in the
+                // next iteration.
+                if(beta < sqrt(Scalar(m_n)) * m_eps)
+                {
+                    m_fac_f.setZero();
+                    beta = Scalar(0);
+                    break;
+                }
+
                 // f <- f - V * Vf
                 m_fac_f.noalias() -= Vs * Vf.head(i1);
                 // h <- h + Vf
@@ -257,6 +278,7 @@ private:
                 beta = m_fac_f.norm();
 
                 Vf.head(i1).noalias() = Vs.transpose() * m_fac_f;
+                ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
                 count++;
             }
         }
@@ -323,10 +345,9 @@ private:
         int nnz;
         for(int i = 0; i < k; i++)
         {
-            nnz = m_ncv - k + i + 1;
-            MapMat V(m_fac_V.data(), m_n, nnz);
+            const int nnz = m_ncv - k + i + 1;
             MapVec q(&Q(0, i), nnz);
-            Vs.col(i).noalias() = V * q;
+            Vs.col(i).noalias() = m_fac_V.leftCols(nnz) * q;
         }
         Vs.col(k).noalias() = m_fac_V * Q.col(k);
         m_fac_V.leftCols(k + 1).noalias() = Vs;
@@ -548,6 +569,11 @@ public:
         m_fac_H(0, 0) = v.dot(w);
         m_fac_f = w - v * m_fac_H(0, 0);
         m_fac_V.col(0) = v;
+
+        // In some cases f is zero in exact arithmetics, but due to rounding errors
+        // it may contain tiny fluctuations. When this happens, we force f to be zero
+        if(m_fac_f.cwiseAbs().maxCoeff() < m_eps)
+            m_fac_f.setZero();
     }
 
     ///
