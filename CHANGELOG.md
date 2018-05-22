@@ -1,6 +1,7 @@
 ## [0.6.2] - 2018-05-22
 ### Changed
-- Fixed a regression on an edge case
+- Fixed regressions in v0.6.0 on some edge cases
+- Improved the accuracy of restarting processes in `SymEigsSolver` and `GenEigsSolver`
 - Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.2.2
 - Code and documentation cleanup
 

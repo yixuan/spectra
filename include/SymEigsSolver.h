@@ -188,6 +188,31 @@ private:
     const Scalar m_eps;        // the machine precision, ~= 1e-16 for the "double" type
     const Scalar m_eps23;      // m_eps^(2/3), used to test the convergence
 
+    // Given orthonormal basis functions V, find a nonzero vector f such that V'f = 0
+    // Assume that f has been properly allocated
+    void expand_basis(const MapMat& V, const int seed, Vector& f, Scalar& fnorm)
+    {
+        using std::sqrt;
+
+        const Scalar thresh = m_eps * sqrt(Scalar(m_n));
+        for(int iter = 0; iter < 5; iter++)
+        {
+            // Randomly generate a new vector and orthogonalize it against V
+            SimpleRandom<Scalar> rng(seed + 123 * iter);
+            f.noalias() = rng.random_vec(m_n);
+            // f <- f - V * V' * f, so that f is orthogonal to V
+            Vector Vf = inner_product(V, m_fac_f);
+            f -= V * Vf;
+            // fnorm <- ||f||
+            fnorm = m_fac_f.norm();
+
+            // If fnorm is too close to zero, we try a new random vector,
+            // otherwise return the result
+            if(fnorm >= thresh)
+                return;
+        }
+    }
+
     // Lanczos factorization starting from step-k
     void factorize_from(int from_k, int to_m, const Vector& fk)
     {
@@ -195,7 +220,7 @@ private:
 
         if(to_m <= from_k) return;
 
-        const Scalar sqrtn = sqrt(Scalar(m_n));
+        const Scalar beta_thresh = m_eps * sqrt(Scalar(m_n));
         m_fac_f.noalias() = fk;
 
         // Pre-allocate Vf
@@ -213,15 +238,8 @@ private:
             // to the current V, which we call a restart
             if(beta < m_near_0)
             {
-                SimpleRandom<Scalar> rng(2 * i);
-                m_fac_f.noalias() = rng.random_vec(m_n);
-                // f <- f - V * V' * f, so that f is orthogonal to V
                 MapMat V(m_fac_V.data(), m_n, i); // The first i columns
-                Vf.head(i).noalias() = inner_product(V, m_fac_f);
-                m_fac_f.noalias() -= V * Vf.head(i);
-                // beta <- ||f||
-                beta = norm(m_fac_f);
-
+                expand_basis(V, 2 * i, m_fac_f, beta);
                 restart = true;
             }
 
@@ -264,7 +282,7 @@ private:
                 // likely to fail. In particular, if beta=0, then the test is ensured to fail.
                 // Hence when this happens, we force f to be zero, and then restart in the
                 // next iteration.
-                if(beta < sqrtn * m_eps)
+                if(beta < beta_thresh)
                 {
                     m_fac_f.setZero();
                     beta = Scalar(0);
