@@ -1,3 +1,10 @@
+## [0.6.2] - 2018-05-22
+### Changed
+- Fixed a regression on an edge case
+- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.2.2
+- Code and documentation cleanup
+
+
 ## [0.6.1] - 2018-03-03
 ### Changed
 - Fixed a bug of uninitialized memory
