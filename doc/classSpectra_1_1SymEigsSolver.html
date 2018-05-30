@@ -106,8 +106,8 @@ Inheritance diagram for Spectra::SymEigsSolver&lt; Scalar, SelectionRule, OpType
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa43d8837ab70c5a102d4366ff3b0c490"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#aa43d8837ab70c5a102d4366ff3b0c490">SymEigsSolver</a> (OpType *op_, int nev_, int ncv_)</td></tr>
-<tr class="separator:aa43d8837ab70c5a102d4366ff3b0c490"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fe9aa59fb452a95646ab5a75ca1aab1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#a1fe9aa59fb452a95646ab5a75ca1aab1">SymEigsSolver</a> (OpType *op, int nev, int ncv)</td></tr>
+<tr class="separator:a1fe9aa59fb452a95646ab5a75ca1aab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af296ce9cdfea5eb42a08486ce79aa4a4"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#af296ce9cdfea5eb42a08486ce79aa4a4">~SymEigsSolver</a> ()</td></tr>
 <tr class="separator:af296ce9cdfea5eb42a08486ce79aa4a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf2ef756971d56fb6a432efdf9c9a059"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#aaf2ef756971d56fb6a432efdf9c9a059">init</a> (const Scalar *init_resid)</td></tr>
@@ -124,10 +124,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af931b9caba7048a7a8115fa97111a72d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa7b5509449ff3efef7c900bd1559e21"><td class="memItemLeft" align="right" valign="top">Vector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#afa7b5509449ff3efef7c900bd1559e21">eigenvalues</a> () const</td></tr>
 <tr class="separator:afa7b5509449ff3efef7c900bd1559e21"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a152e6ed2f0939e2d77121ada64e6fd94"><td class="memItemLeft" align="right" valign="top">Matrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#a152e6ed2f0939e2d77121ada64e6fd94">eigenvectors</a> (int nvec) const</td></tr>
-<tr class="separator:a152e6ed2f0939e2d77121ada64e6fd94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af384fabd3f263e0e1350b61bc27155ff"><td class="memItemLeft" align="right" valign="top">Matrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#af384fabd3f263e0e1350b61bc27155ff">eigenvectors</a> () const</td></tr>
-<tr class="separator:af384fabd3f263e0e1350b61bc27155ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75d27304d55ec28fe7af0fd81345f07f"><td class="memItemLeft" align="right" valign="top">virtual Matrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#a75d27304d55ec28fe7af0fd81345f07f">eigenvectors</a> (int nvec) const</td></tr>
+<tr class="separator:a75d27304d55ec28fe7af0fd81345f07f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1198885b996446cce37206febe9f18b"><td class="memItemLeft" align="right" valign="top">virtual Matrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SymEigsSolver.html#ab1198885b996446cce37206febe9f18b">eigenvectors</a> () const</td></tr>
+<tr class="separator:ab1198885b996446cce37206febe9f18b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename OpType = DenseSymMatProd&lt;double&gt;&gt;<br />
@@ -151,8 +151,8 @@ class Spectra::SymEigsSolver&lt; Scalar, SelectionRule, OpType &gt;</h3>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;Eigen/Core&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;SymEigsSolver.h&gt;</span></div><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div><div class="line"></div><div class="line"><span class="keyword">using namespace </span><a class="code" href="namespaceSpectra.html">Spectra</a>;</div><div class="line"></div><div class="line"><span class="comment">// M = diag(1, 2, ..., 10)</span></div><div class="line"><span class="keyword">class </span>MyDiagonalTen</div><div class="line">{</div><div class="line"><span class="keyword">public</span>:</div><div class="line">    <span class="keywordtype">int</span> rows() { <span class="keywordflow">return</span> 10; }</div><div class="line">    <span class="keywordtype">int</span> cols() { <span class="keywordflow">return</span> 10; }</div><div class="line">    <span class="comment">// y_out = M * x_in</span></div><div class="line">    <span class="keywordtype">void</span> perform_op(<span class="keywordtype">double</span> *x_in, <span class="keywordtype">double</span> *y_out)</div><div class="line">    {</div><div class="line">        <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; rows(); i++)</div><div class="line">        {</div><div class="line">            y_out[i] = x_in[i] * (i + 1);</div><div class="line">        }</div><div class="line">    }</div><div class="line">};</div><div class="line"></div><div class="line"><span class="keywordtype">int</span> main()</div><div class="line">{</div><div class="line">    MyDiagonalTen op;</div><div class="line">    <a class="code" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver&lt;double, LARGEST_ALGE, MyDiagonalTen&gt;</a> eigs(&amp;op, 3, 6);</div><div class="line">    eigs.init();</div><div class="line">    eigs.compute();</div><div class="line">    <span class="keywordflow">if</span>(eigs.info() == <a class="code" href="group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba79882c7474aed8cd8ebddc8cd4aa5185">SUCCESSFUL</a>)</div><div class="line">    {</div><div class="line">        Eigen::VectorXd evalues = eigs.eigenvalues();</div><div class="line">        <span class="comment">// Will get (10, 9, 8)</span></div><div class="line">        std::cout &lt;&lt; <span class="stringliteral">&quot;Eigenvalues found:\n&quot;</span> &lt;&lt; evalues &lt;&lt; std::endl;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="keywordflow">return</span> 0;</div><div class="line">}</div></div><!-- fragment --> 
 <p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00156">156</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aa43d8837ab70c5a102d4366ff3b0c490"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa43d8837ab70c5a102d4366ff3b0c490">&#9670;&nbsp;</a></span>SymEigsSolver()</h2>
+<a id="a1fe9aa59fb452a95646ab5a75ca1aab1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fe9aa59fb452a95646ab5a75ca1aab1">&#9670;&nbsp;</a></span>SymEigsSolver()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -166,19 +166,19 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
           <td class="memname"><a class="el" href="classSpectra_1_1SymEigsSolver.html">Spectra::SymEigsSolver</a>&lt; Scalar, SelectionRule, OpType &gt;::<a class="el" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver</a> </td>
           <td>(</td>
           <td class="paramtype">OpType *&#160;</td>
-          <td class="paramname"><em>op_</em>, </td>
+          <td class="paramname"><em>op</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>nev_</em>, </td>
+          <td class="paramname"><em>nev</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>ncv_</em>&#160;</td>
+          <td class="paramname"><em>ncv</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -195,14 +195,14 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <p>Constructor to create a solver object.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">op_</td><td>Pointer to the matrix operation object, which should implement the matrix-vector multiplication operation of \(A\): calculating \(Av\) for any vector \(v\). Users could either create the object from the wrapper class such as <a class="el" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd</a>, or define their own that impelements all the public member functions as in <a class="el" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd</a>. </td></tr>
-    <tr><td class="paramname">nev_</td><td>Number of eigenvalues requested. This should satisfy \(1\le nev \le n-1\), where \(n\) is the size of matrix. </td></tr>
-    <tr><td class="paramname">ncv_</td><td>Parameter that controls the convergence speed of the algorithm. Typically a larger <code>ncv_</code> means faster convergence, but it may also result in greater memory use and more matrix operations in each iteration. This parameter must satisfy \(nev &lt; ncv \le n\), and is advised to take \(ncv \ge 2\cdot nev\). </td></tr>
+    <tr><td class="paramname">op</td><td>Pointer to the matrix operation object, which should implement the matrix-vector multiplication operation of \(A\): calculating \(Av\) for any vector \(v\). Users could either create the object from the wrapper class such as <a class="el" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd</a>, or define their own that impelements all the public member functions as in <a class="el" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd</a>. </td></tr>
+    <tr><td class="paramname">nev</td><td>Number of eigenvalues requested. This should satisfy \(1\le nev \le n-1\), where \(n\) is the size of matrix. </td></tr>
+    <tr><td class="paramname">ncv</td><td>Parameter that controls the convergence speed of the algorithm. Typically a larger <code>ncv</code> means faster convergence, but it may also result in greater memory use and more matrix operations in each iteration. This parameter must satisfy \(nev &lt; ncv \le n\), and is advised to take \(ncv \ge 2\cdot nev\). </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00484">484</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00505">505</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -232,7 +232,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Virtual destructor </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00506">506</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00527">527</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -271,7 +271,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </dl>
 <p><b>Spectra</b> (and also <b>ARPACK</b>) uses an iterative algorithm to find eigenvalues. This function allows the user to provide the initial residual vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00517">517</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00538">538</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -302,7 +302,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <p>Initializes the solver by providing a random initial residual vector.</p>
 <p>This overloaded function generates a random initial residual vector (with a fixed random seed) for the algorithm. Elements in the vector follow independent Uniform(-0.5, 0.5) distribution. </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00563">563</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00589">589</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -358,7 +358,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of converged eigenvalues. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00588">588</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00614">614</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -388,7 +388,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returns the status of the computation. The full list of enumeration values can be found in <a class="el" href="group__Enumerations.html">Enumerations</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00617">617</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00643">643</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -418,7 +418,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returns the number of iterations used in the computation. </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00622">622</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00648">648</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -448,7 +448,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </div><div class="memdoc">
 <p>Returns the number of matrix operations used in the computation. </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00627">627</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00653">653</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
@@ -479,12 +479,12 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 <p>Returns the converged eigenvalues.</p>
 <dl class="section return"><dt>Returns</dt><dd>A vector containing the eigenvalues. Returned vector type will be <code>Eigen::Vector&lt;Scalar, ...&gt;</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00636">636</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00662">662</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
-<a id="a152e6ed2f0939e2d77121ada64e6fd94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a152e6ed2f0939e2d77121ada64e6fd94">&#9670;&nbsp;</a></span>eigenvectors() <span class="overload">[1/2]</span></h2>
+<a id="a75d27304d55ec28fe7af0fd81345f07f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75d27304d55ec28fe7af0fd81345f07f">&#9670;&nbsp;</a></span>eigenvectors() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -495,7 +495,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Matrix <a class="el" href="classSpectra_1_1SymEigsSolver.html">Spectra::SymEigsSolver</a>&lt; Scalar, SelectionRule, OpType &gt;::eigenvectors </td>
+          <td class="memname">virtual Matrix <a class="el" href="classSpectra_1_1SymEigsSolver.html">Spectra::SymEigsSolver</a>&lt; Scalar, SelectionRule, OpType &gt;::eigenvectors </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>nvec</em></td><td>)</td>
@@ -504,7 +504,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -517,12 +517,12 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A matrix containing the eigenvectors. Returned matrix type will be <code>Eigen::Matrix&lt;Scalar, ...&gt;</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00666">666</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00692">692</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>
-<a id="af384fabd3f263e0e1350b61bc27155ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af384fabd3f263e0e1350b61bc27155ff">&#9670;&nbsp;</a></span>eigenvectors() <span class="overload">[2/2]</span></h2>
+<a id="ab1198885b996446cce37206febe9f18b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1198885b996446cce37206febe9f18b">&#9670;&nbsp;</a></span>eigenvectors() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -533,7 +533,7 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Matrix <a class="el" href="classSpectra_1_1SymEigsSolver.html">Spectra::SymEigsSolver</a>&lt; Scalar, SelectionRule, OpType &gt;::eigenvectors </td>
+          <td class="memname">virtual Matrix <a class="el" href="classSpectra_1_1SymEigsSolver.html">Spectra::SymEigsSolver</a>&lt; Scalar, SelectionRule, OpType &gt;::eigenvectors </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -541,13 +541,13 @@ template&lt;typename Scalar = double, int SelectionRule = LARGEST_MAGN, typename
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 <p>Returns all converged eigenvectors. </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00694">694</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsSolver_8h_source.html#l00720">720</a> of file <a class="el" href="SymEigsSolver_8h_source.html">SymEigsSolver.h</a>.</p>
 
 </div>
 </div>

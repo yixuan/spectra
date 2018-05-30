@@ -1,6 +1,6 @@
 var classSpectra_1_1GenEigsSolver =
 [
-    [ "GenEigsSolver", "classSpectra_1_1GenEigsSolver.html#aab5b020a70aaad0819904a23f7c67894", null ],
+    [ "GenEigsSolver", "classSpectra_1_1GenEigsSolver.html#a15f154603b532c1311441848bd22bf62", null ],
     [ "~GenEigsSolver", "classSpectra_1_1GenEigsSolver.html#a46d105a5d9d765fbdd3f6c4cd2058bfa", null ],
     [ "init", "classSpectra_1_1GenEigsSolver.html#a9b98ce65ddf08cd600585e982a3cc15f", null ],
     [ "init", "classSpectra_1_1GenEigsSolver.html#a7480a89931c401111c69ed83d62d5c69", null ],
