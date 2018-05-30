@@ -15,34 +15,6 @@
   <script type="text/javascript" src="{{ '/js/bootstrap.min.js' | prepend: site.baseurl }}"></script>
   <script type="text/javascript" src="{{ '/js/script.js' | prepend: site.baseurl }}"></script>
 
-  <!-- MathJax support -->
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-        processEscapes: true
-      }
-    });
-  </script>
-  <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-        tex2jax: {
-          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-        }
-      });
-  </script>
-  <script type="text/x-mathjax-config">
-      MathJax.Hub.Queue(function() {
-          var all = MathJax.Hub.getAllJax(), i;
-          for(i=0; i < all.length; i += 1) {
-              all[i].SourceElement().parentNode.className += ' has-jax';
-          }
-      });
-  </script>
-  <script type="text/javascript"
-     src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-  </script>
-
   <!-- highlight.js -->
   <link rel="stylesheet" href="{{ '/css/hljs-gh.css' | prepend: site.baseurl }}">
   <script src="{{ '/js/highlight.pack.js' | prepend: site.baseurl }}"></script>
