@@ -17,11 +17,12 @@ The development page of **Spectra** is at
 [ARPACK](http://www.caam.rice.edu/software/ARPACK/) is a software written in
 FORTRAN for solving large scale eigenvalue problems. The development of
 **Spectra** is much inspired by ARPACK, and as the whole name indicates,
-**Spectra** is a redesign of the ARPACK library using C++ language.
+**Spectra** is a redesign of the ARPACK library using the C++ language.
 
-In fact, **Spectra** is based on the algorithms described in the
+In fact, **Spectra** is based on the algorithm described in the
 [ARPACK Users' Guide](http://www.caam.rice.edu/software/ARPACK/UG/ug.html),
-but it does not use the ARPACK code, and it is **NOT** a clone of ARPACK for C++.
+the implicitly restarted Arnoldi/Lanczos method. However,
+it does not use the ARPACK code, and it is **NOT** a clone of ARPACK for C++.
 In short, **Spectra** implements the major algorithms in ARPACK,
 but **Spectra** provides a completely different interface, and it does not
 depend on ARPACK.
@@ -72,7 +73,8 @@ matrices.
 
 ~~~~~~~~~~{.cpp}
 #include <Eigen/Core>
-#include <SymEigsSolver.h>  // Also includes <MatOp/DenseSymMatProd.h>
+#include <Spectra/SymEigsSolver.h>
+// <Spectra/MatOp/DenseSymMatProd.h> is implicitly included
 #include <iostream>
 
 using namespace Spectra;
@@ -109,8 +111,8 @@ Sparse matrix is supported via classes such as Spectra::SparseGenMatProd and Spe
 ~~~~~~~~~~{.cpp}
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <GenEigsSolver.h>
-#include <MatOp/SparseGenMatProd.h>
+#include <Spectra/GenEigsSolver.h>
+#include <Spectra/MatOp/SparseGenMatProd.h>
 #include <iostream>
 
 using namespace Spectra;
@@ -156,7 +158,7 @@ And here is an example for user-supplied matrix operation class.
 
 ~~~~~~~~~~{.cpp}
 #include <Eigen/Core>
-#include <SymEigsSolver.h>
+#include <Spectra/SymEigsSolver.h>
 #include <iostream>
 
 using namespace Spectra;
