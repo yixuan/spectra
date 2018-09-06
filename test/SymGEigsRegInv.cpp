@@ -3,9 +3,9 @@
 #include <iostream>
 #include <random> // Requires C++ 11
 
-#include <SymGEigsSolver.h>
-#include <MatOp/SparseSymMatProd.h>
-#include <MatOp/SparseRegularInverse.h>
+#include <Spectra/SymGEigsSolver.h>
+#include <Spectra/MatOp/SparseSymMatProd.h>
+#include <Spectra/MatOp/SparseRegularInverse.h>
 
 using namespace Spectra;
 

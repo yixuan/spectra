@@ -3,11 +3,11 @@
 #include <iostream>
 #include <random> // Requires C++ 11
 
-#include <SymGEigsSolver.h>
-#include <MatOp/DenseSymMatProd.h>
-#include <MatOp/DenseCholesky.h>
-#include <MatOp/SparseSymMatProd.h>
-#include <MatOp/SparseCholesky.h>
+#include <Spectra/SymGEigsSolver.h>
+#include <Spectra/MatOp/DenseSymMatProd.h>
+#include <Spectra/MatOp/DenseCholesky.h>
+#include <Spectra/MatOp/SparseSymMatProd.h>
+#include <Spectra/MatOp/SparseCholesky.h>
 
 using namespace Spectra;
 

@@ -3,9 +3,9 @@
 #include <iostream>
 #include <random> // Requires C++ 11
 
-#include <SymEigsShiftSolver.h>
-#include <MatOp/DenseSymShiftSolve.h>
-#include <MatOp/SparseSymShiftSolve.h>
+#include <Spectra/SymEigsShiftSolver.h>
+#include <Spectra/MatOp/DenseSymShiftSolve.h>
+#include <Spectra/MatOp/SparseSymShiftSolve.h>
 
 using namespace Spectra;
 

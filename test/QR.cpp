@@ -1,9 +1,9 @@
-// Test ../include/LinAlg/UpperHessenbergQR.h and
-//      ../include/LinAlg/DoubleShiftQR.h
+// Test ../include/Spectra/LinAlg/UpperHessenbergQR.h and
+//      ../include/Spectra/LinAlg/DoubleShiftQR.h
 #include <Eigen/Core>
 #include <Eigen/QR>
-#include <LinAlg/UpperHessenbergQR.h>
-#include <LinAlg/DoubleShiftQR.h>
+#include <Spectra/LinAlg/UpperHessenbergQR.h>
+#include <Spectra/LinAlg/DoubleShiftQR.h>
 
 using namespace Spectra;
 

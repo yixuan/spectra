@@ -1,7 +1,7 @@
-// Test ../include/LinAlg/UpperHessenbergEigen.h and
-//      ../include/LinAlg/TridiagEigen.h
-#include <LinAlg/UpperHessenbergEigen.h>
-#include <LinAlg/TridiagEigen.h>
+// Test ../include/Spectra/LinAlg/UpperHessenbergEigen.h and
+//      ../include/Spectra/LinAlg/TridiagEigen.h
+#include <Spectra/LinAlg/UpperHessenbergEigen.h>
+#include <Spectra/LinAlg/TridiagEigen.h>
 #include <Eigen/Eigenvalues>
 #include <ctime>
 

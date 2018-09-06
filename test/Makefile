@@ -3,7 +3,10 @@ CPPFLAGS = -I../include
 LDFLAGS =
 LIBS =
 
-HEADERS = $(wildcard ../include/MatOp/*.h) $(wildcard ../include/LinAlg/*.h) $(wildcard ../include/Util/*.h) $(wildcard ../include/*.h)
+HEADERS = $(wildcard ../include/Spectra/MatOp/*.h) \
+	$(wildcard ../include/Spectra/LinAlg/*.h) \
+	$(wildcard ../include/Spectra/Util/*.h) \
+	$(wildcard ../include/Spectra/*.h)
 
 
 .PHONY: all test clean

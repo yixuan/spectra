@@ -3,9 +3,9 @@
 #include <iostream>
 #include <random> // Requires C++ 11
 
-#include <GenEigsRealShiftSolver.h>
-#include <MatOp/DenseGenRealShiftSolve.h>
-#include <MatOp/SparseGenRealShiftSolve.h>
+#include <Spectra/GenEigsRealShiftSolver.h>
+#include <Spectra/MatOp/DenseGenRealShiftSolve.h>
+#include <Spectra/MatOp/SparseGenRealShiftSolve.h>
 
 using namespace Spectra;
 

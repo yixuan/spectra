@@ -2,8 +2,8 @@
 #include <iostream>
 #include "timer.h"
 
-#include <SymEigsSolver.h>
-#include <GenEigsSolver.h>
+#include <Spectra/SymEigsSolver.h>
+#include <Spectra/GenEigsSolver.h>
 
 using namespace Spectra;
 

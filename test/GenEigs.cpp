@@ -3,9 +3,9 @@
 #include <iostream>
 #include <random> // Requires C++ 11
 
-#include <GenEigsSolver.h>
-#include <MatOp/DenseGenMatProd.h>
-#include <MatOp/SparseGenMatProd.h>
+#include <Spectra/GenEigsSolver.h>
+#include <Spectra/MatOp/DenseGenMatProd.h>
+#include <Spectra/MatOp/SparseGenMatProd.h>
 
 using namespace Spectra;
 
