@@ -1,3 +1,17 @@
+## [Unreleased]
+### Changed
+- **API change**: Spectra now requires Eigen >= 3.3.
+- **API change**: The library header files are moved into a directory
+  named `Spectra`. Hence the recommended include directive would look like
+  `#include <Spectra/SymEigsSolver.h>`.
+- The matrix operation classes (e.g. `DenseSymMatProd` and `SparseSymMatProd`)
+  are now internally using an
+  [Eigen::Ref](https://eigen.tuxfamily.org/dox/classEigen_1_1Ref.html) object
+  to wrap the user matrices, thanks to
+  [Dario Mangoni](https://github.com/dariomangoni) who raised this issue in
+  [#16](https://github.com/yixuan/spectra/issues/16).
+
+
 ## [0.6.2] - 2018-05-22
 ### Changed
 - Fixed regressions in v0.6.0 on some edge cases
