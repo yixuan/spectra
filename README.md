@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/yixuan/spectra.svg?branch=master)](https://travis-ci.org/yixuan/spectra)
 
-> **NOTE**: Starting from v7.0 all header files are moved into a directory
+> **NOTE**: Starting from v0.7 all header files are moved into a directory
 > named `Spectra`. Hence the recommended include directive would look like
 > `#include <Spectra/SymEigsSolver.h>`.
 
