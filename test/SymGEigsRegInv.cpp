@@ -22,13 +22,13 @@ SpMatrix sprand(int size, double prob = 0.5)
     SpMatrix mat(size, size);
     std::default_random_engine gen;
     gen.seed(0);
-    std::uniform_real_distribution<double> distr(-1.0, 1.0);
+    std::uniform_real_distribution<double> distr(0.0, 1.0);
     for(int i = 0; i < size; i++)
     {
         for(int j = 0; j < size; j++)
         {
             if(distr(gen) < prob)
-                mat.insert(i, j) = distr(gen);
+                mat.insert(i, j) = distr(gen) - 0.5;
         }
     }
     return mat;

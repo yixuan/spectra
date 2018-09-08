@@ -43,13 +43,13 @@ SpMatrix gen_sparse_data(int n, double prob = 0.5)
     SpMatrix mat(n, n);
     std::default_random_engine gen;
     gen.seed(0);
-    std::uniform_real_distribution<double> distr(-1.0, 1.0);
+    std::uniform_real_distribution<double> distr(0.0, 1.0);
     for(int i = 0; i < n; i++)
     {
         for(int j = 0; j < n; j++)
         {
             if(distr(gen) < prob)
-                mat.insert(i, j) = distr(gen);
+                mat.insert(i, j) = distr(gen) - 0.5;
         }
     }
     return mat;
