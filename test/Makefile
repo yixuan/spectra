@@ -6,13 +6,14 @@ LIBS =
 HEADERS = $(wildcard ../include/Spectra/MatOp/*.h) \
 	$(wildcard ../include/Spectra/LinAlg/*.h) \
 	$(wildcard ../include/Spectra/Util/*.h) \
-	$(wildcard ../include/Spectra/*.h)
+	$(wildcard ../include/Spectra/*.h) \
+	$(wildcard ../include/Spectra/contrib/*.h)
 
 
 .PHONY: all test clean
 
 all: QR.out Eigen.out SymEigs.out SymEigsShift.out GenEigs.out GenEigsRealShift.out GenEigsComplexShift.out \
-	SymGEigsCholesky.out SymGEigsRegInv.out
+	SymGEigsCholesky.out SymGEigsRegInv.out SVD.out
 
 test:
 	-./QR.out
@@ -24,9 +25,11 @@ test:
 	-./GenEigsComplexShift.out
 	-./SymGEigsCholesky.out
 	-./SymGEigsRegInv.out
+	-./SVD.out
 
 %.out: %.cpp $(HEADERS)
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@ $(LDFLAGS) $(LIBS)
 
 clean:
 	-rm *.out
+
