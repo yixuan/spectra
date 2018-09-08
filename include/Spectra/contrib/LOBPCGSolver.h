@@ -1,18 +1,20 @@
 // Written by Anna Araslanova
+// Modified by Yixuan Qiu
 // License: MIT
 
-#ifndef SYM_SPARSE_EIGS_SOLVER_LOBPCG
-#define SYM_SPARSE_EIGS_SOLVER_LOBPCG
+#ifndef LOBPCG_SOLVER
+#define LOBPCG_SOLVER
 
 #include <functional>
 #include <map>
 
 #include <Eigen/Core>
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
 #include <Eigen/SparseCore>
+#include <Eigen/SVD>
+#include <Eigen/SparseCholesky>
 
 #include "../SymGEigsSolver.h"
+
 
 namespace Spectra {
 
@@ -36,7 +38,7 @@ namespace Spectra {
 	///	*** ARGUMENTS
 	///	Eigen::SparseMatrix<long double> A; // N*N - Ax = lambda*Bx, lrage and sparse
 	///	Eigen::SparseMatrix<long double> X; // N*M - initial approximations to eigenvectors (random in general case)
-	///	Spectra::LOBPCG<long double> solver(A, X);
+	///	Spectra::LOBPCGSolver<long double> solver(A, X);
 	///	*Eigen::SparseMatrix<long double> B; // N*N - Ax = lambda*Bx, sparse, positive definite
 	///	solver.setConstraints(B);
 	///	*Eigen::SparseMatrix<long double> Y; // N*K - constraints, already found eigenvectors
@@ -53,7 +55,7 @@ namespace Spectra {
 	///
 	///	*** EXAMPLE
 	/// \code{.cpp}
-	/// #include "SymSparseEigsSolverLOBPCG.h"
+	/// #include <Spectra/contrib/SymSparseEigsSolverLOBPCG.h>
 	///
 	///	// random A
 	///	Matrix a;
@@ -68,7 +70,7 @@ namespace Spectra {
 	///	x = Matrix::Random(10, 2).array();
 	///	Eigen::SparseMatrix<long double> X(x.sparseView());
 	///	// solve Ax = lambda*x
-	///	Spectra::LOBPCG<long double> solver(A, X);
+	///	Spectra::LOBPCGSolver<long double> solver(A, X);
 	///	solver.compute(10, 1e-4); // 10 iterations, L2_tolerance = 1e-4*N
 	/// std::cout << "info\n" << solver.info() << std::endl;
 	/// std::cout << "eigenvalues\n" << solver.eigenvalues() << std::endl;
@@ -78,7 +80,7 @@ namespace Spectra {
 	///
 
 	template < typename Scalar = long double>
-	class LOBPCG {
+	class LOBPCGSolver {
 	private:
 
 		typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
@@ -253,7 +255,7 @@ namespace Spectra {
 
 	public:
 
-		LOBPCG(const Eigen::SparseMatrix<Scalar>& A, const Eigen::SparseMatrix<Scalar> X) :
+		LOBPCGSolver(const Eigen::SparseMatrix<Scalar>& A, const Eigen::SparseMatrix<Scalar> X) :
 			m_n(A.rows()),
 			m_nev(X.cols()),
 			m_info(NOT_COMPUTED),
@@ -487,6 +489,7 @@ namespace Spectra {
 
 	};
 
+
 } // namespace Spectra
 
-#endif // SYM_SPARSE_EIGS_SOLVER_LOBPCG
+#endif // LOBPCG_SOLVER
