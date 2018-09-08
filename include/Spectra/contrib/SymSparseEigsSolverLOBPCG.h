@@ -1,11 +1,9 @@
-
 // Written by Anna Araslanova
 // License: MIT
 
 #ifndef SYM_SPARSE_EIGS_SOLVER_LOBPCG
 #define SYM_SPARSE_EIGS_SOLVER_LOBPCG
 
-#include "stdafx.h"
 #include <functional>
 #include <map>
 
@@ -14,8 +12,7 @@
 #include <Eigen/Sparse>
 #include <Eigen/SparseCore>
 
-#include <SymEigsSolver.h> 
-#include <SymGEigsSolver.h>
+#include "../SymGEigsSolver.h"
 
 namespace Spectra {
 
@@ -404,7 +401,7 @@ namespace Spectra {
 				DenseSymMatProd<Scalar> Aop(gramA);
 				DenseCholesky<Scalar>  Bop(gramB);
 
-				SymGEigsSolver<Scalar, SMALLEST_ALGE, Spectra::DenseSymMatProd<Scalar>, \
+				SymGEigsSolver<Scalar, SMALLEST_ALGE, DenseSymMatProd<Scalar>, \
 					DenseCholesky<Scalar>, GEIGS_CHOLESKY> geigs(&Aop, &Bop, m_nev, std::min(10, gramA.rows() - 1));
 
 				geigs.init();
