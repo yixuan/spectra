@@ -1,15 +1,22 @@
 ## [Unreleased]
+### Added
+- Added an eigen solver `LOBPCG` in the `contrib` directory using the
+  [LOBPCG](https://en.wikipedia.org/wiki/LOBPCG) algorithm,
+  contributed by [Anna Araslanova](https://github.com/AnnaAraslanova)
+- Added a partial SVD solver `PartialSVDSolver` in the `contrib` directory
+
 ### Changed
-- **API change**: Spectra now requires Eigen >= 3.3.
+- **API change**: Spectra now requires Eigen >= 3.3
 - **API change**: The library header files are moved into a directory
   named `Spectra`. Hence the recommended include directive would look like
-  `#include <Spectra/SymEigsSolver.h>`.
+  `#include <Spectra/SymEigsSolver.h>`
 - The matrix operation classes (e.g. `DenseSymMatProd` and `SparseSymMatProd`)
   are now internally using an
   [Eigen::Ref](https://eigen.tuxfamily.org/dox/classEigen_1_1Ref.html) object
   to wrap the user matrices, thanks to
   [Dario Mangoni](https://github.com/dariomangoni) who raised this issue in
-  [#16](https://github.com/yixuan/spectra/issues/16).
+  [#16](https://github.com/yixuan/spectra/issues/16)
+- Fixed inappropriate range of random numbers in the tests
 
 
 ## [0.6.2] - 2018-05-22
