@@ -11,7 +11,6 @@
 #include <cmath>      // std::sqrt
 #include <stdexcept>  // std::invalid_argument
 #include <sstream>    // std::stringstream
-#include <iostream>
 
 #include "../Util/TypeTraits.h"
 #include "../Util/SimpleRandom.h"
@@ -86,15 +85,6 @@ public:
         m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
         m_eps(Eigen::NumTraits<Scalar>::epsilon())
     {}
-
-    // Debugging
-    void print()
-    {
-        std::cout << "H = \n" << m_fac_H << std::endl;
-        std::cout << "\nV = \n" << m_fac_V << std::endl;
-        std::cout << "\nf = \n" << m_fac_f.transpose() << std::endl;
-        std::cout << "\n||f||= \n" << m_beta << std::endl;
-    }
 
     // Const-reference to internal structures
     const Matrix& matrix_V() const { return m_fac_V; }
