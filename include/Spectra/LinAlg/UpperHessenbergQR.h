@@ -93,10 +93,10 @@ public:
     /// be performed later by calling the compute() method.
     ///
     UpperHessenbergQR(Index size) :
-    	m_n(size),
-    	m_rot_cos(m_n - 1),
-    	m_rot_sin(m_n - 1),
-    	m_computed(false)
+        m_n(size),
+        m_rot_cos(m_n - 1),
+        m_rot_sin(m_n - 1),
+        m_computed(false)
     {}
 
     ///
@@ -112,7 +112,7 @@ public:
     ///
     UpperHessenbergQR(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0)) :
         m_n(mat.rows()),
-		m_shift(shift),
+        m_shift(shift),
         m_rot_cos(m_n - 1),
         m_rot_sin(m_n - 1),
         m_computed(false)
