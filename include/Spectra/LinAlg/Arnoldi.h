@@ -275,13 +275,13 @@ public:
         for(int i = 0; i < m_k; i++)
         {
             const int nnz = m_m - m_k + i + 1;
-            MapVec q(&Q(0, i), nnz);
+            MapConstVec q(&Q(0, i), nnz);
             Vs.col(i).noalias() = m_fac_V.leftCols(nnz) * q;
         }
         Vs.col(m_k).noalias() = m_fac_V * Q.col(m_k);
         m_fac_V.leftCols(m_k + 1).noalias() = Vs;
 
-        const Vector fk = m_fac_f * Q(m_m - 1, m_k - 1) + m_fac_V.col(m_k) * m_fac_H(m_k, m_k - 1);
+        Vector fk = m_fac_f * Q(m_m - 1, m_k - 1) + m_fac_V.col(m_k) * m_fac_H(m_k, m_k - 1);
         m_fac_f.swap(fk);
         m_beta = m_fac_f.norm();
     }
