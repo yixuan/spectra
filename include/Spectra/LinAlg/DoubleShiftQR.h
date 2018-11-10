@@ -333,12 +333,12 @@ public:
         m_computed = true;
     }
 
-    const Matrix& matrix_QtHQ() const
+    void matrix_QtHQ(Matrix& dest) const
     {
         if(!m_computed)
             throw std::logic_error("DoubleShiftQR: need to call compute() first");
 
-        return m_mat_H;
+        dest.noalias() = m_mat_H;
     }
 
     // Q = P0 * P1 * ...

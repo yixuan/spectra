@@ -329,19 +329,17 @@ private:
                 // Matrix Q = Matrix::Identity(m_ncv, m_ncv);
                 // decomp_ds.apply_YQ(Q);
                 // m_fac_H = Q.transpose() * m_fac_H * Q;
-                m_fac_H.noalias() = decomp_ds.matrix_QtHQ();
+                decomp_ds.matrix_QtHQ(m_fac_H);
 
                 i++;
             } else {
                 // QR decomposition of H - mu * I, mu is real
-                m_fac_H.diagonal().array() -= m_ritz_val[i].real();
-                decomp_hb.compute(m_fac_H);
+                decomp_hb.compute(m_fac_H, m_ritz_val[i].real());
 
                 // Q -> Q * Qi
                 decomp_hb.apply_YQ(Q);
                 // H -> Q'HQ = RQ + mu * I
-                decomp_hb.matrix_RQ(m_fac_H);
-                m_fac_H.diagonal().array() += m_ritz_val[i].real();
+                decomp_hb.matrix_QtHQ(m_fac_H);
             }
         }
         // V -> VQ, only need to update the first k+1 columns

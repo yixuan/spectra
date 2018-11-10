@@ -49,7 +49,7 @@ void run_test(MatrixType &H)
     MatrixXd RQ_true = R;
     decomp.apply_YQ(RQ_true);
     MatrixXd RQ;
-    decomp.matrix_RQ(RQ);
+    decomp.matrix_QtHQ(RQ);
     INFO( "max error of RQ = " << (RQ - RQ_true).cwiseAbs().maxCoeff() );
     REQUIRE( (RQ - RQ_true).cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12) );
 
@@ -147,8 +147,10 @@ TEST_CASE("QR decomposition with double shifts", "QR")
     REQUIRE( (Q.cwiseAbs() - Q0.cwiseAbs()).cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12) );
 
     // Test Q'HQ
-    INFO( "max error of Q'HQ = " << (decomp.matrix_QtHQ() - Q.transpose() * H * Q).cwiseAbs().maxCoeff() );
-    REQUIRE( (decomp.matrix_QtHQ() - Q.transpose() * H * Q).cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12) );
+    MatrixXd QtHQ;
+    decomp.matrix_QtHQ(QtHQ);
+    INFO( "max error of Q'HQ = " << (QtHQ - Q.transpose() * H * Q).cwiseAbs().maxCoeff() );
+    REQUIRE( (QtHQ - Q.transpose() * H * Q).cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12) );
 
     // Test apply functions
     VectorXd y = VectorXd::Random(n);

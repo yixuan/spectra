@@ -318,16 +318,14 @@ private:
         for(int i = k; i < m_ncv; i++)
         {
             // QR decomposition of H-mu*I, mu is the shift
-            m_fac_H.diagonal().array() -= m_ritz_val[i];
-            decomp.compute(m_fac_H);
+            decomp.compute(m_fac_H, m_ritz_val[i]);
 
             // Q -> Q * Qi
             decomp.apply_YQ(Q);
             // H -> Q'HQ
             // Since QR = H - mu * I, we have H = QR + mu * I
             // and therefore Q'HQ = RQ + mu * I
-            decomp.matrix_RQ(m_fac_H);
-            m_fac_H.diagonal().array() += m_ritz_val[i];
+            decomp.matrix_QtHQ(m_fac_H);
         }
         // V -> VQ, only need to update the first k+1 columns
         // Q has some elements being zero
