@@ -305,7 +305,7 @@ private:
             return;
 
         DoubleShiftQR<Scalar> decomp_ds(m_ncv);
-        UpperHessenbergQR<Scalar> decomp_hb;
+        UpperHessenbergQR<Scalar> decomp_hb(m_ncv);
         Matrix Q = Matrix::Identity(m_ncv, m_ncv);
 
         for(int i = k; i < m_ncv; i++)

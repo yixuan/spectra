@@ -312,7 +312,7 @@ private:
         if(k >= m_ncv)
             return;
 
-        TridiagQR<Scalar> decomp;
+        TridiagQR<Scalar> decomp(m_ncv);
         Matrix Q = Matrix::Identity(m_ncv, m_ncv);
 
         for(int i = k; i < m_ncv; i++)

@@ -42,9 +42,10 @@ private:
     typedef Eigen::Ref<Matrix> GenericMatrix;
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
 
+    Matrix m_mat_T;
+
 protected:
     Index m_n;
-    Matrix m_mat_T;
     // Gi = [ cos[i]  sin[i]]
     //      [-sin[i]  cos[i]]
     // Q = G1 * G2 * ... * G_{n-1}
@@ -87,11 +88,14 @@ protected:
 
 public:
     ///
-    /// Default constructor. Computation can
+    /// Constructor to preallocate memory. Computation can
     /// be performed later by calling the compute() method.
     ///
-    UpperHessenbergQR() :
-        m_n(0), m_computed(false)
+    UpperHessenbergQR(Index size) :
+    	m_n(size),
+    	m_rot_cos(m_n - 1),
+    	m_rot_sin(m_n - 1),
+    	m_computed(false)
     {}
 
     ///
@@ -106,7 +110,6 @@ public:
     ///
     UpperHessenbergQR(ConstGenericMatrix& mat) :
         m_n(mat.rows()),
-        m_mat_T(m_n, m_n),
         m_rot_cos(m_n - 1),
         m_rot_sin(m_n - 1),
         m_computed(false)
@@ -117,7 +120,7 @@ public:
     ///
     /// We have virtual functions, so need a virtual destructor
     ///
-    virtual ~UpperHessenbergQR(){};
+    virtual ~UpperHessenbergQR() {};
 
     ///
     /// Conduct the QR factorization of an upper Hessenberg matrix.
@@ -460,11 +463,11 @@ private:
 
 public:
     ///
-    /// Default constructor. Computation can
+    /// Constructor to preallocate memory. Computation can
     /// be performed later by calling the compute() method.
     ///
-    TridiagQR() :
-        UpperHessenbergQR<Scalar>()
+    TridiagQR(Index size) :
+        UpperHessenbergQR<Scalar>(size)
     {}
 
     ///
@@ -478,7 +481,7 @@ public:
     /// the matrix are used.
     ///
     TridiagQR(ConstGenericMatrix& mat) :
-        UpperHessenbergQR<Scalar>()
+        UpperHessenbergQR<Scalar>(mat.rows())
     {
         this->compute(mat);
     }

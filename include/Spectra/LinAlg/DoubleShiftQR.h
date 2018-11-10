@@ -268,7 +268,7 @@ public:
         m_computed(false)
     {}
 
-    DoubleShiftQR(ConstGenericMatrix& mat, Scalar s, Scalar t) :
+    DoubleShiftQR(ConstGenericMatrix& mat, const Scalar& s, const Scalar& t) :
         m_n(mat.rows()),
         m_mat_H(m_n, m_n),
         m_shift_s(s),
