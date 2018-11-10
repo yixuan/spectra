@@ -21,6 +21,7 @@
 #include "LinAlg/UpperHessenbergQR.h"
 #include "LinAlg/UpperHessenbergEigen.h"
 #include "LinAlg/DoubleShiftQR.h"
+#include "LinAlg/Arnoldi.h"
 #include "MatOp/DenseGenMatProd.h"
 
 namespace Spectra {
@@ -145,10 +146,13 @@ private:
     typedef Eigen::Array<bool, Eigen::Dynamic, 1> BoolArray;
     typedef Eigen::Map<Matrix> MapMat;
     typedef Eigen::Map<Vector> MapVec;
+    typedef Eigen::Map<const Vector> MapConstVec;
 
     typedef std::complex<Scalar> Complex;
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic> ComplexMatrix;
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, 1> ComplexVector;
+
+    typedef Arnoldi<Scalar, OpType> ArnoldiFac;
 
 protected:
     OpType*       m_op;        // object to conduct matrix operation,
@@ -159,9 +163,7 @@ protected:
     int           m_nmatop;    // number of matrix operations called
     int           m_niter;     // number of restarting iterations
 
-    Matrix        m_fac_V;     // V matrix in the Arnoldi factorization
-    Matrix        m_fac_H;     // H matrix in the Arnoldi factorization
-    Vector        m_fac_f;     // residual in the Arnoldi factorization
+    ArnoldiFac    m_fac;       // Arnoldi factorization
 
     ComplexVector m_ritz_val;  // Ritz values
     ComplexMatrix m_ritz_vec;  // Ritz vectors
@@ -175,120 +177,6 @@ private:
                                // ~= 1e-307 for the "double" type
     const Scalar  m_eps;       // the machine precision, ~= 1e-16 for the "double" type
     const Scalar  m_eps23;     // m_eps^(2/3), used to test the convergence
-
-    // Given orthonormal basis functions V, find a nonzero vector f such that V'f = 0
-    // Assume that f has been properly allocated
-    void expand_basis(const MapMat& V, const int seed, Vector& f, Scalar& fnorm)
-    {
-        using std::sqrt;
-
-        const Scalar thresh = m_eps * sqrt(Scalar(m_n));
-        for(int iter = 0; iter < 5; iter++)
-        {
-            // Randomly generate a new vector and orthogonalize it against V
-            SimpleRandom<Scalar> rng(seed + 123 * iter);
-            f.noalias() = rng.random_vec(m_n);
-            // f <- f - V * V' * f, so that f is orthogonal to V
-            Vector Vf = V.transpose() * f;
-            f -= V * Vf;
-            // fnorm <- ||f||
-            fnorm = f.norm();
-
-            // If fnorm is too close to zero, we try a new random vector,
-            // otherwise return the result
-            if(fnorm >= thresh)
-                return;
-        }
-    }
-
-    // Arnoldi factorization starting from step-k
-    void factorize_from(int from_k, int to_m, const Vector& fk)
-    {
-        using std::sqrt;
-
-        if(to_m <= from_k) return;
-
-        const Scalar beta_thresh = m_eps * sqrt(Scalar(m_n));
-        m_fac_f.noalias() = fk;
-
-        // Pre-allocate Vf
-        Vector Vf(to_m);
-        Vector w(m_n);
-        Scalar beta = m_fac_f.norm();
-        // Keep the upperleft k x k submatrix of H and set other elements to 0
-        m_fac_H.rightCols(m_ncv - from_k).setZero();
-        m_fac_H.block(from_k, 0, m_ncv - from_k, from_k).setZero();
-        for(int i = from_k; i <= to_m - 1; i++)
-        {
-            bool restart = false;
-            // If beta = 0, then the next V is not full rank
-            // We need to generate a new residual vector that is orthogonal
-            // to the current V, which we call a restart
-            if(beta < m_near_0)
-            {
-                MapMat V(m_fac_V.data(), m_n, i); // The first i columns
-                expand_basis(V, 2 * i, m_fac_f, beta);
-                restart = true;
-            }
-
-            // v <- f / ||f||
-            m_fac_V.col(i).noalias() = m_fac_f / beta; // The (i+1)-th column
-
-            // Note that H[i+1, i] equals to the unrestarted beta
-            m_fac_H(i, i - 1) = restart ? Scalar(0) : beta;
-
-            // w <- A * v, v = m_fac_V.col(i)
-            m_op->perform_op(&m_fac_V(0, i), w.data());
-            m_nmatop++;
-
-            const int i1 = i + 1;
-            // First i+1 columns of V
-            MapMat Vs(m_fac_V.data(), m_n, i1);
-            // h = m_fac_H(0:i, i)
-            MapVec h(&m_fac_H(0, i), i1);
-            // h <- V' * w
-            h.noalias() = Vs.transpose() * w;
-
-            // f <- w - V * h
-            m_fac_f.noalias() = w - Vs * h;
-            beta = m_fac_f.norm();
-
-            if(beta > Scalar(0.717) * h.norm())
-                continue;
-
-            // f/||f|| is going to be the next column of V, so we need to test
-            // whether V' * (f/||f||) ~= 0
-            Vf.head(i1).noalias() = Vs.transpose() * m_fac_f;
-            Scalar ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
-            // If not, iteratively correct the residual
-            int count = 0;
-            while(count < 5 && ortho_err > m_eps * beta)
-            {
-                // There is an edge case: when beta=||f|| is close to zero, f mostly consists
-                // of noises of rounding errors, so the test [ortho_err < eps * beta] is very
-                // likely to fail. In particular, if beta=0, then the test is ensured to fail.
-                // Hence when this happens, we force f to be zero, and then restart in the
-                // next iteration.
-                if(beta < beta_thresh)
-                {
-                    m_fac_f.setZero();
-                    beta = Scalar(0);
-                    break;
-                }
-
-                // f <- f - V * Vf
-                m_fac_f.noalias() -= Vs * Vf.head(i1);
-                // h <- h + Vf
-                h.noalias() += Vf.head(i1);
-                // beta <- ||f||
-                beta = m_fac_f.norm();
-
-                Vf.head(i1).noalias() = Vs.transpose() * m_fac_f;
-                ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
-                count++;
-            }
-        }
-    }
 
     // Real Ritz values calculated from UpperHessenbergEigen have exact zero imaginary part
     // Complex Ritz values have exact conjugate pairs
@@ -321,7 +209,7 @@ private:
                 const Scalar s = Scalar(2) * m_ritz_val[i].real();
                 const Scalar t = norm(m_ritz_val[i]);
 
-                decomp_ds.compute(m_fac_H, s, t);
+                decomp_ds.compute(m_fac.matrix_H(), s, t);
 
                 // Q -> Q * Qi
                 decomp_ds.apply_YQ(Q);
@@ -329,34 +217,23 @@ private:
                 // Matrix Q = Matrix::Identity(m_ncv, m_ncv);
                 // decomp_ds.apply_YQ(Q);
                 // m_fac_H = Q.transpose() * m_fac_H * Q;
-                decomp_ds.matrix_QtHQ(m_fac_H);
+                m_fac.compress_H(decomp_ds);
 
                 i++;
             } else {
                 // QR decomposition of H - mu * I, mu is real
-                decomp_hb.compute(m_fac_H, m_ritz_val[i].real());
+                decomp_hb.compute(m_fac.matrix_H(), m_ritz_val[i].real());
 
                 // Q -> Q * Qi
                 decomp_hb.apply_YQ(Q);
                 // H -> Q'HQ = RQ + mu * I
-                decomp_hb.matrix_QtHQ(m_fac_H);
+                m_fac.compress_H(decomp_hb);
             }
         }
-        // V -> VQ, only need to update the first k+1 columns
-        // Q has some elements being zero
-        // The first (ncv - k + i) elements of the i-th column of Q are non-zero
-        Matrix Vs(m_n, k + 1);
-        for(int i = 0; i < k; i++)
-        {
-            const int nnz = m_ncv - k + i + 1;
-            MapVec q(&Q(0, i), nnz);
-            Vs.col(i).noalias() = m_fac_V.leftCols(nnz) * q;
-        }
-        Vs.col(k).noalias() = m_fac_V * Q.col(k);
-        m_fac_V.leftCols(k + 1).noalias() = Vs;
 
-        const Vector fk = m_fac_f * Q(m_ncv - 1, k - 1) + m_fac_V.col(k) * m_fac_H(k, k - 1);
-        factorize_from(k, m_ncv, fk);
+        m_fac.compress_V(Q);
+        m_fac.factorize_from(k, m_ncv, *m_op, m_fac.vector_f(), m_nmatop);
+
         retrieve_ritzpair();
     }
 
@@ -365,7 +242,7 @@ private:
     {
         // thresh = tol * max(m_eps23, abs(theta)), theta for Ritz value
         Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(m_eps23);
-        Array resid = m_ritz_est.head(m_nev).array().abs() * m_fac_f.norm();
+        Array resid = m_ritz_est.head(m_nev).array().abs() * m_fac.f_norm();
         // Converged "wanted" Ritz values
         m_ritz_conv = (resid < thresh);
 
@@ -405,7 +282,7 @@ private:
     // Retrieves and sorts Ritz values and Ritz vectors
     void retrieve_ritzpair()
     {
-        UpperHessenbergEigen<Scalar> decomp(m_fac_H);
+        UpperHessenbergEigen<Scalar> decomp(m_fac.matrix_H());
         const ComplexVector& evals = decomp.eigenvalues();
         ComplexMatrix evecs = decomp.eigenvectors();
 
@@ -512,6 +389,7 @@ public:
         m_ncv(ncv > m_n ? m_n : ncv),
         m_nmatop(0),
         m_niter(0),
+        m_fac(m_n, m_ncv),
         m_info(NOT_COMPUTED),
         m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
@@ -541,42 +419,22 @@ public:
     void init(const Scalar* init_resid)
     {
         // Reset all matrices/vectors to zero
-        m_fac_V.resize(m_n, m_ncv);
-        m_fac_H.resize(m_ncv, m_ncv);
-        m_fac_f.resize(m_n);
         m_ritz_val.resize(m_ncv);
         m_ritz_vec.resize(m_ncv, m_nev);
         m_ritz_est.resize(m_ncv);
         m_ritz_conv.resize(m_nev);
 
-        m_fac_V.setZero();
-        m_fac_H.setZero();
-        m_fac_f.setZero();
         m_ritz_val.setZero();
         m_ritz_vec.setZero();
         m_ritz_est.setZero();
         m_ritz_conv.setZero();
 
-        // Set the initial vector
-        Vector v(m_n);
-        std::copy(init_resid, init_resid + m_n, v.data());
-        const Scalar vnorm = v.norm();
-        if(vnorm < m_near_0)
-            throw std::invalid_argument("initial residual vector cannot be zero");
-        v /= vnorm;
+        m_nmatop = 0;
+        m_niter = 0;
 
-        Vector w(m_n);
-        m_op->perform_op(v.data(), w.data());
-        m_nmatop++;
-
-        m_fac_H(0, 0) = v.dot(w);
-        m_fac_f.noalias() = w - v * m_fac_H(0, 0);
-        m_fac_V.col(0).noalias() = v;
-
-        // In some cases f is zero in exact arithmetics, but due to rounding errors
-        // it may contain tiny fluctuations. When this happens, we force f to be zero
-        if(m_fac_f.cwiseAbs().maxCoeff() < m_eps)
-            m_fac_f.setZero();
+        // Initialize the Arnoldi factorization
+        MapConstVec v0(init_resid, m_n);
+        m_fac.init(*m_op, v0, m_nmatop);
     }
 
     ///
@@ -616,7 +474,7 @@ public:
     int compute(int maxit = 1000, Scalar tol = 1e-10, int sort_rule = LARGEST_MAGN)
     {
         // The m-step Arnoldi factorization
-        factorize_from(1, m_ncv, m_fac_f);
+        m_fac.factorize_from(1, m_ncv, *m_op, m_fac.vector_f(), m_nmatop);
         retrieve_ritzpair();
         // Restarting
         int i, nconv = 0, nev_adj;
@@ -711,7 +569,7 @@ public:
             }
         }
 
-        res.noalias() = m_fac_V * ritz_vec_conv;
+        res.noalias() = m_fac.matrix_V() * ritz_vec_conv;
 
         return res;
     }
