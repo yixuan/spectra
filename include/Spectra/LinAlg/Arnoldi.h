@@ -135,10 +135,7 @@ public:
     }
 
     // Arnoldi factorization starting from step-k
-    void factorize_from(
-        int from_k, int to_m,
-        OpType& op, const Vector& fk, int& op_counter
-    )
+    void factorize_from(int from_k, int to_m, OpType& op, int& op_counter)
     {
         using std::sqrt;
 
@@ -154,8 +151,6 @@ public:
         }
 
         const Scalar beta_thresh = m_eps * sqrt(Scalar(m_n));
-        m_fac_f.noalias() = fk;
-        m_beta = m_fac_f.norm();
 
         // Pre-allocate vectors
         Vector Vf(to_m);

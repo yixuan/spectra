@@ -232,7 +232,7 @@ private:
         }
 
         m_fac.compress_V(Q);
-        m_fac.factorize_from(k, m_ncv, *m_op, m_fac.vector_f(), m_nmatop);
+        m_fac.factorize_from(k, m_ncv, *m_op, m_nmatop);
 
         retrieve_ritzpair();
     }
@@ -474,7 +474,7 @@ public:
     int compute(int maxit = 1000, Scalar tol = 1e-10, int sort_rule = LARGEST_MAGN)
     {
         // The m-step Arnoldi factorization
-        m_fac.factorize_from(1, m_ncv, *m_op, m_fac.vector_f(), m_nmatop);
+        m_fac.factorize_from(1, m_ncv, *m_op, m_nmatop);
         retrieve_ritzpair();
         // Restarting
         int i, nconv = 0, nev_adj;
