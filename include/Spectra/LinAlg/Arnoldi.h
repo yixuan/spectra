@@ -46,6 +46,7 @@ private:
 	Matrix m_fac_V;     // V matrix in the Arnoldi factorization
 	Matrix m_fac_H;     // H matrix in the Arnoldi factorization
 	Vector m_fac_f;     // residual in the Arnoldi factorization
+	Scalar m_beta;      // ||f||, norm of f
 
 	const Scalar m_near_0;    // a very small value, but 1.0 / m_near_0 does not overflow
 	                          // ~= 1e-307 for the "double" type
@@ -90,12 +91,14 @@ public:
 		std::cout << "H = \n" << m_fac_H << std::endl;
 		std::cout << "\nV = \n" << m_fac_V << std::endl;
 		std::cout << "\nf = \n" << m_fac_f.transpose() << std::endl;
+		std::cout << "\n||f||= \n" << m_beta << std::endl;
 	}
 
 	// Const-reference to internal structures
 	const Matrix& matrix_V() const { return m_fac_V; }
 	const Matrix& matrix_H() const { return m_fac_H; }
 	const Vector& vector_f() const { return m_fac_f; }
+	Scalar f_norm() const { return m_beta; }
 	int subspace_dim() const { return m_k; }
 
 	// Initialize with an operator and an initial vector
@@ -104,7 +107,6 @@ public:
 		m_fac_V.resize(m_n, m_m);
 		m_fac_H.resize(m_m, m_m);
 		m_fac_f.resize(m_n);
-
 		m_fac_H.setZero();
 
 		// Verify the initial vector
@@ -129,7 +131,12 @@ public:
 		// In some cases f is zero in exact arithmetics, but due to rounding errors
 		// it may contain tiny fluctuations. When this happens, we force f to be zero
 		if(m_fac_f.cwiseAbs().maxCoeff() < m_eps)
+		{
 			m_fac_f.setZero();
+			m_beta = Scalar(0);
+		} else {
+			m_beta = m_fac_f.norm();
+		}
 
 		// Indicate that this is a step-1 factorization
 		m_k = 1;
@@ -156,7 +163,7 @@ public:
 
 	    const Scalar beta_thresh = m_eps * sqrt(Scalar(m_n));
 	    m_fac_f.noalias() = fk;
-	    Scalar beta = m_fac_f.norm();
+	    m_beta = m_fac_f.norm();
 
 	    // Pre-allocate vectors
 	    Vector Vf(to_m);
@@ -172,18 +179,18 @@ public:
 	        // If beta = 0, then the next V is not full rank
 	        // We need to generate a new residual vector that is orthogonal
 	        // to the current V, which we call a restart
-	        if(beta < m_near_0)
+	        if(m_beta < m_near_0)
 	        {
 	            MapConstMat V(m_fac_V.data(), m_n, i); // The first i columns
-	            expand_basis(V, 2 * i, m_fac_f, beta);
+	            expand_basis(V, 2 * i, m_fac_f, m_beta);
 	            restart = true;
 	        }
 
 	        // v <- f / ||f||
-	        m_fac_V.col(i).noalias() = m_fac_f / beta; // The (i+1)-th column
+	        m_fac_V.col(i).noalias() = m_fac_f / m_beta; // The (i+1)-th column
 
 	        // Note that H[i+1, i] equals to the unrestarted beta
-	        m_fac_H(i, i - 1) = restart ? Scalar(0) : beta;
+	        m_fac_H(i, i - 1) = restart ? Scalar(0) : m_beta;
 
 	        // w <- A * v, v = m_fac_V.col(i)
 	        op.perform_op(&m_fac_V(0, i), w.data());
@@ -199,9 +206,9 @@ public:
 
 	        // f <- w - V * h
 	        m_fac_f.noalias() = w - Vs * h;
-	        beta = m_fac_f.norm();
+	        m_beta = m_fac_f.norm();
 
-	        if(beta > Scalar(0.717) * h.norm())
+	        if(m_beta > Scalar(0.717) * h.norm())
 	            continue;
 
 	        // f/||f|| is going to be the next column of V, so we need to test
@@ -210,17 +217,17 @@ public:
 	        Scalar ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
 	        // If not, iteratively correct the residual
 	        int count = 0;
-	        while(count < 5 && ortho_err > m_eps * beta)
+	        while(count < 5 && ortho_err > m_eps * m_beta)
 	        {
 	            // There is an edge case: when beta=||f|| is close to zero, f mostly consists
 	            // of noises of rounding errors, so the test [ortho_err < eps * beta] is very
 	            // likely to fail. In particular, if beta=0, then the test is ensured to fail.
 	            // Hence when this happens, we force f to be zero, and then restart in the
 	            // next iteration.
-	            if(beta < beta_thresh)
+	            if(m_beta < beta_thresh)
 	            {
 	                m_fac_f.setZero();
-	                beta = Scalar(0);
+	                m_beta = Scalar(0);
 	                break;
 	            }
 
@@ -229,7 +236,7 @@ public:
 	            // h <- h + Vf
 	            h.noalias() += Vf.head(i1);
 	            // beta <- ||f||
-	            beta = m_fac_f.norm();
+	            m_beta = m_fac_f.norm();
 
 	            Vf.head(i1).noalias() = Vs.transpose() * m_fac_f;
 	            ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
