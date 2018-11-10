@@ -10,6 +10,7 @@
 #include <Eigen/Core>
 #include <cmath>      // std::sqrt
 #include <stdexcept>  // std::invalid_argument
+#include <sstream>    // std::stringstream
 #include <iostream>
 
 #include "../Util/TypeTraits.h"
@@ -91,6 +92,7 @@ public:
 		std::cout << "\nf = \n" << m_fac_f.transpose() << std::endl;
 	}
 
+	// Const-reference to internal structures
 	const Matrix& matrix_V() const { return m_fac_V; }
 	const Matrix& matrix_H() const { return m_fac_H; }
 	const Vector& vector_f() const { return m_fac_f; }
@@ -142,6 +144,15 @@ public:
 	    using std::sqrt;
 
 	    if(to_m <= from_k) return;
+
+	    if(from_k > m_k)
+	    {
+	    	std::stringstream msg;
+	    	msg << "from_k (= " << from_k <<
+	    		   ") is larger than the current subspace dimension (= " <<
+	    		   m_k << ")";
+	    	throw std::invalid_argument(msg.str());
+	    }
 
 	    const Scalar beta_thresh = m_eps * sqrt(Scalar(m_n));
 	    m_fac_f.noalias() = fk;
