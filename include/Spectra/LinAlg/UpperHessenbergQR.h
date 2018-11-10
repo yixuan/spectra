@@ -49,6 +49,7 @@ protected:
     // Gi = [ cos[i]  sin[i]]
     //      [-sin[i]  cos[i]]
     // Q = G1 * G2 * ... * G_{n-1}
+    Scalar m_shift;
     Array m_rot_cos;
     Array m_rot_sin;
     bool m_computed;
@@ -100,7 +101,8 @@ public:
 
     ///
     /// Constructor to create an object that performs and stores the
-    /// QR decomposition of an upper Hessenberg matrix `mat`.
+    /// QR decomposition of an upper Hessenberg matrix `mat`, with an
+    /// optional shift: mat - s * I = QR.
     ///
     /// \param mat Matrix type can be `Eigen::Matrix<Scalar, ...>` (e.g.
     /// `Eigen::MatrixXd` and `Eigen::MatrixXf`), or its mapped version
@@ -108,22 +110,24 @@ public:
     /// Only the upper triangular and the lower subdiagonal parts of
     /// the matrix are used.
     ///
-    UpperHessenbergQR(ConstGenericMatrix& mat) :
+    UpperHessenbergQR(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0)) :
         m_n(mat.rows()),
+		m_shift(shift),
         m_rot_cos(m_n - 1),
         m_rot_sin(m_n - 1),
         m_computed(false)
     {
-        compute(mat);
+        compute(mat, shift);
     }
 
     ///
-    /// We have virtual functions, so need a virtual destructor
+    /// Virtual destructor.
     ///
     virtual ~UpperHessenbergQR() {};
 
     ///
-    /// Conduct the QR factorization of an upper Hessenberg matrix.
+    /// Conduct the QR factorization of an upper Hessenberg matrix with
+    /// an optional shift.
     ///
     /// \param mat Matrix type can be `Eigen::Matrix<Scalar, ...>` (e.g.
     /// `Eigen::MatrixXd` and `Eigen::MatrixXf`), or its mapped version
@@ -131,18 +135,20 @@ public:
     /// Only the upper triangular and the lower subdiagonal parts of
     /// the matrix are used.
     ///
-    virtual void compute(ConstGenericMatrix& mat)
+    virtual void compute(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0))
     {
         m_n = mat.rows();
         if(m_n != mat.cols())
             throw std::invalid_argument("UpperHessenbergQR: matrix must be square");
 
+        m_shift = shift;
         m_mat_T.resize(m_n, m_n);
         m_rot_cos.resize(m_n - 1);
         m_rot_sin.resize(m_n - 1);
 
-        // Make a copy of mat
+        // Make a copy of mat - s * I
         std::copy(mat.data(), mat.data() + mat.size(), m_mat_T.data());
+        m_mat_T.diagonal().array() -= m_shift;
 
         Scalar xi, xj, r, c, s;
         Scalar *Tii, *ptr;
@@ -205,13 +211,13 @@ public:
     }
 
     ///
-    /// Overwrite `dest` with the \f$RQ\f$ matrix, the multiplication of \f$R\f$ and \f$Q\f$.
-    /// \f$RQ\f$ is an upper Hessenberg matrix.
+    /// Overwrite `dest` with \f$Q'HQ = RQ + sI\f$, where \f$H$\f is the input matrix `mat`,
+    /// and \f$s$\f is the shift. The result is an upper Hessenberg matrix.
     ///
     /// \param mat The matrix to be overwritten, whose type should be `Eigen::Matrix<Scalar, ...>`,
     /// depending on the template parameter `Scalar` defined.
     ///
-    virtual void matrix_RQ(Matrix& dest) const
+    virtual void matrix_QtHQ(Matrix& dest) const
     {
         if(!m_computed)
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
@@ -220,6 +226,7 @@ public:
         dest.resize(m_n, m_n);
         std::copy(m_mat_T.data(), m_mat_T.data() + m_mat_T.size(), dest.data());
 
+        // Compute the RQ matrix
         const Index n1 = m_n - 1;
         for(Index i = 0; i < n1; i++)
         {
@@ -243,6 +250,9 @@ public:
             dest.block(0, i, i + 2, 1)     = c * Yi - s * dest.block(0, i + 1, i + 2, 1);
             dest.block(0, i + 1, i + 2, 1) = s * Yi + c * dest.block(0, i + 1, i + 2, 1); */
         }
+
+        // Add the shift to the diagonal
+        dest.diagonal().array() += m_shift;
     }
 
     ///
@@ -472,7 +482,8 @@ public:
 
     ///
     /// Constructor to create an object that performs and stores the
-    /// QR decomposition of a tridiagonal matrix `mat`.
+    /// QR decomposition of a tridiagonal matrix `mat`, with an
+    /// optional shift: mat - s * I = QR.
     ///
     /// \param mat Matrix type can be `Eigen::Matrix<Scalar, ...>` (e.g.
     /// `Eigen::MatrixXd` and `Eigen::MatrixXf`), or its mapped version
@@ -480,14 +491,15 @@ public:
     /// Only the major- and sub- diagonal parts of
     /// the matrix are used.
     ///
-    TridiagQR(ConstGenericMatrix& mat) :
+    TridiagQR(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0)) :
         UpperHessenbergQR<Scalar>(mat.rows())
     {
-        this->compute(mat);
+        this->compute(mat, shift);
     }
 
     ///
-    /// Conduct the QR factorization of a tridiagonal matrix.
+    /// Conduct the QR factorization of a tridiagonal matrix with an
+    /// optional shift.
     ///
     /// \param mat Matrix type can be `Eigen::Matrix<Scalar, ...>` (e.g.
     /// `Eigen::MatrixXd` and `Eigen::MatrixXf`), or its mapped version
@@ -495,12 +507,13 @@ public:
     /// Only the major- and sub- diagonal parts of
     /// the matrix are used.
     ///
-    void compute(ConstGenericMatrix& mat)
+    void compute(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0))
     {
         this->m_n = mat.rows();
         if(this->m_n != mat.cols())
             throw std::invalid_argument("TridiagQR: matrix must be square");
 
+        this->m_shift = shift;
         m_T_diag.resize(this->m_n);
         m_T_lsub.resize(this->m_n - 1);
         m_T_usub.resize(this->m_n - 1);
@@ -508,7 +521,7 @@ public:
         this->m_rot_cos.resize(this->m_n - 1);
         this->m_rot_sin.resize(this->m_n - 1);
 
-        m_T_diag.noalias() = mat.diagonal();
+        m_T_diag.array() = mat.diagonal().array() - this->m_shift;
         m_T_lsub.noalias() = mat.diagonal(-1);
         m_T_usub.noalias() = m_T_lsub;
 
@@ -585,13 +598,13 @@ public:
     }
 
     ///
-    /// Overwrite `dest` with the \f$RQ\f$ matrix, the multiplication of \f$R\f$ and \f$Q\f$.
-    /// \f$RQ\f$ is an upper Hessenberg matrix.
+    /// Overwrite `dest` with \f$Q'HQ = RQ + sI\f$, where \f$H$\f is the input matrix `mat`,
+    /// and \f$s$\f is the shift. The result is a tridiagonal matrix.
     ///
     /// \param mat The matrix to be overwritten, whose type should be `Eigen::Matrix<Scalar, ...>`,
     /// depending on the template parameter `Scalar` defined.
     ///
-    void matrix_RQ(Matrix& dest) const
+    void matrix_QtHQ(Matrix& dest) const
     {
         if(!this->m_computed)
             throw std::logic_error("TridiagQR: need to call compute() first");
@@ -603,6 +616,7 @@ public:
         // The upper diagonal refers to m_T_usub
         // The 2nd upper subdiagonal will be zero in RQ
 
+        // Compute the RQ matrix
         // [m11  m12] points to RQ[i:(i+1), i:(i+1)]
         // [0    m22]
         //
@@ -625,6 +639,9 @@ public:
 
         // Copy the lower subdiagonal to upper subdiagonal
         dest.diagonal(1).noalias() = dest.diagonal(-1);
+
+        // Add the shift to the diagonal
+        dest.diagonal().array() += this->m_shift;
     }
 };
 
