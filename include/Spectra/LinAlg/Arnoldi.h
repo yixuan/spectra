@@ -69,7 +69,7 @@ private:
 	        Vf.noalias() = V.transpose() * f;
 	        f.noalias() -= V * Vf;
 	        // fnorm <- ||f||
-	        fnorm = m_fac_f.norm();
+	        fnorm = f.norm();
 
 	        // If fnorm is too close to zero, we try a new random vector,
 	        // otherwise return the result

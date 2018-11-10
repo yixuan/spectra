@@ -202,10 +202,10 @@ private:
             SimpleRandom<Scalar> rng(seed + 123 * iter);
             f.noalias() = rng.random_vec(m_n);
             // f <- f - V * V' * f, so that f is orthogonal to V
-            Vector Vf = inner_product(V, m_fac_f);
+            Vector Vf = inner_product(V, f);
             f -= V * Vf;
             // fnorm <- ||f||
-            fnorm = m_fac_f.norm();
+            fnorm = f.norm();
 
             // If fnorm is too close to zero, we try a new random vector,
             // otherwise return the result
