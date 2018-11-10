@@ -254,7 +254,7 @@ public:
     void compress_H(const DoubleShiftQR<Scalar>& decomp)
     {
         decomp.matrix_QtHQ(m_fac_H);
-        m_k--;
+        m_k -= 2;
     }
 
     // Apply H -> Q'HQ, where Q is from an upper Hessenberg QR decomposition
