@@ -160,7 +160,7 @@ private:
 
     // P = I - 2 * u * u' = P'
     // PX = X - 2 * u * (u'X)
-    void apply_PX(GenericMatrix X, Index stride, Index u_ind)
+    void apply_PX(GenericMatrix X, Index stride, Index u_ind) const
     {
         const Index nr = m_ref_nr.coeff(u_ind);
         if(nr == 1)
@@ -198,7 +198,7 @@ private:
 
     // x is a pointer to a vector
     // Px = x - 2 * dot(x, u) * u
-    void apply_PX(Scalar* x, Index u_ind)
+    void apply_PX(Scalar* x, Index u_ind) const
     {
         const Index nr = m_ref_nr.coeff(u_ind);
         if(nr == 1)
@@ -218,7 +218,7 @@ private:
     }
 
     // XP = X - 2 * (X * u) * u'
-    void apply_XP(GenericMatrix X, Index stride, Index u_ind)
+    void apply_XP(GenericMatrix X, Index stride, Index u_ind) const
     {
         const Index nr = m_ref_nr.coeff(u_ind);
         if(nr == 1)
@@ -343,7 +343,7 @@ public:
 
     // Q = P0 * P1 * ...
     // Q'y = P_{n-2} * ... * P1 * P0 * y
-    void apply_QtY(Vector& y)
+    void apply_QtY(Vector& y) const
     {
         if(!m_computed)
             throw std::logic_error("DoubleShiftQR: need to call compute() first");
@@ -358,7 +358,7 @@ public:
 
     // Q = P0 * P1 * ...
     // YQ = Y * P0 * P1 * ...
-    void apply_YQ(GenericMatrix Y)
+    void apply_YQ(GenericMatrix Y) const
     {
         if(!m_computed)
             throw std::logic_error("DoubleShiftQR: need to call compute() first");
