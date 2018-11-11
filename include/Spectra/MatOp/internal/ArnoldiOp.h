@@ -61,7 +61,7 @@ public:
     // Compute res = <X, y> = X'By
     // X is a matrix, y is a vector, res is a vector
     template <typename Arg1, typename Arg2>
-    void inner_product(const Arg1& x, const Arg2& y, Eigen::Ref<Vector> res)
+    void trans_product(const Arg1& x, const Arg2& y, Eigen::Ref<Vector> res)
     {
         m_Bop.mat_prod(y.data(), m_cache.data());
         res.noalias() = x.transpose() * m_cache;
