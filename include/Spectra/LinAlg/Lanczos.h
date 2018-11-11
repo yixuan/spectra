@@ -35,6 +35,17 @@ private:
     typedef Eigen::Map<const Matrix> MapConstMat;
     typedef Eigen::Map<const Vector> MapConstVec;
 
+    using Arnoldi<Scalar, ArnoldiOpType>::m_op;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_n;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_m;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_k;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_fac_V;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_fac_H;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_fac_f;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_beta;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_near_0;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_eps;
+
 public:
     Lanczos(const ArnoldiOpType& op, int m) :
         Arnoldi<Scalar, ArnoldiOpType>(op, m)
@@ -44,15 +55,6 @@ public:
     void factorize_from(int from_k, int to_m, int& op_counter)
     {
         using std::sqrt;
-        using Arnoldi<Scalar, ArnoldiOpType>::m_n;
-        using Arnoldi<Scalar, ArnoldiOpType>::m_m;
-        using Arnoldi<Scalar, ArnoldiOpType>::m_k;
-        using Arnoldi<Scalar, ArnoldiOpType>::m_fac_V;
-        using Arnoldi<Scalar, ArnoldiOpType>::m_fac_H;
-        using Arnoldi<Scalar, ArnoldiOpType>::m_fac_f;
-        using Arnoldi<Scalar, ArnoldiOpType>::m_beta;
-        using Arnoldi<Scalar, ArnoldiOpType>::m_near_0;
-        using Arnoldi<Scalar, ArnoldiOpType>::m_eps;
 
         if(to_m <= from_k) return;
 
