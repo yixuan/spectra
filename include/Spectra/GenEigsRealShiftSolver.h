@@ -7,7 +7,10 @@
 #ifndef GEN_EIGS_REAL_SHIFT_SOLVER_H
 #define GEN_EIGS_REAL_SHIFT_SOLVER_H
 
-#include "GenEigsSolver.h"
+#include <Eigen/Core>
+
+#include "GenEigsBase.h"
+#include "Util/SelectionRule.h"
 #include "MatOp/DenseGenRealShiftSolve.h"
 
 namespace Spectra {
@@ -30,13 +33,13 @@ namespace Spectra {
 /// \tparam OpType        The name of the matrix operation class. Users could either
 ///                       use the wrapper classes such as DenseGenRealShiftSolve and
 ///                       SparseGenRealShiftSolve, or define their
-///                       own that impelemnts all the public member functions as in
+///                       own that implements all the public member functions as in
 ///                       DenseGenRealShiftSolve.
 ///
 template <typename Scalar = double,
           int SelectionRule = LARGEST_MAGN,
           typename OpType = DenseGenRealShiftSolve<double> >
-class GenEigsRealShiftSolver: public GenEigsSolver<Scalar, SelectionRule, OpType>
+class GenEigsRealShiftSolver: public GenEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>
 {
 private:
     typedef std::complex<Scalar> Complex;
@@ -44,14 +47,14 @@ private:
 
     const Scalar m_sigma;
 
-    // First transform back the ritz values, and then sort
+    // First transform back the Ritz values, and then sort
     void sort_ritzpair(int sort_rule)
     {
-        // The eigenvalus we get from the iteration is nu = 1 / (lambda - sigma)
+        // The eigenvalues we get from the iteration is nu = 1 / (lambda - sigma)
         // So the eigenvalues of the original problem is lambda = 1 / nu + sigma
         ComplexArray ritz_val_org = Scalar(1.0) / this->m_ritz_val.head(this->m_nev).array() + m_sigma;
         this->m_ritz_val.head(this->m_nev) = ritz_val_org;
-        GenEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair(sort_rule);
+        GenEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>::sort_ritzpair(sort_rule);
     }
 public:
     ///
@@ -73,7 +76,7 @@ public:
     /// \param sigma  The real-valued shift.
     ///
     GenEigsRealShiftSolver(OpType* op, int nev, int ncv, Scalar sigma) :
-        GenEigsSolver<Scalar, SelectionRule, OpType>(op, nev, ncv),
+        GenEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>(op, NULL, nev, ncv),
         m_sigma(sigma)
     {
         this->m_op->set_shift(m_sigma);
