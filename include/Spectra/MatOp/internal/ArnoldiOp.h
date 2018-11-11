@@ -13,7 +13,22 @@
 namespace Spectra {
 
 
-// Operators used in the Arnoldi factormization
+///
+/// \ingroup Internals
+/// @{
+///
+
+///
+/// \defgroup Operators Operators
+///
+/// Different types of operators.
+///
+
+///
+/// \ingroup Operators
+///
+/// Operators used in the Arnoldi factorization.
+///
 template <typename Scalar, typename OpType, typename BOpType>
 class ArnoldiOp
 {
@@ -69,10 +84,20 @@ public:
 
 
 
-// Placeholder for the case B = I
+///
+/// \ingroup Operators
+///
+/// Placeholder for the B-operator when \f$B = I\f$.
+///
 class IdentityBOp {};
 
-// Partial specialization for B = I
+
+
+///
+/// \ingroup Operators
+///
+/// Partial specialization for the case \f$B = I\f$.
+///
 template <typename Scalar, typename OpType>
 class ArnoldiOp<Scalar, OpType, IdentityBOp>
 {
@@ -117,6 +142,10 @@ public:
         m_op.perform_op(x_in, y_out);
     }
 };
+
+///
+/// @{
+///
 
 
 } // namespace Spectra
