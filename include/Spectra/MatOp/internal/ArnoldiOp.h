@@ -40,8 +40,8 @@ private:
     Vector   m_cache;
 
 public:
-    ArnoldiOp(OpType& op, BOpType& Bop) :
-        m_op(op), m_Bop(Bop), m_cache(op.rows())
+    ArnoldiOp(OpType* op, BOpType* Bop) :
+        m_op(*op), m_Bop(*Bop), m_cache(op->rows())
     {}
 
     inline int rows() const { return m_op.rows(); }
@@ -107,8 +107,8 @@ private:
     OpType& m_op;
 
 public:
-    ArnoldiOp<Scalar, OpType, IdentityBOp>(OpType& op) :
-        m_op(op)
+    ArnoldiOp<Scalar, OpType, IdentityBOp>(OpType* op, IdentityBOp* Bop) :
+        m_op(*op)
     {}
 
     inline int rows() const { return m_op.rows(); }
