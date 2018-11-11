@@ -16,9 +16,21 @@ namespace Spectra {
 
 
 ///
+/// \defgroup Internals Internal Classes
+///
+/// Classes for internal use. May be useful to developers.
+///
+
+///
+/// \ingroup Internals
+/// @{
+///
+
+///
 /// \defgroup LinearAlgebra Linear Algebra
 ///
 /// A number of classes for linear algebra operations.
+///
 
 ///
 /// \ingroup LinearAlgebra
@@ -102,7 +114,8 @@ public:
     ///
     /// Constructor to create an object that performs and stores the
     /// QR decomposition of an upper Hessenberg matrix `mat`, with an
-    /// optional shift: mat - s * I = QR.
+    /// optional shift: \f$H-sI=QR\f$. Here \f$H\f$ stands for the matrix
+    /// `mat`, and \f$s\f$ is the shift.
     ///
     /// \param mat Matrix type can be `Eigen::Matrix<Scalar, ...>` (e.g.
     /// `Eigen::MatrixXd` and `Eigen::MatrixXf`), or its mapped version
@@ -211,8 +224,8 @@ public:
     }
 
     ///
-    /// Overwrite `dest` with \f$Q'HQ = RQ + sI\f$, where \f$H$\f is the input matrix `mat`,
-    /// and \f$s$\f is the shift. The result is an upper Hessenberg matrix.
+    /// Overwrite `dest` with \f$Q'HQ = RQ + sI\f$, where \f$H\f$ is the input matrix `mat`,
+    /// and \f$s\f$ is the shift. The result is an upper Hessenberg matrix.
     ///
     /// \param mat The matrix to be overwritten, whose type should be `Eigen::Matrix<Scalar, ...>`,
     /// depending on the template parameter `Scalar` defined.
@@ -450,6 +463,8 @@ public:
 
 
 ///
+/// \ingroup LinearAlgebra
+///
 /// Perform the QR decomposition of a tridiagonal matrix, a special
 /// case of upper Hessenberg matrices.
 ///
@@ -482,8 +497,9 @@ public:
 
     ///
     /// Constructor to create an object that performs and stores the
-    /// QR decomposition of a tridiagonal matrix `mat`, with an
-    /// optional shift: mat - s * I = QR.
+    /// QR decomposition of an upper Hessenberg matrix `mat`, with an
+    /// optional shift: \f$H-sI=QR\f$. Here \f$H\f$ stands for the matrix
+    /// `mat`, and \f$s\f$ is the shift.
     ///
     /// \param mat Matrix type can be `Eigen::Matrix<Scalar, ...>` (e.g.
     /// `Eigen::MatrixXd` and `Eigen::MatrixXf`), or its mapped version
@@ -598,8 +614,8 @@ public:
     }
 
     ///
-    /// Overwrite `dest` with \f$Q'HQ = RQ + sI\f$, where \f$H$\f is the input matrix `mat`,
-    /// and \f$s$\f is the shift. The result is a tridiagonal matrix.
+    /// Overwrite `dest` with \f$Q'HQ = RQ + sI\f$, where \f$H\f$ is the input matrix `mat`,
+    /// and \f$s\f$ is the shift. The result is a tridiagonal matrix.
     ///
     /// \param mat The matrix to be overwritten, whose type should be `Eigen::Matrix<Scalar, ...>`,
     /// depending on the template parameter `Scalar` defined.
@@ -644,6 +660,10 @@ public:
         dest.diagonal().array() += this->m_shift;
     }
 };
+
+///
+/// @{
+///
 
 
 } // namespace Spectra
