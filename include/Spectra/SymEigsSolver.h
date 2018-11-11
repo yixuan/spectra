@@ -19,6 +19,7 @@
 #include "Util/SimpleRandom.h"
 #include "LinAlg/UpperHessenbergQR.h"
 #include "LinAlg/TridiagEigen.h"
+#include "LinAlg/Lanczos.h"
 #include "MatOp/DenseSymMatProd.h"
 
 
@@ -163,6 +164,10 @@ private:
     typedef Eigen::Array<bool, Eigen::Dynamic, 1> BoolArray;
     typedef Eigen::Map<Matrix> MapMat;
     typedef Eigen::Map<Vector> MapVec;
+    typedef Eigen::Map<const Vector> MapConstVec;
+
+    typedef ArnoldiOp<Scalar, OpType, IdentityBOp> ArnoldiOpType;
+    typedef Lanczos<Scalar, ArnoldiOpType> LanczosFac;
 
 protected:
     OpType*      m_op;         // object to conduct matrix operation,
@@ -173,9 +178,8 @@ protected:
     int          m_nmatop;     // number of matrix operations called
     int          m_niter;      // number of restarting iterations
 
-    Matrix       m_fac_V;      // V matrix in the Lanczos factorization
-    Matrix       m_fac_H;      // H matrix in the Lanczos factorization
-    Vector       m_fac_f;      // residual in the Lanczos factorization
+    LanczosFac   m_fac;        // Lanczos factorization
+
     Vector       m_ritz_val;   // Ritz values
 
 private:
@@ -189,123 +193,6 @@ private:
     const Scalar m_eps;        // the machine precision, ~= 1e-16 for the "double" type
     const Scalar m_eps23;      // m_eps^(2/3), used to test the convergence
 
-    // Given orthonormal basis functions V, find a nonzero vector f such that V'f = 0
-    // Assume that f has been properly allocated
-    void expand_basis(const MapMat& V, const int seed, Vector& f, Scalar& fnorm)
-    {
-        using std::sqrt;
-
-        const Scalar thresh = m_eps * sqrt(Scalar(m_n));
-        for(int iter = 0; iter < 5; iter++)
-        {
-            // Randomly generate a new vector and orthogonalize it against V
-            SimpleRandom<Scalar> rng(seed + 123 * iter);
-            f.noalias() = rng.random_vec(m_n);
-            // f <- f - V * V' * f, so that f is orthogonal to V
-            Vector Vf = inner_product(V, f);
-            f -= V * Vf;
-            // fnorm <- ||f||
-            fnorm = f.norm();
-
-            // If fnorm is too close to zero, we try a new random vector,
-            // otherwise return the result
-            if(fnorm >= thresh)
-                return;
-        }
-    }
-
-    // Lanczos factorization starting from step-k
-    void factorize_from(int from_k, int to_m, const Vector& fk)
-    {
-        using std::sqrt;
-
-        if(to_m <= from_k) return;
-
-        const Scalar beta_thresh = m_eps * sqrt(Scalar(m_n));
-        m_fac_f.noalias() = fk;
-
-        // Pre-allocate Vf
-        Vector Vf(to_m);
-        Vector w(m_n);
-        Scalar beta = norm(m_fac_f), Hii = Scalar(0);
-        // Keep the upperleft k x k submatrix of H and set other elements to 0
-        m_fac_H.rightCols(m_ncv - from_k).setZero();
-        m_fac_H.block(from_k, 0, m_ncv - from_k, from_k).setZero();
-        for(int i = from_k; i <= to_m - 1; i++)
-        {
-            bool restart = false;
-            // If beta = 0, then the next V is not full rank
-            // We need to generate a new residual vector that is orthogonal
-            // to the current V, which we call a restart
-            if(beta < m_near_0)
-            {
-                MapMat V(m_fac_V.data(), m_n, i); // The first i columns
-                expand_basis(V, 2 * i, m_fac_f, beta);
-                restart = true;
-            }
-
-            // v <- f / ||f||
-            MapVec v(&m_fac_V(0, i), m_n); // The (i+1)-th column
-            v.noalias() = m_fac_f / beta;
-
-            // Note that H[i+1, i] equals to the unrestarted beta
-            m_fac_H(i, i - 1) = restart ? Scalar(0) : beta;
-
-            // w <- A * v
-            m_op->perform_op(v.data(), w.data());
-            m_nmatop++;
-
-            Hii = inner_product(v, w);
-            m_fac_H(i - 1, i) = m_fac_H(i, i - 1); // Due to symmetry
-            m_fac_H(i, i) = Hii;
-
-            // f <- w - V * V' * w = w - H[i+1, i] * V{i} - H[i+1, i+1] * V{i+1}
-            // If restarting, we know that H[i+1, i] = 0
-            if(restart)
-                m_fac_f.noalias() = w - Hii * v;
-            else
-                m_fac_f.noalias() = w - m_fac_H(i, i - 1) * m_fac_V.col(i - 1) - Hii * v;
-
-            beta = norm(m_fac_f);
-
-            // f/||f|| is going to be the next column of V, so we need to test
-            // whether V' * (f/||f||) ~= 0
-            const int i1 = i + 1;
-            MapMat V(m_fac_V.data(), m_n, i1); // The first (i+1) columns
-            Vf.head(i1).noalias() = inner_product(V, m_fac_f);
-            Scalar ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
-            // If not, iteratively correct the residual
-            int count = 0;
-            while(count < 5 && ortho_err > m_eps * beta)
-            {
-                // There is an edge case: when beta=||f|| is close to zero, f mostly consists
-                // of noises of rounding errors, so the test [ortho_err < eps * beta] is very
-                // likely to fail. In particular, if beta=0, then the test is ensured to fail.
-                // Hence when this happens, we force f to be zero, and then restart in the
-                // next iteration.
-                if(beta < beta_thresh)
-                {
-                    m_fac_f.setZero();
-                    beta = Scalar(0);
-                    break;
-                }
-
-                // f <- f - V * Vf
-                m_fac_f.noalias() -= V * Vf.head(i1);
-                // h <- h + Vf
-                m_fac_H(i - 1, i) += Vf[i - 1];
-                m_fac_H(i, i - 1) = m_fac_H(i - 1, i);
-                m_fac_H(i, i) += Vf[i];
-                // beta <- ||f||
-                beta = norm(m_fac_f);
-
-                Vf.head(i1).noalias() = inner_product(V, m_fac_f);
-                ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
-                count++;
-            }
-        }
-    }
-
     // Implicitly restarted Lanczos factorization
     void restart(int k)
     {
@@ -318,30 +205,19 @@ private:
         for(int i = k; i < m_ncv; i++)
         {
             // QR decomposition of H-mu*I, mu is the shift
-            decomp.compute(m_fac_H, m_ritz_val[i]);
+            decomp.compute(m_fac.matrix_H(), m_ritz_val[i]);
 
             // Q -> Q * Qi
             decomp.apply_YQ(Q);
             // H -> Q'HQ
             // Since QR = H - mu * I, we have H = QR + mu * I
             // and therefore Q'HQ = RQ + mu * I
-            decomp.matrix_QtHQ(m_fac_H);
+            m_fac.compress_H(decomp);
         }
-        // V -> VQ, only need to update the first k+1 columns
-        // Q has some elements being zero
-        // The first (ncv - k + i) elements of the i-th column of Q are non-zero
-        Matrix Vs(m_n, k + 1);
-        for(int i = 0; i < k; i++)
-        {
-            const int nnz = m_ncv - k + i + 1;
-            MapVec q(&Q(0, i), nnz);
-            Vs.col(i).noalias() = m_fac_V.leftCols(nnz) * q;
-        }
-        Vs.col(k).noalias() = m_fac_V * Q.col(k);
-        m_fac_V.leftCols(k + 1).noalias() = Vs;
 
-        const Vector fk = m_fac_f * Q(m_ncv - 1, k - 1) + m_fac_V.col(k) * m_fac_H(k, k - 1);
-        factorize_from(k, m_ncv, fk);
+        m_fac.compress_V(Q);
+        m_fac.factorize_from(k, m_ncv, m_nmatop);
+
         retrieve_ritzpair();
     }
 
@@ -350,7 +226,7 @@ private:
     {
         // thresh = tol * max(m_eps23, abs(theta)), theta for Ritz value
         Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(m_eps23);
-        Array resid =  m_ritz_est.head(m_nev).array().abs() * norm(m_fac_f);
+        Array resid =  m_ritz_est.head(m_nev).array().abs() * m_fac.f_norm();
         // Converged "wanted" Ritz values
         m_ritz_conv = (resid < thresh);
 
@@ -382,7 +258,7 @@ private:
     // Retrieves and sorts Ritz values and Ritz vectors
     void retrieve_ritzpair()
     {
-        TridiagEigen<Scalar> decomp(m_fac_H);
+        TridiagEigen<Scalar> decomp(m_fac.matrix_H());
         const Vector& evals = decomp.eigenvalues();
         const Matrix& evecs = decomp.eigenvectors();
 
@@ -424,15 +300,6 @@ private:
     }
 
 protected:
-    // In generalized eigenvalue problem Ax=lambda*Bx, define the inner product to be <x, y> = x'By
-    // For regular eigenvalue problems, it is the usual inner product <x, y> = x'y
-    virtual Scalar inner_product(const Vector& x, const Vector& y) { return x.dot(y); }
-    virtual Scalar inner_product(const MapVec& x, const Vector& y) { return x.dot(y); }
-    virtual Vector inner_product(const MapMat& x, const Vector& y) { return x.transpose() * y; }
-
-    // B-norm of a vector. For regular eigenvalue problems it is simply the L2 norm
-    virtual Scalar norm(const Vector& x) { return x.norm(); }
-
     // Sorts the first nev Ritz pairs in the specified order
     // This is used to return the final results
     virtual void sort_ritzpair(int sort_rule)
@@ -508,6 +375,7 @@ public:
         m_ncv(ncv > m_n ? m_n : ncv),
         m_nmatop(0),
         m_niter(0),
+        m_fac(ArnoldiOpType(*op), m_ncv),
         m_info(NOT_COMPUTED),
         m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
@@ -537,17 +405,11 @@ public:
     void init(const Scalar* init_resid)
     {
         // Reset all matrices/vectors to zero
-        m_fac_V.resize(m_n, m_ncv);
-        m_fac_H.resize(m_ncv, m_ncv);
-        m_fac_f.resize(m_n);
         m_ritz_val.resize(m_ncv);
         m_ritz_vec.resize(m_ncv, m_nev);
         m_ritz_est.resize(m_ncv);
         m_ritz_conv.resize(m_nev);
 
-        m_fac_V.setZero();
-        m_fac_H.setZero();
-        m_fac_f.setZero();
         m_ritz_val.setZero();
         m_ritz_vec.setZero();
         m_ritz_est.setZero();
@@ -556,26 +418,9 @@ public:
         m_nmatop = 0;
         m_niter = 0;
 
-        // Set the initial vector
-        Vector v(m_n);
-        std::copy(init_resid, init_resid + m_n, v.data());
-        const Scalar vnorm = norm(v);
-        if(vnorm < m_near_0)
-            throw std::invalid_argument("initial residual vector cannot be zero");
-        v /= vnorm;
-
-        Vector w(m_n);
-        m_op->perform_op(v.data(), w.data());
-        m_nmatop++;
-
-        m_fac_H(0, 0) = inner_product(v, w);
-        m_fac_f.noalias() = w - v * m_fac_H(0, 0);
-        m_fac_V.col(0).noalias() = v;
-
-        // In some cases f is zero in exact arithmetics, but due to rounding errors
-        // it may contain tiny fluctuations. When this happens, we force f to be zero.
-        if(m_fac_f.cwiseAbs().maxCoeff() < m_eps)
-            m_fac_f.setZero();
+        // Initialize the Lanczos factorization
+        MapConstVec v0(init_resid, m_n);
+        m_fac.init(v0, m_nmatop);
     }
 
     ///
@@ -612,8 +457,8 @@ public:
     ///
     int compute(int maxit = 1000, Scalar tol = 1e-10, int sort_rule = LARGEST_ALGE)
     {
-        // The m-step Arnoldi factorization
-        factorize_from(1, m_ncv, m_fac_f);
+        // The m-step Lanczos factorization
+        m_fac.factorize_from(1, m_ncv, m_nmatop);
         retrieve_ritzpair();
         // Restarting
         int i, nconv = 0, nev_adj;
@@ -708,7 +553,7 @@ public:
             }
         }
 
-        res.noalias() = m_fac_V * ritz_vec_conv;
+        res.noalias() = m_fac.matrix_V() * ritz_vec_conv;
 
         return res;
     }
