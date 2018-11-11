@@ -12,9 +12,9 @@
 #include <stdexcept>  // std::invalid_argument
 #include <sstream>    // std::stringstream
 
+#include "../MatOp/internal/ArnoldiOp.h"
 #include "../Util/TypeTraits.h"
 #include "../Util/SimpleRandom.h"
-#include "../MatOp/DenseGenMatProd.h"
 #include "UpperHessenbergQR.h"
 #include "DoubleShiftQR.h"
 
@@ -28,8 +28,7 @@ namespace Spectra {
 // f: n x 1
 // e: [0, ..., 0, 1]
 // V and H are allocated of dimension m, so the maximum value of k is m
-template < typename Scalar = double,
-           typename OpType = DenseGenMatProd<double> >
+template <typename Scalar, typename ArnoldiOpType>
 class Arnoldi
 {
 private:
@@ -40,6 +39,8 @@ private:
     typedef Eigen::Map<const Matrix> MapConstMat;
     typedef Eigen::Map<const Vector> MapConstVec;
 
+    ArnoldiOpType m_op;    // Operators for the Arnoldi factorization
+
     const int m_n;      // dimension of A
     const int m_m;      // maximum dimension of subspace V
     int       m_k;      // current dimension of subspace V
@@ -47,13 +48,13 @@ private:
     Matrix m_fac_V;     // V matrix in the Arnoldi factorization
     Matrix m_fac_H;     // H matrix in the Arnoldi factorization
     Vector m_fac_f;     // residual in the Arnoldi factorization
-    Scalar m_beta;      // ||f||, norm of f
+    Scalar m_beta;      // ||f||, B-norm of f
 
     const Scalar m_near_0;    // a very small value, but 1.0 / m_near_0 does not overflow
                               // ~= 1e-307 for the "double" type
     const Scalar m_eps;       // the machine precision, ~= 1e-16 for the "double" type
 
-    // Given orthonormal basis functions V, find a nonzero vector f such that V'f = 0
+    // Given orthonormal basis functions V, find a nonzero vector f such that V'Bf = 0
     // Assume that f has been properly allocated
     void expand_basis(MapConstMat& V, const int seed, Vector& f, Scalar& fnorm)
     {
@@ -66,11 +67,11 @@ private:
             // Randomly generate a new vector and orthogonalize it against V
             SimpleRandom<Scalar> rng(seed + 123 * iter);
             f.noalias() = rng.random_vec(m_n);
-            // f <- f - V * V' * f, so that f is orthogonal to V
-            Vf.noalias() = V.transpose() * f;
+            // f <- f - V * V'Bf, so that f is orthogonal to V in B-norm
+            m_op.trans_product(V, f, Vf);
             f.noalias() -= V * Vf;
             // fnorm <- ||f||
-            fnorm = f.norm();
+            fnorm = m_op.norm(f);
 
             // If fnorm is too close to zero, we try a new random vector,
             // otherwise return the result
@@ -80,8 +81,8 @@ private:
     }
 
 public:
-    Arnoldi(int n, int m) :
-        m_n(n), m_m(m), m_k(0),
+    Arnoldi(const ArnoldiOpType& op, int m) :
+        m_op(op), m_n(op.rows()), m_m(m), m_k(0),
         m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
         m_eps(Eigen::NumTraits<Scalar>::epsilon())
     {}
@@ -94,7 +95,7 @@ public:
     int subspace_dim() const { return m_k; }
 
     // Initialize with an operator and an initial vector
-    void init(OpType& op, MapConstVec& v0, int& op_counter)
+    void init(MapConstVec& v0, int& op_counter)
     {
         m_fac_V.resize(m_n, m_m);
         m_fac_H.resize(m_m, m_m);
@@ -102,7 +103,7 @@ public:
         m_fac_H.setZero();
 
         // Verify the initial vector
-        const Scalar v0norm = v0.norm();
+        const Scalar v0norm = m_op.norm(v0);
         if(v0norm < m_near_0)
             throw std::invalid_argument("initial residual vector cannot be zero");
 
@@ -114,10 +115,10 @@ public:
 
         // Compute H and f
         Vector w(m_n);
-        op.perform_op(v.data(), w.data());
+        m_op.perform_op(v.data(), w.data());
         op_counter++;
 
-        m_fac_H(0, 0) = v.dot(w);
+        m_fac_H(0, 0) = m_op.inner_product(v, w);
         m_fac_f.noalias() = w - v * m_fac_H(0, 0);
 
         // In some cases f is zero in exact arithmetics, but due to rounding errors
@@ -127,7 +128,7 @@ public:
             m_fac_f.setZero();
             m_beta = Scalar(0);
         } else {
-            m_beta = m_fac_f.norm();
+            m_beta = m_op.norm(m_fac_f);
         }
 
         // Indicate that this is a step-1 factorization
@@ -135,7 +136,7 @@ public:
     }
 
     // Arnoldi factorization starting from step-k
-    void factorize_from(int from_k, int to_m, OpType& op, int& op_counter)
+    void factorize_from(int from_k, int to_m, int& op_counter)
     {
         using std::sqrt;
 
@@ -180,7 +181,7 @@ public:
             m_fac_H(i, i - 1) = restart ? Scalar(0) : m_beta;
 
             // w <- A * v, v = m_fac_V.col(i)
-            op.perform_op(&m_fac_V(0, i), w.data());
+            m_op.perform_op(&m_fac_V(0, i), w.data());
             op_counter++;
 
             const int i1 = i + 1;
@@ -188,19 +189,19 @@ public:
             MapConstMat Vs(m_fac_V.data(), m_n, i1);
             // h = m_fac_H(0:i, i)
             MapVec h(&m_fac_H(0, i), i1);
-            // h <- V' * w
-            h.noalias() = Vs.transpose() * w;
+            // h <- V'Bw
+            m_op.trans_product(Vs, w, h);
 
             // f <- w - V * h
             m_fac_f.noalias() = w - Vs * h;
-            m_beta = m_fac_f.norm();
+            m_beta = m_op.norm(m_fac_f);
 
-            if(m_beta > Scalar(0.717) * h.norm())
+            if(m_beta > Scalar(0.717) * m_op.norm(h))
                 continue;
 
             // f/||f|| is going to be the next column of V, so we need to test
-            // whether V' * (f/||f||) ~= 0
-            Vf.head(i1).noalias() = Vs.transpose() * m_fac_f;
+            // whether V'B(f/||f||) ~= 0
+            m_op.trans_product(Vs, m_fac_f, Vf.head(i1));
             Scalar ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
             // If not, iteratively correct the residual
             int count = 0;
@@ -223,9 +224,9 @@ public:
                 // h <- h + Vf
                 h.noalias() += Vf.head(i1);
                 // beta <- ||f||
-                m_beta = m_fac_f.norm();
+                m_beta = m_op.norm(m_fac_f);
 
-                Vf.head(i1).noalias() = Vs.transpose() * m_fac_f;
+                m_op.trans_product(Vs, m_fac_f, Vf.head(i1));
                 ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
                 count++;
             }
@@ -268,7 +269,7 @@ public:
 
         Vector fk = m_fac_f * Q(m_m - 1, m_k - 1) + m_fac_V.col(m_k) * m_fac_H(m_k, m_k - 1);
         m_fac_f.swap(fk);
-        m_beta = m_fac_f.norm();
+        m_beta = m_op.norm(m_fac_f);
     }
 };
 
