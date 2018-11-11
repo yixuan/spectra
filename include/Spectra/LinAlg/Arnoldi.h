@@ -88,6 +88,8 @@ public:
         m_eps(Eigen::NumTraits<Scalar>::epsilon())
     {}
 
+    virtual ~Arnoldi() {}
+
     // Const-reference to internal structures
     const Matrix& matrix_V() const { return m_fac_V; }
     const Matrix& matrix_H() const { return m_fac_H; }
