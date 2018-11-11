@@ -7,7 +7,10 @@
 #ifndef SYM_EIGS_SHIFT_SOLVER_H
 #define SYM_EIGS_SHIFT_SOLVER_H
 
-#include "SymEigsSolver.h"
+#include <Eigen/Core>
+
+#include "SymEigsBase.h"
+#include "Util/SelectionRule.h"
 #include "MatOp/DenseSymShiftSolve.h"
 
 
@@ -154,7 +157,7 @@ namespace Spectra {
 template <typename Scalar = double,
           int SelectionRule = LARGEST_MAGN,
           typename OpType = DenseSymShiftSolve<double> >
-class SymEigsShiftSolver: public SymEigsSolver<Scalar, SelectionRule, OpType>
+class SymEigsShiftSolver: public SymEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>
 {
 private:
     typedef Eigen::Array<Scalar, Eigen::Dynamic, 1> Array;
@@ -166,7 +169,7 @@ private:
     {
         Array m_ritz_val_org = Scalar(1.0) / this->m_ritz_val.head(this->m_nev).array() + m_sigma;
         this->m_ritz_val.head(this->m_nev) = m_ritz_val_org;
-        SymEigsSolver<Scalar, SelectionRule, OpType>::sort_ritzpair(sort_rule);
+        SymEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>::sort_ritzpair(sort_rule);
     }
 
 public:
@@ -189,7 +192,7 @@ public:
     /// \param sigma  The value of the shift.
     ///
     SymEigsShiftSolver(OpType* op, int nev, int ncv, Scalar sigma) :
-        SymEigsSolver<Scalar, SelectionRule, OpType>(op, nev, ncv),
+        SymEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>(op, NULL, nev, ncv),
         m_sigma(sigma)
     {
         this->m_op->set_shift(m_sigma);
