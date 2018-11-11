@@ -152,7 +152,8 @@ private:
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic> ComplexMatrix;
     typedef Eigen::Matrix<Complex, Eigen::Dynamic, 1> ComplexVector;
 
-    typedef Arnoldi<Scalar, OpType> ArnoldiFac;
+    typedef ArnoldiOp<Scalar, OpType, IdentityBOp> ArnoldiOpType;
+    typedef Arnoldi<Scalar, ArnoldiOpType> ArnoldiFac;
 
 protected:
     OpType*       m_op;        // object to conduct matrix operation,
@@ -232,7 +233,7 @@ private:
         }
 
         m_fac.compress_V(Q);
-        m_fac.factorize_from(k, m_ncv, *m_op, m_nmatop);
+        m_fac.factorize_from(k, m_ncv, m_nmatop);
 
         retrieve_ritzpair();
     }
@@ -389,7 +390,7 @@ public:
         m_ncv(ncv > m_n ? m_n : ncv),
         m_nmatop(0),
         m_niter(0),
-        m_fac(m_n, m_ncv),
+        m_fac(ArnoldiOpType(*op), m_ncv),
         m_info(NOT_COMPUTED),
         m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
@@ -434,7 +435,7 @@ public:
 
         // Initialize the Arnoldi factorization
         MapConstVec v0(init_resid, m_n);
-        m_fac.init(*m_op, v0, m_nmatop);
+        m_fac.init(v0, m_nmatop);
     }
 
     ///
@@ -474,7 +475,7 @@ public:
     int compute(int maxit = 1000, Scalar tol = 1e-10, int sort_rule = LARGEST_MAGN)
     {
         // The m-step Arnoldi factorization
-        m_fac.factorize_from(1, m_ncv, *m_op, m_nmatop);
+        m_fac.factorize_from(1, m_ncv, m_nmatop);
         retrieve_ritzpair();
         // Restarting
         int i, nconv = 0, nev_adj;
