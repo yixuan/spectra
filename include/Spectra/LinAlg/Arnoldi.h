@@ -39,6 +39,7 @@ private:
     typedef Eigen::Map<const Matrix> MapConstMat;
     typedef Eigen::Map<const Vector> MapConstVec;
 
+protected:
     ArnoldiOpType m_op;    // Operators for the Arnoldi factorization
 
     const int m_n;      // dimension of A
@@ -136,7 +137,7 @@ public:
     }
 
     // Arnoldi factorization starting from step-k
-    void factorize_from(int from_k, int to_m, int& op_counter)
+    virtual void factorize_from(int from_k, int to_m, int& op_counter)
     {
         using std::sqrt;
 
@@ -145,7 +146,7 @@ public:
         if(from_k > m_k)
         {
             std::stringstream msg;
-            msg << "from_k (= " << from_k <<
+            msg << "Arnoldi: from_k (= " << from_k <<
                    ") is larger than the current subspace dimension (= " <<
                    m_k << ")";
             throw std::invalid_argument(msg.str());
