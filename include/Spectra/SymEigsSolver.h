@@ -13,6 +13,7 @@
 #include <algorithm>  // std::min, std::copy
 #include <stdexcept>  // std::invalid_argument
 
+#include "internal/SymEigsBase.h"
 #include "Util/TypeTraits.h"
 #include "Util/SelectionRule.h"
 #include "Util/CompInfo.h"
@@ -155,7 +156,7 @@ namespace Spectra {
 template < typename Scalar = double,
            int SelectionRule = LARGEST_MAGN,
            typename OpType = DenseSymMatProd<double> >
-class SymEigsSolver
+class SymEigsSolver: public SymEigsBase<Scalar, OpType, IdentityBOp>
 {
 private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
@@ -166,8 +167,7 @@ private:
     typedef Eigen::Map<Vector> MapVec;
     typedef Eigen::Map<const Vector> MapConstVec;
 
-    typedef ArnoldiOp<Scalar, OpType, IdentityBOp> ArnoldiOpType;
-    typedef Lanczos<Scalar, ArnoldiOpType> LanczosFac;
+    using SymEigsBase<Scalar, OpType, IdentityBOp>::m_fac;
 
 protected:
     OpType*      m_op;         // object to conduct matrix operation,
@@ -177,8 +177,6 @@ protected:
     const int    m_ncv;        // dimension of Krylov subspace in the Lanczos method
     int          m_nmatop;     // number of matrix operations called
     int          m_niter;      // number of restarting iterations
-
-    LanczosFac   m_fac;        // Lanczos factorization
 
     Vector       m_ritz_val;   // Ritz values
 
@@ -369,13 +367,13 @@ public:
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
     SymEigsSolver(OpType* op, int nev, int ncv) :
+        SymEigsBase<Scalar, OpType, IdentityBOp>(op, NULL, ncv),
         m_op(op),
         m_n(m_op->rows()),
         m_nev(nev),
         m_ncv(ncv > m_n ? m_n : ncv),
         m_nmatop(0),
         m_niter(0),
-        m_fac(ArnoldiOpType(*op), m_ncv),
         m_info(NOT_COMPUTED),
         m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
