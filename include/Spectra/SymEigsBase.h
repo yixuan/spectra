@@ -22,7 +22,6 @@
 #include "LinAlg/TridiagEigen.h"
 #include "LinAlg/Lanczos.h"
 
-
 namespace Spectra {
 
 
@@ -35,7 +34,9 @@ namespace Spectra {
 ///
 /// \ingroup EigenSolver
 ///
-/// Base class for symmetric eigen solvers.
+/// This is the base class for symmetric eigen solvers, mainly for internal use.
+/// It is kept here to provide the documentation for member functions of concrete eigen solvers
+/// such as SymEigsSolver and SymEigsShiftSolver.
 ///
 template < typename Scalar,
            int      SelectionRule,
@@ -236,23 +237,8 @@ protected:
     }
 
 public:
-    ///
-    /// Constructor to create a solver object.
-    ///
-    /// \param op   Pointer to the matrix operation object, which should implement
-    ///             the matrix-vector multiplication operation of \f$A\f$:
-    ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
-    ///             create the object from the wrapper class such as DenseSymMatProd, or
-    ///             define their own that impelements all the public member functions
-    ///             as in DenseSymMatProd.
-    /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
-    ///             where \f$n\f$ is the size of matrix.
-    /// \param ncv  Parameter that controls the convergence speed of the algorithm.
-    ///             Typically a larger `ncv` means faster convergence, but it may
-    ///             also result in greater memory use and more matrix operations
-    ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
-    ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
-    ///
+    /// \cond
+
     SymEigsBase(OpType* op, BOpType* Bop, int nev, int ncv) :
         m_op(op),
         m_n(m_op->rows()),
@@ -277,6 +263,8 @@ public:
     /// Virtual destructor
     ///
     virtual ~SymEigsBase() {}
+
+    /// \endcond
 
     ///
     /// Initializes the solver by providing an initial residual vector.

@@ -40,16 +40,16 @@ private:
     typedef Eigen::Map<const Vector> MapConstVec;
 
 protected:
-    ArnoldiOpType m_op;    // Operators for the Arnoldi factorization
+    ArnoldiOpType m_op;       // Operators for the Arnoldi factorization
 
-    const int m_n;      // dimension of A
-    const int m_m;      // maximum dimension of subspace V
-    int       m_k;      // current dimension of subspace V
+    const int m_n;            // dimension of A
+    const int m_m;            // maximum dimension of subspace V
+    int       m_k;            // current dimension of subspace V
 
-    Matrix m_fac_V;     // V matrix in the Arnoldi factorization
-    Matrix m_fac_H;     // H matrix in the Arnoldi factorization
-    Vector m_fac_f;     // residual in the Arnoldi factorization
-    Scalar m_beta;      // ||f||, B-norm of f
+    Matrix m_fac_V;           // V matrix in the Arnoldi factorization
+    Matrix m_fac_H;           // H matrix in the Arnoldi factorization
+    Vector m_fac_f;           // residual in the Arnoldi factorization
+    Scalar m_beta;            // ||f||, B-norm of f
 
     const Scalar m_near_0;    // a very small value, but 1.0 / m_near_0 does not overflow
                               // ~= 1e-307 for the "double" type

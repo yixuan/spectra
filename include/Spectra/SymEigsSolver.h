@@ -13,7 +13,6 @@
 #include "Util/SelectionRule.h"
 #include "MatOp/DenseSymMatProd.h"
 
-
 namespace Spectra {
 
 
@@ -55,7 +54,7 @@ namespace Spectra {
 /// \tparam OpType        The name of the matrix operation class. Users could either
 ///                       use the wrapper classes such as DenseSymMatProd and
 ///                       SparseSymMatProd, or define their
-///                       own that impelemnts all the public member functions as in
+///                       own that implements all the public member functions as in
 ///                       DenseSymMatProd.
 ///
 /// Below is an example that demonstrates the usage of this class.
@@ -150,7 +149,7 @@ public:
     ///             the matrix-vector multiplication operation of \f$A\f$:
     ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
     ///             create the object from the wrapper class such as DenseSymMatProd, or
-    ///             define their own that impelements all the public member functions
+    ///             define their own that implements all the public member functions
     ///             as in DenseSymMatProd.
     /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
     ///             where \f$n\f$ is the size of matrix.

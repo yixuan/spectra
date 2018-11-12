@@ -129,7 +129,7 @@ public:
     ///                the complex shift-solve operation of \f$A\f$: calculating
     ///                \f$\mathrm{Re}\{(A-\sigma I)^{-1}v\}\f$ for any vector \f$v\f$. Users could either
     ///                create the object from the DenseGenComplexShiftSolve wrapper class, or
-    ///                define their own that impelemnts all the public member functions
+    ///                define their own that implements all the public member functions
     ///                as in DenseGenComplexShiftSolve.
     /// \param nev     Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-2\f$,
     ///                where \f$n\f$ is the size of matrix.

@@ -13,7 +13,6 @@
 #include "Util/SelectionRule.h"
 #include "MatOp/DenseSymShiftSolve.h"
 
-
 namespace Spectra {
 
 
@@ -65,7 +64,7 @@ namespace Spectra {
 /// \tparam OpType        The name of the matrix operation class. Users could either
 ///                       use the wrapper classes such as DenseSymShiftSolve and
 ///                       SparseSymShiftSolve, or define their
-///                       own that impelemnts all the public member functions as in
+///                       own that implements all the public member functions as in
 ///                       DenseSymShiftSolve.
 ///
 /// Below is an example that illustrates the use of the shift-and-invert mode:
@@ -164,7 +163,7 @@ private:
 
     const Scalar m_sigma;
 
-    // First transform back the ritz values, and then sort
+    // First transform back the Ritz values, and then sort
     void sort_ritzpair(int sort_rule)
     {
         Array m_ritz_val_org = Scalar(1.0) / this->m_ritz_val.head(this->m_nev).array() + m_sigma;
@@ -180,7 +179,7 @@ public:
     ///               the shift-solve operation of \f$A\f$: calculating
     ///               \f$(A-\sigma I)^{-1}v\f$ for any vector \f$v\f$. Users could either
     ///               create the object from the wrapper class such as DenseSymShiftSolve, or
-    ///               define their own that impelemnts all the public member functions
+    ///               define their own that implements all the public member functions
     ///               as in DenseSymShiftSolve.
     /// \param nev    Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
     ///               where \f$n\f$ is the size of matrix.

@@ -64,7 +64,7 @@ public:
     ///               the shift-solve operation of \f$A\f$: calculating
     ///               \f$(A-\sigma I)^{-1}v\f$ for any vector \f$v\f$. Users could either
     ///               create the object from the wrapper class such as DenseGenRealShiftSolve, or
-    ///               define their own that impelemnts all the public member functions
+    ///               define their own that implements all the public member functions
     ///               as in DenseGenRealShiftSolve.
     /// \param nev    Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-2\f$,
     ///               where \f$n\f$ is the size of matrix.

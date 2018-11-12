@@ -15,7 +15,7 @@ namespace Spectra {
 
 
 ///
-/// \ingroup MatOp
+/// \ingroup Operators
 ///
 /// This class defines the matrix operation for generalized eigen solver in the
 /// Cholesky decomposition mode. It calculates \f$y=L^{-1}A(L')^{-1}x\f$ for any

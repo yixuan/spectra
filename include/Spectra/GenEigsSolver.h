@@ -36,7 +36,7 @@ namespace Spectra {
 /// \tparam OpType        The name of the matrix operation class. Users could either
 ///                       use the wrapper classes such as DenseGenMatProd and
 ///                       SparseGenMatProd, or define their
-///                       own that impelemnts all the public member functions as in
+///                       own that implements all the public member functions as in
 ///                       DenseGenMatProd.
 ///
 /// An example that illustrates the usage of GenEigsSolver is give below:
@@ -136,7 +136,7 @@ public:
     ///             the matrix-vector multiplication operation of \f$A\f$:
     ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
     ///             create the object from the wrapper class such as DenseGenMatProd, or
-    ///             define their own that impelemnts all the public member functions
+    ///             define their own that implements all the public member functions
     ///             as in DenseGenMatProd.
     /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-2\f$,
     ///             where \f$n\f$ is the size of matrix.

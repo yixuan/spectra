@@ -30,7 +30,9 @@ namespace Spectra {
 ///
 /// \ingroup EigenSolver
 ///
-/// Base class for general eigen solvers.
+/// This is the base class for general eigen solvers, mainly for internal use.
+/// It is kept here to provide the documentation for member functions of concrete eigen solvers
+/// such as GenEigsSolver and GenEigsRealShiftSolver.
 ///
 template < typename Scalar,
            int      SelectionRule,
@@ -265,23 +267,8 @@ protected:
     }
 
 public:
-    ///
-    /// Constructor to create a solver object.
-    ///
-    /// \param op   Pointer to the matrix operation object, which should implement
-    ///             the matrix-vector multiplication operation of \f$A\f$:
-    ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
-    ///             create the object from the wrapper class such as DenseGenMatProd, or
-    ///             define their own that impelemnts all the public member functions
-    ///             as in DenseGenMatProd.
-    /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-2\f$,
-    ///             where \f$n\f$ is the size of matrix.
-    /// \param ncv  Parameter that controls the convergence speed of the algorithm.
-    ///             Typically a larger `ncv` means faster convergence, but it may
-    ///             also result in greater memory use and more matrix operations
-    ///             in each iteration. This parameter must satisfy \f$nev+2 \le ncv \le n\f$,
-    ///             and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
-    ///
+    /// \cond
+
     GenEigsBase(OpType* op, BOpType* Bop, int nev, int ncv) :
         m_op(op),
         m_n(m_op->rows()),
@@ -306,6 +293,8 @@ public:
     /// Virtual destructor
     ///
     virtual ~GenEigsBase() {}
+
+    /// \endcond
 
     ///
     /// Initializes the solver by providing an initial residual vector.

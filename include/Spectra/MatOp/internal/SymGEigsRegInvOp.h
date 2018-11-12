@@ -15,7 +15,7 @@ namespace Spectra {
 
 
 ///
-/// \ingroup MatOp
+/// \ingroup Operators
 ///
 /// This class defines the matrix operation for generalized eigen solver in the
 /// regular inverse mode. This class is intended for internal use.
