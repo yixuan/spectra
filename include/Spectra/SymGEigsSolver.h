@@ -12,7 +12,6 @@
 #include "MatOp/internal/SymGEigsCholeskyOp.h"
 #include "MatOp/internal/SymGEigsRegInvOp.h"
 
-
 namespace Spectra {
 
 

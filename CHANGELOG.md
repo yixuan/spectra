@@ -1,6 +1,10 @@
 ## [Unreleased]
 ### Added
-- Added an eigen solver `LOBPCG` in the `contrib` directory using the
+- Added a directory `contrib` to include code contributed by users. It is not
+  formally a part of the Spectra library, but it may contain useful solvers
+  and applications based on Spectra. Code in `contrib` may not be fully tested,
+  so please use with caution. Feedback and report of issues are always welcome
+- Added an eigen solver `LOBPCGSolver` in the `contrib` directory using the
   [LOBPCG](https://en.wikipedia.org/wiki/LOBPCG) algorithm,
   contributed by [Anna Araslanova](https://github.com/AnnaAraslanova)
 - Added a partial SVD solver `PartialSVDSolver` in the `contrib` directory
