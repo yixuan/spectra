@@ -1,4 +1,4 @@
-## [Unreleased]
+## [0.7.0] - 2019-01-10
 ### Added
 - Added a directory `contrib` to include code contributed by users. It is not
   formally a part of the Spectra library, but it may contain useful solvers
