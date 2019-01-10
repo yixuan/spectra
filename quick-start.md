@@ -54,7 +54,7 @@ For real symmetric matrices using the shift-and-invert mode
 - [GenEigsRealShiftSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
 For general real matrices using the shift-and-invert mode,
 with a real-valued shift
-- [GenEigsComplexShiftSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
+- [GenEigsComplexShiftSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsComplexShiftSolver.html):
 For general real matrices using the shift-and-invert mode,
 with a complex-valued shift
 - [SymGEigsSolver](https://spectralib.org/doc/classSpectra_1_1SymGEigsSolver.html):
