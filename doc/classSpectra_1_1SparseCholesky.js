@@ -1,6 +1,6 @@
 var classSpectra_1_1SparseCholesky =
 [
-    [ "SparseCholesky", "classSpectra_1_1SparseCholesky.html#a5100882f8667ef40983eff16c5997f05", null ],
+    [ "SparseCholesky", "classSpectra_1_1SparseCholesky.html#ae69cdce1f0c667228f5d7af7b4c90296", null ],
     [ "rows", "classSpectra_1_1SparseCholesky.html#af8c63c2225eee44454d8367cadbfb209", null ],
     [ "cols", "classSpectra_1_1SparseCholesky.html#a310978adda7202f7d8e9c3919294fe4a", null ],
     [ "info", "classSpectra_1_1SparseCholesky.html#a363f36cc39520bc34bf092030a43da49", null ],
