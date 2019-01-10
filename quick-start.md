@@ -67,7 +67,8 @@ matrices.
 
 ~~~
 #include <Eigen/Core>
-#include <SymEigsSolver.h>  // Also includes <MatOp/DenseSymMatProd.h>
+#include <Spectra/SymEigsSolver.h>
+// <Spectra/MatOp/DenseSymMatProd.h> is implicitly included
 #include <iostream>
 
 using namespace Spectra;
@@ -104,8 +105,8 @@ Sparse matrix is supported via the `SparseGenMatProd` class.
 ~~~
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <GenEigsSolver.h>
-#include <MatOp/SparseGenMatProd.h>
+#include <Spectra/GenEigsSolver.h>
+#include <Spectra/MatOp/SparseGenMatProd.h>
 #include <iostream>
 
 using namespace Spectra;
@@ -151,7 +152,7 @@ And here is an example for user-supplied matrix operation class.
 
 ~~~
 #include <Eigen/Core>
-#include <SymEigsSolver.h>
+#include <Spectra/SymEigsSolver.h>
 #include <iostream>
 
 using namespace Spectra;
