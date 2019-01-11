@@ -27,6 +27,7 @@
   [Dario Mangoni](https://github.com/dariomangoni) who raised this issue in
   [#16](https://github.com/yixuan/spectra/issues/16)
 - Fixed inappropriate range of random numbers in the tests
+- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.4.2
 
 
 ## [0.6.2] - 2018-05-22
