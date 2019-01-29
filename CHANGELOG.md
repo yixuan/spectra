@@ -1,3 +1,10 @@
+## [Unreleased]
+### Changed
+- Fixed a missing `#include` in `DenseCholesky.h`, thanks to
+  [Lennart Trunk](https://github.com/TheScarfix) for the issue
+  [#59](https://github.com/yixuan/spectra/issues/59)
+
+
 ## [0.7.0] - 2019-01-10
 ### Added
 - Added a directory `contrib` to include code contributed by users. It is not
