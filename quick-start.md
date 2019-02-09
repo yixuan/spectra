@@ -164,7 +164,7 @@ public:
     int rows() { return 10; }
     int cols() { return 10; }
     // y_out = M * x_in
-    void perform_op(double *x_in, double *y_out)
+    void perform_op(const double *x_in, double *y_out)
     {
         for(int i = 0; i < rows(); i++)
         {
