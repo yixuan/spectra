@@ -3,6 +3,8 @@
 - Fixed a missing `#include` in `DenseCholesky.h`, thanks to
   [Lennart Trunk](https://github.com/TheScarfix) for the issue
   [#59](https://github.com/yixuan/spectra/issues/59)
+- Fixed errors in examples ([#60](https://github.com/yixuan/spectra/issues/60)),
+  thanks to [@linuxfreebird](https://github.com/linuxfreebird)
 
 
 ## [0.7.0] - 2019-01-10
