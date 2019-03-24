@@ -22,18 +22,21 @@ private:
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
     typedef Eigen::Map<Vector> MapVec;
+    typedef Eigen::Map<const Vector> MapConstVec;
 
     typedef typename Matrix::Index Index;
 
     typedef Eigen::Matrix<Index, Eigen::Dynamic, 1> IntVector;
     typedef Eigen::Ref<Matrix> GenericMatrix;
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
+    typedef const Eigen::Ref<const Vector> ConstGenericVector;
 
     Index m_n;
     Vector m_data;
     std::vector<Scalar*> m_mat;  // m_mat represents a lower-triangular matrix
                                  // m_mat[i] points to the head of the i-th column
-    IntVector m_perm;
+    IntVector m_perm;            // [-2, -1, 3, 1, 4, 5]: 0 <-> 2, 1 <-> 1, 2 <-> 3, 3 <-> 1, 4 <-> 4, 5 <-> 5
+    std::vector< std::pair<Index, Index> > m_permc;  // compressed version of m_perm: [(0, 2), (2, 3), (3, 1)]
 
     bool m_computed;
 
@@ -67,6 +70,16 @@ private:
                     *dest = mat.coeff(i, j);
                 }
             }
+        }
+    }
+
+    void compress_permutation()
+    {
+        for(Index i = 0; i < m_n; i++)
+        {
+            const Index perm = std::abs(m_perm[i]);
+            if(perm != i)
+                m_permc.push_back(std::make_pair(i, perm));
         }
     }
 
@@ -344,8 +357,10 @@ public:
         if(m_n != mat.cols())
             throw std::invalid_argument("BKLDLT: matrix must be square");
 
-        // Copy data
         m_perm.setLinSpaced(m_n, 0, m_n - 1);
+        m_permc.clear();
+
+        // Copy data
         m_data.resize((m_n * (m_n + 1)) / 2);
         compute_pointer();
         copy_data(mat, uplo);
@@ -374,12 +389,94 @@ public:
             m_mat[k][0] = Scalar(1) / m_mat[k][0];
         }
 
+        compress_permutation();
+
         std::cout << "decomposition result:" << std::endl;
         print_mat();
         std::cout << "permutation result:" << std::endl;
-        std::cout << m_perm.transpose() << std::endl;
+        std::cout << m_perm.transpose() << std::endl << std::endl;
+        std::cout << "compressed permutation result:" << std::endl;
+        for(Index i = 0; i < m_permc.size(); i++)
+            std::cout << "(" << m_permc[i].first << ", " << m_permc[i].second << ") ";
+        std::cout << std::endl << std::endl;
 
         m_computed = true;
+    }
+
+    // Solve Ax=b
+    Vector solve(ConstGenericVector& b) const
+    {
+        // PAP' = LDL'
+        // 1. b -> Pb
+        Vector res = b;
+        Scalar* x = res.data();
+        Index npermc = m_permc.size();
+        for(Index i = 0; i < npermc; i++)
+        {
+            std::swap(x[m_permc[i].first], x[m_permc[i].second]);
+        }
+
+        // 2. Lz = Pb
+        // matp[j][i - j] -> A[i, j], i >= j
+        Scalar* const* matp = &m_mat.front();
+        // If m_perm[end] < 0, then end with m_n - 3, otherwise end with m_n - 2
+        const Index end = (m_perm[m_n - 1] < 0) ? (m_n - 3) : (m_n - 2);
+        for(Index i = 0; i <= end; i++)
+        {
+            const Index b1size = m_n - i - 1;
+            const Index b2size = b1size - 1;
+            if(m_perm[i] >= 0)
+            {
+                MapConstVec l(matp[i] + 1, b1size);
+                res.segment(i + 1, b1size).noalias() -= l * x[i];
+            } else {
+                MapConstVec l1(matp[i] + 2, b2size);
+                MapConstVec l2(matp[i + 1] + 1, b2size);
+                res.segment(i + 2, b2size).noalias() -= (l1 * x[i] + l2 * x[i + 1]);
+                i++;
+            }
+        }
+
+        // 3. Dw = z
+        for(Index i = 0; i < m_n; i++)
+        {
+            const Scalar e11 = matp[i][0];
+            if(m_perm[i] >= 0)
+            {
+                x[i] *= e11;
+            } else {
+                const Scalar e21 = matp[i][1], e22 = matp[i + 1][0];
+                const Scalar wi = x[i] * e11 + x[i + 1] * e21;
+                x[i + 1] = x[i] * e21 + x[i + 1] * e22;
+                x[i] = wi;
+                i++;
+            }
+        }
+
+        // 4. L'y = w
+        // If m_perm[end] < 0, then start with m_n - 3, otherwise start with m_n - 2
+        Index i = (m_perm[m_n - 1] < 0) ? (m_n - 3) : (m_n - 2);
+        for(; i >= 0; i--)
+        {
+            const Index ldim = m_n - i - 1;
+            MapConstVec l(matp[i] + 1, ldim);
+            x[i] -= res.segment(i + 1, ldim).dot(l);
+
+            if(m_perm[i] < 0)
+            {
+                MapConstVec l2(matp[i - 1] + 2, ldim);
+                x[i - 1] -= res.segment(i + 1, ldim).dot(l2);
+                i--;
+            }
+        }
+
+        // 5. x = P'y
+        for(Index i = npermc - 1; i >= 0; i--)
+        {
+            std::swap(x[m_permc[i].first], x[m_permc[i].second]);
+        }
+
+        return res;
     }
 };
 
