@@ -178,7 +178,10 @@ private:
         Scalar** matp = &m_mat.front();
 
         // First search A[r+1, r], ...,  A[end, r], which has the same task as find_lambda()
-        Scalar sigma = find_lambda(r, p);
+        // If r == end, we skip this search
+        Scalar sigma = Scalar(-1);
+        if(r < m_n - 1)
+            sigma = find_lambda(r, p);
 
         // Then search A[k, r], ..., A[r-1, r], which maps to A[r, k], ..., A[r, r-1]
         for(Index j = k; j < r; j++)
