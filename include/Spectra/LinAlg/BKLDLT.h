@@ -113,7 +113,7 @@ private:
 
     // Working on the A[k:end, k:end] submatrix
     // Exchange [k+1, k] <-> [r, p]
-    // Assume r > p >= k
+    // Assume p >= k, r >= k+1
     void pivoting_2x2(Index k, Index r, Index p)
     {
         pivoting_1x1(k, p);
@@ -223,14 +223,24 @@ private:
                     {
                         // Permutation on A
                         pivoting_1x1(k, r);
+
                         // Permutation on L
                         interchange_rows(k, r, 0, k - 1);
                         return true;
                     } else {
                         // Permutation on A
-                        // [r, p] and [p, r] are symmetric, but we make r > p
-                        if(r < p)
-                            std::swap(r, p);
+                        // [r, p] and [p, r] are symmetric, but we need to make sure
+                        // p >= k and r >= k+1, so it is safe to always make r > p
+                        // One exception is when min{r,p} == k+1, in which case we make
+                        // r = k+1, so that only one permutation needs to be performed
+                        const Scalar rp_min = std::min(r, p);
+                        const Scalar rp_max = std::max(r, p);
+                        if(rp_min == k + 1)
+                        {
+                            r = rp_min; p = rp_max;
+                        } else {
+                            r = rp_max; p = rp_min;
+                        }
                         pivoting_2x2(k, r, p);
                         // Permutation on L
                         interchange_rows(k, p, 0, k - 1);
