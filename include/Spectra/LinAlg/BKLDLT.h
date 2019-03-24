@@ -257,29 +257,18 @@ private:
         return true;
     }
 
-    // C = [c1, c2], c1 = [ptr1[0], ..., ptr1[m-1]]', c2 = [ptr2[0], ..., ptr2[m-1]]'
     // E = [e11, e12]
     //     [e21, e22]
-    // Return C * E^(-1)
-    Matrix solve_2x2(
-        const Scalar& e11, const Scalar& e21, const Scalar& e22,
-        const Scalar* ptr1, const Scalar* ptr2, Index m
-    )
+    // Overwrite E with inv(E)
+    void inverse_inplace_2x2(Scalar& e11, Scalar& e21, Scalar& e22) const
     {
-        Matrix res(m, 2);
-        Scalar* col1 = res.data();
-        Scalar* col2 = col1 + m;
         // inv(E) = [d11, d12], d11 = e22/delta, d21 = -e21/delta, d22 = e11/delta
         //          [d21, d22]
         const Scalar delta = e11 * e22 - e21 * e21;
-        const Scalar d11 = e22 / delta, d21 = -e21 / delta, d22 = e11 / delta;
-        for(Index i = 0; i < m; i++)
-        {
-            col1[i] = ptr1[i] * d11 + ptr2[i] * d21;
-            col2[i] = ptr1[i] * d21 + ptr2[i] * d22;
-        }
-
-        return res;
+        std::swap(e11, e22);
+        e11 /= delta;
+        e22 /= delta;
+        e21 = -e21 / delta;
     }
 
     void gaussian_elimination_1x1(Index k)
@@ -287,8 +276,11 @@ private:
         // matp[j][i - j] -> A[i, j], i >= j
         Scalar** matp = &m_mat.front();
 
-        // B -= l * l' / A[k, k], B = A[(k+1):end, (k+1):end], l = L[(k+1):end, k]
+        // D = 1 / A[k, k]
         const Scalar akk = matp[k][0];
+        matp[k][0] = 1.0 / akk;
+
+        // B -= l * l' / A[k, k], B := A[(k+1):end, (k+1):end], l := L[(k+1):end, k]
         Scalar* lptr = matp[k] + 1;
         const Index ldim = m_n - k - 1;
         MapVec l(lptr, ldim);
@@ -306,13 +298,21 @@ private:
         // matp[j][i - j] -> A[i, j], i >= j
         Scalar** matp = &m_mat.front();
 
-        // X = l * inv(E), l = L[(k+2):end, k:(k+1)]
+        // D = inv(E)
+        Scalar& e11 = matp[k][0];
+        Scalar& e21 = matp[k][1];
+        Scalar& e22 = matp[k + 1][0];
+        inverse_inplace_2x2(e11, e21, e22);
+
+        // X = l * inv(E), l := L[(k+2):end, k:(k+1)]
         Scalar* l1ptr = matp[k] + 2;
         Scalar* l2ptr = matp[k + 1] + 1;
         const Index ldim = m_n - k - 2;
-        Matrix X = solve_2x2(matp[k][0], matp[k][1], matp[k + 1][0], l1ptr, l2ptr, ldim);
-        const Scalar* x1ptr = X.data();
-        const Scalar* x2ptr = x1ptr + ldim;
+        MapVec l1(l1ptr, ldim), l2(l2ptr, ldim);
+
+        Eigen::Matrix<Scalar, Eigen::Dynamic, 2> X(ldim, 2);
+        X.col(0).noalias() = l1 * e11 + l2 * e21;
+        X.col(1).noalias() = l1 * e21 + l2 * e22;
 
         // B -= l * inv(E) * l' = X * l', B = A[(k+2):end, (k+2):end]
         for(Index j = 0; j < ldim; j++)
@@ -321,8 +321,8 @@ private:
         }
 
         // l = X
-        std::copy(x1ptr, x2ptr, l1ptr);
-        std::copy(x2ptr, x2ptr + ldim, l2ptr);
+        l1.noalias() = X.col(0);
+        l2.noalias() = X.col(1);
     }
 
 public:
@@ -351,7 +351,8 @@ public:
         copy_data(mat, uplo);
 
         const Scalar alpha = (1.0 + std::sqrt(17.0)) / 8.0;
-        for(Index k = 0; k < m_n - 1; k++)
+        Index k = 0;
+        for(k = 0; k < m_n - 1; k++)
         {
             // std::cout << "k = " << k << std::endl;
 
@@ -366,6 +367,11 @@ public:
                 gaussian_elimination_2x2(k);
                 k++;
             }
+        }
+        // Invert the last 1x1 block if it exists
+        if(k == m_n - 1)
+        {
+            m_mat[k][0] = Scalar(1) / m_mat[k][0];
         }
 
         std::cout << "decomposition result:" << std::endl;
