@@ -301,10 +301,10 @@ private:
         const Scalar* x1ptr = X.data();
         const Scalar* x2ptr = x1ptr + ldim;
 
-        // B -= l * inv(E) * l' = X * l', B = A[(k+1):end, (k+1):end]
+        // B -= l * inv(E) * l' = X * l', B = A[(k+2):end, (k+2):end]
         for(Index j = 0; j < ldim; j++)
         {
-            MapVec(matp[j + k + 1], ldim - j).noalias() -= (X.col(0).tail(ldim - j) * l1ptr[j] + X.col(1).tail(ldim - j) * l2ptr[j]);
+            MapVec(matp[j + k + 2], ldim - j).noalias() -= (X.col(0).tail(ldim - j) * l1ptr[j] + X.col(1).tail(ldim - j) * l2ptr[j]);
         }
 
         // l = X
