@@ -32,23 +32,30 @@ private:
     typedef const Eigen::Ref<const Vector> ConstGenericVector;
 
     Index m_n;
-    Vector m_data;
-    std::vector<Scalar*> m_mat;  // m_mat represents a lower-triangular matrix
-                                 // m_mat[i] points to the head of the i-th column
-    IntVector m_perm;            // [-2, -1, 3, 1, 4, 5]: 0 <-> 2, 1 <-> 1, 2 <-> 3, 3 <-> 1, 4 <-> 4, 5 <-> 5
+    Vector m_data;                  // storage for a lower-triangular matrix
+    std::vector<Scalar*> m_colptr;  // pointers to columns
+    IntVector m_perm;               // [-2, -1, 3, 1, 4, 5]: 0 <-> 2, 1 <-> 1, 2 <-> 3, 3 <-> 1, 4 <-> 4, 5 <-> 5
     std::vector< std::pair<Index, Index> > m_permc;  // compressed version of m_perm: [(0, 2), (2, 3), (3, 1)]
 
     bool m_computed;
 
+    Scalar* col_pointer(Index k) { return m_colptr[k]; }
+    // A[i, j] -> m_colptr[j][i - j], i >= j
+    Scalar& coeff(Index i, Index j) { return m_colptr[j][i - j]; }
+    const Scalar& coeff(Index i, Index j) const { return m_colptr[j][i - j]; }
+    // A[i, i] -> m_colptr[i][0]
+    Scalar& diag_coeff(Index i) { return m_colptr[i][0]; }
+    const Scalar& diag_coeff(Index i) const { return m_colptr[i][0]; }
+
     void compute_pointer()
     {
-        m_mat.clear();
-        m_mat.reserve(m_n);
+        m_colptr.clear();
+        m_colptr.reserve(m_n);
         Scalar* head = m_data.data();
 
         for(Index i = 0; i < m_n; i++)
         {
-            m_mat.push_back(head);
+            m_colptr.push_back(head);
             head += (m_n - i);
         }
     }
@@ -59,7 +66,7 @@ private:
         {
             for(Index j = 0; j < m_n; j++)
             {
-                std::copy(&mat.coeffRef(j, j), &mat.coeffRef(0, j + 1), m_mat[j]);
+                std::copy(&mat.coeffRef(j, j), &mat.coeffRef(0, j + 1), col_pointer(j));
             }
         } else {
             Scalar* dest = m_data.data();
@@ -88,7 +95,7 @@ private:
         Matrix mat = Matrix::Zero(m_n, m_n);
         for(Index j = 0; j < m_n; j++)
         {
-            std::copy(m_mat[j], m_mat[j] + (m_n - j), &mat.coeffRef(j, j));
+            std::copy(col_pointer(j), col_pointer(j) + (m_n - j), &mat.coeffRef(j, j));
         }
         std::cout << mat << std::endl << std::endl;
     }
@@ -105,20 +112,17 @@ private:
             return;
         }
 
-        // matp[j][i - j] -> A[i, j], i >= j
-        Scalar** matp = &m_mat.front();
-
         // A[k, k] <-> A[r, r]
-        std::swap(matp[k][0], matp[r][0]);
+        std::swap(diag_coeff(k), diag_coeff(r));
 
         // A[(r+1):end, k] <-> A[(r+1):end, r]
-        std::swap_ranges(matp[k] + (r + 1 - k), matp[k + 1], matp[r] + 1);
+        std::swap_ranges(&coeff(r + 1, k), col_pointer(k + 1), &coeff(r + 1, r));
 
         // A[(k+1):(r-1), k] <-> A[r, (k+1):(r-1)]
-        Scalar* src = matp[k] + 1;
+        Scalar* src = &coeff(k + 1, k);
         for(Index j = k + 1; j < r; j++, src++)
         {
-            std::swap(*src, matp[j][r - j]);
+            std::swap(*src, coeff(r, j));
         }
 
         m_perm[k] = r;
@@ -132,11 +136,8 @@ private:
         pivoting_1x1(k, p);
         pivoting_1x1(k + 1, r);
 
-        // matp[j][i - j] -> A[i, j], i >= j
-        Scalar** matp = &m_mat.front();
-
         // A[k+1, k] <-> A[r, k]
-        std::swap(matp[k][1], matp[k][r - k]);
+        std::swap(coeff(k + 1, k), coeff(r, k));
 
         // Use negative signs to indicate a 2x2 block
         m_perm[k] = -m_perm[k];
@@ -150,12 +151,9 @@ private:
         if(r1 == r2)
             return;
 
-        // matp[j][i - j] -> A[i, j], i >= j
-        Scalar** matp = &m_mat.front();
-
         for(Index j = c1; j <= c2; j++)
         {
-            std::swap(matp[j][r1 - j], matp[j][r2 - j]);
+            std::swap(coeff(r1, j), coeff(r2, j));
         }
     }
 
@@ -165,8 +163,8 @@ private:
     {
         using std::abs;
 
-        const Scalar* head = m_mat[k];
-        const Scalar* end = m_mat[k + 1];
+        const Scalar* head = col_pointer(k);
+        const Scalar* end = col_pointer(k + 1);
         Scalar lambda = abs(head[1]);
         r = k + 1;
         for(const Scalar* ptr = head + 2; ptr < end; ptr++)
@@ -178,6 +176,7 @@ private:
                 r = k + (ptr - head);
             }
         }
+
         return lambda;
     }
 
@@ -186,9 +185,6 @@ private:
     Scalar find_sigma(Index k, Index r, Index& p)
     {
         using std::abs;
-
-        // matp[j][i - j] -> A[i, j], i >= j
-        Scalar** matp = &m_mat.front();
 
         // First search A[r+1, r], ...,  A[end, r], which has the same task as find_lambda()
         // If r == end, we skip this search
@@ -199,7 +195,7 @@ private:
         // Then search A[k, r], ..., A[r-1, r], which maps to A[r, k], ..., A[r, r-1]
         for(Index j = k; j < r; j++)
         {
-            const Scalar abs_elem = abs(matp[j][r - j]);
+            const Scalar abs_elem = abs(coeff(r, j));
             if(sigma < abs_elem)
             {
                 sigma = abs_elem;
@@ -214,10 +210,6 @@ private:
     // Return true if the resulting pivoting is 1x1, and false if 2x2
     bool permutate_mat(Index k, const Scalar& alpha)
     {
-        // matp[j][i - j] -> A[i, j], i >= j
-        Scalar** matp = &m_mat.front();
-
-        Scalar* col_head = matp[k];
         Index r = k, p = k;
         const Scalar lambda = find_lambda(k, r);
         // std::cout << "lambda = " << lambda << std::endl;
@@ -225,7 +217,7 @@ private:
         // If lambda=0, no need to interchange
         if(lambda > Scalar(0))
         {
-            const Scalar abs_akk = abs(col_head[0]);
+            const Scalar abs_akk = abs(diag_coeff(k));
             // If |A[k, k]| >= alpha * lambda, no need to interchange
             if(abs_akk < alpha * lambda)
             {
@@ -286,20 +278,17 @@ private:
 
     void gaussian_elimination_1x1(Index k)
     {
-        // matp[j][i - j] -> A[i, j], i >= j
-        Scalar** matp = &m_mat.front();
-
         // D = 1 / A[k, k]
-        const Scalar akk = matp[k][0];
-        matp[k][0] = 1.0 / akk;
+        const Scalar akk = diag_coeff(k);
+        diag_coeff(k) = 1.0 / akk;
 
         // B -= l * l' / A[k, k], B := A[(k+1):end, (k+1):end], l := L[(k+1):end, k]
-        Scalar* lptr = matp[k] + 1;
+        Scalar* lptr = col_pointer(k) + 1;
         const Index ldim = m_n - k - 1;
         MapVec l(lptr, ldim);
         for(Index j = 0; j < ldim; j++)
         {
-            MapVec(matp[j + k + 1], ldim - j).noalias() -= (lptr[j] / akk) * l.tail(ldim - j);
+            MapVec(col_pointer(j + k + 1), ldim - j).noalias() -= (lptr[j] / akk) * l.tail(ldim - j);
         }
 
         // l /= A[k, k]
@@ -308,18 +297,15 @@ private:
 
     void gaussian_elimination_2x2(Index k)
     {
-        // matp[j][i - j] -> A[i, j], i >= j
-        Scalar** matp = &m_mat.front();
-
         // D = inv(E)
-        Scalar& e11 = matp[k][0];
-        Scalar& e21 = matp[k][1];
-        Scalar& e22 = matp[k + 1][0];
+        Scalar& e11 = diag_coeff(k);
+        Scalar& e21 = coeff(k + 1, k);
+        Scalar& e22 = diag_coeff(k + 1);
         inverse_inplace_2x2(e11, e21, e22);
 
         // X = l * inv(E), l := L[(k+2):end, k:(k+1)]
-        Scalar* l1ptr = matp[k] + 2;
-        Scalar* l2ptr = matp[k + 1] + 1;
+        Scalar* l1ptr = &coeff(k + 2, k);
+        Scalar* l2ptr = &coeff(k + 2, k + 1);
         const Index ldim = m_n - k - 2;
         MapVec l1(l1ptr, ldim), l2(l2ptr, ldim);
 
@@ -330,7 +316,7 @@ private:
         // B -= l * inv(E) * l' = X * l', B = A[(k+2):end, (k+2):end]
         for(Index j = 0; j < ldim; j++)
         {
-            MapVec(matp[j + k + 2], ldim - j).noalias() -= (X.col(0).tail(ldim - j) * l1ptr[j] + X.col(1).tail(ldim - j) * l2ptr[j]);
+            MapVec(col_pointer(j + k + 2), ldim - j).noalias() -= (X.col(0).tail(ldim - j) * l1ptr[j] + X.col(1).tail(ldim - j) * l2ptr[j]);
         }
 
         // l = X
@@ -343,10 +329,10 @@ public:
         m_n(0), m_computed(false)
     {}
 
-    BKLDLT(ConstGenericMatrix& mat) :
+    BKLDLT(ConstGenericMatrix& mat, int uplo = Eigen::Lower) :
         m_n(mat.rows()), m_computed(false)
     {
-        compute(mat);
+        compute(mat, uplo);
     }
 
     void compute(ConstGenericMatrix& mat, int uplo = Eigen::Lower)
@@ -386,19 +372,19 @@ public:
         // Invert the last 1x1 block if it exists
         if(k == m_n - 1)
         {
-            m_mat[k][0] = Scalar(1) / m_mat[k][0];
+            diag_coeff(k) = Scalar(1) / diag_coeff(k);
         }
 
         compress_permutation();
 
-        std::cout << "decomposition result:" << std::endl;
-        print_mat();
+        /*std::cout << "decomposition result:" << std::endl;
+        // print_mat();
         std::cout << "permutation result:" << std::endl;
         std::cout << m_perm.transpose() << std::endl << std::endl;
         std::cout << "compressed permutation result:" << std::endl;
         for(Index i = 0; i < m_permc.size(); i++)
             std::cout << "(" << m_permc[i].first << ", " << m_permc[i].second << ") ";
-        std::cout << std::endl << std::endl;
+        std::cout << std::endl << std::endl;*/
 
         m_computed = true;
     }
@@ -417,8 +403,6 @@ public:
         }
 
         // 2. Lz = Pb
-        // matp[j][i - j] -> A[i, j], i >= j
-        Scalar* const* matp = &m_mat.front();
         // If m_perm[end] < 0, then end with m_n - 3, otherwise end with m_n - 2
         const Index end = (m_perm[m_n - 1] < 0) ? (m_n - 3) : (m_n - 2);
         for(Index i = 0; i <= end; i++)
@@ -427,11 +411,11 @@ public:
             const Index b2size = b1size - 1;
             if(m_perm[i] >= 0)
             {
-                MapConstVec l(matp[i] + 1, b1size);
+                MapConstVec l(&coeff(i + 1, i), b1size);
                 res.segment(i + 1, b1size).noalias() -= l * x[i];
             } else {
-                MapConstVec l1(matp[i] + 2, b2size);
-                MapConstVec l2(matp[i + 1] + 1, b2size);
+                MapConstVec l1(&coeff(i + 2, i), b2size);
+                MapConstVec l2(&coeff(i + 2, i + 1), b2size);
                 res.segment(i + 2, b2size).noalias() -= (l1 * x[i] + l2 * x[i + 1]);
                 i++;
             }
@@ -440,12 +424,12 @@ public:
         // 3. Dw = z
         for(Index i = 0; i < m_n; i++)
         {
-            const Scalar e11 = matp[i][0];
+            const Scalar e11 = diag_coeff(i);
             if(m_perm[i] >= 0)
             {
                 x[i] *= e11;
             } else {
-                const Scalar e21 = matp[i][1], e22 = matp[i + 1][0];
+                const Scalar e21 = coeff(i + 1, i), e22 = diag_coeff(i + 1);
                 const Scalar wi = x[i] * e11 + x[i + 1] * e21;
                 x[i + 1] = x[i] * e21 + x[i + 1] * e22;
                 x[i] = wi;
@@ -459,12 +443,12 @@ public:
         for(; i >= 0; i--)
         {
             const Index ldim = m_n - i - 1;
-            MapConstVec l(matp[i] + 1, ldim);
+            MapConstVec l(&coeff(i + 1, i), ldim);
             x[i] -= res.segment(i + 1, ldim).dot(l);
 
             if(m_perm[i] < 0)
             {
-                MapConstVec l2(matp[i - 1] + 2, ldim);
+                MapConstVec l2(&coeff(i + 1, i - 1), ldim);
                 x[i - 1] -= res.segment(i + 1, ldim).dot(l2);
                 i--;
             }
