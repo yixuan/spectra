@@ -15,6 +15,12 @@
 namespace Spectra {
 
 
+// Bunch-Kaufman LDLT decomposition
+// References:
+// 1. Bunch, J. R., & Kaufman, L. (1977). Some stable methods for calculating inertia and solving symmetric linear systems.
+//    Mathematics of computation, 31(137), 163-179.
+// 2. Golub, G. H., & Van Loan, C. F. (2012). Matrix computations (Vol. 3). JHU press. Section 4.4.
+// 3. Bunch-Parlett diagonal pivoting <http://oz.nthu.edu.tw/~d947207/Chap13_GE3.ppt>
 template <typename Scalar = double>
 class BKLDLT
 {
@@ -39,6 +45,8 @@ private:
 
     bool m_computed;
 
+    // Access to elements
+    // Pointer to the k-th column
     Scalar* col_pointer(Index k) { return m_colptr[k]; }
     // A[i, j] -> m_colptr[j][i - j], i >= j
     Scalar& coeff(Index i, Index j) { return m_colptr[j][i - j]; }
@@ -47,6 +55,7 @@ private:
     Scalar& diag_coeff(Index i) { return m_colptr[i][0]; }
     const Scalar& diag_coeff(Index i) const { return m_colptr[i][0]; }
 
+    // Compute column pointers
     void compute_pointer()
     {
         m_colptr.clear();
@@ -80,6 +89,7 @@ private:
         }
     }
 
+    // Compute compressed permutations
     void compress_permutation()
     {
         for(Index i = 0; i < m_n; i++)
@@ -392,6 +402,9 @@ public:
     // Solve Ax=b
     Vector solve(ConstGenericVector& b) const
     {
+        if(!m_computed)
+            throw std::logic_error("BKLDLT: need to call compute() first");
+
         // PAP' = LDL'
         // 1. b -> Pb
         Vector res = b;
