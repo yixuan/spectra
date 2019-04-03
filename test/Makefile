@@ -12,12 +12,13 @@ HEADERS = $(wildcard ../include/Spectra/MatOp/*.h) \
 
 .PHONY: all test clean
 
-all: QR.out Eigen.out SymEigs.out SymEigsShift.out GenEigs.out GenEigsRealShift.out GenEigsComplexShift.out \
+all: QR.out Eigen.out BKLDLT.out SymEigs.out SymEigsShift.out GenEigs.out GenEigsRealShift.out GenEigsComplexShift.out \
 	SymGEigsCholesky.out SymGEigsRegInv.out SVD.out
 
 test:
 	-./QR.out
 	-./Eigen.out
+	-./BKLDLT.out
 	-./SymEigs.out
 	-./SymEigsShift.out
 	-./GenEigs.out
