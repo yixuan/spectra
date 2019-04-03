@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -71,6 +71,8 @@ public:
         mat = mat - sigma * identity;
         m_solver.isSymmetric(true);
         m_solver.compute(mat);
+        if(m_solver.info() != Eigen::Success)
+            throw std::invalid_argument("SparseSymShiftSolve: factorization failed with the given shift");
     }
 
     ///

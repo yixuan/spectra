@@ -69,7 +69,7 @@ public:
     {
         m_solver.compute(m_mat, Uplo, sigma);
         if(m_solver.info() != SUCCESSFUL)
-            throw std::invalid_argument("DenseSymShiftSolve: matrix is singular with the given shift");
+            throw std::invalid_argument("DenseSymShiftSolve: factorization failed with the given shift");
     }
 
     ///
