@@ -1,10 +1,28 @@
-## [Unreleased]
+## [0.8.0] - 2019-04-03
+### Added
+- Added a `BKLDLT` class that implements the Bunch-Kaufman LDLT decomposition
+  for symmetric indefinite matrices. According to the Eigen documentation,
+  currently `Eigen::LDLT` cannot handle some special indefinite matrices such
+  as `[0, 1; 1, 0]`, but `BKLDLT` is applicable to any symmetric matrices as
+  long as it is not singular. LDLT decomposition is used in shift-and-invert
+  solvers (see below)
+- Added a unit test for `BKLDLT`
+
 ### Changed
+- `DenseSymShiftSolve` now uses the newly added `BKLDLT` class to do the
+  decomposition. This change broadens the class of matrices that
+  `DenseSymShiftSolve` can handle, reduces memory use, and should also improve
+  the numerical stability of the solver
+- Replaced `Eigen::SimplicialLDLT` with `Eigen::SparseLU` in the `SparseSymShiftSolve`
+  class, as some edge-case indefinite matrices may break `Eigen::SimplicialLDLT`
+- `SparseSymShiftSolve` and `SparseGenRealShiftSolve` will throw an error if
+  the factorization failed, for example, on singular matrices
 - Fixed a missing `#include` in `DenseCholesky.h`, thanks to
   [Lennart Trunk](https://github.com/TheScarfix) for the issue
   [#59](https://github.com/yixuan/spectra/issues/59)
 - Fixed errors in examples ([#60](https://github.com/yixuan/spectra/issues/60)),
   thanks to [@linuxfreebird](https://github.com/linuxfreebird)
+- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.7.0
 
 
 ## [0.7.0] - 2019-01-10
