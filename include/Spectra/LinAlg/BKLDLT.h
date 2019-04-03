@@ -35,6 +35,7 @@ private:
     typedef typename Matrix::Index Index;
 
     typedef Eigen::Matrix<Index, Eigen::Dynamic, 1> IntVector;
+    typedef Eigen::Ref<Vector> GenericVector;
     typedef Eigen::Ref<Matrix> GenericMatrix;
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
     typedef const Eigen::Ref<const Vector> ConstGenericVector;
@@ -425,15 +426,15 @@ public:
     }
 
     // Solve Ax=b
-    Vector solve(ConstGenericVector& b) const
+    void solve_inplace(GenericVector b) const
     {
         if(!m_computed)
             throw std::logic_error("BKLDLT: need to call compute() first");
 
         // PAP' = LDL'
         // 1. b -> Pb
-        Vector res = b;
-        Scalar* x = res.data();
+        Scalar* x = b.data();
+        MapVec res(x, m_n);
         Index npermc = m_permc.size();
         for(Index i = 0; i < npermc; i++)
         {
@@ -497,7 +498,12 @@ public:
         {
             std::swap(x[m_permc[i].first], x[m_permc[i].second]);
         }
+    }
 
+    Vector solve(ConstGenericVector& b) const
+    {
+        Vector res = b;
+        solve_inplace(res);
         return res;
     }
 
