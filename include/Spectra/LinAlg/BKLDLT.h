@@ -10,7 +10,6 @@
 #include <Eigen/Core>
 #include <vector>
 #include <stdexcept>
-#include <iostream>
 
 #include "../Util/CompInfo.h"
 
@@ -102,16 +101,6 @@ private:
             if(perm != i)
                 m_permc.push_back(std::make_pair(i, perm));
         }
-    }
-
-    void print_mat() const
-    {
-        Matrix mat = Matrix::Zero(m_n, m_n);
-        for(Index j = 0; j < m_n; j++)
-        {
-            std::copy(col_pointer(j), col_pointer(j) + (m_n - j), &mat.coeffRef(j, j));
-        }
-        std::cout << mat << std::endl << std::endl;
     }
 
     // Working on the A[k:end, k:end] submatrix
@@ -226,7 +215,6 @@ private:
     {
         Index r = k, p = k;
         const Scalar lambda = find_lambda(k, r);
-        // std::cout << "lambda = " << lambda << std::endl;
 
         // If lambda=0, no need to interchange
         if(lambda > Scalar(0))
@@ -236,7 +224,6 @@ private:
             if(abs_akk < alpha * lambda)
             {
                 const Scalar sigma = find_sigma(k, r, p);
-                // std::cout << "sigma = " << sigma << std::endl;
 
                 // If sigma * |A[k, k]| >= alpha * lambda^2, no need to interchange
                 if(sigma * abs_akk < alpha * lambda * lambda)
@@ -383,8 +370,6 @@ public:
         Index k = 0;
         for(k = 0; k < m_n - 1; k++)
         {
-            // std::cout << "k = " << k << std::endl;
-
             // 1. Interchange rows and columns of A, and save the result to m_perm
             bool is_1x1 = permutate_mat(k, alpha);
 
@@ -412,15 +397,6 @@ public:
         }
 
         compress_permutation();
-
-        /*std::cout << "decomposition result:" << std::endl;
-        // print_mat();
-        std::cout << "permutation result:" << std::endl;
-        std::cout << m_perm.transpose() << std::endl << std::endl;
-        std::cout << "compressed permutation result:" << std::endl;
-        for(Index i = 0; i < m_permc.size(); i++)
-            std::cout << "(" << m_permc[i].first << ", " << m_permc[i].second << ") ";
-        std::cout << std::endl << std::endl;*/
 
         m_computed = true;
     }
