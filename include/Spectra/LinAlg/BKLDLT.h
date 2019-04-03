@@ -72,13 +72,17 @@ private:
         }
     }
 
-    void copy_data(ConstGenericMatrix& mat, int uplo = Eigen::Lower)
+    // Copy mat - shift * I to m_data
+    void copy_data(ConstGenericMatrix& mat, int uplo, const Scalar& shift)
     {
         if(uplo == Eigen::Lower)
         {
             for(Index j = 0; j < m_n; j++)
             {
-                std::copy(&mat.coeffRef(j, j), &mat.coeffRef(0, j + 1), col_pointer(j));
+                const Scalar* begin = &mat.coeffRef(j, j);
+                const Index len = m_n - j;
+                std::copy(begin, begin + len, col_pointer(j));
+                diag_coeff(j) -= shift;
             }
         } else {
             Scalar* dest = m_data.data();
@@ -88,6 +92,7 @@ private:
                 {
                     *dest = mat.coeff(i, j);
                 }
+                diag_coeff(i) -= shift;
             }
         }
     }
@@ -344,13 +349,14 @@ public:
         m_n(0), m_computed(false), m_info(NOT_COMPUTED)
     {}
 
-    BKLDLT(ConstGenericMatrix& mat, int uplo = Eigen::Lower) :
+    // Factorize mat - shift * I
+    BKLDLT(ConstGenericMatrix& mat, int uplo = Eigen::Lower, const Scalar& shift = Scalar(0)) :
         m_n(mat.rows()), m_computed(false), m_info(NOT_COMPUTED)
     {
-        compute(mat, uplo);
+        compute(mat, uplo, shift);
     }
 
-    void compute(ConstGenericMatrix& mat, int uplo = Eigen::Lower)
+    void compute(ConstGenericMatrix& mat, int uplo = Eigen::Lower, const Scalar& shift = Scalar(0))
     {
         using std::abs;
 
@@ -364,7 +370,7 @@ public:
         // Copy data
         m_data.resize((m_n * (m_n + 1)) / 2);
         compute_pointer();
-        copy_data(mat, uplo);
+        copy_data(mat, uplo, shift);
 
         const Scalar alpha = (1.0 + std::sqrt(17.0)) / 8.0;
         Index k = 0;
