@@ -9,7 +9,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <Eigen/SparseCholesky>
+#include <Eigen/SparseLU>
 #include <stdexcept>
 
 namespace Spectra {
@@ -34,7 +34,7 @@ private:
 
     ConstGenericSparseMatrix m_mat;
     const int m_n;
-    Eigen::SimplicialLDLT<SparseMatrix, Uplo> m_solver;
+    Eigen::SparseLU<SparseMatrix> m_solver;
 
 public:
     ///
@@ -65,8 +65,12 @@ public:
     ///
     void set_shift(Scalar sigma)
     {
-        m_solver.setShift(-sigma);
-        m_solver.compute(m_mat);
+        SparseMatrix mat = m_mat.template selfadjointView<Uplo>();
+        SparseMatrix identity(m_n, m_n);
+        identity.setIdentity();
+        mat = mat - sigma * identity;
+        m_solver.isSymmetric(true);
+        m_solver.compute(mat);
     }
 
     ///
