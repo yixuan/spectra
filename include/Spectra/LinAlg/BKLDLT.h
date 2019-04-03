@@ -12,6 +12,8 @@
 #include <stdexcept>
 #include <iostream>
 
+#include "../Util/CompInfo.h"
+
 namespace Spectra {
 
 
@@ -44,6 +46,7 @@ private:
     std::vector< std::pair<Index, Index> > m_permc;  // compressed version of m_perm: [(0, 2), (2, 3), (3, 1)]
 
     bool m_computed;
+    int  m_info;
 
     // Access to elements
     // Pointer to the k-th column
@@ -286,10 +289,15 @@ private:
         e21 = -e21 / delta;
     }
 
-    void gaussian_elimination_1x1(Index k)
+    // Return value is the status, SUCCESSFUL/NUMERICAL_ISSUE
+    int gaussian_elimination_1x1(Index k)
     {
         // D = 1 / A[k, k]
         const Scalar akk = diag_coeff(k);
+        // Return NUMERICAL_ISSUE if not invertible
+        if(akk == Scalar(0))
+            return NUMERICAL_ISSUE;
+
         diag_coeff(k) = 1.0 / akk;
 
         // B -= l * l' / A[k, k], B := A[(k+1):end, (k+1):end], l := L[(k+1):end, k]
@@ -303,14 +311,21 @@ private:
 
         // l /= A[k, k]
         l /= akk;
+
+        return SUCCESSFUL;
     }
 
-    void gaussian_elimination_2x2(Index k)
+    // Return value is the status, SUCCESSFUL/NUMERICAL_ISSUE
+    int gaussian_elimination_2x2(Index k)
     {
         // D = inv(E)
         Scalar& e11 = diag_coeff(k);
         Scalar& e21 = coeff(k + 1, k);
         Scalar& e22 = diag_coeff(k + 1);
+        // Return NUMERICAL_ISSUE if not invertible
+        if(e11 * e22 - e21 * e21 == Scalar(0))
+            return NUMERICAL_ISSUE;
+
         inverse_inplace_2x2(e11, e21, e22);
 
         // X = l * inv(E), l := L[(k+2):end, k:(k+1)]
@@ -332,15 +347,17 @@ private:
         // l = X
         l1.noalias() = X.col(0);
         l2.noalias() = X.col(1);
+
+        return SUCCESSFUL;
     }
 
 public:
     BKLDLT() :
-        m_n(0), m_computed(false)
+        m_n(0), m_computed(false), m_info(NOT_COMPUTED)
     {}
 
     BKLDLT(ConstGenericMatrix& mat, int uplo = Eigen::Lower) :
-        m_n(mat.rows()), m_computed(false)
+        m_n(mat.rows()), m_computed(false), m_info(NOT_COMPUTED)
     {
         compute(mat, uplo);
     }
@@ -373,15 +390,23 @@ public:
             // 2. Gaussian elimination
             if(is_1x1)
             {
-                gaussian_elimination_1x1(k);
+                m_info = gaussian_elimination_1x1(k);
             } else {
-                gaussian_elimination_2x2(k);
+                m_info = gaussian_elimination_2x2(k);
                 k++;
             }
+
+            // 3. Check status
+            if(m_info != SUCCESSFUL)
+                break;
         }
         // Invert the last 1x1 block if it exists
         if(k == m_n - 1)
         {
+            const Scalar akk = diag_coeff(k);
+            if(akk == Scalar(0))
+                m_info = NUMERICAL_ISSUE;
+
             diag_coeff(k) = Scalar(1) / diag_coeff(k);
         }
 
@@ -475,6 +500,8 @@ public:
 
         return res;
     }
+
+    int info() const { return m_info; }
 };
 
 
