@@ -247,8 +247,8 @@ private:
                         // p >= k and r >= k+1, so it is safe to always make r > p
                         // One exception is when min{r,p} == k+1, in which case we make
                         // r = k+1, so that only one permutation needs to be performed
-                        const Scalar rp_min = std::min(r, p);
-                        const Scalar rp_max = std::max(r, p);
+                        const Index rp_min = std::min(r, p);
+                        const Index rp_max = std::max(r, p);
                         if(rp_min == k + 1)
                         {
                             r = rp_min; p = rp_max;
