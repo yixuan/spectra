@@ -22,12 +22,11 @@ template <typename Scalar = double>
 class DoubleShiftQR
 {
 private:
+    typedef Eigen::Index Index;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
     typedef Eigen::Matrix<Scalar, 3, Eigen::Dynamic> Matrix3X;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
     typedef Eigen::Array<unsigned char, Eigen::Dynamic, 1> IntArray;
-
-    typedef typename Matrix::Index Index;
 
     typedef Eigen::Ref<Matrix> GenericMatrix;
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;

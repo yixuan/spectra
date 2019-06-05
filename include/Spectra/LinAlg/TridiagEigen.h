@@ -24,13 +24,12 @@ template <typename Scalar = double>
 class TridiagEigen
 {
 private:
+    typedef Eigen::Index Index;
     // For convenience in adapting the tridiagonal_qr_step() function
     typedef Scalar RealScalar;
 
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-
-    typedef typename Matrix::Index Index;
 
     typedef Eigen::Ref<Matrix> GenericMatrix;
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
@@ -152,7 +151,7 @@ public:
 
         Index end = m_n - 1;
         Index start = 0;
-        int iter = 0; // total number of iterations
+        Index iter = 0; // total number of iterations
         int info = 0; // 0 for success, 1 for failure
 
         const Scalar considerAsZero = TypeTraits<Scalar>::min();

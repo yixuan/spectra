@@ -44,12 +44,11 @@ template <typename Scalar = double>
 class UpperHessenbergQR
 {
 private:
+    typedef Eigen::Index Index;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
     typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
     typedef Eigen::Matrix<Scalar, 1, Eigen::Dynamic> RowVector;
     typedef Eigen::Array<Scalar, Eigen::Dynamic, 1> Array;
-
-    typedef typename Matrix::Index Index;
 
     typedef Eigen::Ref<Matrix> GenericMatrix;
     typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;

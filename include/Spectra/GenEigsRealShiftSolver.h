@@ -42,6 +42,7 @@ template <typename Scalar = double,
 class GenEigsRealShiftSolver: public GenEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>
 {
 private:
+    typedef Eigen::Index Index;
     typedef std::complex<Scalar> Complex;
     typedef Eigen::Array<Complex, Eigen::Dynamic, 1> ComplexArray;
 
@@ -75,7 +76,7 @@ public:
     ///               and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
     /// \param sigma  The real-valued shift.
     ///
-    GenEigsRealShiftSolver(OpType* op, int nev, int ncv, Scalar sigma) :
+    GenEigsRealShiftSolver(OpType* op, Index nev, Index ncv, Scalar sigma) :
         GenEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>(op, NULL, nev, ncv),
         m_sigma(sigma)
     {
