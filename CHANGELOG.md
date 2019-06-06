@@ -1,3 +1,17 @@
+## [0.8.1] - 2019-06-05
+### Changed
+- Fixed a bug in `BKLDLT` in which a wrong type was used, thanks to
+  [@jdbancal](https://github.com/jdbancal) for the issue
+  [#64](https://github.com/yixuan/spectra/pull/64)
+- Fixed a bug in `BKLDLT` that caused segmentation fault in some edge
+  cases, also reported by [@jdbancal](https://github.com/jdbancal) in issue
+  [#66](https://github.com/yixuan/spectra/issues/66)
+- The type `Eigen::Index` is now globally used for indices and sizes, in order to
+  handle potentially large matrices. This was suggested by
+  [Yuan Yao](https://github.com/y-yao) in issue
+  [#19](https://github.com/yixuan/spectra/issues/19)
+
+
 ## [0.8.0] - 2019-04-03
 ### Added
 - Added a `BKLDLT` class that implements the Bunch-Kaufman LDLT decomposition
