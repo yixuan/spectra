@@ -105,10 +105,10 @@ $(document).ready(function(){initNavTree('classSpectra_1_1SparseCholesky.html','
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae69cdce1f0c667228f5d7af7b4c90296"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseCholesky.html#ae69cdce1f0c667228f5d7af7b4c90296">SparseCholesky</a> (ConstGenericSparseMatrix &amp;mat)</td></tr>
 <tr class="separator:ae69cdce1f0c667228f5d7af7b4c90296"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8c63c2225eee44454d8367cadbfb209"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseCholesky.html#af8c63c2225eee44454d8367cadbfb209">rows</a> () const</td></tr>
-<tr class="separator:af8c63c2225eee44454d8367cadbfb209"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a310978adda7202f7d8e9c3919294fe4a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseCholesky.html#a310978adda7202f7d8e9c3919294fe4a">cols</a> () const</td></tr>
-<tr class="separator:a310978adda7202f7d8e9c3919294fe4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55050635322db4e7f1317c3953c1a600"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseCholesky.html#a55050635322db4e7f1317c3953c1a600">rows</a> () const</td></tr>
+<tr class="separator:a55050635322db4e7f1317c3953c1a600"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa328008149939eb27d3a2655891b9a68"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseCholesky.html#aa328008149939eb27d3a2655891b9a68">cols</a> () const</td></tr>
+<tr class="separator:aa328008149939eb27d3a2655891b9a68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a363f36cc39520bc34bf092030a43da49"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseCholesky.html#a363f36cc39520bc34bf092030a43da49">info</a> () const</td></tr>
 <tr class="separator:a363f36cc39520bc34bf092030a43da49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a942cf621ca4f3906850bb2b4cfb86fd7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseCholesky.html#a942cf621ca4f3906850bb2b4cfb86fd7">lower_triangular_solve</a> (const Scalar *x_in, Scalar *y_out) const</td></tr>
@@ -157,13 +157,13 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00049">49</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00050">50</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="af8c63c2225eee44454d8367cadbfb209"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af8c63c2225eee44454d8367cadbfb209">&#9670;&nbsp;</a></span>rows()</h2>
+<a id="a55050635322db4e7f1317c3953c1a600"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55050635322db4e7f1317c3953c1a600">&#9670;&nbsp;</a></span>rows()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -174,7 +174,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1SparseCholesky.html">Spectra::SparseCholesky</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::rows </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1SparseCholesky.html">Spectra::SparseCholesky</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::rows </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -188,12 +188,12 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
 </div><div class="memdoc">
 <p>Returns the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00064">64</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00065">65</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
 
 </div>
 </div>
-<a id="a310978adda7202f7d8e9c3919294fe4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a310978adda7202f7d8e9c3919294fe4a">&#9670;&nbsp;</a></span>cols()</h2>
+<a id="aa328008149939eb27d3a2655891b9a68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa328008149939eb27d3a2655891b9a68">&#9670;&nbsp;</a></span>cols()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -204,7 +204,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1SparseCholesky.html">Spectra::SparseCholesky</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::cols </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1SparseCholesky.html">Spectra::SparseCholesky</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::cols </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -218,7 +218,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
 </div><div class="memdoc">
 <p>Returns the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00068">68</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00069">69</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -248,7 +248,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
 </div><div class="memdoc">
 <p>Returns the status of the computation. The full list of enumeration values can be found in <a class="el" href="group__Enumerations.html">Enumerations</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00074">74</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00075">75</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -296,7 +296,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00083">83</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00084">84</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -344,7 +344,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00098">98</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseCholesky_8h_source.html#l00099">99</a> of file <a class="el" href="SparseCholesky_8h_source.html">SparseCholesky.h</a>.</p>
 
 </div>
 </div>

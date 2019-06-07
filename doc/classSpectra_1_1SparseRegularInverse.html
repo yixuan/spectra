@@ -105,10 +105,10 @@ $(document).ready(function(){initNavTree('classSpectra_1_1SparseRegularInverse.h
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab09860dbdf2d364faa0510cd79531005"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseRegularInverse.html#ab09860dbdf2d364faa0510cd79531005">SparseRegularInverse</a> (ConstGenericSparseMatrix &amp;mat)</td></tr>
 <tr class="separator:ab09860dbdf2d364faa0510cd79531005"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f7a0aba863052aceec121003351ef25"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseRegularInverse.html#a2f7a0aba863052aceec121003351ef25">rows</a> () const</td></tr>
-<tr class="separator:a2f7a0aba863052aceec121003351ef25"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2659de07dae45c88114db051e9316f1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseRegularInverse.html#ae2659de07dae45c88114db051e9316f1">cols</a> () const</td></tr>
-<tr class="separator:ae2659de07dae45c88114db051e9316f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8dd57b1f22f8d301b01fa0fb75f98a53"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseRegularInverse.html#a8dd57b1f22f8d301b01fa0fb75f98a53">rows</a> () const</td></tr>
+<tr class="separator:a8dd57b1f22f8d301b01fa0fb75f98a53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02e142888b106432360ecfd4470def4c"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseRegularInverse.html#a02e142888b106432360ecfd4470def4c">cols</a> () const</td></tr>
+<tr class="separator:a02e142888b106432360ecfd4470def4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a46eeae36c081eae218d72908192462d5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseRegularInverse.html#a46eeae36c081eae218d72908192462d5">solve</a> (const Scalar *x_in, Scalar *y_out) const</td></tr>
 <tr class="separator:a46eeae36c081eae218d72908192462d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afe594e3a9792f5b502d580fa689be41c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseRegularInverse.html#afe594e3a9792f5b502d580fa689be41c">mat_prod</a> (const Scalar *x_in, Scalar *y_out) const</td></tr>
@@ -156,13 +156,13 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseRegularInverse_8h_source.html#l00051">51</a> of file <a class="el" href="SparseRegularInverse_8h_source.html">SparseRegularInverse.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseRegularInverse_8h_source.html#l00052">52</a> of file <a class="el" href="SparseRegularInverse_8h_source.html">SparseRegularInverse.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a2f7a0aba863052aceec121003351ef25"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2f7a0aba863052aceec121003351ef25">&#9670;&nbsp;</a></span>rows()</h2>
+<a id="a8dd57b1f22f8d301b01fa0fb75f98a53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8dd57b1f22f8d301b01fa0fb75f98a53">&#9670;&nbsp;</a></span>rows()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -173,7 +173,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1SparseRegularInverse.html">Spectra::SparseRegularInverse</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::rows </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1SparseRegularInverse.html">Spectra::SparseRegularInverse</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::rows </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -187,12 +187,12 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
 </div><div class="memdoc">
 <p>Return the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseRegularInverse_8h_source.html#l00063">63</a> of file <a class="el" href="SparseRegularInverse_8h_source.html">SparseRegularInverse.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseRegularInverse_8h_source.html#l00064">64</a> of file <a class="el" href="SparseRegularInverse_8h_source.html">SparseRegularInverse.h</a>.</p>
 
 </div>
 </div>
-<a id="ae2659de07dae45c88114db051e9316f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2659de07dae45c88114db051e9316f1">&#9670;&nbsp;</a></span>cols()</h2>
+<a id="a02e142888b106432360ecfd4470def4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02e142888b106432360ecfd4470def4c">&#9670;&nbsp;</a></span>cols()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -203,7 +203,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1SparseRegularInverse.html">Spectra::SparseRegularInverse</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::cols </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1SparseRegularInverse.html">Spectra::SparseRegularInverse</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::cols </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -217,7 +217,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
 </div><div class="memdoc">
 <p>Return the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseRegularInverse_8h_source.html#l00067">67</a> of file <a class="el" href="SparseRegularInverse_8h_source.html">SparseRegularInverse.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseRegularInverse_8h_source.html#l00068">68</a> of file <a class="el" href="SparseRegularInverse_8h_source.html">SparseRegularInverse.h</a>.</p>
 
 </div>
 </div>
@@ -265,7 +265,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseRegularInverse_8h_source.html#l00076">76</a> of file <a class="el" href="SparseRegularInverse_8h_source.html">SparseRegularInverse.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseRegularInverse_8h_source.html#l00077">77</a> of file <a class="el" href="SparseRegularInverse_8h_source.html">SparseRegularInverse.h</a>.</p>
 
 </div>
 </div>
@@ -313,7 +313,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseRegularInverse_8h_source.html#l00090">90</a> of file <a class="el" href="SparseRegularInverse_8h_source.html">SparseRegularInverse.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseRegularInverse_8h_source.html#l00091">91</a> of file <a class="el" href="SparseRegularInverse_8h_source.html">SparseRegularInverse.h</a>.</p>
 
 </div>
 </div>

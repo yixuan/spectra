@@ -105,10 +105,10 @@ $(document).ready(function(){initNavTree('classSpectra_1_1SparseSymMatProd.html'
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a061e0533151e17791d66969465e50b58"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymMatProd.html#a061e0533151e17791d66969465e50b58">SparseSymMatProd</a> (ConstGenericSparseMatrix &amp;mat)</td></tr>
 <tr class="separator:a061e0533151e17791d66969465e50b58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f617dfe1b319bf65a926411bc348031"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymMatProd.html#a3f617dfe1b319bf65a926411bc348031">rows</a> () const</td></tr>
-<tr class="separator:a3f617dfe1b319bf65a926411bc348031"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb59e85225235173ed58db90eab0bc20"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymMatProd.html#afb59e85225235173ed58db90eab0bc20">cols</a> () const</td></tr>
-<tr class="separator:afb59e85225235173ed58db90eab0bc20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b42e2f96f39608e137cda7f36ff1b00"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymMatProd.html#a3b42e2f96f39608e137cda7f36ff1b00">rows</a> () const</td></tr>
+<tr class="separator:a3b42e2f96f39608e137cda7f36ff1b00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1584f60d24a2ea0f519f78900bccfab8"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymMatProd.html#a1584f60d24a2ea0f519f78900bccfab8">cols</a> () const</td></tr>
+<tr class="separator:a1584f60d24a2ea0f519f78900bccfab8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa0b4f81014762318bb2ba5f13683849"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymMatProd.html#afa0b4f81014762318bb2ba5f13683849">perform_op</a> (const Scalar *x_in, Scalar *y_out) const</td></tr>
 <tr class="separator:afa0b4f81014762318bb2ba5f13683849"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -153,13 +153,13 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseSymMatProd_8h_source.html#l00043">43</a> of file <a class="el" href="SparseSymMatProd_8h_source.html">SparseSymMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseSymMatProd_8h_source.html#l00044">44</a> of file <a class="el" href="SparseSymMatProd_8h_source.html">SparseSymMatProd.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3f617dfe1b319bf65a926411bc348031"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3f617dfe1b319bf65a926411bc348031">&#9670;&nbsp;</a></span>rows()</h2>
+<a id="a3b42e2f96f39608e137cda7f36ff1b00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b42e2f96f39608e137cda7f36ff1b00">&#9670;&nbsp;</a></span>rows()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -170,7 +170,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1SparseSymMatProd.html">Spectra::SparseSymMatProd</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::rows </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1SparseSymMatProd.html">Spectra::SparseSymMatProd</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::rows </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -184,12 +184,12 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
 </div><div class="memdoc">
 <p>Return the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseSymMatProd_8h_source.html#l00050">50</a> of file <a class="el" href="SparseSymMatProd_8h_source.html">SparseSymMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseSymMatProd_8h_source.html#l00051">51</a> of file <a class="el" href="SparseSymMatProd_8h_source.html">SparseSymMatProd.h</a>.</p>
 
 </div>
 </div>
-<a id="afb59e85225235173ed58db90eab0bc20"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afb59e85225235173ed58db90eab0bc20">&#9670;&nbsp;</a></span>cols()</h2>
+<a id="a1584f60d24a2ea0f519f78900bccfab8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1584f60d24a2ea0f519f78900bccfab8">&#9670;&nbsp;</a></span>cols()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -200,7 +200,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1SparseSymMatProd.html">Spectra::SparseSymMatProd</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::cols </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1SparseSymMatProd.html">Spectra::SparseSymMatProd</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::cols </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -214,7 +214,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
 </div><div class="memdoc">
 <p>Return the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseSymMatProd_8h_source.html#l00054">54</a> of file <a class="el" href="SparseSymMatProd_8h_source.html">SparseSymMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseSymMatProd_8h_source.html#l00055">55</a> of file <a class="el" href="SparseSymMatProd_8h_source.html">SparseSymMatProd.h</a>.</p>
 
 </div>
 </div>
@@ -262,7 +262,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseSymMatProd_8h_source.html#l00063">63</a> of file <a class="el" href="SparseSymMatProd_8h_source.html">SparseSymMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseSymMatProd_8h_source.html#l00064">64</a> of file <a class="el" href="SparseSymMatProd_8h_source.html">SparseSymMatProd.h</a>.</p>
 
 </div>
 </div>

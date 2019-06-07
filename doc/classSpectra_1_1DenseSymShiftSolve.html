@@ -105,10 +105,10 @@ $(document).ready(function(){initNavTree('classSpectra_1_1DenseSymShiftSolve.htm
 Public Member Functions</h2></td></tr>
 <tr class="memitem:afbdf1e346c37f1270f0029bbbd2e2d7b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseSymShiftSolve.html#afbdf1e346c37f1270f0029bbbd2e2d7b">DenseSymShiftSolve</a> (ConstGenericMatrix &amp;mat)</td></tr>
 <tr class="separator:afbdf1e346c37f1270f0029bbbd2e2d7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad22bc8a18483cf802d7f3a8e674f13f1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseSymShiftSolve.html#ad22bc8a18483cf802d7f3a8e674f13f1">rows</a> () const</td></tr>
-<tr class="separator:ad22bc8a18483cf802d7f3a8e674f13f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d58a495b5a5cb30bd1d65ea87d69d93"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseSymShiftSolve.html#a7d58a495b5a5cb30bd1d65ea87d69d93">cols</a> () const</td></tr>
-<tr class="separator:a7d58a495b5a5cb30bd1d65ea87d69d93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac95b845dc97ffbf1c253890042569c3a"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseSymShiftSolve.html#ac95b845dc97ffbf1c253890042569c3a">rows</a> () const</td></tr>
+<tr class="separator:ac95b845dc97ffbf1c253890042569c3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a916649b3eb4c77e7f860a12444b26f46"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseSymShiftSolve.html#a916649b3eb4c77e7f860a12444b26f46">cols</a> () const</td></tr>
+<tr class="separator:a916649b3eb4c77e7f860a12444b26f46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d730c57fb462a8a4258f7d1f6cbede9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseSymShiftSolve.html#a3d730c57fb462a8a4258f7d1f6cbede9">set_shift</a> (Scalar sigma)</td></tr>
 <tr class="separator:a3d730c57fb462a8a4258f7d1f6cbede9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a865a4d04e8582a36121fde89f6ae19d6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseSymShiftSolve.html#a865a4d04e8582a36121fde89f6ae19d6">perform_op</a> (const Scalar *x_in, Scalar *y_out) const</td></tr>
@@ -155,13 +155,13 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymShiftSolve_8h_source.html#l00049">49</a> of file <a class="el" href="DenseSymShiftSolve_8h_source.html">DenseSymShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymShiftSolve_8h_source.html#l00050">50</a> of file <a class="el" href="DenseSymShiftSolve_8h_source.html">DenseSymShiftSolve.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ad22bc8a18483cf802d7f3a8e674f13f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad22bc8a18483cf802d7f3a8e674f13f1">&#9670;&nbsp;</a></span>rows()</h2>
+<a id="ac95b845dc97ffbf1c253890042569c3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac95b845dc97ffbf1c253890042569c3a">&#9670;&nbsp;</a></span>rows()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,7 +172,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1DenseSymShiftSolve.html">Spectra::DenseSymShiftSolve</a>&lt; Scalar, Uplo &gt;::rows </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1DenseSymShiftSolve.html">Spectra::DenseSymShiftSolve</a>&lt; Scalar, Uplo &gt;::rows </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -186,12 +186,12 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
 </div><div class="memdoc">
 <p>Return the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymShiftSolve_8h_source.html#l00059">59</a> of file <a class="el" href="DenseSymShiftSolve_8h_source.html">DenseSymShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymShiftSolve_8h_source.html#l00060">60</a> of file <a class="el" href="DenseSymShiftSolve_8h_source.html">DenseSymShiftSolve.h</a>.</p>
 
 </div>
 </div>
-<a id="a7d58a495b5a5cb30bd1d65ea87d69d93"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d58a495b5a5cb30bd1d65ea87d69d93">&#9670;&nbsp;</a></span>cols()</h2>
+<a id="a916649b3eb4c77e7f860a12444b26f46"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a916649b3eb4c77e7f860a12444b26f46">&#9670;&nbsp;</a></span>cols()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -202,7 +202,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1DenseSymShiftSolve.html">Spectra::DenseSymShiftSolve</a>&lt; Scalar, Uplo &gt;::cols </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1DenseSymShiftSolve.html">Spectra::DenseSymShiftSolve</a>&lt; Scalar, Uplo &gt;::cols </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -216,7 +216,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
 </div><div class="memdoc">
 <p>Return the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymShiftSolve_8h_source.html#l00063">63</a> of file <a class="el" href="DenseSymShiftSolve_8h_source.html">DenseSymShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymShiftSolve_8h_source.html#l00064">64</a> of file <a class="el" href="DenseSymShiftSolve_8h_source.html">DenseSymShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -247,7 +247,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
 </div><div class="memdoc">
 <p>Set the real shift \(\sigma\). </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymShiftSolve_8h_source.html#l00068">68</a> of file <a class="el" href="DenseSymShiftSolve_8h_source.html">DenseSymShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymShiftSolve_8h_source.html#l00069">69</a> of file <a class="el" href="DenseSymShiftSolve_8h_source.html">DenseSymShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -295,7 +295,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymShiftSolve_8h_source.html#l00082">82</a> of file <a class="el" href="DenseSymShiftSolve_8h_source.html">DenseSymShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymShiftSolve_8h_source.html#l00083">83</a> of file <a class="el" href="DenseSymShiftSolve_8h_source.html">DenseSymShiftSolve.h</a>.</p>
 
 </div>
 </div>

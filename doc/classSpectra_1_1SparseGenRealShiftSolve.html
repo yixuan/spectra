@@ -105,10 +105,10 @@ $(document).ready(function(){initNavTree('classSpectra_1_1SparseGenRealShiftSolv
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aa08e043f151c5ef225aeeaded4542d4e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html#aa08e043f151c5ef225aeeaded4542d4e">SparseGenRealShiftSolve</a> (ConstGenericSparseMatrix &amp;mat)</td></tr>
 <tr class="separator:aa08e043f151c5ef225aeeaded4542d4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34855d95eacc254dc388ef77508d7b22"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html#a34855d95eacc254dc388ef77508d7b22">rows</a> () const</td></tr>
-<tr class="separator:a34855d95eacc254dc388ef77508d7b22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3ade4b004d14d48d9b8ee288caf241b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html#ac3ade4b004d14d48d9b8ee288caf241b">cols</a> () const</td></tr>
-<tr class="separator:ac3ade4b004d14d48d9b8ee288caf241b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc4d106e05172202ad288b0f166572e3"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html#adc4d106e05172202ad288b0f166572e3">rows</a> () const</td></tr>
+<tr class="separator:adc4d106e05172202ad288b0f166572e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c273ac439e35f5b9dd6d9ebb26342d3"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html#a1c273ac439e35f5b9dd6d9ebb26342d3">cols</a> () const</td></tr>
+<tr class="separator:a1c273ac439e35f5b9dd6d9ebb26342d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab20c8684a8ef100b60d8d435080f7e54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html#ab20c8684a8ef100b60d8d435080f7e54">set_shift</a> (Scalar sigma)</td></tr>
 <tr class="separator:ab20c8684a8ef100b60d8d435080f7e54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a4430eba1f60fd5b51e318db2a6cf69"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html#a1a4430eba1f60fd5b51e318db2a6cf69">perform_op</a> (const Scalar *x_in, Scalar *y_out) const</td></tr>
@@ -155,13 +155,13 @@ template&lt;typename Scalar , int Flags = 0, typename StorageIndex  = int&gt; </
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00047">47</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00048">48</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a34855d95eacc254dc388ef77508d7b22"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a34855d95eacc254dc388ef77508d7b22">&#9670;&nbsp;</a></span>rows()</h2>
+<a id="adc4d106e05172202ad288b0f166572e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc4d106e05172202ad288b0f166572e3">&#9670;&nbsp;</a></span>rows()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,7 +172,7 @@ template&lt;typename Scalar , int Flags = 0, typename StorageIndex  = int&gt; </
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html">Spectra::SparseGenRealShiftSolve</a>&lt; Scalar, Flags, StorageIndex &gt;::rows </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html">Spectra::SparseGenRealShiftSolve</a>&lt; Scalar, Flags, StorageIndex &gt;::rows </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -186,12 +186,12 @@ template&lt;typename Scalar , int Flags = 0, typename StorageIndex  = int&gt; </
 </div><div class="memdoc">
 <p>Return the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00057">57</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00058">58</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
-<a id="ac3ade4b004d14d48d9b8ee288caf241b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3ade4b004d14d48d9b8ee288caf241b">&#9670;&nbsp;</a></span>cols()</h2>
+<a id="a1c273ac439e35f5b9dd6d9ebb26342d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c273ac439e35f5b9dd6d9ebb26342d3">&#9670;&nbsp;</a></span>cols()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -202,7 +202,7 @@ template&lt;typename Scalar , int Flags = 0, typename StorageIndex  = int&gt; </
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html">Spectra::SparseGenRealShiftSolve</a>&lt; Scalar, Flags, StorageIndex &gt;::cols </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html">Spectra::SparseGenRealShiftSolve</a>&lt; Scalar, Flags, StorageIndex &gt;::cols </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -216,7 +216,7 @@ template&lt;typename Scalar , int Flags = 0, typename StorageIndex  = int&gt; </
 </div><div class="memdoc">
 <p>Return the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00061">61</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00062">62</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -247,7 +247,7 @@ template&lt;typename Scalar , int Flags = 0, typename StorageIndex  = int&gt; </
 </div><div class="memdoc">
 <p>Set the real shift \(\sigma\). </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00066">66</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00067">67</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -295,7 +295,7 @@ template&lt;typename Scalar , int Flags = 0, typename StorageIndex  = int&gt; </
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00083">83</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00084">84</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>

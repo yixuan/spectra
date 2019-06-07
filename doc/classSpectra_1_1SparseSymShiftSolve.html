@@ -105,10 +105,10 @@ $(document).ready(function(){initNavTree('classSpectra_1_1SparseSymShiftSolve.ht
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9a971efb2cfc8717077d361932071533"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymShiftSolve.html#a9a971efb2cfc8717077d361932071533">SparseSymShiftSolve</a> (ConstGenericSparseMatrix &amp;mat)</td></tr>
 <tr class="separator:a9a971efb2cfc8717077d361932071533"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a4ab3b511e151453f1993c77eac383b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymShiftSolve.html#a5a4ab3b511e151453f1993c77eac383b">rows</a> () const</td></tr>
-<tr class="separator:a5a4ab3b511e151453f1993c77eac383b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13501f4b51e3f5b0e602ce7d0278a913"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymShiftSolve.html#a13501f4b51e3f5b0e602ce7d0278a913">cols</a> () const</td></tr>
-<tr class="separator:a13501f4b51e3f5b0e602ce7d0278a913"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4594f5cf77a298abc0c6fec0616d4a6d"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymShiftSolve.html#a4594f5cf77a298abc0c6fec0616d4a6d">rows</a> () const</td></tr>
+<tr class="separator:a4594f5cf77a298abc0c6fec0616d4a6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2af97457b458deb50983c1ad19dfb9b1"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymShiftSolve.html#a2af97457b458deb50983c1ad19dfb9b1">cols</a> () const</td></tr>
+<tr class="separator:a2af97457b458deb50983c1ad19dfb9b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adcda64d6e12a1392e014e6f1ceb10715"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymShiftSolve.html#adcda64d6e12a1392e014e6f1ceb10715">set_shift</a> (Scalar sigma)</td></tr>
 <tr class="separator:adcda64d6e12a1392e014e6f1ceb10715"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89c63ca6ec31aeb82a524775796dd4eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseSymShiftSolve.html#a89c63ca6ec31aeb82a524775796dd4eb">perform_op</a> (const Scalar *x_in, Scalar *y_out) const</td></tr>
@@ -155,13 +155,13 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseSymShiftSolve_8h_source.html#l00047">47</a> of file <a class="el" href="SparseSymShiftSolve_8h_source.html">SparseSymShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseSymShiftSolve_8h_source.html#l00048">48</a> of file <a class="el" href="SparseSymShiftSolve_8h_source.html">SparseSymShiftSolve.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a5a4ab3b511e151453f1993c77eac383b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a4ab3b511e151453f1993c77eac383b">&#9670;&nbsp;</a></span>rows()</h2>
+<a id="a4594f5cf77a298abc0c6fec0616d4a6d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4594f5cf77a298abc0c6fec0616d4a6d">&#9670;&nbsp;</a></span>rows()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,7 +172,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1SparseSymShiftSolve.html">Spectra::SparseSymShiftSolve</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::rows </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1SparseSymShiftSolve.html">Spectra::SparseSymShiftSolve</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::rows </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -186,12 +186,12 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
 </div><div class="memdoc">
 <p>Return the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseSymShiftSolve_8h_source.html#l00057">57</a> of file <a class="el" href="SparseSymShiftSolve_8h_source.html">SparseSymShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseSymShiftSolve_8h_source.html#l00058">58</a> of file <a class="el" href="SparseSymShiftSolve_8h_source.html">SparseSymShiftSolve.h</a>.</p>
 
 </div>
 </div>
-<a id="a13501f4b51e3f5b0e602ce7d0278a913"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13501f4b51e3f5b0e602ce7d0278a913">&#9670;&nbsp;</a></span>cols()</h2>
+<a id="a2af97457b458deb50983c1ad19dfb9b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2af97457b458deb50983c1ad19dfb9b1">&#9670;&nbsp;</a></span>cols()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -202,7 +202,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1SparseSymShiftSolve.html">Spectra::SparseSymShiftSolve</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::cols </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1SparseSymShiftSolve.html">Spectra::SparseSymShiftSolve</a>&lt; Scalar, Uplo, Flags, StorageIndex &gt;::cols </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -216,7 +216,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
 </div><div class="memdoc">
 <p>Return the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseSymShiftSolve_8h_source.html#l00061">61</a> of file <a class="el" href="SparseSymShiftSolve_8h_source.html">SparseSymShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseSymShiftSolve_8h_source.html#l00062">62</a> of file <a class="el" href="SparseSymShiftSolve_8h_source.html">SparseSymShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -247,7 +247,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
 </div><div class="memdoc">
 <p>Set the real shift \(\sigma\). </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseSymShiftSolve_8h_source.html#l00066">66</a> of file <a class="el" href="SparseSymShiftSolve_8h_source.html">SparseSymShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseSymShiftSolve_8h_source.html#l00067">67</a> of file <a class="el" href="SparseSymShiftSolve_8h_source.html">SparseSymShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -295,7 +295,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower, int Flags = 0, typename S
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseSymShiftSolve_8h_source.html#l00085">85</a> of file <a class="el" href="SparseSymShiftSolve_8h_source.html">SparseSymShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseSymShiftSolve_8h_source.html#l00086">86</a> of file <a class="el" href="SparseSymShiftSolve_8h_source.html">SparseSymShiftSolve.h</a>.</p>
 
 </div>
 </div>

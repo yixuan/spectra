@@ -105,10 +105,10 @@ $(document).ready(function(){initNavTree('classSpectra_1_1DenseCholesky.html',''
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0f8794be15f45c1cc2f4c200e57f820d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#a0f8794be15f45c1cc2f4c200e57f820d">DenseCholesky</a> (ConstGenericMatrix &amp;mat)</td></tr>
 <tr class="separator:a0f8794be15f45c1cc2f4c200e57f820d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcb9290f47bc6b530841af6c616653ab"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#afcb9290f47bc6b530841af6c616653ab">rows</a> () const</td></tr>
-<tr class="separator:afcb9290f47bc6b530841af6c616653ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a4115870bc09675b301abf7185a1172"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#a2a4115870bc09675b301abf7185a1172">cols</a> () const</td></tr>
-<tr class="separator:a2a4115870bc09675b301abf7185a1172"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36a6b9f2a5a3e3def92199d9311cb27c"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#a36a6b9f2a5a3e3def92199d9311cb27c">rows</a> () const</td></tr>
+<tr class="separator:a36a6b9f2a5a3e3def92199d9311cb27c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae141d2f935d4b0fff3a903f3e7d7392f"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#ae141d2f935d4b0fff3a903f3e7d7392f">cols</a> () const</td></tr>
+<tr class="separator:ae141d2f935d4b0fff3a903f3e7d7392f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9027f39715516a9c18986ac8c750f35f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#a9027f39715516a9c18986ac8c750f35f">info</a> () const</td></tr>
 <tr class="separator:a9027f39715516a9c18986ac8c750f35f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4bbeacb485268a9f758d0d755faca88"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#af4bbeacb485268a9f758d0d755faca88">lower_triangular_solve</a> (const Scalar *x_in, Scalar *y_out) const</td></tr>
@@ -157,13 +157,13 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00050">50</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00051">51</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="afcb9290f47bc6b530841af6c616653ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afcb9290f47bc6b530841af6c616653ab">&#9670;&nbsp;</a></span>rows()</h2>
+<a id="a36a6b9f2a5a3e3def92199d9311cb27c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36a6b9f2a5a3e3def92199d9311cb27c">&#9670;&nbsp;</a></span>rows()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -174,7 +174,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1DenseCholesky.html">Spectra::DenseCholesky</a>&lt; Scalar, Uplo &gt;::rows </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1DenseCholesky.html">Spectra::DenseCholesky</a>&lt; Scalar, Uplo &gt;::rows </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -188,12 +188,12 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
 </div><div class="memdoc">
 <p>Returns the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00065">65</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00066">66</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
-<a id="a2a4115870bc09675b301abf7185a1172"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a4115870bc09675b301abf7185a1172">&#9670;&nbsp;</a></span>cols()</h2>
+<a id="ae141d2f935d4b0fff3a903f3e7d7392f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae141d2f935d4b0fff3a903f3e7d7392f">&#9670;&nbsp;</a></span>cols()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -204,7 +204,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classSpectra_1_1DenseCholesky.html">Spectra::DenseCholesky</a>&lt; Scalar, Uplo &gt;::cols </td>
+          <td class="memname">Index <a class="el" href="classSpectra_1_1DenseCholesky.html">Spectra::DenseCholesky</a>&lt; Scalar, Uplo &gt;::cols </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -218,7 +218,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
 </div><div class="memdoc">
 <p>Returns the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00069">69</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00070">70</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -248,7 +248,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
 </div><div class="memdoc">
 <p>Returns the status of the computation. The full list of enumeration values can be found in <a class="el" href="group__Enumerations.html">Enumerations</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00075">75</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00076">76</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -296,7 +296,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00084">84</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00085">85</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -344,7 +344,7 @@ template&lt;typename Scalar , int Uplo = Eigen::Lower&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00098">98</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00099">99</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
