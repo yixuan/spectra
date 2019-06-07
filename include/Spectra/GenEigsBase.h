@@ -361,7 +361,7 @@ public:
     ///
     /// \return Number of converged eigenvalues.
     ///
-    int compute(Index maxit = 1000, Scalar tol = 1e-10, int sort_rule = LARGEST_MAGN)
+    Index compute(Index maxit = 1000, Scalar tol = 1e-10, int sort_rule = LARGEST_MAGN)
     {
         // The m-step Arnoldi factorization
         m_fac.factorize_from(1, m_ncv, m_nmatop);
