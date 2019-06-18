@@ -1,5 +1,8 @@
 # <a href="https://spectralib.org"><img src="https://spectralib.org/img/logo.png" width="200px" /></a>
 
+% I plan to introduce the chebyshev polynomial points to this codes to get the eigenvaluse for unbounded problems.
+
+
 [![Build Status](https://travis-ci.org/yixuan/spectra.svg?branch=master)](https://travis-ci.org/yixuan/spectra)
 
 > **NOTE**: Starting from v0.7 all header files are moved into a directory
