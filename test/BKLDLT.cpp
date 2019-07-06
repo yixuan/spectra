@@ -55,7 +55,7 @@ TEST_CASE("BKLDLT decomposition of symmetric real matrix [100x100]", "[BKLDLT]")
 
 TEST_CASE("BKLDLT decomposition of symmetric real matrix [1000x1000]", "[BKLDLT]")
 {
-    std::srand(123);
+    std::srand(3);
     const int n = 1000;
     MatrixXd A = MatrixXd::Random(n, n);
     A = (A + A.transpose()).eval();
