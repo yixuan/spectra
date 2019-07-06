@@ -27,11 +27,6 @@ matrix:
             - ubuntu-toolchain-r-test
             - llvm-toolchain-xenial-7
 
-# Enable Slack notifications, disable e-mail
-notifications:
-  slack: GQCG:5PZ5ibXCwNU1b5ToWbHVIqnI
-  email: false
-
 before_cache:
   - rm -rf $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var $HOME/miniconda/conda-meta/history
   - pip uninstall -y cardboardlint
