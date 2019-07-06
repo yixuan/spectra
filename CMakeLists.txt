@@ -50,7 +50,7 @@ install(EXPORT Spectra-targets
 
 include(CMakePackageConfigHelpers)
 
-#[[configure_package_config_file(
+configure_package_config_file(
     ${CMAKE_SOURCE_DIR}/cmake/Spectra-config.cmake.in
     ${CMAKE_BINARY_DIR}/cmake/Spectra-config.cmake
     INSTALL_DESTINATION cmake
@@ -58,7 +58,7 @@ include(CMakePackageConfigHelpers)
 
 write_basic_package_version_file(
     ${CMAKE_BINARY_DIR}/cmake/Spectra-config-version.cmake
-    VERSION ${CINT_VERSION}
+    VERSION ${Spectra_VERSION}
     COMPATIBILITY AnyNewerVersion
 )
 
@@ -67,4 +67,4 @@ install(
         ${CMAKE_BINARY_DIR}/cmake/Spectra-config.cmake
         ${CMAKE_BINARY_DIR}/cmake/Spectra-config-version.cmake
     DESTINATION cmake
-)]]
+)
