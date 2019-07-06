@@ -1,14 +1,31 @@
-language: c++
-dist: xenial
-env: CC=gcc-8 CXX=g++-8
-sudo: true
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - gcc-8
-      - g++-8
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      name: Linux, gcc-8
+      env: CC=gcc-8 CXX=g++-8
+      sudo: true
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-8
+            - g++-8
+    - os: linux
+      dist: xenial
+      name: Linux, Clang 7.0
+      env: CC=clang-7 CXX=clang++-7
+      sudo: true
+      addons:
+        apt:
+          packages:
+            - clang-7
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-7
 
 # Enable Slack notifications, disable e-mail
 notifications:
