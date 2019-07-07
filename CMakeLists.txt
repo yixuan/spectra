@@ -39,7 +39,7 @@ install(TARGETS Spectra
 	INCLUDES DESTINATION include
 )
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include DESTINATION include)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include)
 
 install(EXPORT Spectra-targets
 	FILE Spectra-targets.cmake
