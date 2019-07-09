@@ -1,36 +1,76 @@
-branches:
-  only:
-    - master
-    - develop
-
 language: cpp
 
-compiler:
-  - clang
-  - gcc
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      name: Linux, gcc-8
+      env: CC=gcc-8 CXX=g++-8
+      sudo: true
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-8
+            - g++-8
+    - os: linux
+      dist: xenial
+      name: Linux, Clang 7.0
+      env: CC=clang-7 CXX=clang++-7
+      sudo: true
+      addons:
+        apt:
+          packages:
+            - clang-7
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-xenial-7
 
-dist: xenial
+before_cache:
+  - rm -rf $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var $HOME/miniconda/conda-meta/history
+  - pip uninstall -y cardboardlint
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-xenial-7
-    packages:
-      - g++-8
-      - clang-7
+# Cache miniconda for faster build procedures
+cache:
+  directories:
+    - $HOME/miniconda
+    - $HOME/download
 
 before_install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-8"; fi
-  - if [ "$CXX" = "clang++" ]; then export CXX="clang++-7"; fi
-  - $CXX --version
+  - |
+    set -ex
+    if [ -d $HOME/miniconda/bin ]; then
+      echo "Miniconda already installed.";
+    else
+      echo "Installing miniconda.";
+      rm -rf $HOME/miniconda;
+      mkdir -p $HOME/download;
+      wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O $HOME/download/miniconda.sh;
+      bash $HOME/download/miniconda.sh -b -p $HOME/miniconda
+    fi
+    set +ex
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
 
 install:
-  - wget https://bitbucket.org/eigen/eigen/get/3.3.7.tar.gz
-  - tar xzf 3.3.7.tar.gz
-  - mv eigen-eigen-323c052e1731/Eigen include/
+  # Configure conda
+  - source $HOME/miniconda/bin/activate
+  - hash -r
+  - conda config --set always_yes yes --set changeps1 no
 
+  # Install a recent version of CMake, Boost and eigen if they are not yet already installed.
+  - if [ ! -f $HOME/miniconda/bin/cmake ]; then
+      conda install -c conda-forge cmake=3.13 eigen;
+    else
+      echo "Using already installed packages.";
+    fi
+  - export PATH=${HOME}/miniconda/bin:${PATH} # Use conda CMake
+
+# Run the build script
 script:
-  - cd test
-  - make -j 2 all
-  - make test
+  - cd ${TRAVIS_BUILD_DIR}
+  - mkdir build && cd build
+  - cmake .. -DCMAKE_PREFIX_PATH=${HOME}/miniconda -DBUILD_TESTS=TRUE
+  - make -j3 VERBOSE=1 && make test ARGS=-j3 && sudo make install

@@ -1,3 +1,5 @@
 *.o
 *.out
 include/Eigen/*
+.idea/
+cmake-build*/
