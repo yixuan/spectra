@@ -109,7 +109,7 @@ private:
     OpType& m_op;
 
 public:
-    ArnoldiOp<Scalar, OpType, IdentityBOp>(OpType* op, IdentityBOp* Bop) :
+    ArnoldiOp<Scalar, OpType, IdentityBOp>(OpType* op, IdentityBOp* /*Bop*/) :
         m_op(*op)
     {}
 
