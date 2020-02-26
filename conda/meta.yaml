@@ -1,0 +1,28 @@
+{% set version = "0.8.1" %}
+
+package:
+    name: spectra
+    version: {{ version }}
+source:
+    git_url: https://github.com/yixuan/spectra.git
+    git_tag: master
+requirements:
+    build:
+      - git
+      - make
+      - cmake {{ cmake }}
+      - {{ compiler('c') }}
+      - {{ compiler('cxx') }}
+      - llvm-openmp               # [osx]
+    host:
+      - eigen {{ eigen }}
+    run:
+      - {{ pin_compatible('eigen', min_pin='x.x', max_pin='x.x') }}
+test:
+  commands:
+    - test -f ${PREFIX}/include/Spectra/GenEigsBase.h
+about:
+    home: https://github.com/GQCG/spectra
+    license: Mozilla Public License 2.0 (MPL 2.0)
+    license_file: LICENSE
+    summary: 'A header-only C++ library for large scale eigenvalue problems.'
