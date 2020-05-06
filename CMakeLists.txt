@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.13 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 project (Spectra VERSION 0.8.1 LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)  # make CMake look into the ./cmake/ folder for configuration files
@@ -6,11 +6,13 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)  # make CMake look into
 # Supported options
 # -----------------
 option(BUILD_TESTS "Build tests" OFF)
-
+include(FeatureSummary) # More verbose Output for libraries using set_package_properties
 
 # Look for supporting libraries
 # -----------------------------
-find_package(Eigen3 REQUIRED)
+find_package(Eigen3 NO_MODULE REQUIRED)
+set_package_properties(Eigen3 PROPERTIES TYPE REQUIRED PURPOSE "C++ vector data structures")
+message(STATUS "Found Eigen3 Version: ${Eigen3_VERSION} Path: ${Eigen3_DIR}")
 
 # Setup library
 # -------------
@@ -72,3 +74,8 @@ install(
         ${CMAKE_BINARY_DIR}/cmake/spectra-config-version.cmake
     DESTINATION cmake
 )
+
+
+
+# Print out summary of all detected packages
+feature_summary(INCLUDE_QUIET_PACKAGES WHAT ALL)
