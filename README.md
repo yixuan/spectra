@@ -233,7 +233,7 @@ More information can be found in the project page [https://spectralib.org](https
 
 ## Installation
 
-An optional CMake installation is supported, if you have CMake with at least v3.13 installed. You can install the headers using the following commands:
+An optional CMake installation is supported, if you have CMake installed. You can install the headers using the following commands:
 
 ```bash
     mkdir build && cd build
