@@ -203,20 +203,20 @@ protected:
             {
                 SortEigenvalue<Scalar, LARGEST_MAGN> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
-            }
                 break;
+            }
             case SMALLEST_ALGE:
             {
                 SortEigenvalue<Scalar, SMALLEST_ALGE> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
-            }
                 break;
+            }
             case SMALLEST_MAGN:
             {
                 SortEigenvalue<Scalar, SMALLEST_MAGN> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
-            }
                 break;
+            }
             default:
                 throw std::invalid_argument("unsupported sorting rule");
         }

@@ -221,32 +221,32 @@ protected:
             {
                 SortEigenvalue<Complex, LARGEST_REAL> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
-            }
                 break;
+            }
             case LARGEST_IMAG:
             {
                 SortEigenvalue<Complex, LARGEST_IMAG> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
-            }
                 break;
+            }
             case SMALLEST_MAGN:
             {
                 SortEigenvalue<Complex, SMALLEST_MAGN> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
-            }
                 break;
+            }
             case SMALLEST_REAL:
             {
                 SortEigenvalue<Complex, SMALLEST_REAL> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
-            }
                 break;
+            }
             case SMALLEST_IMAG:
             {
                 SortEigenvalue<Complex, SMALLEST_IMAG> sorting(m_ritz_val.data(), m_nev);
                 ind = sorting.index();
-            }
                 break;
+            }
             default:
                 throw std::invalid_argument("unsupported sorting rule");
         }
