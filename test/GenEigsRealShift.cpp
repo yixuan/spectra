@@ -57,7 +57,8 @@ void run_test(const MatType& mat, int k, int m, double sigma, bool allow_fail = 
     GenEigsRealShiftSolver<double, SelectionRule, typename OpTypeTrait<MatType>::OpType>
         eigs(&op, k, m, sigma);
     eigs.init();
-    int nconv = eigs.compute(300); // maxit = 300 to reduce running time for failed cases
+    // maxit = 300 to reduce running time for failed cases
+    int nconv = eigs.compute(300);
     int niter = eigs.num_iterations();
     int nops  = eigs.num_operations();
 

@@ -58,6 +58,7 @@ private:
     typedef Lanczos<Scalar, ArnoldiOpType> LanczosFac;
 
 protected:
+    // clang-format off
     OpType*      m_op;         // object to conduct matrix operation,
                                // e.g. matrix-vector product
     const Index  m_n;          // dimension of matrix A
@@ -79,6 +80,7 @@ private:
                                // ~= 1e-307 for the "double" type
     const Scalar m_eps;        // the machine precision, ~= 1e-16 for the "double" type
     const Scalar m_eps23;      // m_eps^(2/3), used to test the convergence
+    // clang-format on
 
     // Implicitly restarted Lanczos factorization
     void restart(Index k)

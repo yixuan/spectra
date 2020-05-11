@@ -41,6 +41,7 @@ private:
     typedef Eigen::Map<const Vector> MapConstVec;
 
 protected:
+    // clang-format off
     ArnoldiOpType m_op;       // Operators for the Arnoldi factorization
 
     const Index m_n;          // dimension of A
@@ -55,6 +56,7 @@ protected:
     const Scalar m_near_0;    // a very small value, but 1.0 / m_near_0 does not overflow
                               // ~= 1e-307 for the "double" type
     const Scalar m_eps;       // the machine precision, ~= 1e-16 for the "double" type
+    // clang-format on
 
     // Given orthonormal basis functions V, find a nonzero vector f such that V'Bf = 0
     // Assume that f has been properly allocated

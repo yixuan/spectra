@@ -120,6 +120,7 @@ void run_test_sets(const MatType& mat, int k, int m, double sigma)
     }
 }
 
+// clang-format off
 TEST_CASE("Eigensolver of symmetric real matrix [10x10]", "[eigs_sym]")
 {
     std::srand(123);

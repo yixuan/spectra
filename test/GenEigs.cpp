@@ -58,7 +58,8 @@ void run_test(const MatType& mat, int k, int m, bool allow_fail = false)
     GenEigsSolver<double, SelectionRule, typename OpTypeTrait<MatType>::OpType>
         eigs(&op, k, m);
     eigs.init();
-    int nconv = eigs.compute(500); // maxit = 500 to reduce running time for failed cases
+    // maxit = 500 to reduce running time for failed cases
+    int nconv = eigs.compute(500);
     int niter = eigs.num_iterations();
     int nops  = eigs.num_operations();
 

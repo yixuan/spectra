@@ -153,6 +153,7 @@ void run_test_sets(const MatType& A, const MatType& B, int k, int m)
     }
 }
 
+// clang-format off
 TEST_CASE("Generalized eigensolver of symmetric real matrix [10x10]", "[geigs_sym]")
 {
     std::srand(123);

@@ -112,6 +112,7 @@ void run_test_sets(const SpMatrix& A, const SpMatrix& B, int k, int m)
     }
 }
 
+// clang-format off
 TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [10x10]", "[geigs_sym]")
 {
     std::srand(123);

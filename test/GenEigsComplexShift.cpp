@@ -20,7 +20,8 @@ void run_test(const Matrix &mat, int k, int m, double sigmar, double sigmai, boo
     DenseGenComplexShiftSolve<double> op(mat);
     GenEigsComplexShiftSolver<double, SelectionRule, DenseGenComplexShiftSolve<double>> eigs(&op, k, m, sigmar, sigmai);
     eigs.init();
-    int nconv = eigs.compute(100); // maxit = 500 to reduce running time for failed cases
+    // maxit = 100 to reduce running time for failed cases
+    int nconv = eigs.compute(100);
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 

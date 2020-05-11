@@ -155,13 +155,11 @@ void eigs_sym_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
         return;
     }
 
-/*
-    std::cout << "computed eigenvalues D = \n" << evals.transpose() << std::endl;
+    /* std::cout << "computed eigenvalues D = \n" << evals.transpose() << std::endl;
     std::cout << "first 5 rows of computed eigenvectors U = \n" <<
-        evecs.topLeftCorner(5, nconv) << std::endl;
+    evecs.topLeftCorner(5, nconv) << std::endl;
     std::cout << "nconv = " << nconv << std::endl;
-    std::cout << "nops = " << niter << std::endl;
-*/
+    std::cout << "nops = " << niter << std::endl; */
 
     end = get_wall_time();
     time_used = (end - start) * 1000;
@@ -322,16 +320,14 @@ void eigs_gen_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
         return;
     }
 
-/*
-    VectorXcd evals(evals_re.size());
+    /* VectorXcd evals(evals_re.size());
     evals.real() = evals_re;
     evals.imag() = evals_im;
     std::cout << "computed eigenvalues D = \n" << evals << std::endl;
     std::cout << "first 5 rows of computed eigenvectors U = \n" <<
         evecs.topLeftCorner(5, nconv) << std::endl;
     std::cout << "nconv = " << nconv << std::endl;
-    std::cout << "nops = " << niter << std::endl;
-*/
+    std::cout << "nops = " << niter << std::endl; */
 
     end = get_wall_time();
     time_used = (end - start) * 1000;
