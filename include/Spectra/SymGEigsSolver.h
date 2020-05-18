@@ -164,10 +164,8 @@ template < typename Scalar,
            int SelectionRule,
            typename OpType,
            typename BOpType >
-// clang-format off
 class SymGEigsSolver<Scalar, SelectionRule, OpType, BOpType, GEIGS_CHOLESKY> :
     public SymEigsBase<Scalar, SelectionRule, SymGEigsCholeskyOp<Scalar, OpType, BOpType>, IdentityBOp>
-// clang-format on
 {
 private:
     typedef Eigen::Index Index;
@@ -202,13 +200,11 @@ public:
     ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
-    // clang-format off
     SymGEigsSolver(OpType* op, BOpType* Bop, Index nev, Index ncv) :
         SymEigsBase<Scalar, SelectionRule, SymGEigsCholeskyOp<Scalar, OpType, BOpType>, IdentityBOp>(
             new SymGEigsCholeskyOp<Scalar, OpType, BOpType>(*op, *Bop), NULL, nev, ncv
         ),
         m_Bop(Bop)
-    // clang-format on
     {}
 
     /// \cond
@@ -287,10 +283,8 @@ template < typename Scalar,
            int SelectionRule,
            typename OpType,
            typename BOpType >
-// clang-format off
 class SymGEigsSolver<Scalar, SelectionRule, OpType, BOpType, GEIGS_REGULAR_INVERSE> :
     public SymEigsBase<Scalar, SelectionRule, SymGEigsRegInvOp<Scalar, OpType, BOpType>, BOpType>
-// clang-format on
 {
 private:
     typedef Eigen::Index Index;
@@ -319,12 +313,10 @@ public:
     ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
-    // clang-format off
     SymGEigsSolver(OpType* op, BOpType* Bop, Index nev, Index ncv) :
         SymEigsBase<Scalar, SelectionRule, SymGEigsRegInvOp<Scalar, OpType, BOpType>, BOpType>(
             new SymGEigsRegInvOp<Scalar, OpType, BOpType>(*op, *Bop), Bop, nev, ncv
         )
-    // clang-format on
     {}
 
     /// \cond

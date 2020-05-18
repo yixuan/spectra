@@ -34,7 +34,7 @@ BraceWrapping:
   AfterObjCDeclaration: false
   AfterStruct:     true
   AfterUnion:      true
-  AfterExternBlock: true
+  AfterExternBlock: false
   BeforeCatch:     true
   BeforeElse:      true
   IndentBraces:    false
@@ -44,7 +44,7 @@ BraceWrapping:
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Custom
 BreakBeforeInheritanceComma: false
-BreakInheritanceList: BeforeColon
+BreakInheritanceList: AfterColon
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializersBeforeComma: false
 BreakConstructorInitializers: AfterColon
