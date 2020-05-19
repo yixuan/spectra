@@ -1,3 +1,21 @@
+## [0.9.0] - 2020-05-19
+### Added
+- Added support for CMake build, contributed by
+  [Guillaume Acke](https://github.com/guacke) and [Jens Wehner](https://github.com/JensWehner)
+  ([#70](https://github.com/yixuan/spectra/pull/70), [#88](https://github.com/yixuan/spectra/pull/88))
+- Spectra can now be installed via [conda-forge](https://github.com/conda-forge/spectralib-feedstock),
+  thanks to [Guillaume Acke](https://github.com/guacke) and [Julien Schueller](https://github.com/jschueller)
+  ([#81](https://github.com/yixuan/spectra/pull/81), [#85](https://github.com/yixuan/spectra/pull/85))
+- The source code of Spectra is now formatted using
+  [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html), suggested by
+  [Jens Wehner](https://github.com/JensWehner)
+
+### Changed
+- Fixed a compiler warning caused by unused parameter, contributed by
+  [Julien Schueller](https://github.com/jschueller) ([#80](https://github.com/yixuan/spectra/pull/80))
+- Changed the implementation of `BKLDLT` sovler to improve precision in some tests
+
+
 ## [0.8.1] - 2019-06-05
 ### Changed
 - Fixed a bug in `BKLDLT` in which a wrong type was used, thanks to
