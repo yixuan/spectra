@@ -17,16 +17,16 @@ void run_test(const MatrixXd& A, const VectorXd& b, double s)
     REQUIRE(decompL.info() == SUCCESSFUL);
 
     BKLDLT<double> decompU(A, Eigen::Upper, s);
-    REQUIRE( decompU.info() == SUCCESSFUL );
+    REQUIRE(decompU.info() == SUCCESSFUL);
 
     VectorXd solL = decompL.solve(b);
     VectorXd solU = decompU.solve(b);
-    REQUIRE( (solL - solU).cwiseAbs().maxCoeff() == 0.0 );
+    REQUIRE((solL - solU).cwiseAbs().maxCoeff() == 0.0);
 
     const double tol = 1e-9;
     VectorXd resid = A * solL - s * solL - b;
-    INFO( "||(A - s * I)x - b||_inf = " << resid.cwiseAbs().maxCoeff() );
-    REQUIRE( resid.cwiseAbs().maxCoeff() == Approx(0.0).margin(tol) );
+    INFO("||(A - s * I)x - b||_inf = " << resid.cwiseAbs().maxCoeff());
+    REQUIRE(resid.cwiseAbs().maxCoeff() == Approx(0.0).margin(tol));
 }
 
 TEST_CASE("BKLDLT decomposition of symmetric real matrix [10x10]", "[BKLDLT]")

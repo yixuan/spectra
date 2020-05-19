@@ -26,7 +26,6 @@
 
 namespace Spectra {
 
-
 ///
 /// \ingroup EigenSolver
 ///
@@ -34,10 +33,10 @@ namespace Spectra {
 /// It is kept here to provide the documentation for member functions of concrete eigen solvers
 /// such as GenEigsSolver and GenEigsRealShiftSolver.
 ///
-template < typename Scalar,
-           int      SelectionRule,
-           typename OpType,
-           typename BOpType >
+template <typename Scalar,
+          int SelectionRule,
+          typename OpType,
+          typename BOpType>
 class GenEigsBase
 {
 private:
@@ -94,16 +93,16 @@ private:
     {
         using std::norm;
 
-        if(k >= m_ncv)
+        if (k >= m_ncv)
             return;
 
         DoubleShiftQR<Scalar> decomp_ds(m_ncv);
         UpperHessenbergQR<Scalar> decomp_hb(m_ncv);
         Matrix Q = Matrix::Identity(m_ncv, m_ncv);
 
-        for(Index i = k; i < m_ncv; i++)
+        for (Index i = k; i < m_ncv; i++)
         {
-            if(is_complex(m_ritz_val[i]) && is_conj(m_ritz_val[i], m_ritz_val[i + 1]))
+            if (is_complex(m_ritz_val[i]) && is_conj(m_ritz_val[i], m_ritz_val[i + 1]))
             {
                 // H - mu * I = Q1 * R1
                 // H <- R1 * Q1 + mu * I = Q1' * H * Q1
@@ -125,7 +124,9 @@ private:
                 m_fac.compress_H(decomp_ds);
 
                 i++;
-            } else {
+            }
+            else
+            {
                 // QR decomposition of H - mu * I, mu is real
                 decomp_hb.compute(m_fac.matrix_H(), m_ritz_val[i].real());
 
@@ -160,23 +161,24 @@ private:
         using std::abs;
 
         Index nev_new = m_nev;
-        for(Index i = m_nev; i < m_ncv; i++)
-            if(abs(m_ritz_est[i]) < m_near_0)  nev_new++;
+        for (Index i = m_nev; i < m_ncv; i++)
+            if (abs(m_ritz_est[i]) < m_near_0)
+                nev_new++;
 
         // Adjust nev_new, according to dnaup2.f line 660~674 in ARPACK
         nev_new += std::min(nconv, (m_ncv - nev_new) / 2);
-        if(nev_new == 1 && m_ncv >= 6)
+        if (nev_new == 1 && m_ncv >= 6)
             nev_new = m_ncv / 2;
-        else if(nev_new == 1 && m_ncv > 3)
+        else if (nev_new == 1 && m_ncv > 3)
             nev_new = 2;
 
-        if(nev_new > m_ncv - 2)
+        if (nev_new > m_ncv - 2)
             nev_new = m_ncv - 2;
 
         // Increase nev by one if ritz_val[nev - 1] and
         // ritz_val[nev] are conjugate pairs
-        if(is_complex(m_ritz_val[nev_new - 1]) &&
-           is_conj(m_ritz_val[nev_new - 1], m_ritz_val[nev_new]))
+        if (is_complex(m_ritz_val[nev_new - 1]) &&
+            is_conj(m_ritz_val[nev_new - 1], m_ritz_val[nev_new]))
         {
             nev_new++;
         }
@@ -195,12 +197,12 @@ private:
         std::vector<int> ind = sorting.index();
 
         // Copy the Ritz values and vectors to m_ritz_val and m_ritz_vec, respectively
-        for(Index i = 0; i < m_ncv; i++)
+        for (Index i = 0; i < m_ncv; i++)
         {
             m_ritz_val[i] = evals[ind[i]];
             m_ritz_est[i] = evecs(m_ncv - 1, ind[i]);
         }
-        for(Index i = 0; i < m_nev; i++)
+        for (Index i = 0; i < m_nev; i++)
         {
             m_ritz_vec.col(i).noalias() = evecs.col(ind[i]);
         }
@@ -215,7 +217,7 @@ protected:
         SortEigenvalue<Complex, LARGEST_MAGN> sorting(m_ritz_val.data(), m_nev);
         std::vector<int> ind = sorting.index();
 
-        switch(sort_rule)
+        switch (sort_rule)
         {
             case LARGEST_MAGN:
                 break;
@@ -257,7 +259,7 @@ protected:
         ComplexMatrix new_ritz_vec(m_ncv, m_nev);
         BoolArray new_ritz_conv(m_nev);
 
-        for(Index i = 0; i < m_nev; i++)
+        for (Index i = 0; i < m_nev; i++)
         {
             new_ritz_val[i] = m_ritz_val[ind[i]];
             new_ritz_vec.col(i).noalias() = m_ritz_vec.col(ind[i]);
@@ -285,10 +287,10 @@ public:
         m_eps(Eigen::NumTraits<Scalar>::epsilon()),
         m_eps23(Eigen::numext::pow(m_eps, Scalar(2.0) / 3))
     {
-        if(nev < 1 || nev > m_n - 2)
+        if (nev < 1 || nev > m_n - 2)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 2, n is the size of matrix");
 
-        if(ncv < nev + 2 || ncv > m_n)
+        if (ncv < nev + 2 || ncv > m_n)
             throw std::invalid_argument("ncv must satisfy nev + 2 <= ncv <= n, n is the size of matrix");
     }
 
@@ -370,10 +372,10 @@ public:
         retrieve_ritzpair();
         // Restarting
         Index i, nconv = 0, nev_adj;
-        for(i = 0; i < maxit; i++)
+        for (i = 0; i < maxit; i++)
         {
             nconv = num_converged(tol);
-            if(nconv >= m_nev)
+            if (nconv >= m_nev)
                 break;
 
             nev_adj = nev_adjusted(nconv);
@@ -416,13 +418,13 @@ public:
         const Index nconv = m_ritz_conv.cast<Index>().sum();
         ComplexVector res(nconv);
 
-        if(!nconv)
+        if (!nconv)
             return res;
 
         Index j = 0;
-        for(Index i = 0; i < m_nev; i++)
+        for (Index i = 0; i < m_nev; i++)
         {
-            if(m_ritz_conv[i])
+            if (m_ritz_conv[i])
             {
                 res[j] = m_ritz_val[i];
                 j++;
@@ -447,14 +449,14 @@ public:
         nvec = std::min(nvec, nconv);
         ComplexMatrix res(m_n, nvec);
 
-        if(!nvec)
+        if (!nvec)
             return res;
 
         ComplexMatrix ritz_vec_conv(m_ncv, nvec);
         Index j = 0;
-        for(Index i = 0; i < m_nev && j < nvec; i++)
+        for (Index i = 0; i < m_nev && j < nvec; i++)
         {
-            if(m_ritz_conv[i])
+            if (m_ritz_conv[i])
             {
                 ritz_vec_conv.col(j).noalias() = m_ritz_vec.col(i);
                 j++;
@@ -475,7 +477,6 @@ public:
     }
 };
 
+}  // namespace Spectra
 
-} // namespace Spectra
-
-#endif // GEN_EIGS_BASE_H
+#endif  // GEN_EIGS_BASE_H
