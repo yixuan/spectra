@@ -13,7 +13,7 @@
 ### Changed
 - Fixed a compiler warning caused by unused parameter, contributed by
   [Julien Schueller](https://github.com/jschueller) ([#80](https://github.com/yixuan/spectra/pull/80))
-- Changed the implementation of `BKLDLT` sovler to improve precision in some tests
+- Changed the implementation of `BKLDLT` solver to improve precision in some tests
 
 
 ## [0.8.1] - 2019-06-05
