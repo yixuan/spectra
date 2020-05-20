@@ -67,22 +67,25 @@ protected:
     // Given x and y, compute 1) r = sqrt(x^2 + y^2), 2) c = x / r, 3) s = -y / r
     // If both x and y are zero, set c = 1 and s = 0
     // We must implement it in a numerically stable way
+    // The implementation below is shown to be more accurate than directly computing
+    //     r = std::hypot(x, y); c = x / r; s = -y / r;
     static void compute_rotation(const Scalar& x, const Scalar& y, Scalar& r, Scalar& c, Scalar& s)
     {
+        using std::abs;
         using std::sqrt;
 
         const Scalar xsign = (x > Scalar(0)) - (x < Scalar(0));
         const Scalar ysign = (y > Scalar(0)) - (y < Scalar(0));
-        const Scalar xabs = x * xsign;
-        const Scalar yabs = y * ysign;
+        const Scalar xabs = abs(x);
+        const Scalar yabs = abs(y);
         if (xabs > yabs)
         {
             // In this case xabs != 0
-            const Scalar ratio = yabs / xabs;  // so that 0 <= ratio < 1
+            const Scalar ratio = y / x;  // so that 0 <= |ratio| < 1
             const Scalar common = sqrt(Scalar(1) + ratio * ratio);
             c = xsign / common;
+            s = -ratio * c;
             r = xabs * common;
-            s = -y / r;
         }
         else
         {
@@ -93,11 +96,11 @@ protected:
                 s = Scalar(0);
                 return;
             }
-            const Scalar ratio = xabs / yabs;  // so that 0 <= ratio <= 1
+            const Scalar ratio = x / y;  // so that 0 <= |ratio| <= 1
             const Scalar common = sqrt(Scalar(1) + ratio * ratio);
             s = -ysign / common;
+            c = -ratio * s;
             r = yabs * common;
-            c = x / r;
         }
     }
 
