@@ -29,7 +29,7 @@ template <typename Scalar = double>
 class SimpleRandom
 {
 private:
-    using Eigen::Index;
+    using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
     static constexpr unsigned int m_a = 16807;           // multiplier
