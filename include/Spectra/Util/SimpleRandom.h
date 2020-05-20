@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -29,14 +29,14 @@ template <typename Scalar = double>
 class SimpleRandom
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
+    using Eigen::Index;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
-    const unsigned int m_a;     // multiplier
-    const unsigned long m_max;  // 2^31 - 1
-    long m_rand;
+    static constexpr unsigned int m_a = 16807;           // multiplier
+    static constexpr unsigned long m_max = 2147483647L;  // 2^31 - 1
+    long m_rand;                                         // RNG state
 
-    inline long next_long_rand(long seed)
+    inline long next_long_rand(long seed) const
     {
         unsigned long lo, hi;
 
@@ -59,8 +59,6 @@ private:
 
 public:
     SimpleRandom(unsigned long init_seed) :
-        m_a(16807),
-        m_max(2147483647L),
         m_rand(init_seed ? (init_seed & m_max) : 1)
     {}
 
