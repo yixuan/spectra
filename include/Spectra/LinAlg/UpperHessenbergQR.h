@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -8,8 +8,8 @@
 #define UPPER_HESSENBERG_QR_H
 
 #include <Eigen/Core>
-#include <cmath>      // std::sqrt
-#include <algorithm>  // std::fill, std::copy
+#include <cmath>      // std::abs, std::sqrt
+#include <algorithm>  // std::fill
 #include <stdexcept>  // std::logic_error
 
 namespace Spectra {
@@ -43,14 +43,14 @@ template <typename Scalar = double>
 class UpperHessenbergQR
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Matrix<Scalar, 1, Eigen::Dynamic> RowVector;
-    typedef Eigen::Array<Scalar, Eigen::Dynamic, 1> Array;
+    using Index = Eigen::Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using RowVector = Eigen::Matrix<Scalar, 1, Eigen::Dynamic>;
+    using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
-    typedef Eigen::Ref<Matrix> GenericMatrix;
-    typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
+    using GenericMatrix = Eigen::Ref<Matrix>;
+    using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
     Matrix m_mat_T;
 
@@ -165,7 +165,7 @@ public:
         m_rot_sin.resize(m_n - 1);
 
         // Make a copy of mat - s * I
-        std::copy(mat.data(), mat.data() + mat.size(), m_mat_T.data());
+        m_mat_T.noalias() = mat;
         m_mat_T.diagonal().array() -= m_shift;
 
         Scalar xi, xj, r, c, s;
@@ -242,7 +242,7 @@ public:
 
         // Make a copy of the R matrix
         dest.resize(m_n, m_n);
-        std::copy(m_mat_T.data(), m_mat_T.data() + m_mat_T.size(), dest.data());
+        dest.noalias() = m_mat_T;
 
         // Compute the RQ matrix
         const Index n1 = m_n - 1;
@@ -478,11 +478,16 @@ template <typename Scalar = double>
 class TridiagQR : public UpperHessenbergQR<Scalar>
 {
 private:
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
+    using Index = Eigen::Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
-    typedef typename Matrix::Index Index;
+    using UpperHessenbergQR<Scalar>::m_n;
+    using UpperHessenbergQR<Scalar>::m_shift;
+    using UpperHessenbergQR<Scalar>::m_rot_cos;
+    using UpperHessenbergQR<Scalar>::m_rot_sin;
+    using UpperHessenbergQR<Scalar>::m_computed;
 
     Vector m_T_diag;   // diagonal elements of T
     Vector m_T_lsub;   // lower subdiagonal of T
@@ -528,27 +533,27 @@ public:
     ///
     void compute(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0))
     {
-        this->m_n = mat.rows();
-        if (this->m_n != mat.cols())
+        m_n = mat.rows();
+        if (m_n != mat.cols())
             throw std::invalid_argument("TridiagQR: matrix must be square");
 
-        this->m_shift = shift;
-        m_T_diag.resize(this->m_n);
-        m_T_lsub.resize(this->m_n - 1);
-        m_T_usub.resize(this->m_n - 1);
-        m_T_usub2.resize(this->m_n - 2);
-        this->m_rot_cos.resize(this->m_n - 1);
-        this->m_rot_sin.resize(this->m_n - 1);
+        m_shift = shift;
+        m_T_diag.resize(m_n);
+        m_T_lsub.resize(m_n - 1);
+        m_T_usub.resize(m_n - 1);
+        m_T_usub2.resize(m_n - 2);
+        m_rot_cos.resize(m_n - 1);
+        m_rot_sin.resize(m_n - 1);
 
-        m_T_diag.array() = mat.diagonal().array() - this->m_shift;
+        m_T_diag.array() = mat.diagonal().array() - m_shift;
         m_T_lsub.noalias() = mat.diagonal(-1);
         m_T_usub.noalias() = m_T_lsub;
 
         // A number of pointers to avoid repeated address calculation
-        Scalar *c = this->m_rot_cos.data(),  // pointer to the cosine vector
-            *s = this->m_rot_sin.data(),     // pointer to the sine vector
+        Scalar *c = m_rot_cos.data(),  // pointer to the cosine vector
+            *s = m_rot_sin.data(),     // pointer to the sine vector
             r;
-        const Index n1 = this->m_n - 1;
+        const Index n1 = m_n - 1;
         for (Index i = 0; i < n1; i++)
         {
             // diag[i] == T[i, i]
@@ -593,7 +598,7 @@ public:
             // T[i + 1, i + 2] *= c;
         }
 
-        this->m_computed = true;
+        m_computed = true;
     }
 
     ///
@@ -605,10 +610,10 @@ public:
     ///
     Matrix matrix_R() const
     {
-        if (!this->m_computed)
+        if (!m_computed)
             throw std::logic_error("TridiagQR: need to call compute() first");
 
-        Matrix R = Matrix::Zero(this->m_n, this->m_n);
+        Matrix R = Matrix::Zero(m_n, m_n);
         R.diagonal().noalias() = m_T_diag;
         R.diagonal(1).noalias() = m_T_usub;
         R.diagonal(2).noalias() = m_T_usub2;
@@ -625,11 +630,11 @@ public:
     ///
     void matrix_QtHQ(Matrix& dest) const
     {
-        if (!this->m_computed)
+        if (!m_computed)
             throw std::logic_error("TridiagQR: need to call compute() first");
 
         // Make a copy of the R matrix
-        dest.resize(this->m_n, this->m_n);
+        dest.resize(m_n, m_n);
         dest.setZero();
         dest.diagonal().noalias() = m_T_diag;
         // The upper diagonal refers to m_T_usub
@@ -641,11 +646,11 @@ public:
         //
         // Gi = [ cos[i]  sin[i]]
         //      [-sin[i]  cos[i]]
-        const Index n1 = this->m_n - 1;
+        const Index n1 = m_n - 1;
         for (Index i = 0; i < n1; i++)
         {
-            const Scalar c = this->m_rot_cos.coeff(i);
-            const Scalar s = this->m_rot_sin.coeff(i);
+            const Scalar c = m_rot_cos.coeff(i);
+            const Scalar s = m_rot_sin.coeff(i);
             const Scalar m11 = dest.coeff(i, i),
                          m12 = m_T_usub.coeff(i),
                          m22 = m_T_diag.coeff(i + 1);
@@ -660,7 +665,7 @@ public:
         dest.diagonal(1).noalias() = dest.diagonal(-1);
 
         // Add the shift to the diagonal
-        dest.diagonal().array() += this->m_shift;
+        dest.diagonal().array() += m_shift;
     }
 };
 
