@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -14,17 +14,13 @@ namespace Spectra {
 ///
 /// The enumeration to specify the mode of generalized eigenvalue solver.
 ///
-enum GEIGS_MODE
+enum class GeigsMode
 {
-    GEIGS_CHOLESKY = 0,  ///< Using Cholesky decomposition to solve generalized eigenvalues.
-
-    GEIGS_REGULAR_INVERSE,  ///< Regular inverse mode for generalized eigenvalue solver.
-
-    GEIGS_SHIFT_INVERT,  ///< Shift-and-invert mode for generalized eigenvalue solver.
-
-    GEIGS_BUCKLING,  ///< Buckling mode for generalized eigenvalue solver.
-
-    GEIGS_CAYLEY  ///< Cayley transformation mode for generalized eigenvalue solver.
+    Cholesky,        ///< Using Cholesky decomposition to solve generalized eigenvalues.
+    RegularInverse,  ///< Regular inverse mode for generalized eigenvalue solver.
+    ShiftInvert,     ///< Shift-and-invert mode for generalized eigenvalue solver.
+    Buckling,        ///< Buckling mode for generalized eigenvalue solver.
+    Cayley           ///< Cayley transformation mode for generalized eigenvalue solver.
 };
 
 }  // namespace Spectra

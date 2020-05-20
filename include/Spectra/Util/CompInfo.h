@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -14,20 +14,20 @@ namespace Spectra {
 ///
 /// The enumeration to report the status of computation.
 ///
-enum COMPUTATION_INFO
+enum class CompInfo
 {
-    SUCCESSFUL = 0,  ///< Computation was successful.
+    Successful,  ///< Computation was successful.
 
-    NOT_COMPUTED,  ///< Used in eigen solvers, indicating that computation
-                   ///< has not been conducted. Users should call
-                   ///< the `compute()` member function of solvers.
+    NotComputed,  ///< Used in eigen solvers, indicating that computation
+                  ///< has not been conducted. Users should call
+                  ///< the `compute()` member function of solvers.
 
-    NOT_CONVERGING,  ///< Used in eigen solvers, indicating that some eigenvalues
-                     ///< did not converge. The `compute()`
-                     ///< function returns the number of converged eigenvalues.
+    NotConverging,  ///< Used in eigen solvers, indicating that some eigenvalues
+                    ///< did not converge. The `compute()`
+                    ///< function returns the number of converged eigenvalues.
 
-    NUMERICAL_ISSUE  ///< Used in Cholesky decomposition, indicating that the
-                     ///< matrix is not positive definite.
+    NumericalIssue  ///< Used in Cholesky decomposition, indicating that the
+                    ///< matrix is not positive definite.
 };
 
 }  // namespace Spectra
