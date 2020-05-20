@@ -30,20 +30,22 @@ private:
     using GenericMatrix = Eigen::Ref<Matrix>;
     using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
-    Index m_n;              // Dimension of the matrix
-    Matrix m_mat_H;         // A copy of the matrix to be factorized
-    Scalar m_shift_s;       // Shift constant
-    Scalar m_shift_t;       // Shift constant
-    Matrix3X m_ref_u;       // Householder reflectors
-    IntArray m_ref_nr;      // How many rows does each reflector affects
-                            // 3 - A general reflector
-                            // 2 - A Givens rotation
-                            // 1 - An identity transformation
-    const Scalar m_near_0;  // a very small value, but 1.0 / m_safe_min does not overflow
-                            // ~= 1e-307 for the "double" type
-    const Scalar m_eps;     // the machine precision,
-                            // e.g. ~= 1e-16 for the "double" type
-    const Scalar m_eps_rel;
+    // A very small value, but 1.0 / m_near_0 does not overflow
+    // ~= 1e-307 for the "double" type
+    static constexpr Scalar m_near_0 = TypeTraits<Scalar>::min() * Scalar(10);
+    // The machine precision, ~= 1e-16 for the "double" type
+    static constexpr Scalar m_eps = TypeTraits<Scalar>::epsilon();
+    static constexpr Scalar m_eps_rel = TypeTraits<Scalar>::epsilon();
+
+    Index m_n;          // Dimension of the matrix
+    Matrix m_mat_H;     // A copy of the matrix to be factorized
+    Scalar m_shift_s;   // Shift constant
+    Scalar m_shift_t;   // Shift constant
+    Matrix3X m_ref_u;   // Householder reflectors
+    IntArray m_ref_nr;  // How many rows does each reflector affects
+                        // 3 - A general reflector
+                        // 2 - A Givens rotation
+                        // 1 - An identity transformation
     const Scalar m_eps_abs;
     bool m_computed;  // Whether matrix has been factorized
 
@@ -267,9 +269,6 @@ private:
 public:
     DoubleShiftQR(Index size) :
         m_n(size),
-        m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
-        m_eps(Eigen::NumTraits<Scalar>::epsilon()),
-        m_eps_rel(m_eps),
         m_eps_abs(m_near_0 * (m_n / m_eps)),
         m_computed(false)
     {}
@@ -281,9 +280,6 @@ public:
         m_shift_t(t),
         m_ref_u(3, m_n),
         m_ref_nr(m_n),
-        m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
-        m_eps(Eigen::NumTraits<Scalar>::epsilon()),
-        m_eps_rel(m_eps),
         m_eps_abs(m_near_0 * (m_n / m_eps)),
         m_computed(false)
     {
