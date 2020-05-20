@@ -531,7 +531,7 @@ public:
     /// Only the major- and sub- diagonal parts of
     /// the matrix are used.
     ///
-    void compute(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0))
+    void compute(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0)) override
     {
         m_n = mat.rows();
         if (m_n != mat.cols())
@@ -608,7 +608,7 @@ public:
     /// \return Returned matrix type will be `Eigen::Matrix<Scalar, ...>`, depending on
     /// the template parameter `Scalar` defined.
     ///
-    Matrix matrix_R() const
+    Matrix matrix_R() const override
     {
         if (!m_computed)
             throw std::logic_error("TridiagQR: need to call compute() first");
@@ -628,7 +628,7 @@ public:
     /// \param mat The matrix to be overwritten, whose type should be `Eigen::Matrix<Scalar, ...>`,
     /// depending on the template parameter `Scalar` defined.
     ///
-    void matrix_QtHQ(Matrix& dest) const
+    void matrix_QtHQ(Matrix& dest) const override
     {
         if (!m_computed)
             throw std::logic_error("TridiagQR: need to call compute() first");
