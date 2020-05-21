@@ -136,12 +136,11 @@ namespace Spectra {
 /// \endcode
 ///
 template <typename Scalar = double,
-          int SelectionRule = LARGEST_MAGN,
-          typename OpType = DenseSymMatProd<double> >
-class SymEigsSolver : public SymEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>
+          typename OpType = DenseSymMatProd<double>>
+class SymEigsSolver : public SymEigsBase<Scalar, OpType, IdentityBOp>
 {
 private:
-    typedef Eigen::Index Index;
+    using Index = Eigen::Index;
 
 public:
     ///
@@ -161,8 +160,8 @@ public:
     ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
-    SymEigsSolver(OpType* op, Index nev, Index ncv) :
-        SymEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>(op, NULL, nev, ncv)
+    SymEigsSolver(OpType& op, Index nev, Index ncv) :
+        SymEigsBase<Scalar, OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv)
     {}
 };
 
