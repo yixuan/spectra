@@ -44,6 +44,15 @@ public:
         m_op(op), m_Bop(Bop), m_cache(op.rows())
     {}
 
+    // Move constructor
+    ArnoldiOp(ArnoldiOp&& other) :
+        m_op(other.m_op), m_Bop(other.m_Bop)
+    {
+        // Vector does not have a move constructor, but we can emulate
+        // it using Vector::swap()
+        m_cache.swap(other.m_cache);
+    }
+
     inline Index rows() const { return m_op.rows(); }
 
     // In generalized eigenvalue problem Ax=lambda*Bx, define the inner product to be <x, y> = x'By.
