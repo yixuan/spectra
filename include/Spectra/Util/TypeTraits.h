@@ -80,6 +80,12 @@ struct TypeTraits<long double>
     }
 };
 
+// Get the element type of a "scalar"
+// ElemType<double>                 => double
+// ElemType<std::complex<double>>   => double
+template <typename T>
+using ElemType = typename Eigen::NumTraits<T>::Real;
+
 }  // namespace Spectra
 
 /// \endcond

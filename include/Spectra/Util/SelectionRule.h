@@ -13,6 +13,7 @@
 #include <complex>    // std::complex
 #include <utility>    // std::pair
 #include <stdexcept>  // std::invalid_argument
+#include "TypeTraits.h"
 
 namespace Spectra {
 
@@ -27,7 +28,7 @@ namespace Spectra {
 ///
 /// The enumeration of selection rules of desired eigenvalues.
 ///
-enum class Select
+enum class SortRule
 {
     LargestMagn,  ///< Select eigenvalues with largest magnitude. Magnitude
                   ///< means the absolute value for real numbers and norm for
@@ -56,34 +57,17 @@ enum class Select
 
 /// \cond
 
-// Get the element type of a "scalar"
-// ElemType<double>                   => double
-// ElemType< std::complex<double> >   => double
-template <typename T>
-class ElemType
-{
-public:
-    typedef T type;
-};
-
-template <typename T>
-class ElemType<std::complex<T> >
-{
-public:
-    typedef T type;
-};
-
-// When comparing eigenvalues, we first calculate the "target"
-// to sort. For example, if we want to choose the eigenvalues with
+// When comparing eigenvalues, we first calculate the "target" to sort.
+// For example, if we want to choose the eigenvalues with
 // largest magnitude, the target will be -abs(x).
 // The minus sign is due to the fact that std::sort() sorts in ascending order.
 
 // Default target: throw an exception
-template <typename Scalar, int SelectionRule>
+template <typename Scalar, SortRule Rule>
 class SortingTarget
 {
 public:
-    static typename ElemType<Scalar>::type get(const Scalar& val)
+    static ElemType<Scalar> get(const Scalar& val)
     {
         using std::abs;
         throw std::invalid_argument("incompatible selection rule");
@@ -91,23 +75,23 @@ public:
     }
 };
 
-// Specialization for LARGEST_MAGN
-// This covers [float, double, complex] x [LARGEST_MAGN]
+// Specialization for SortRule::LargestMagn
+// This covers [float, double, complex] x [SortRule::LargestMagn]
 template <typename Scalar>
-class SortingTarget<Scalar, LARGEST_MAGN>
+class SortingTarget<Scalar, SortRule::LargestMagn>
 {
 public:
-    static typename ElemType<Scalar>::type get(const Scalar& val)
+    static ElemType<Scalar> get(const Scalar& val)
     {
         using std::abs;
         return -abs(val);
     }
 };
 
-// Specialization for LARGEST_REAL
-// This covers [complex] x [LARGEST_REAL]
+// Specialization for SortRule::LargestReal
+// This covers [complex] x [SortRule::LargestReal]
 template <typename RealType>
-class SortingTarget<std::complex<RealType>, LARGEST_REAL>
+class SortingTarget<std::complex<RealType>, SortRule::LargestReal>
 {
 public:
     static RealType get(const std::complex<RealType>& val)
@@ -116,10 +100,10 @@ public:
     }
 };
 
-// Specialization for LARGEST_IMAG
-// This covers [complex] x [LARGEST_IMAG]
+// Specialization for SortRule::LargestImag
+// This covers [complex] x [SortRule::LargestImag]
 template <typename RealType>
-class SortingTarget<std::complex<RealType>, LARGEST_IMAG>
+class SortingTarget<std::complex<RealType>, SortRule::LargestImag>
 {
 public:
     static RealType get(const std::complex<RealType>& val)
@@ -129,10 +113,10 @@ public:
     }
 };
 
-// Specialization for LARGEST_ALGE
-// This covers [float, double] x [LARGEST_ALGE]
+// Specialization for SortRule::LargestAlge
+// This covers [float, double] x [SortRule::LargestAlge]
 template <typename Scalar>
-class SortingTarget<Scalar, LARGEST_ALGE>
+class SortingTarget<Scalar, SortRule::LargestAlge>
 {
 public:
     static Scalar get(const Scalar& val)
@@ -141,12 +125,12 @@ public:
     }
 };
 
-// Here BOTH_ENDS is the same as LARGEST_ALGE, but
+// Here SortRule::BothEnds is the same as SortRule::LargestAlge, but
 // we need some additional steps, which are done in
 // SymEigsSolver.h => retrieve_ritzpair().
 // There we move the smallest values to the proper locations.
 template <typename Scalar>
-class SortingTarget<Scalar, BOTH_ENDS>
+class SortingTarget<Scalar, SortRule::BothEnds>
 {
 public:
     static Scalar get(const Scalar& val)
@@ -155,23 +139,23 @@ public:
     }
 };
 
-// Specialization for SMALLEST_MAGN
-// This covers [float, double, complex] x [SMALLEST_MAGN]
+// Specialization for SortRule::SmallestMagn
+// This covers [float, double, complex] x [SortRule::SmallestMagn]
 template <typename Scalar>
-class SortingTarget<Scalar, SMALLEST_MAGN>
+class SortingTarget<Scalar, SortRule::SmallestMagn>
 {
 public:
-    static typename ElemType<Scalar>::type get(const Scalar& val)
+    static ElemType<Scalar> get(const Scalar& val)
     {
         using std::abs;
         return abs(val);
     }
 };
 
-// Specialization for SMALLEST_REAL
-// This covers [complex] x [SMALLEST_REAL]
+// Specialization for SortRule::SmallestReal
+// This covers [complex] x [SortRule::SmallestReal]
 template <typename RealType>
-class SortingTarget<std::complex<RealType>, SMALLEST_REAL>
+class SortingTarget<std::complex<RealType>, SortRule::SmallestReal>
 {
 public:
     static RealType get(const std::complex<RealType>& val)
@@ -180,10 +164,10 @@ public:
     }
 };
 
-// Specialization for SMALLEST_IMAG
-// This covers [complex] x [SMALLEST_IMAG]
+// Specialization for SortRule::SmallestImag
+// This covers [complex] x [SortRule::SmallestImag]
 template <typename RealType>
-class SortingTarget<std::complex<RealType>, SMALLEST_IMAG>
+class SortingTarget<std::complex<RealType>, SortRule::SmallestImag>
 {
 public:
     static RealType get(const std::complex<RealType>& val)
@@ -193,10 +177,10 @@ public:
     }
 };
 
-// Specialization for SMALLEST_ALGE
-// This covers [float, double] x [SMALLEST_ALGE]
+// Specialization for SortRule::SmallestAlge
+// This covers [float, double] x [SortRule::SmallestAlge]
 template <typename Scalar>
-class SortingTarget<Scalar, SMALLEST_ALGE>
+class SortingTarget<Scalar, SortRule::SmallestAlge>
 {
 public:
     static Scalar get(const Scalar& val)
@@ -205,49 +189,36 @@ public:
     }
 };
 
-// Sort eigenvalues and return the order index
-template <typename PairType>
-class PairComparator
-{
-public:
-    bool operator()(const PairType& v1, const PairType& v2)
-    {
-        return v1.first < v2.first;
-    }
-};
-
-template <typename T, int SelectionRule>
+// Sort eigenvalues
+template <typename T, SortRule Rule>
 class SortEigenvalue
 {
 private:
-    typedef typename ElemType<T>::type TargetType;  // Type of the sorting target, will be
-                                                    // a floating number type, e.g. "double"
-    typedef std::pair<TargetType, int> PairType;    // Type of the sorting pair, including
-                                                    // the sorting target and the index
+    using Index = Eigen::Index;
+    using IndexArray = std::vector<Index>;
 
-    std::vector<PairType> pair_sort;
+    const T* m_evals;
+    IndexArray m_index;
 
 public:
-    SortEigenvalue(const T* start, int size) :
-        pair_sort(size)
+    // Sort indices according to the eigenvalues they point to
+    inline bool operator()(Index i, Index j)
     {
-        for (int i = 0; i < size; i++)
+        return SortingTarget<T, Rule>::get(m_evals[i]) < SortingTarget<T, Rule>::get(m_evals[j]);
+    }
+
+    SortEigenvalue(const T* start, Index size) :
+        m_evals(start), m_index(size)
+    {
+        for (Index i = 0; i < size; i++)
         {
-            pair_sort[i].first = SortingTarget<T, SelectionRule>::get(start[i]);
-            pair_sort[i].second = i;
+            m_index[i] = i;
         }
-        PairComparator<PairType> comp;
-        std::sort(pair_sort.begin(), pair_sort.end(), comp);
+        std::sort(m_index.begin(), m_index.end(), *this);
     }
 
-    std::vector<int> index()
-    {
-        std::vector<int> ind(pair_sort.size());
-        for (unsigned int i = 0; i < ind.size(); i++)
-            ind[i] = pair_sort[i].second;
-
-        return ind;
-    }
+    inline IndexArray index() const { return m_index; }
+    inline void swap(IndexArray& other) { m_index.swap(other); }
 };
 
 /// \endcond
