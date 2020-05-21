@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2018-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -27,13 +27,12 @@ template <typename Scalar, typename ArnoldiOpType>
 class Lanczos : public Arnoldi<Scalar, ArnoldiOpType>
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Map<Matrix> MapMat;
-    typedef Eigen::Map<Vector> MapVec;
-    typedef Eigen::Map<const Matrix> MapConstMat;
-    typedef Eigen::Map<const Vector> MapConstVec;
+    using Index = Eigen::Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using MapMat = Eigen::Map<Matrix>;
+    using MapVec = Eigen::Map<Vector>;
+    using MapConstMat = Eigen::Map<const Matrix>;
 
     using Arnoldi<Scalar, ArnoldiOpType>::m_op;
     using Arnoldi<Scalar, ArnoldiOpType>::m_n;
@@ -52,7 +51,7 @@ public:
     {}
 
     // Lanczos factorization starting from step-k
-    void factorize_from(Index from_k, Index to_m, Index& op_counter)
+    void factorize_from(Index from_k, Index to_m, Index& op_counter) override
     {
         using std::sqrt;
 
@@ -155,6 +154,7 @@ public:
     }
 
     // Apply H -> Q'HQ, where Q is from a tridiagonal QR decomposition
+    // Function overloading here, not overriding
     void compress_H(const TridiagQR<Scalar>& decomp)
     {
         decomp.matrix_QtHQ(m_fac_H);

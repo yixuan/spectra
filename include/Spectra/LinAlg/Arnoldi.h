@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2018-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -31,31 +31,28 @@ template <typename Scalar, typename ArnoldiOpType>
 class Arnoldi
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Map<Matrix> MapMat;
-    typedef Eigen::Map<Vector> MapVec;
-    typedef Eigen::Map<const Matrix> MapConstMat;
-    typedef Eigen::Map<const Vector> MapConstVec;
+    using Index = Eigen::Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using MapVec = Eigen::Map<Vector>;
+    using MapConstMat = Eigen::Map<const Matrix>;
+    using MapConstVec = Eigen::Map<const Vector>;
 
 protected:
-    // clang-format off
-    ArnoldiOpType m_op;       // Operators for the Arnoldi factorization
+    // A very small value, but 1.0 / m_near_0 does not overflow
+    // ~= 1e-307 for the "double" type
+    static constexpr Scalar m_near_0 = TypeTraits<Scalar>::min() * Scalar(10);
+    // The machine precision, ~= 1e-16 for the "double" type
+    static constexpr Scalar m_eps = TypeTraits<Scalar>::epsilon();
 
-    const Index m_n;          // dimension of A
-    const Index m_m;          // maximum dimension of subspace V
-    Index       m_k;          // current dimension of subspace V
-
-    Matrix m_fac_V;           // V matrix in the Arnoldi factorization
-    Matrix m_fac_H;           // H matrix in the Arnoldi factorization
-    Vector m_fac_f;           // residual in the Arnoldi factorization
-    Scalar m_beta;            // ||f||, B-norm of f
-
-    const Scalar m_near_0;    // a very small value, but 1.0 / m_near_0 does not overflow
-                              // ~= 1e-307 for the "double" type
-    const Scalar m_eps;       // the machine precision, ~= 1e-16 for the "double" type
-    // clang-format on
+    ArnoldiOpType m_op;  // Operators for the Arnoldi factorization
+    const Index m_n;     // dimension of A
+    const Index m_m;     // maximum dimension of subspace V
+    Index m_k;           // current dimension of subspace V
+    Matrix m_fac_V;      // V matrix in the Arnoldi factorization
+    Matrix m_fac_H;      // H matrix in the Arnoldi factorization
+    Vector m_fac_f;      // residual in the Arnoldi factorization
+    Scalar m_beta;       // ||f||, B-norm of f
 
     // Given orthonormal basis functions V, find a nonzero vector f such that V'Bf = 0
     // Assume that f has been properly allocated
@@ -85,9 +82,7 @@ protected:
 
 public:
     Arnoldi(const ArnoldiOpType& op, Index m) :
-        m_op(op), m_n(op.rows()), m_m(m), m_k(0),
-        m_near_0(TypeTraits<Scalar>::min() * Scalar(10)),
-        m_eps(Eigen::NumTraits<Scalar>::epsilon())
+        m_op(op), m_n(op.rows()), m_m(m), m_k(0)
     {}
 
     virtual ~Arnoldi() {}
