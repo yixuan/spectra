@@ -9,6 +9,7 @@
 
 #include <Eigen/Core>
 #include <cmath>      // std::sqrt
+#include <utility>    // std::forward
 #include <stdexcept>  // std::invalid_argument
 #include <sstream>    // std::stringstream
 
@@ -46,8 +47,10 @@ private:
     using Arnoldi<Scalar, ArnoldiOpType>::m_eps;
 
 public:
-    Lanczos(const ArnoldiOpType& op, Index m) :
-        Arnoldi<Scalar, ArnoldiOpType>(op, m)
+    // Forward parameter `op` to the constructor of Arnoldi
+    template <typename T>
+    Lanczos(T&& op, Index m) :
+        Arnoldi<Scalar, ArnoldiOpType>(std::forward<T>(op), m)
     {}
 
     // Lanczos factorization starting from step-k

@@ -9,6 +9,7 @@
 
 #include <Eigen/Core>
 #include <cmath>      // std::sqrt
+#include <utility>    // std::move
 #include <stdexcept>  // std::invalid_argument
 #include <sstream>    // std::stringstream
 
@@ -81,11 +82,15 @@ protected:
     }
 
 public:
+    // Copy an ArnoldiOp
     Arnoldi(const ArnoldiOpType& op, Index m) :
         m_op(op), m_n(op.rows()), m_m(m), m_k(0)
     {}
 
-    virtual ~Arnoldi() {}
+    // Move an ArnoldiOp
+    Arnoldi(ArnoldiOpType&& op, Index m) :
+        m_op(std::move(op)), m_n(op.rows()), m_m(m), m_k(0)
+    {}
 
     // Const-reference to internal structures
     const Matrix& matrix_V() const { return m_fac_V; }
