@@ -52,7 +52,7 @@ private:
     using GenericMatrix = Eigen::Ref<Matrix>;
     using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
-    Matrix m_mat_T;
+    Matrix m_mat_R;
 
 protected:
     Index m_n;
@@ -125,7 +125,7 @@ public:
     /// \param mat Matrix type can be `Eigen::Matrix<Scalar, ...>` (e.g.
     /// `Eigen::MatrixXd` and `Eigen::MatrixXf`), or its mapped version
     /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
-    /// Only the upper triangular and the lower subdiagonal parts of
+    /// Only the upper triangular and the subdiagonal elements of
     /// the matrix are used.
     ///
     UpperHessenbergQR(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0)) :
@@ -144,13 +144,13 @@ public:
     virtual ~UpperHessenbergQR(){};
 
     ///
-    /// Conduct the QR factorization of an upper Hessenberg matrix with
+    /// Compute the QR decomposition of an upper Hessenberg matrix with
     /// an optional shift.
     ///
     /// \param mat Matrix type can be `Eigen::Matrix<Scalar, ...>` (e.g.
     /// `Eigen::MatrixXd` and `Eigen::MatrixXf`), or its mapped version
     /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
-    /// Only the upper triangular and the lower subdiagonal parts of
+    /// Only the upper triangular and the subdiagonal elements of
     /// the matrix are used.
     ///
     virtual void compute(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0))
@@ -160,54 +160,54 @@ public:
             throw std::invalid_argument("UpperHessenbergQR: matrix must be square");
 
         m_shift = shift;
-        m_mat_T.resize(m_n, m_n);
+        m_mat_R.resize(m_n, m_n);
         m_rot_cos.resize(m_n - 1);
         m_rot_sin.resize(m_n - 1);
 
         // Make a copy of mat - s * I
-        m_mat_T.noalias() = mat;
-        m_mat_T.diagonal().array() -= m_shift;
+        m_mat_R.noalias() = mat;
+        m_mat_R.diagonal().array() -= m_shift;
 
         Scalar xi, xj, r, c, s;
-        Scalar *Tii, *ptr;
+        Scalar *Rii, *ptr;
         const Index n1 = m_n - 1;
         for (Index i = 0; i < n1; i++)
         {
-            Tii = &m_mat_T.coeffRef(i, i);
+            Rii = &m_mat_R.coeffRef(i, i);
 
-            // Make sure mat_T is upper Hessenberg
-            // Zero the elements below mat_T(i + 1, i)
-            std::fill(Tii + 2, Tii + m_n - i, Scalar(0));
+            // Make sure R is upper Hessenberg
+            // Zero the elements below R[i + 1, i]
+            std::fill(Rii + 2, Rii + m_n - i, Scalar(0));
 
-            xi = Tii[0];  // mat_T(i, i)
-            xj = Tii[1];  // mat_T(i + 1, i)
+            xi = Rii[0];  // R[i, i]
+            xj = Rii[1];  // R[i + 1, i]
             compute_rotation(xi, xj, r, c, s);
-            m_rot_cos[i] = c;
-            m_rot_sin[i] = s;
+            m_rot_cos.coeffRef(i) = c;
+            m_rot_sin.coeffRef(i) = s;
 
             // For a complete QR decomposition,
             // we first obtain the rotation matrix
             // G = [ cos  sin]
             //     [-sin  cos]
-            // and then do T[i:(i + 1), i:(n - 1)] = G' * T[i:(i + 1), i:(n - 1)]
+            // and then do R[i:(i + 1), i:(n - 1)] = G' * R[i:(i + 1), i:(n - 1)]
 
             // Gt << c, -s, s, c;
-            // m_mat_T.block(i, i, 2, m_n - i) = Gt * m_mat_T.block(i, i, 2, m_n - i);
-            Tii[0] = r;       // m_mat_T(i, i)     => r
-            Tii[1] = 0;       // m_mat_T(i + 1, i) => 0
-            ptr = Tii + m_n;  // m_mat_T(i, k), k = i+1, i+2, ..., n-1
+            // m_mat_R.block(i, i, 2, m_n - i) = Gt * m_mat_R.block(i, i, 2, m_n - i);
+            Rii[0] = r;       // R[i, i]     => r
+            Rii[1] = 0;       // R[i + 1, i] => 0
+            ptr = Rii + m_n;  // R[i, k], k = i+1, i+2, ..., n-1
             for (Index j = i + 1; j < m_n; j++, ptr += m_n)
             {
-                Scalar tmp = ptr[0];
+                const Scalar tmp = ptr[0];
                 ptr[0] = c * tmp - s * ptr[1];
                 ptr[1] = s * tmp + c * ptr[1];
             }
 
             // If we do not need to calculate the R matrix, then
             // only the cos and sin sequences are required.
-            // In such case we only update T[i + 1, (i + 1):(n - 1)]
-            // m_mat_T.block(i + 1, i + 1, 1, m_n - i - 1) *= c;
-            // m_mat_T.block(i + 1, i + 1, 1, m_n - i - 1) += s * mat_T.block(i, i + 1, 1, m_n - i - 1);
+            // In such case we only update R[i + 1, (i + 1):(n - 1)]
+            // m_mat_R.block(i + 1, i + 1, 1, m_n - i - 1) *= c;
+            // m_mat_R.block(i + 1, i + 1, 1, m_n - i - 1) += s * m_mat_R.block(i, i + 1, 1, m_n - i - 1);
         }
 
         m_computed = true;
@@ -225,7 +225,7 @@ public:
         if (!m_computed)
             throw std::logic_error("UpperHessenbergQR: need to call compute() first");
 
-        return m_mat_T;
+        return m_mat_R;
     }
 
     ///
@@ -242,7 +242,7 @@ public:
 
         // Make a copy of the R matrix
         dest.resize(m_n, m_n);
-        dest.noalias() = m_mat_T;
+        dest.noalias() = m_mat_R;
 
         // Compute the RQ matrix
         const Index n1 = m_n - 1;
@@ -255,7 +255,7 @@ public:
             //      [-sin[i]  cos[i]]
             Scalar *Yi, *Yi1;
             Yi = &dest.coeffRef(0, i);
-            Yi1 = Yi + m_n;  // RQ(0, i + 1)
+            Yi1 = Yi + m_n;  // RQ[0, i + 1]
             const Index i2 = i + 2;
             for (Index j = 0; j < i2; j++)
             {
