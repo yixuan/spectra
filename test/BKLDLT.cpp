@@ -14,10 +14,10 @@ using Eigen::VectorXd;
 void run_test(const MatrixXd& A, const VectorXd& b, double s)
 {
     BKLDLT<double> decompL(A, Eigen::Lower, s);
-    REQUIRE(decompL.info() == SUCCESSFUL);
+    REQUIRE(decompL.info() == CompInfo::Successful);
 
     BKLDLT<double> decompU(A, Eigen::Upper, s);
-    REQUIRE(decompU.info() == SUCCESSFUL);
+    REQUIRE(decompU.info() == CompInfo::Successful);
 
     VectorXd solL = decompL.solve(b);
     VectorXd solU = decompU.solve(b);

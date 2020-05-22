@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2019-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -27,26 +27,25 @@ template <typename Scalar = double>
 class BKLDLT
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Map<Vector> MapVec;
-    typedef Eigen::Map<const Vector> MapConstVec;
-
-    typedef Eigen::Matrix<Index, Eigen::Dynamic, 1> IntVector;
-    typedef Eigen::Ref<Vector> GenericVector;
-    typedef Eigen::Ref<Matrix> GenericMatrix;
-    typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
-    typedef const Eigen::Ref<const Vector> ConstGenericVector;
+    using Index = Eigen::Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using MapVec = Eigen::Map<Vector>;
+    using MapConstVec = Eigen::Map<const Vector>;
+    using IntVector = Eigen::Matrix<Index, Eigen::Dynamic, 1>;
+    using GenericVector = Eigen::Ref<Vector>;
+    using GenericMatrix = Eigen::Ref<Matrix>;
+    using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
+    using ConstGenericVector = const Eigen::Ref<const Vector>;
 
     Index m_n;
-    Vector m_data;                                  // storage for a lower-triangular matrix
-    std::vector<Scalar*> m_colptr;                  // pointers to columns
-    IntVector m_perm;                               // [-2, -1, 3, 1, 4, 5]: 0 <-> 2, 1 <-> 1, 2 <-> 3, 3 <-> 1, 4 <-> 4, 5 <-> 5
-    std::vector<std::pair<Index, Index> > m_permc;  // compressed version of m_perm: [(0, 2), (2, 3), (3, 1)]
+    Vector m_data;                                 // storage for a lower-triangular matrix
+    std::vector<Scalar*> m_colptr;                 // pointers to columns
+    IntVector m_perm;                              // [-2, -1, 3, 1, 4, 5]: 0 <-> 2, 1 <-> 1, 2 <-> 3, 3 <-> 1, 4 <-> 4, 5 <-> 5
+    std::vector<std::pair<Index, Index>> m_permc;  // compressed version of m_perm: [(0, 2), (2, 3), (3, 1)]
 
     bool m_computed;
-    int m_info;
+    CompInfo m_info;
 
     // Access to elements
     // Pointer to the k-th column
@@ -309,14 +308,14 @@ private:
         e21 = -e21 / delta;
     }
 
-    // Return value is the status, SUCCESSFUL/NUMERICAL_ISSUE
-    int gaussian_elimination_1x1(Index k)
+    // Return value is the status, CompInfo::Successful/NumericalIssue
+    CompInfo gaussian_elimination_1x1(Index k)
     {
         // D = 1 / A[k, k]
         const Scalar akk = diag_coeff(k);
-        // Return NUMERICAL_ISSUE if not invertible
+        // Return CompInfo::NumericalIssue if not invertible
         if (akk == Scalar(0))
-            return NUMERICAL_ISSUE;
+            return CompInfo::NumericalIssue;
 
         diag_coeff(k) = Scalar(1) / akk;
 
@@ -332,19 +331,19 @@ private:
         // l /= A[k, k]
         l /= akk;
 
-        return SUCCESSFUL;
+        return CompInfo::Successful;
     }
 
-    // Return value is the status, SUCCESSFUL/NUMERICAL_ISSUE
-    int gaussian_elimination_2x2(Index k)
+    // Return value is the status, CompInfo::Successful/NumericalIssue
+    CompInfo gaussian_elimination_2x2(Index k)
     {
         // D = inv(E)
         Scalar& e11 = diag_coeff(k);
         Scalar& e21 = coeff(k + 1, k);
         Scalar& e22 = diag_coeff(k + 1);
-        // Return NUMERICAL_ISSUE if not invertible
+        // Return CompInfo::NumericalIssue if not invertible
         if (e11 * e22 - e21 * e21 == Scalar(0))
-            return NUMERICAL_ISSUE;
+            return CompInfo::NumericalIssue;
 
         inverse_inplace_2x2(e11, e21, e22);
 
@@ -368,17 +367,17 @@ private:
         l1.noalias() = X.col(0);
         l2.noalias() = X.col(1);
 
-        return SUCCESSFUL;
+        return CompInfo::Successful;
     }
 
 public:
     BKLDLT() :
-        m_n(0), m_computed(false), m_info(NOT_COMPUTED)
+        m_n(0), m_computed(false), m_info(CompInfo::NotComputed)
     {}
 
     // Factorize mat - shift * I
     BKLDLT(ConstGenericMatrix& mat, int uplo = Eigen::Lower, const Scalar& shift = Scalar(0)) :
-        m_n(mat.rows()), m_computed(false), m_info(NOT_COMPUTED)
+        m_n(mat.rows()), m_computed(false), m_info(CompInfo::NotComputed)
     {
         compute(mat, uplo, shift);
     }
@@ -418,7 +417,7 @@ public:
             }
 
             // 3. Check status
-            if (m_info != SUCCESSFUL)
+            if (m_info != CompInfo::Successful)
                 break;
         }
         // Invert the last 1x1 block if it exists
@@ -426,7 +425,7 @@ public:
         {
             const Scalar akk = diag_coeff(k);
             if (akk == Scalar(0))
-                m_info = NUMERICAL_ISSUE;
+                m_info = CompInfo::NumericalIssue;
 
             diag_coeff(k) = Scalar(1) / diag_coeff(k);
         }
@@ -522,7 +521,7 @@ public:
         return res;
     }
 
-    int info() const { return m_info; }
+    CompInfo info() const { return m_info; }
 };
 
 }  // namespace Spectra

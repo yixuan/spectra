@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -26,12 +26,12 @@ template <typename Scalar, int Uplo = Eigen::Lower>
 class DenseSymShiftSolve
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Map<const Vector> MapConstVec;
-    typedef Eigen::Map<Vector> MapVec;
-    typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
+    using Index = Eigen::Index Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using MapConstVec = Eigen::Map<const Vector>;
+    using MapVec = Eigen::Map<Vector>;
+    using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
     ConstGenericMatrix m_mat;
     const int m_n;
@@ -49,7 +49,7 @@ public:
     DenseSymShiftSolve(ConstGenericMatrix& mat) :
         m_mat(mat), m_n(mat.rows())
     {
-        if (mat.rows() != mat.cols())
+        if (m_n != mat.cols())
             throw std::invalid_argument("DenseSymShiftSolve: matrix must be square");
     }
 
@@ -68,7 +68,7 @@ public:
     void set_shift(Scalar sigma)
     {
         m_solver.compute(m_mat, Uplo, sigma);
-        if (m_solver.info() != SUCCESSFUL)
+        if (m_solver.info() != CompInfo::Successful)
             throw std::invalid_argument("DenseSymShiftSolve: factorization failed with the given shift");
     }
 
