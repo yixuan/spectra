@@ -153,22 +153,21 @@ namespace Spectra {
 /// \endcode
 ///
 template <typename Scalar = double,
-          int SelectionRule = LARGEST_MAGN,
-          typename OpType = DenseSymShiftSolve<double> >
-class SymEigsShiftSolver : public SymEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>
+          typename OpType = DenseSymShiftSolve<double>>
+class SymEigsShiftSolver : public SymEigsBase<Scalar, OpType, IdentityBOp>
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Array<Scalar, Eigen::Dynamic, 1> Array;
+    using Index = Eigen::Index;
+    using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
     const Scalar m_sigma;
 
     // First transform back the Ritz values, and then sort
-    void sort_ritzpair(int sort_rule)
+    void sort_ritzpair(SortRule sort_rule) override
     {
-        Array m_ritz_val_org = Scalar(1.0) / this->m_ritz_val.head(this->m_nev).array() + m_sigma;
+        Array m_ritz_val_org = Scalar(1) / this->m_ritz_val.head(this->m_nev).array() + m_sigma;
         this->m_ritz_val.head(this->m_nev) = m_ritz_val_org;
-        SymEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>::sort_ritzpair(sort_rule);
+        SymEigsBase<Scalar, OpType, IdentityBOp>::sort_ritzpair(sort_rule);
     }
 
 public:
@@ -190,11 +189,11 @@ public:
     ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
     /// \param sigma  The value of the shift.
     ///
-    SymEigsShiftSolver(OpType* op, Index nev, Index ncv, Scalar sigma) :
-        SymEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>(op, NULL, nev, ncv),
+    SymEigsShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma) :
+        SymEigsBase<Scalar, OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv),
         m_sigma(sigma)
     {
-        this->m_op->set_shift(m_sigma);
+        op.set_shift(m_sigma);
     }
 };
 

@@ -12,21 +12,21 @@ using namespace Spectra;
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-typedef Eigen::MatrixXd Matrix;
-typedef Eigen::VectorXd Vector;
-typedef Eigen::SparseMatrix<double> SpMatrix;
+using Matrix = Eigen::MatrixXd;
+using Vector = Eigen::VectorXd;
+using SpMatrix = Eigen::SparseMatrix<double>;
 
 // Traits to obtain operation type from matrix type
 template <typename MatType>
 struct OpTypeTrait
 {
-    typedef DenseSymShiftSolve<double> OpType;
+    using OpType = DenseSymShiftSolve<double>;
 };
 
 template <>
 struct OpTypeTrait<SpMatrix>
 {
-    typedef SparseSymShiftSolve<double> OpType;
+    using OpType = SparseSymShiftSolve<double>;
 };
 
 // Generate data for testing
@@ -55,35 +55,32 @@ SpMatrix gen_sparse_data(int n, double prob = 0.5)
     return mat;
 }
 
-template <typename MatType, int SelectionRule>
-void run_test(const MatType& mat, int k, int m, double sigma, bool allow_fail = false)
+template <typename MatType>
+void run_test(const MatType& mat, int k, int m, double sigma, SortRule selection, bool allow_fail = false)
 {
-    typename OpTypeTrait<MatType>::OpType op(mat);
-    SymEigsShiftSolver<double, SelectionRule, typename OpTypeTrait<MatType>::OpType>
-        eigs(&op, k, m, sigma);
+    using OpType = typename OpTypeTrait<MatType>::OpType;
+    OpType op(mat);
+    SymEigsShiftSolver<double, OpType> eigs(op, k, m, sigma);
     eigs.init();
-    // maxit = 150 to reduce running time for failed cases
-    int nconv = eigs.compute(150);
+    // maxit = 500 to reduce running time for failed cases
+    int nconv = eigs.compute(selection, 500);
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
-    if (allow_fail)
+    if (allow_fail && eigs.info() != CompInfo::Successful)
     {
-        if (eigs.info() != SUCCESSFUL)
-        {
-            WARN("FAILED on this test");
-            std::cout << "nconv = " << nconv << std::endl;
-            std::cout << "niter = " << niter << std::endl;
-            std::cout << "nops  = " << nops << std::endl;
-            return;
-        }
+        WARN("FAILED on this test");
+        std::cout << "nconv = " << nconv << std::endl;
+        std::cout << "niter = " << niter << std::endl;
+        std::cout << "nops  = " << nops << std::endl;
+        return;
     }
     else
     {
         INFO("nconv = " << nconv);
         INFO("niter = " << niter);
         INFO("nops  = " << nops);
-        REQUIRE(eigs.info() == SUCCESSFUL);
+        REQUIRE(eigs.info() == CompInfo::Successful);
     }
 
     Vector evals = eigs.eigenvalues();
@@ -101,23 +98,23 @@ void run_test_sets(const MatType& mat, int k, int m, double sigma)
 {
     SECTION("Largest Magnitude")
     {
-        run_test<MatType, LARGEST_MAGN>(mat, k, m, sigma);
+        run_test<MatType>(mat, k, m, sigma, SortRule::LargestMagn);
     }
     SECTION("Largest Value")
     {
-        run_test<MatType, LARGEST_ALGE>(mat, k, m, sigma);
+        run_test<MatType>(mat, k, m, sigma, SortRule::LargestAlge);
     }
     SECTION("Smallest Magnitude")
     {
-        run_test<MatType, SMALLEST_MAGN>(mat, k, m, sigma, true);
+        run_test<MatType>(mat, k, m, sigma, SortRule::SmallestMagn, true);
     }
     SECTION("Smallest Value")
     {
-        run_test<MatType, SMALLEST_ALGE>(mat, k, m, sigma);
+        run_test<MatType>(mat, k, m, sigma, SortRule::SmallestAlge);
     }
     SECTION("Both Ends")
     {
-        run_test<MatType, BOTH_ENDS>(mat, k, m, sigma);
+        run_test<MatType>(mat, k, m, sigma, SortRule::BothEnds);
     }
 }
 
