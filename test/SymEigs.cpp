@@ -12,21 +12,21 @@ using namespace Spectra;
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-typedef Eigen::MatrixXd Matrix;
-typedef Eigen::VectorXd Vector;
-typedef Eigen::SparseMatrix<double> SpMatrix;
+using Matrix = Eigen::MatrixXd;
+using Vector = Eigen::VectorXd;
+using SpMatrix = Eigen::SparseMatrix<double>;
 
 // Traits to obtain operation type from matrix type
 template <typename MatType>
 struct OpTypeTrait
 {
-    typedef DenseSymMatProd<double> OpType;
+    using OpType = DenseSymMatProd<double>;
 };
 
 template <>
 struct OpTypeTrait<SpMatrix>
 {
-    typedef SparseSymMatProd<double> OpType;
+    using OpType = SparseSymMatProd<double>;
 };
 
 // Generate data for testing
@@ -55,21 +55,21 @@ SpMatrix gen_sparse_data(int n, double prob = 0.5)
     return mat;
 }
 
-template <typename MatType, int SelectionRule>
-void run_test(const MatType& mat, int k, int m)
+template <typename MatType>
+void run_test(const MatType& mat, int k, int m, SortRule selection)
 {
-    typename OpTypeTrait<MatType>::OpType op(mat);
-    SymEigsSolver<double, SelectionRule, typename OpTypeTrait<MatType>::OpType>
-        eigs(&op, k, m);
+    using OpType = typename OpTypeTrait<MatType>::OpType;
+    OpType op(mat);
+    SymEigsSolver<double, OpType> eigs(op, k, m);
     eigs.init();
-    int nconv = eigs.compute();
+    int nconv = eigs.compute(selection);
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
     INFO("nconv = " << nconv);
     INFO("niter = " << niter);
     INFO("nops  = " << nops);
-    REQUIRE(eigs.info() == SUCCESSFUL);
+    REQUIRE(eigs.info() == CompInfo::Successful);
 
     Vector evals = eigs.eigenvalues();
     Matrix evecs = eigs.eigenvectors();
@@ -86,23 +86,23 @@ void run_test_sets(const MatType& mat, int k, int m)
 {
     SECTION("Largest Magnitude")
     {
-        run_test<MatType, LARGEST_MAGN>(mat, k, m);
+        run_test<MatType>(mat, k, m, SortRule::LargestMagn);
     }
     SECTION("Largest Value")
     {
-        run_test<MatType, LARGEST_ALGE>(mat, k, m);
+        run_test<MatType>(mat, k, m, SortRule::LargestAlge);
     }
     SECTION("Smallest Magnitude")
     {
-        run_test<MatType, SMALLEST_MAGN>(mat, k, m);
+        run_test<MatType>(mat, k, m, SortRule::SmallestMagn);
     }
     SECTION("Smallest Value")
     {
-        run_test<MatType, SMALLEST_ALGE>(mat, k, m);
+        run_test<MatType>(mat, k, m, SortRule::SmallestAlge);
     }
     SECTION("Both Ends")
     {
-        run_test<MatType, BOTH_ENDS>(mat, k, m);
+        run_test<MatType>(mat, k, m, SortRule::BothEnds);
     }
 }
 
