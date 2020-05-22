@@ -490,9 +490,10 @@ private:
     using UpperHessenbergQR<Scalar>::m_computed;
 
     Vector m_T_diag;   // diagonal elements of T
-    Vector m_T_lsub;   // lower subdiagonal of T
-    Vector m_T_usub;   // upper subdiagonal of T
-    Vector m_T_usub2;  // 2nd upper subdiagonal of T
+    Vector m_T_subd;   // 1st subdiagonal of T
+    Vector m_R_diag;   // diagonal elements of R, where T = QR
+    Vector m_R_supd;   // 1st superdiagonal of R
+    Vector m_R_supd2;  // 2nd superdiagonal of R
 
 public:
     ///
@@ -505,15 +506,14 @@ public:
 
     ///
     /// Constructor to create an object that performs and stores the
-    /// QR decomposition of an upper Hessenberg matrix `mat`, with an
-    /// optional shift: \f$H-sI=QR\f$. Here \f$H\f$ stands for the matrix
+    /// QR decomposition of a tridiagonal matrix `mat`, with an
+    /// optional shift: \f$T-sI=QR\f$. Here \f$T\f$ stands for the matrix
     /// `mat`, and \f$s\f$ is the shift.
     ///
     /// \param mat Matrix type can be `Eigen::Matrix<Scalar, ...>` (e.g.
     /// `Eigen::MatrixXd` and `Eigen::MatrixXf`), or its mapped version
     /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
-    /// Only the major- and sub- diagonal parts of
-    /// the matrix are used.
+    /// Only the diagonal and subdiagonal elements of the matrix are used.
     ///
     TridiagQR(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0)) :
         UpperHessenbergQR<Scalar>(mat.rows())
@@ -522,14 +522,13 @@ public:
     }
 
     ///
-    /// Conduct the QR factorization of a tridiagonal matrix with an
+    /// Compute the QR decomposition of a tridiagonal matrix with an
     /// optional shift.
     ///
     /// \param mat Matrix type can be `Eigen::Matrix<Scalar, ...>` (e.g.
     /// `Eigen::MatrixXd` and `Eigen::MatrixXf`), or its mapped version
     /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
-    /// Only the major- and sub- diagonal parts of
-    /// the matrix are used.
+    /// Only the diagonal and subdiagonal elements of the matrix are used.
     ///
     void compute(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0)) override
     {
@@ -538,54 +537,59 @@ public:
             throw std::invalid_argument("TridiagQR: matrix must be square");
 
         m_shift = shift;
-        m_T_diag.resize(m_n);
-        m_T_lsub.resize(m_n - 1);
-        m_T_usub.resize(m_n - 1);
-        m_T_usub2.resize(m_n - 2);
         m_rot_cos.resize(m_n - 1);
         m_rot_sin.resize(m_n - 1);
 
-        m_T_diag.array() = mat.diagonal().array() - m_shift;
-        m_T_lsub.noalias() = mat.diagonal(-1);
-        m_T_usub.noalias() = m_T_lsub;
+        // Save the diagonal and subdiagonal elements of T
+        m_T_diag.resize(m_n);
+        m_T_subd.resize(m_n - 1);
+        m_T_diag.noalias() = mat.diagonal();
+        m_T_subd.noalias() = mat.diagonal(-1);
+
+        // Apply shift and copy T to R
+        m_R_diag.resize(m_n);
+        m_R_supd.resize(m_n - 1);
+        m_R_supd2.resize(m_n - 2);
+        m_R_diag.array() = m_T_diag.array() - m_shift;
+        m_R_supd.noalias() = m_T_subd;
 
         // A number of pointers to avoid repeated address calculation
         Scalar *c = m_rot_cos.data(),  // pointer to the cosine vector
             *s = m_rot_sin.data(),     // pointer to the sine vector
             r;
-        const Index n1 = m_n - 1;
+        const Index n1 = m_n - 1, n2 = m_n - 2;
         for (Index i = 0; i < n1; i++)
         {
-            // diag[i] == T[i, i]
-            // lsub[i] == T[i + 1, i]
-            // r = sqrt(T[i, i]^2 + T[i + 1, i]^2)
-            // c = T[i, i] / r, s = -T[i + 1, i] / r
-            this->compute_rotation(m_T_diag.coeff(i), m_T_lsub.coeff(i), r, *c, *s);
+            // Rdiag[i] == R[i, i]
+            // Tsubd[i] == R[i + 1, i]
+            // r = sqrt(R[i, i]^2 + R[i + 1, i]^2)
+            // c = R[i, i] / r, s = -R[i + 1, i] / r
+            this->compute_rotation(m_R_diag.coeff(i), m_T_subd.coeff(i), r, *c, *s);
 
             // For a complete QR decomposition,
             // we first obtain the rotation matrix
             // G = [ cos  sin]
             //     [-sin  cos]
-            // and then do T[i:(i + 1), i:(i + 2)] = G' * T[i:(i + 1), i:(i + 2)]
+            // and then do R[i:(i + 1), i:(i + 2)] = G' * R[i:(i + 1), i:(i + 2)]
 
-            // Update T[i, i] and T[i + 1, i]
-            // The updated value of T[i, i] is known to be r
-            // The updated value of T[i + 1, i] is known to be 0
-            m_T_diag.coeffRef(i) = r;
-            m_T_lsub.coeffRef(i) = Scalar(0);
-            // Update T[i, i + 1] and T[i + 1, i + 1]
-            // usub[i] == T[i, i + 1]
-            // diag[i + 1] == T[i + 1, i + 1]
-            const Scalar tmp = m_T_usub.coeff(i);
-            m_T_usub.coeffRef(i) = (*c) * tmp - (*s) * m_T_diag.coeff(i + 1);
-            m_T_diag.coeffRef(i + 1) = (*s) * tmp + (*c) * m_T_diag.coeff(i + 1);
-            // Update T[i, i + 2] and T[i + 1, i + 2]
-            // usub2[i] == T[i, i + 2]
-            // usub[i + 1] == T[i + 1, i + 2]
-            if (i < n1 - 1)
+            // Update R[i, i] and R[i + 1, i]
+            // The updated value of R[i, i] is known to be r
+            // The updated value of R[i + 1, i] is known to be 0
+            m_R_diag.coeffRef(i) = r;
+            // Update R[i, i + 1] and R[i + 1, i + 1]
+            // Rsupd[i] == R[i, i + 1]
+            // Rdiag[i + 1] == R[i + 1, i + 1]
+            const Scalar Tii1 = m_R_supd.coeff(i);
+            const Scalar Ti1i1 = m_R_diag.coeff(i + 1);
+            m_R_supd.coeffRef(i) = (*c) * Tii1 - (*s) * Ti1i1;
+            m_R_diag.coeffRef(i + 1) = (*s) * Tii1 + (*c) * Ti1i1;
+            // Update R[i, i + 2] and R[i + 1, i + 2]
+            // Rsupd2[i] == R[i, i + 2]
+            // Rsupd[i + 1] == R[i + 1, i + 2]
+            if (i < n2)
             {
-                m_T_usub2.coeffRef(i) = -(*s) * m_T_usub.coeff(i + 1);
-                m_T_usub.coeffRef(i + 1) *= (*c);
+                m_R_supd2.coeffRef(i) = -(*s) * m_R_supd.coeff(i + 1);
+                m_R_supd.coeffRef(i + 1) *= (*c);
             }
 
             c++;
@@ -593,9 +597,9 @@ public:
 
             // If we do not need to calculate the R matrix, then
             // only the cos and sin sequences are required.
-            // In such case we only update T[i + 1, (i + 1):(i + 2)]
-            // T[i + 1, i + 1] = c * T[i + 1, i + 1] + s * T[i, i + 1];
-            // T[i + 1, i + 2] *= c;
+            // In such case we only update R[i + 1, (i + 1):(i + 2)]
+            // R[i + 1, i + 1] = c * R[i + 1, i + 1] + s * R[i, i + 1];
+            // R[i + 1, i + 2] *= c;
         }
 
         m_computed = true;
@@ -614,15 +618,15 @@ public:
             throw std::logic_error("TridiagQR: need to call compute() first");
 
         Matrix R = Matrix::Zero(m_n, m_n);
-        R.diagonal().noalias() = m_T_diag;
-        R.diagonal(1).noalias() = m_T_usub;
-        R.diagonal(2).noalias() = m_T_usub2;
+        R.diagonal().noalias() = m_R_diag;
+        R.diagonal(1).noalias() = m_R_supd;
+        R.diagonal(2).noalias() = m_R_supd2;
 
         return R;
     }
 
     ///
-    /// Overwrite `dest` with \f$Q'HQ = RQ + sI\f$, where \f$H\f$ is the input matrix `mat`,
+    /// Overwrite `dest` with \f$Q'TQ = RQ + sI\f$, where \f$T\f$ is the input matrix `mat`,
     /// and \f$s\f$ is the shift. The result is a tridiagonal matrix.
     ///
     /// \param mat The matrix to be overwritten, whose type should be `Eigen::Matrix<Scalar, ...>`,
@@ -633,39 +637,56 @@ public:
         if (!m_computed)
             throw std::logic_error("TridiagQR: need to call compute() first");
 
-        // Make a copy of the R matrix
+        // In exact arithmetics, Q'TQ = RQ + sI, so we can just apply Q to R and add the shift.
+        // However, some numerical examples show that this algorithm decreases the precision,
+        // so we directly apply Q' and Q to T.
+
+        // Copy the saved diagonal and subdiagonal elements of T to `dest`
         dest.resize(m_n, m_n);
         dest.setZero();
         dest.diagonal().noalias() = m_T_diag;
-        // The upper diagonal refers to m_T_usub
-        // The 2nd upper subdiagonal will be zero in RQ
+        dest.diagonal(-1).noalias() = m_T_subd;
 
-        // Compute the RQ matrix
-        // [m11  m12] points to RQ[i:(i+1), i:(i+1)]
-        // [0    m22]
+        // Ti = [x  y  0],  Gi = [ cos[i]  sin[i]  0],  Gi' * Ti * Gi = [x'  y'  o']
+        //      [y  z  w]        [-sin[i]  cos[i]  0]                   [y'  z'  w']
+        //      [0  w  u]        [      0       0  1]                   [o'  w'  u']
         //
-        // Gi = [ cos[i]  sin[i]]
-        //      [-sin[i]  cos[i]]
-        const Index n1 = m_n - 1;
+        // x' = c2*x - 2*c*s*y + s2*z
+        // y' = c*s*(x-z) + (c2-s2)*y
+        // z' = s2*x + 2*c*s*y + c2*z
+        // o' = -s*w, w' = c*w, u' = u
+        //
+        // In iteration (i+1), (y', o') will be further updated to (y'', o''),
+        // where o'' = 0, y'' = cos[i+1]*y' - sin[i+1]*o'
+        const Index n1 = m_n - 1, n2 = m_n - 2;
         for (Index i = 0; i < n1; i++)
         {
             const Scalar c = m_rot_cos.coeff(i);
             const Scalar s = m_rot_sin.coeff(i);
-            const Scalar m11 = dest.coeff(i, i),
-                         m12 = m_T_usub.coeff(i),
-                         m22 = m_T_diag.coeff(i + 1);
+            const Scalar cs = c * s, c2 = c * c, s2 = s * s;
+            const Scalar x = dest.coeff(i, i),
+                         y = dest.coeff(i + 1, i),
+                         z = dest.coeff(i + 1, i + 1);
+            const Scalar c2x = c2 * x, s2x = s2 * x, c2z = c2 * z, s2z = s2 * z;
+            const Scalar csy2 = Scalar(2) * c * s * y;
 
             // Update the diagonal and the lower subdiagonal of dest
-            dest.coeffRef(i, i) = c * m11 - s * m12;
-            dest.coeffRef(i + 1, i) = -s * m22;
-            dest.coeffRef(i + 1, i + 1) = c * m22;
+            dest.coeffRef(i, i) = c2x - csy2 + s2z;                  // x'
+            dest.coeffRef(i + 1, i) = cs * (x - z) + (c2 - s2) * y;  // y'
+            dest.coeffRef(i + 1, i + 1) = s2x + csy2 + c2z;          //z'
+
+            if (i < n2)
+            {
+                const Scalar ci1 = m_rot_cos.coeff(i + 1);
+                const Scalar si1 = m_rot_sin.coeff(i + 1);
+                const Scalar o = -s * m_T_subd.coeff(i + 1);                     // o'
+                dest.coeffRef(i + 2, i + 1) *= c;                                // w'
+                dest.coeffRef(i + 1, i) = ci1 * dest.coeff(i + 1, i) - si1 * o;  // y''
+            }
         }
 
         // Copy the lower subdiagonal to upper subdiagonal
         dest.diagonal(1).noalias() = dest.diagonal(-1);
-
-        // Add the shift to the diagonal
-        dest.diagonal().array() += m_shift;
     }
 };
 
