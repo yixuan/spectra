@@ -1,7 +1,7 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <iostream>
-#include <random> // Requires C++ 11
+#include <random>  // Requires C++ 11
 
 #include <Spectra/SymEigsSolver.h>
 #include <Spectra/MatOp/DenseSymMatProd.h>
@@ -44,18 +44,16 @@ SpMatrix gen_sparse_data(int n, double prob = 0.5)
     std::default_random_engine gen;
     gen.seed(0);
     std::uniform_real_distribution<double> distr(0.0, 1.0);
-    for(int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
-        for(int j = 0; j < n; j++)
+        for (int j = 0; j < n; j++)
         {
-            if(distr(gen) < prob)
+            if (distr(gen) < prob)
                 mat.insert(i, j) = distr(gen) - 0.5;
         }
     }
     return mat;
 }
-
-
 
 template <typename MatType, int SelectionRule>
 void run_test(const MatType& mat, int k, int m)
@@ -66,12 +64,12 @@ void run_test(const MatType& mat, int k, int m)
     eigs.init();
     int nconv = eigs.compute();
     int niter = eigs.num_iterations();
-    int nops  = eigs.num_operations();
+    int nops = eigs.num_operations();
 
-    INFO( "nconv = " << nconv );
-    INFO( "niter = " << niter );
-    INFO( "nops  = " << nops  );
-    REQUIRE( eigs.info() == SUCCESSFUL );
+    INFO("nconv = " << nconv);
+    INFO("niter = " << niter);
+    INFO("nops  = " << nops);
+    REQUIRE(eigs.info() == SUCCESSFUL);
 
     Vector evals = eigs.eigenvalues();
     Matrix evecs = eigs.eigenvectors();
@@ -79,30 +77,30 @@ void run_test(const MatType& mat, int k, int m)
     Matrix resid = mat.template selfadjointView<Eigen::Lower>() * evecs - evecs * evals.asDiagonal();
     const double err = resid.array().abs().maxCoeff();
 
-    INFO( "||AU - UD||_inf = " << err );
-    REQUIRE( err == Approx(0.0).margin(1e-9) );
+    INFO("||AU - UD||_inf = " << err);
+    REQUIRE(err == Approx(0.0).margin(1e-9));
 }
 
 template <typename MatType>
 void run_test_sets(const MatType& mat, int k, int m)
 {
-    SECTION( "Largest Magnitude" )
+    SECTION("Largest Magnitude")
     {
         run_test<MatType, LARGEST_MAGN>(mat, k, m);
     }
-    SECTION( "Largest Value" )
+    SECTION("Largest Value")
     {
         run_test<MatType, LARGEST_ALGE>(mat, k, m);
     }
-    SECTION( "Smallest Magnitude" )
+    SECTION("Smallest Magnitude")
     {
         run_test<MatType, SMALLEST_MAGN>(mat, k, m);
     }
-    SECTION( "Smallest Value" )
+    SECTION("Smallest Value")
     {
         run_test<MatType, SMALLEST_ALGE>(mat, k, m);
     }
-    SECTION( "Both Ends" )
+    SECTION("Both Ends")
     {
         run_test<MatType, BOTH_ENDS>(mat, k, m);
     }

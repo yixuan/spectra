@@ -2,9 +2,8 @@
 
 [![Build Status](https://travis-ci.org/yixuan/spectra.svg?branch=master)](https://travis-ci.org/yixuan/spectra)
 
-> **NOTE**: Starting from v0.7 all header files are moved into a directory
-> named `Spectra`. Hence the recommended include directive would look like
-> `#include <Spectra/SymEigsSolver.h>`.
+> **NOTE**: If you are interested in the future development of Spectra, please join
+> [this thread](https://github.com/yixuan/spectra/issues/92) to share your comments and suggestions.
 
 [**Spectra**](https://spectralib.org) stands for **Sp**arse **E**igenvalue **C**omputation **T**oolkit
 as a **R**edesigned **A**RPACK. It is a C++ library for large scale eigenvalue
@@ -233,7 +232,7 @@ More information can be found in the project page [https://spectralib.org](https
 
 ## Installation
 
-An optional CMake installation is supported, if you have CMake installed. You can install the headers using the following commands:
+An optional CMake installation is supported, if you have CMake with at least v3.10 installed. You can install the headers using the following commands:
 
 ```bash
     mkdir build && cd build

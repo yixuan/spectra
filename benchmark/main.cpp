@@ -11,13 +11,13 @@ void eigs_gen_F77(MatrixXd &M, VectorXd &init_resid, int k, int m, double &time_
 void eigs_sym_Cpp(MatrixXd &M, VectorXd &init_resid, int k, int m, double &time_used, double &prec_err, int &nops);
 void eigs_gen_Cpp(MatrixXd &M, VectorXd &init_resid, int k, int m, double &time_used, double &prec_err, int &nops);
 
-
 void print_header(std::string title)
 {
     const int width = 80;
     const char sep = ' ';
 
-    std::cout << std::endl << std::string(width, '=') << std::endl;
+    std::cout << std::endl
+              << std::string(width, '=') << std::endl;
     std::cout << std::string((width - title.length()) / 2, ' ') << title << std::endl;
     std::cout << std::string(width, '-') << std::endl;
 
@@ -35,8 +35,8 @@ void print_header(std::string title)
 }
 
 void print_row(int n, int dataset,
-    double time_f77, double err_f77, int nops_f77,
-    double time_cpp, double err_cpp, int nops_cpp)
+               double time_f77, double err_f77, int nops_f77,
+               double time_cpp, double err_cpp, int nops_cpp)
 {
     const char sep = ' ';
 
@@ -56,7 +56,8 @@ void print_row(int n, int dataset,
 void print_footer()
 {
     const int width = 80;
-    std::cout << std::string(width, '=') << std::endl << std::endl;
+    std::cout << std::string(width, '=') << std::endl
+              << std::endl;
 }
 
 void run_eigs_sym(int n_experiment, int n_replicate, int n, int k, int m)
@@ -65,7 +66,7 @@ void run_eigs_sym(int n_experiment, int n_replicate, int n, int k, int m)
     double err_f77, err_cpp;
     int nops_f77, nops_cpp;
 
-    for(int i = 0; i < n_experiment; i++)
+    for (int i = 0; i < n_experiment; i++)
     {
         MatrixXd A = MatrixXd::Random(n, n);
         MatrixXd M = A.transpose() + A;
@@ -74,7 +75,7 @@ void run_eigs_sym(int n_experiment, int n_replicate, int n, int k, int m)
         init_resid.array() -= 0.5;
         init_resid = M * init_resid;
 
-        for(int j = 0; j < n_replicate; j++)
+        for (int j = 0; j < n_replicate; j++)
         {
             eigs_sym_F77(M, init_resid, k, m, time_f77, err_f77, nops_f77);
             eigs_sym_Cpp(M, init_resid, k, m, time_cpp, err_cpp, nops_cpp);
@@ -89,7 +90,7 @@ void run_eigs_gen(int n_experiment, int n_replicate, int n, int k, int m)
     double err_f77, err_cpp;
     int nops_f77, nops_cpp;
 
-    for(int i = 0; i < n_experiment; i++)
+    for (int i = 0; i < n_experiment; i++)
     {
         MatrixXd A = MatrixXd::Random(n, n);
 
@@ -97,7 +98,7 @@ void run_eigs_gen(int n_experiment, int n_replicate, int n, int k, int m)
         init_resid.array() -= 0.5;
         init_resid = A * init_resid;
 
-        for(int j = 0; j < n_replicate; j++)
+        for (int j = 0; j < n_replicate; j++)
         {
             eigs_gen_F77(A, init_resid, k, m, time_f77, err_f77, nops_f77);
             eigs_gen_Cpp(A, init_resid, k, m, time_cpp, err_cpp, nops_cpp);

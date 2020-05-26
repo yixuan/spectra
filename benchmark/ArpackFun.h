@@ -1,12 +1,17 @@
 #ifndef ARPACKFUN_H
 #define ARPACKFUN_H
 
-#define F77_CALL(x)	   x ## _
-#define F77_NAME(x)    F77_CALL(x)
+#define F77_CALL(x) x##_
+#define F77_NAME(x) F77_CALL(x)
 
-enum BMAT { BMAT_I = 0, BMAT_G };
+enum BMAT
+{
+    BMAT_I = 0,
+    BMAT_G
+};
 
-enum WHICH {
+enum WHICH
+{
     WHICH_LM = 0,
     WHICH_SM,
     WHICH_LR,
@@ -18,8 +23,12 @@ enum WHICH {
     WHICH_BE
 };
 
-enum HOWMNY { HOWMNY_A = 0, HOWMNY_P, HOWMNY_S };
-
+enum HOWMNY
+{
+    HOWMNY_A = 0,
+    HOWMNY_P,
+    HOWMNY_S
+};
 
 extern "C" {
 
@@ -49,17 +58,16 @@ void F77_NAME(dneupdwr)(int *rvec, int *howmnyi, int *select, double *dr, double
                         double *resid, int *ncv, double *v, int *ldv, int *iparam,
                         int *ipntr, double *workd, double *workl, int *lworkl, int *info);
 
-} // extern "C"
-
+}  // extern "C"
 
 // Map char *which to enum type
 // WHICH_LM is the default if unusual case happens
 inline int whichenum(char *which)
 {
-    switch(which[0])
+    switch (which[0])
     {
         case 'L':
-            switch(which[1])
+            switch (which[1])
             {
                 case 'M':
                     return (int) WHICH_LM;
@@ -73,7 +81,7 @@ inline int whichenum(char *which)
                     return (int) WHICH_LM;
             }
         case 'S':
-            switch(which[1])
+            switch (which[1])
             {
                 case 'M':
                     return (int) WHICH_SM;
@@ -87,7 +95,7 @@ inline int whichenum(char *which)
                     return (int) WHICH_LM;
             }
         case 'B':
-            if(which[1] == 'E')
+            if (which[1] == 'E')
                 return (int) WHICH_BE;
             else
                 return (int) WHICH_LM;
@@ -98,22 +106,22 @@ inline int whichenum(char *which)
     return (int) WHICH_LM;
 }
 
-
 // C++ Wrapper of the functions above
-inline void saupd(int& ido, char bmat, int n, char* which,
-                  int nev, double& tol, double resid[],
+inline void saupd(int &ido, char bmat, int n, char *which,
+                  int nev, double &tol, double resid[],
                   int ncv, double v[], int ldv,
                   int iparam[], int ipntr[], double workd[],
-                  double workl[], int lworkl, int& info)
+                  double workl[], int lworkl, int &info)
 {
-    int bmati = (bmat == 'G') ? BMAT_G: BMAT_I;
+    int bmati = (bmat == 'G') ? BMAT_G : BMAT_I;
     int whichi = whichenum(which);
 
-    F77_CALL(dsaupdwr)(&ido, &bmati, &n, &whichi,
-                       &nev, &tol, resid,
-                       &ncv, v, &ldv,
-                       iparam, ipntr, workd,
-                       workl, &lworkl, &info);
+    F77_CALL(dsaupdwr)
+    (&ido, &bmati, &n, &whichi,
+     &nev, &tol, resid,
+     &ncv, v, &ldv,
+     iparam, ipntr, workd,
+     workl, &lworkl, &info);
 }
 
 inline void seupd(bool rvec, char howmny, double d[],
@@ -121,63 +129,64 @@ inline void seupd(bool rvec, char howmny, double d[],
                   int n, char *which, int nev, double tol,
                   double resid[], int ncv, double v[], int ldv,
                   int iparam[], int ipntr[], double workd[], double workl[],
-                  int lworkl, int& info)
+                  int lworkl, int &info)
 {
-
     int rvec_pass = (int) rvec;
     int *select_pass = new int[ncv];
     double *z_pass = (z == NULL) ? v : z;
-    int howmnyi = (howmny == 'P') ? HOWMNY_P: ((howmny == 'S') ? HOWMNY_S: HOWMNY_A);
-    int bmati = (bmat == 'G') ? BMAT_G: BMAT_I;
+    int howmnyi = (howmny == 'P') ? HOWMNY_P : ((howmny == 'S') ? HOWMNY_S : HOWMNY_A);
+    int bmati = (bmat == 'G') ? BMAT_G : BMAT_I;
     int whichi = whichenum(which);
 
-    F77_CALL(dseupdwr)(&rvec_pass, &howmnyi, select_pass, d,
-                       z_pass, &ldz, &sigma, &bmati,
-                       &n, &whichi, &nev, &tol,
-                       resid, &ncv, v, &ldv,
-                       iparam, ipntr, workd, workl,
-                       &lworkl, &info);
+    F77_CALL(dseupdwr)
+    (&rvec_pass, &howmnyi, select_pass, d,
+     z_pass, &ldz, &sigma, &bmati,
+     &n, &whichi, &nev, &tol,
+     resid, &ncv, v, &ldv,
+     iparam, ipntr, workd, workl,
+     &lworkl, &info);
 
-    delete [] select_pass;
+    delete[] select_pass;
 }
 
-inline void naupd(int& ido, char bmat, int n, char* which,
-                  int nev, double& tol, double resid[],
+inline void naupd(int &ido, char bmat, int n, char *which,
+                  int nev, double &tol, double resid[],
                   int ncv, double v[], int ldv,
                   int iparam[], int ipntr[], double workd[],
-                  double workl[], int lworkl, int& info)
+                  double workl[], int lworkl, int &info)
 {
-    int bmati = (bmat == 'G') ? BMAT_G: BMAT_I;
+    int bmati = (bmat == 'G') ? BMAT_G : BMAT_I;
     int whichi = whichenum(which);
 
-    F77_CALL(dnaupdwr)(&ido, &bmati, &n, &whichi,
-                       &nev, &tol, resid,
-                       &ncv, v, &ldv,
-                       iparam, ipntr, workd,
-                       workl, &lworkl, &info);
+    F77_CALL(dnaupdwr)
+    (&ido, &bmati, &n, &whichi,
+     &nev, &tol, resid,
+     &ncv, v, &ldv,
+     iparam, ipntr, workd,
+     workl, &lworkl, &info);
 }
 
 inline void neupd(bool rvec, char howmny, double dr[], double di[],
                   double z[], int ldz, double sigmar, double sigmai, double workev[],
                   char bmat, int n, char *which, int nev, double tol,
                   double resid[], int ncv, double v[], int ldv, int iparam[],
-                  int ipntr[], double workd[], double workl[], int lworkl, int& info)
+                  int ipntr[], double workd[], double workl[], int lworkl, int &info)
 {
-
     int rvec_pass = (int) rvec;
     int *select_pass = new int[ncv];
     double *z_pass = (z == NULL) ? v : z;
-    int howmnyi = (howmny == 'P') ? HOWMNY_P: ((howmny == 'S') ? HOWMNY_S: HOWMNY_A);
-    int bmati = (bmat == 'G') ? BMAT_G: BMAT_I;
+    int howmnyi = (howmny == 'P') ? HOWMNY_P : ((howmny == 'S') ? HOWMNY_S : HOWMNY_A);
+    int bmati = (bmat == 'G') ? BMAT_G : BMAT_I;
     int whichi = whichenum(which);
 
-    F77_CALL(dneupdwr)(&rvec_pass, &howmnyi, select_pass, dr, di,
-                       z_pass, &ldz, &sigmar, &sigmai, workev,
-                       &bmati, &n, &whichi, &nev, &tol,
-                       resid, &ncv, v, &ldv, iparam,
-                       ipntr, workd, workl, &lworkl, &info);
+    F77_CALL(dneupdwr)
+    (&rvec_pass, &howmnyi, select_pass, dr, di,
+     z_pass, &ldz, &sigmar, &sigmai, workev,
+     &bmati, &n, &whichi, &nev, &tol,
+     resid, &ncv, v, &ldv, iparam,
+     ipntr, workd, workl, &lworkl, &info);
 
-    delete [] select_pass;
+    delete[] select_pass;
 }
 
-#endif // ARPACKFUN_H
+#endif  // ARPACKFUN_H

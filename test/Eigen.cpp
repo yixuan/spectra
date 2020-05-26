@@ -30,12 +30,12 @@ TEST_CASE("Eigen decomposition of upper Hessenberg matrix", "[Eigen]")
 
     MatrixXcd err = H * evecs - evecs * evals.asDiagonal();
 
-    INFO( "||HU - UD||_inf = " << err.cwiseAbs().maxCoeff() );
-    REQUIRE( err.cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12) );
+    INFO("||HU - UD||_inf = " << err.cwiseAbs().maxCoeff());
+    REQUIRE(err.cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12));
 
     clock_t t1, t2;
     t1 = clock();
-    for(int i = 0; i < 100; i++)
+    for (int i = 0; i < 100; i++)
     {
         UpperHessenbergEigen<double> decomp(H);
         VectorXcd evals = decomp.eigenvalues();
@@ -46,7 +46,7 @@ TEST_CASE("Eigen decomposition of upper Hessenberg matrix", "[Eigen]")
               << double(t2 - t1) / CLOCKS_PER_SEC << " secs\n";
 
     t1 = clock();
-    for(int i = 0; i < 100; i++)
+    for (int i = 0; i < 100; i++)
     {
         Eigen::EigenSolver<MatrixXd> decomp(H);
         VectorXcd evals = decomp.eigenvalues();
@@ -74,12 +74,12 @@ TEST_CASE("Eigen decomposition of symmetric tridiagonal matrix", "[Eigen]")
 
     MatrixXd err = H * evecs - evecs * evals.asDiagonal();
 
-    INFO( "||HU - UD||_inf = " << err.cwiseAbs().maxCoeff() );
-    REQUIRE( err.cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12) );
+    INFO("||HU - UD||_inf = " << err.cwiseAbs().maxCoeff());
+    REQUIRE(err.cwiseAbs().maxCoeff() == Approx(0.0).margin(1e-12));
 
     clock_t t1, t2;
     t1 = clock();
-    for(int i = 0; i < 100; i++)
+    for (int i = 0; i < 100; i++)
     {
         TridiagEigen<double> decomp(H);
         VectorXd evals = decomp.eigenvalues();
@@ -90,7 +90,7 @@ TEST_CASE("Eigen decomposition of symmetric tridiagonal matrix", "[Eigen]")
               << double(t2 - t1) / CLOCKS_PER_SEC << " secs\n";
 
     t1 = clock();
-    for(int i = 0; i < 100; i++)
+    for (int i = 0; i < 100; i++)
     {
         Eigen::SelfAdjointEigenSolver<MatrixXd> decomp(H);
         VectorXd evals = decomp.eigenvalues();

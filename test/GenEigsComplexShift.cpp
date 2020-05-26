@@ -20,25 +20,28 @@ void run_test(const Matrix &mat, int k, int m, double sigmar, double sigmai, boo
     DenseGenComplexShiftSolve<double> op(mat);
     GenEigsComplexShiftSolver<double, SelectionRule, DenseGenComplexShiftSolve<double>> eigs(&op, k, m, sigmar, sigmai);
     eigs.init();
-    int nconv = eigs.compute(100); // maxit = 500 to reduce running time for failed cases
+    // maxit = 100 to reduce running time for failed cases
+    int nconv = eigs.compute(100);
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
-    if(allow_fail)
+    if (allow_fail)
     {
-        if( eigs.info() != SUCCESSFUL )
+        if (eigs.info() != SUCCESSFUL)
         {
-            WARN( "FAILED on this test" );
+            WARN("FAILED on this test");
             std::cout << "nconv = " << nconv << std::endl;
             std::cout << "niter = " << niter << std::endl;
-            std::cout << "nops  = " << nops  << std::endl;
+            std::cout << "nops  = " << nops << std::endl;
             return;
         }
-    } else {
-        INFO( "nconv = " << nconv );
-        INFO( "niter = " << niter );
-        INFO( "nops  = " << nops );
-        REQUIRE( eigs.info() == SUCCESSFUL );
+    }
+    else
+    {
+        INFO("nconv = " << nconv);
+        INFO("niter = " << niter);
+        INFO("nops  = " << nops);
+        REQUIRE(eigs.info() == SUCCESSFUL);
     }
 
     ComplexVector evals = eigs.eigenvalues();
@@ -47,35 +50,34 @@ void run_test(const Matrix &mat, int k, int m, double sigmar, double sigmai, boo
     ComplexMatrix resid = mat * evecs - evecs * evals.asDiagonal();
     const double err = resid.array().abs().maxCoeff();
 
-    INFO( "||AU - UD||_inf = " << err );
-    INFO( "||AU - UD||_2 colwise =" << resid.colwise().norm() );
-    REQUIRE( err == Approx(0.0).margin(1e-8) );
+    INFO("||AU - UD||_inf = " << err);
+    INFO("||AU - UD||_2 colwise =" << resid.colwise().norm());
+    REQUIRE(err == Approx(0.0).margin(1e-8));
 }
-
 
 void run_test_sets(const Matrix &A, int k, int m, double sigmar, double sigmai)
 {
-    SECTION( "Largest Magnitude" )
+    SECTION("Largest Magnitude")
     {
         run_test<LARGEST_MAGN>(A, k, m, sigmar, sigmai);
     }
-    SECTION( "Largest Real Part" )
+    SECTION("Largest Real Part")
     {
         run_test<LARGEST_REAL>(A, k, m, sigmar, sigmai);
     }
-    SECTION( "Largest Imaginary Part" )
+    SECTION("Largest Imaginary Part")
     {
         run_test<LARGEST_IMAG>(A, k, m, sigmar, sigmai);
     }
-    SECTION( "Smallest Magnitude" )
+    SECTION("Smallest Magnitude")
     {
         run_test<SMALLEST_MAGN>(A, k, m, sigmar, sigmai, true);
     }
-    SECTION( "Smallest Real Part" )
+    SECTION("Smallest Real Part")
     {
         run_test<SMALLEST_REAL>(A, k, m, sigmar, sigmai);
     }
-    SECTION( "Smallest Imaginary Part" )
+    SECTION("Smallest Imaginary Part")
     {
         run_test<SMALLEST_IMAG>(A, k, m, sigmar, sigmai, true);
     }

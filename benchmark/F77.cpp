@@ -49,9 +49,9 @@ void eigs_sym_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
     int ldv = n;
     // Control parameters
     int *iparam = new int[11]();
-    iparam[1 - 1] = 1; // ishfts
-    iparam[3 - 1] = 1000; // maxitr
-    iparam[7 - 1] = 1; // mode
+    iparam[1 - 1] = 1;     // ishfts
+    iparam[3 - 1] = 1000;  // maxitr
+    iparam[7 - 1] = 1;     // mode
     // Some pointers
     int *ipntr = new int[11]();
     /* workd has 3 columns.
@@ -85,15 +85,15 @@ void eigs_sym_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
     }
 
     // info > 0 means warning, < 0 means error
-    if(info > 0)
+    if (info > 0)
         std::cout << "warnings occured" << std::endl;
-    if(info < 0)
+    if (info < 0)
     {
-        delete [] workl;
-        delete [] workd;
-        delete [] ipntr;
-        delete [] iparam;
-        delete [] resid;
+        delete[] workl;
+        delete[] workd;
+        delete[] ipntr;
+        delete[] iparam;
+        delete[] resid;
 
         std::cout << "errors occured" << std::endl;
         end = get_wall_time();
@@ -139,11 +139,11 @@ void eigs_sym_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
     niter = iparam[9 - 1];
 
     // Free memory of temp arrays
-    delete [] workl;
-    delete [] workd;
-    delete [] ipntr;
-    delete [] iparam;
-    delete [] resid;
+    delete[] workl;
+    delete[] workd;
+    delete[] ipntr;
+    delete[] iparam;
+    delete[] resid;
 
     // ierr < 0 means error
     if (ierr < 0)
@@ -155,13 +155,11 @@ void eigs_sym_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
         return;
     }
 
-/*
-    std::cout << "computed eigenvalues D = \n" << evals.transpose() << std::endl;
+    /* std::cout << "computed eigenvalues D = \n" << evals.transpose() << std::endl;
     std::cout << "first 5 rows of computed eigenvectors U = \n" <<
-        evecs.topLeftCorner(5, nconv) << std::endl;
+    evecs.topLeftCorner(5, nconv) << std::endl;
     std::cout << "nconv = " << nconv << std::endl;
-    std::cout << "nops = " << niter << std::endl;
-*/
+    std::cout << "nops = " << niter << std::endl; */
 
     end = get_wall_time();
     time_used = (end - start) * 1000;
@@ -169,8 +167,6 @@ void eigs_sym_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
     prec_err = err.cwiseAbs().maxCoeff();
     nops = niter;
 }
-
-
 
 void eigs_gen_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
                   double &time_used, double &prec_err, int &nops)
@@ -212,9 +208,9 @@ void eigs_gen_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
     int ldv = n;
     // Control parameters
     int *iparam = new int[11]();
-    iparam[1 - 1] = 1; // ishfts
-    iparam[3 - 1] = 1000; // maxitr
-    iparam[7 - 1] = 1; // mode
+    iparam[1 - 1] = 1;     // ishfts
+    iparam[3 - 1] = 1000;  // maxitr
+    iparam[7 - 1] = 1;     // mode
     // Some pointers
     int *ipntr = new int[14]();
     /* workd has 3 columns.
@@ -248,15 +244,15 @@ void eigs_gen_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
     }
 
     // info > 0 means warning, < 0 means error
-    if(info > 0)
+    if (info > 0)
         std::cout << "warnings occured" << std::endl;
-    if(info < 0)
+    if (info < 0)
     {
-        delete [] workl;
-        delete [] workd;
-        delete [] ipntr;
-        delete [] iparam;
-        delete [] resid;
+        delete[] workl;
+        delete[] workd;
+        delete[] ipntr;
+        delete[] iparam;
+        delete[] resid;
 
         std::cout << "errors occured" << std::endl;
         end = get_wall_time();
@@ -305,12 +301,12 @@ void eigs_gen_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
     niter = iparam[9 - 1];
 
     // Free memory of temp arrays
-    delete [] workv;
-    delete [] workl;
-    delete [] workd;
-    delete [] ipntr;
-    delete [] iparam;
-    delete [] resid;
+    delete[] workv;
+    delete[] workl;
+    delete[] workd;
+    delete[] ipntr;
+    delete[] iparam;
+    delete[] resid;
 
     // ierr < 0 means error
     if (ierr < 0)
@@ -322,16 +318,14 @@ void eigs_gen_F77(MatrixXd &M, VectorXd &init_resid, int k, int m,
         return;
     }
 
-/*
-    VectorXcd evals(evals_re.size());
+    /* VectorXcd evals(evals_re.size());
     evals.real() = evals_re;
     evals.imag() = evals_im;
     std::cout << "computed eigenvalues D = \n" << evals << std::endl;
     std::cout << "first 5 rows of computed eigenvectors U = \n" <<
         evecs.topLeftCorner(5, nconv) << std::endl;
     std::cout << "nconv = " << nconv << std::endl;
-    std::cout << "nops = " << niter << std::endl;
-*/
+    std::cout << "nops = " << niter << std::endl; */
 
     end = get_wall_time();
     time_used = (end - start) * 1000;
