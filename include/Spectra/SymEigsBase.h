@@ -57,8 +57,6 @@ private:
 
 protected:
     // clang-format off
-    const OpType& m_op;         // object to conduct matrix operation,
-                                // e.g. matrix-vector product
     const Index   m_n;          // dimension of matrix A
     const Index   m_nev;        // number of eigenvalues requested
     const Index   m_ncv;        // dimension of Krylov subspace in the Lanczos method
@@ -279,8 +277,7 @@ public:
     /// \cond
 
     SymEigsBase(const OpType& op, const BOpType& Bop, Index nev, Index ncv) :
-        m_op(op),
-        m_n(m_op.rows()),
+        m_n(op.rows()),
         m_nev(nev),
         m_ncv(ncv > m_n ? m_n : ncv),
         m_nmatop(0),
