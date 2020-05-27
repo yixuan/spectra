@@ -11,7 +11,6 @@
 #include <cmath>      // std::sqrt
 #include <utility>    // std::forward
 #include <stdexcept>  // std::invalid_argument
-#include <sstream>    // std::stringstream
 
 #include "Arnoldi.h"
 
@@ -63,9 +62,9 @@ public:
 
         if (from_k > m_k)
         {
-            std::stringstream msg;
-            msg << "Lanczos: from_k (= " << from_k << ") is larger than the current subspace dimension (= " << m_k << ")";
-            throw std::invalid_argument(msg.str());
+            std::string msg = "Lanczos: from_k (= " + std::to_string(from_k) +
+                ") is larger than the current subspace dimension (= " + std::to_string(m_k) + ")";
+            throw std::invalid_argument(msg);
         }
 
         const Scalar beta_thresh = m_eps * sqrt(Scalar(m_n));
