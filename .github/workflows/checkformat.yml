@@ -16,5 +16,7 @@ jobs:
     - uses: actions/checkout@v2 
     - name: dependencies
       run: sudo apt install libeigen3-dev clang-format-8
-    - name: check_format
-      run: cmake --build . --target format && git diff --exit-code
+    - name: cmake
+      run: cmake -B builddir
+    - name: Format
+      run: cmake --build builddir --target format && git diff --exit-code
