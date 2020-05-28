@@ -1,0 +1,28 @@
+name: Codecov
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mpi: [ ON] 
+        compiler: [gcc]
+        BUILD_TYPE : [Debug]
+    steps:
+    - uses: actions/checkout@v2 
+    - name: configure
+      env:
+        CC: ${{ matrix.compiler }}
+      run: cmake -H. -Bbuild -DENABLE_TESTING=ON -DCMAKEBUILD_TYPE=${{ matrix.BUILD_TYPE }} -DENABLE_COVERAGE_BUILD=ON
+    - name: make
+      run: cmake --build build -- -j4
+    - name: test
+      run: cd build && ctest
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1

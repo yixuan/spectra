@@ -3,6 +3,16 @@ project (Spectra VERSION 0.8.1 LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)  # make CMake look into the ./cmake/ folder for configuration files
 
+option(ENABLE_COVERAGE_BUILD "Do a coverage build" OFF)
+if(ENABLE_COVERAGE_BUILD)
+    message(STATUS "Enabling coverage build")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+endif()
+
+
 # Supported options
 # -----------------
 option(BUILD_TESTS "Build tests" OFF)
