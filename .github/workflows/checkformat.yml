@@ -12,14 +12,9 @@ jobs:
     strategy:
       matrix:
         compiler: [gcc]
-        BUILD_TYPE : [Debug]
     steps:
     - uses: actions/checkout@v2 
     - name: dependencies
       run: sudo apt install libeigen3-dev clang-format-8
-    - name: configure
-      env:
-        CC: ${{ matrix.compiler }}
-      run: cmake -H. -Bbuild -DBUILD_TESTS=ON -DCMAKEBUILD_TYPE=${{ matrix.BUILD_TYPE }}
     - name: check_format
       run: cmake --build . --target format && git diff --exit-code
