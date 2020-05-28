@@ -1,4 +1,4 @@
-name: Codecov
+name: check format
 on:
   push:
     branches: [ master ]
@@ -16,14 +16,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2 
     - name: dependencies
-      run: sudo apt install libeigen3-dev
+      run: sudo apt install libeigen3-dev clang-format-8
     - name: configure
       env:
         CC: ${{ matrix.compiler }}
       run: cmake -H. -Bbuild -DBUILD_TESTS=ON -DCMAKEBUILD_TYPE=${{ matrix.BUILD_TYPE }} -DENABLE_COVERAGE_BUILD=ON
-    - name: make
-      run: cmake --build build -- -j4
-    - name: test
-      run: cd build && ctest
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
+    - name: check_format
+      run: cmake --build --target format && git diff --exit-code
