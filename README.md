@@ -1,6 +1,8 @@
 # <a href="https://spectralib.org"><img src="https://spectralib.org/img/logo.png" width="200px" /></a>
 
-[![Build Status](https://travis-ci.org/yixuan/spectra.svg?branch=master)](https://travis-ci.org/yixuan/spectra)
+[![Build Status](https://travis-ci.org/yixuan/spectra.svg?branch=master)](https://travis-ci.org/yixuan/spectra) ![Basic CI](https://github.com/JensWehner/spectra/workflows/Basic%20CI/badge.svg) [![codecov](https://codecov.io/gh/JensWehner/spectra/branch/master/graph/badge.svg)](https://codecov.io/gh/JensWehner/spectra)
+
+
 
 > **NOTE**: If you are interested in the future development of Spectra, please join
 > [this thread](https://github.com/yixuan/spectra/issues/92) to share your comments and suggestions.
