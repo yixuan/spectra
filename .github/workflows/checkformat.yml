@@ -22,4 +22,4 @@ jobs:
         CC: ${{ matrix.compiler }}
       run: cmake -H. -Bbuild -DBUILD_TESTS=ON -DCMAKEBUILD_TYPE=${{ matrix.BUILD_TYPE }} -DENABLE_COVERAGE_BUILD=ON
     - name: check_format
-      run: cmake --build --target format && git diff --exit-code
+      run: cmake --build . --target format && git diff --exit-code
