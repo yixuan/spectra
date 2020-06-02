@@ -8,7 +8,7 @@
 #define UPPER_HESSENBERG_QR_H
 
 #include <Eigen/Core>
-#include <cmath>      // std::abs, std::sqrt
+#include <cmath>      // std::abs, std::sqrt, std::pow
 #include <algorithm>  // std::fill
 #include <stdexcept>  // std::logic_error
 
@@ -66,6 +66,64 @@ protected:
     Array m_rot_sin;
     bool m_computed;
 
+    // Given a >= b > 0, compute r = sqrt(a^2 + b^2), c = a / r, and s = b / r with high precision
+    static void stable_scaling(const Scalar& a, const Scalar& b, Scalar& r, Scalar& c, Scalar& s)
+    {
+        using std::sqrt;
+        using std::pow;
+
+        // Let t = b / a, then 0 < t <= 1
+        // c = 1 / sqrt(1 + t^2)
+        // s = t * c
+        // r = a * sqrt(1 + t^2)
+        const Scalar t = b / a;
+        // We choose a cutoff such that cutoff^4 < eps
+        // If t > cutoff, use the standard way; otherwise use Taylor series expansion
+        // to avoid an explicit sqrt() call that may lose precision
+        constexpr Scalar eps = TypeTraits<Scalar>::epsilon();
+        // std::pow() is not constexpr, so we do not declare cutoff to be constexpr
+        // But most compilers should be able to compute cutoff at compile time
+        const Scalar cutoff = Scalar(0.1) * pow(eps, Scalar(0.25));
+        if (t >= cutoff)
+        {
+            const Scalar denom = sqrt(Scalar(1) + t * t);
+            c = Scalar(1) / denom;
+            s = t * c;
+            r = a * denom;
+        }
+        else
+        {
+            // 1 / sqrt(1 + t^2) ~=     1 - (1/2) * t^2 + (3/8) * t^4
+            // 1 / sqrt(1 + l^2) ~= 1 / l - (1/2) / l^3 + (3/8) / l^5
+            //                   ==     t - (1/2) * t^3 + (3/8) * t^5, where l = 1 / t
+            // sqrt(1 + t^2)     ~=     1 + (1/2) * t^2 - (1/8) * t^4 + (1/16) * t^6
+            //
+            // c = 1 / sqrt(1 + t^2) ~= 1 - t^2 * (1/2 - (3/8) * t^2)
+            // s = 1 / sqrt(1 + l^2) ~= t * (1 - t^2 * (1/2 - (3/8) * t^2))
+            // r = a * sqrt(1 + t^2) ~= a + (1/2) * b * t - (1/8) * b * t^3 + (1/16) * b * t^5
+            //                       == a + (b/2) * t * (1 - t^2 * (1/4 - 1/8 * t^2))
+            constexpr Scalar c1 = Scalar(1);
+            constexpr Scalar c2 = Scalar(0.5);
+            constexpr Scalar c4 = Scalar(0.25);
+            constexpr Scalar c8 = Scalar(0.125);
+            constexpr Scalar c38 = Scalar(0.375);
+            const Scalar t2 = t * t;
+            const Scalar tc = t2 * (c2 - c38 * t2);
+            c = c1 - tc;
+            s = t - t * tc;
+            r = a + c2 * b * t * (c1 - t2 * (c4 - c8 * t2));
+
+            /* const Scalar t_2 = Scalar(0.5) * t;
+            const Scalar t2_2 = t_2 * t;
+            const Scalar t3_2 = t2_2 * t;
+            const Scalar t4_38 = Scalar(1.5) * t2_2 * t2_2;
+            const Scalar t5_16 = Scalar(0.25) * t3_2 * t2_2;
+            c = Scalar(1) - t2_2 + t4_38;
+            s = t - t3_2 + Scalar(6) * t5_16;
+            r = a + b * (t_2 - Scalar(0.25) * t3_2 + t5_16); */
+        }
+    }
+
     // Given x and y, compute 1) r = sqrt(x^2 + y^2), 2) c = x / r, 3) s = -y / r
     // If both x and y are zero, set c = 1 and s = 0
     // We must implement it in a numerically stable way
@@ -74,35 +132,41 @@ protected:
     static void compute_rotation(const Scalar& x, const Scalar& y, Scalar& r, Scalar& c, Scalar& s)
     {
         using std::abs;
-        using std::sqrt;
 
-        const Scalar xsign = (x > Scalar(0)) - (x < Scalar(0));
-        const Scalar ysign = (y > Scalar(0)) - (y < Scalar(0));
+        // Only need xsign when x != 0
+        const Scalar xsign = (x > Scalar(0)) ? Scalar(1) : Scalar(-1);
         const Scalar xabs = abs(x);
+        if (y == Scalar(0))
+        {
+            c = (x == Scalar(0)) ? Scalar(1) : xsign;
+            s = Scalar(0);
+            r = xabs;
+            return;
+        }
+
+        // Now we know y != 0
+        const Scalar ysign = (y > Scalar(0)) ? Scalar(1) : Scalar(-1);
         const Scalar yabs = abs(y);
+        if (x == Scalar(0))
+        {
+            c = Scalar(0);
+            s = -ysign;
+            r = yabs;
+            return;
+        }
+
+        // Now we know x != 0, y != 0
         if (xabs > yabs)
         {
-            // In this case xabs != 0
-            const Scalar ratio = y / x;  // so that 0 <= |ratio| < 1
-            const Scalar common = sqrt(Scalar(1) + ratio * ratio);
-            c = xsign / common;
-            s = -ratio * c;
-            r = xabs * common;
+            stable_scaling(xabs, yabs, r, c, s);
+            c = xsign * c;
+            s = -ysign * s;
         }
         else
         {
-            if (yabs == Scalar(0))
-            {
-                r = Scalar(0);
-                c = Scalar(1);
-                s = Scalar(0);
-                return;
-            }
-            const Scalar ratio = x / y;  // so that 0 <= |ratio| <= 1
-            const Scalar common = sqrt(Scalar(1) + ratio * ratio);
-            s = -ysign / common;
-            c = -ratio * s;
-            r = yabs * common;
+            stable_scaling(yabs, xabs, r, s, c);
+            c = xsign * c;
+            s = -ysign * s;
         }
     }
 
