@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -54,17 +54,13 @@ namespace Spectra {
 /// returning \f$\lambda\f$ rather than \f$\nu\f$), and eigenvectors are the
 /// same for both the original problem and the shifted-and-inverted problem.
 ///
-/// \tparam Scalar        The element type of the matrix.
-///                       Currently supported types are `float`, `double` and `long double`.
-/// \tparam SelectionRule An enumeration value indicating the selection rule of
-///                       the shifted-and-inverted eigenvalues.
-///                       The full list of enumeration values can be found in
-///                       \ref Enumerations.
-/// \tparam OpType        The name of the matrix operation class. Users could either
-///                       use the wrapper classes such as DenseSymShiftSolve and
-///                       SparseSymShiftSolve, or define their
-///                       own that implements all the public member functions as in
-///                       DenseSymShiftSolve.
+/// \tparam Scalar  The element type of the matrix.
+///                 Currently supported types are `float`, `double` and `long double`.
+/// \tparam OpType  The name of the matrix operation class. Users could either
+///                 use the wrapper classes such as DenseSymShiftSolve and
+///                 SparseSymShiftSolve, or define their
+///                 own that implements all the public member functions as in
+///                 DenseSymShiftSolve.
 ///
 /// Below is an example that illustrates the use of the shift-and-invert mode:
 ///
@@ -88,12 +84,11 @@ namespace Spectra {
 ///
 ///     // Construct eigen solver object with shift 0
 ///     // This will find eigenvalues that are closest to 0
-///     SymEigsShiftSolver< double, LARGEST_MAGN,
-///                         DenseSymShiftSolve<double> > eigs(&op, 3, 6, 0.0);
+///     SymEigsShiftSolver<double, DenseSymShiftSolve<double>> eigs(op, 3, 6, 0.0);
 ///
 ///     eigs.init();
-///     eigs.compute();
-///     if(eigs.info() == SUCCESSFUL)
+///     eigs.compute(SortRule::LargestMagn);
+///     if(eigs.info() == CompInfo::Successful)
 ///     {
 ///         Eigen::VectorXd evalues = eigs.eigenvalues();
 ///         // Will get (3.0, 2.0, 1.0)
@@ -124,7 +119,7 @@ namespace Spectra {
 ///     void set_shift(double sigma) { sigma_ = sigma; }
 ///     // y_out = inv(A - sigma * I) * x_in
 ///     // inv(A - sigma * I) = diag(1/(1-sigma), 1/(2-sigma), ...)
-///     void perform_op(double *x_in, double *y_out)
+///     void perform_op(double *x_in, double *y_out) const
 ///     {
 ///         for(int i = 0; i < rows(); i++)
 ///         {
@@ -137,11 +132,10 @@ namespace Spectra {
 /// {
 ///     MyDiagonalTenShiftSolve op;
 ///     // Find three eigenvalues that are closest to 3.14
-///     SymEigsShiftSolver<double, LARGEST_MAGN,
-///                        MyDiagonalTenShiftSolve> eigs(&op, 3, 6, 3.14);
+///     SymEigsShiftSolver<double, MyDiagonalTenShiftSolve> eigs(op, 3, 6, 3.14);
 ///     eigs.init();
-///     eigs.compute();
-///     if(eigs.info() == SUCCESSFUL)
+///     eigs.compute(SortRule::LargestMagn);
+///     if(eigs.info() == CompInfo::Successful)
 ///     {
 ///         Eigen::VectorXd evalues = eigs.eigenvalues();
 ///         // Will get (4.0, 3.0, 2.0)
@@ -174,7 +168,7 @@ public:
     ///
     /// Constructor to create a eigen solver object using the shift-and-invert mode.
     ///
-    /// \param op     Pointer to the matrix operation object, which should implement
+    /// \param op     The matrix operation object that implements
     ///               the shift-solve operation of \f$A\f$: calculating
     ///               \f$(A-\sigma I)^{-1}v\f$ for any vector \f$v\f$. Users could either
     ///               create the object from the wrapper class such as DenseSymShiftSolve, or

@@ -162,6 +162,7 @@ private:
         const Vector& evals = decomp.eigenvalues();
         const Matrix& evecs = decomp.eigenvectors();
 
+        // Sort Ritz values and put the wanted ones at the beginning
         std::vector<Index> ind;
         switch (selection)
         {
@@ -194,11 +195,10 @@ private:
                 throw std::invalid_argument("unsupported selection rule");
         }
 
-        // For SortRule::BothEnds, the eigenvalues are sorted according
-        // to the SortRule::LargestAlge rule, so we need to move those smallest
-        // values to the left
+        // For SortRule::BothEnds, the eigenvalues are sorted according to the
+        // SortRule::LargestAlge rule, so we need to move those smallest values to the left
         // The order would be
-        // Largest => Smallest => 2nd largest => 2nd smallest => ...
+        //     Largest => Smallest => 2nd largest => 2nd smallest => ...
         // We keep this order since the first k values will always be
         // the wanted collection, no matter k is nev_updated (used in restart())
         // or is nev (used in sort_ritzpair())
@@ -352,19 +352,22 @@ public:
 
     ///
     /// Conducts the major computation procedure.
-    ///
+    /// \param selection  An enumeration value indicating the selection rule of
+    ///                   the requested eigenvalues, for example `SortRule::LargestMagn`
+    ///                   to retrieve eigenvalues with the largest magnitude.
+    ///                   The full list of enumeration values can be found in
+    ///                   \ref Enumerations.
     /// \param maxit      Maximum number of iterations allowed in the algorithm.
     /// \param tol        Precision parameter for the calculated eigenvalues.
-    /// \param sort_rule  Rule to sort the eigenvalues and eigenvectors.
+    /// \param sorting    Rule to sort the eigenvalues and eigenvectors.
     ///                   Supported values are
-    ///                   `Spectra::SortRule::LargestAlge`, `Spectra::SortRule::LargestMagn`,
-    ///                   `Spectra::SortRule::SmallestAlge` and `Spectra::SortRule::SmallestMagn`,
+    ///                   `SortRule::LargestAlge`, `SortRule::LargestMagn`,
+    ///                   `SortRule::SmallestAlge` and `SortRule::SmallestMagn`,
     ///                   for example `SortRule::LargestAlge` indicates that largest eigenvalues
     ///                   come first. Note that this argument is only used to
     ///                   **sort** the final result, and the **selection** rule
     ///                   (e.g. selecting the largest or smallest eigenvalues in the
-    ///                   full spectrum) is specified by the template parameter
-    ///                   `SelectionRule` of SymEigsSolver.
+    ///                   full spectrum) is specified by the parameter `selection`.
     ///
     /// \return Number of converged eigenvalues.
     ///
