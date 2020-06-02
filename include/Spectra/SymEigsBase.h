@@ -12,6 +12,7 @@
 #include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min
 #include <stdexcept>  // std::invalid_argument
+#include <utility>    // std::move
 
 #include "Util/TypeTraits.h"
 #include "Util/SelectionRule.h"
@@ -57,6 +58,15 @@ private:
 
 protected:
     // clang-format off
+
+    // In SymEigsSolver and SymEigsShiftSolver, the A operator is an lvalue provided by
+    // the user. In SymGEigsSolver, the A operator is an rvalue. To avoid copying objects,
+    // we use the following scheme:
+    // 1. If the op parameter in the constructor is an lvalue, make m_op a const reference to op
+    // 2. If op is an rvalue, move op to m_op_container, and then make m_op a const
+    //    reference to m_op_container[0]
+    std::vector<OpType> m_op_container;
+    const OpType& m_op;         // matrix operator for A
     const Index   m_n;          // dimension of matrix A
     const Index   m_nev;        // number of eigenvalues requested
     const Index   m_ncv;        // dimension of Krylov subspace in the Lanczos method
@@ -72,6 +82,13 @@ private:
     BoolArray     m_ritz_conv;  // indicator of the convergence of Ritz values
     CompInfo      m_info;       // status of the computation
     // clang-format on
+
+    static std::vector<OpType> create_op_container(OpType&& rval)
+    {
+        std::vector<OpType> container;
+        container.emplace_back(std::move(rval));
+        return container;
+    }
 
     // Implicitly restarted Lanczos factorization
     void restart(Index k, SortRule selection)
@@ -283,13 +300,34 @@ protected:
 public:
     /// \cond
 
-    SymEigsBase(const OpType& op, const BOpType& Bop, Index nev, Index ncv) :
+    // If op is an lvalue
+    SymEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv) :
+        m_op(op),
         m_n(op.rows()),
         m_nev(nev),
         m_ncv(ncv > m_n ? m_n : ncv),
         m_nmatop(0),
         m_niter(0),
         m_fac(ArnoldiOpType(op, Bop), m_ncv),
+        m_info(CompInfo::NotComputed)
+    {
+        if (nev < 1 || nev > m_n - 1)
+            throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
+
+        if (ncv <= nev || ncv > m_n)
+            throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
+    }
+
+    // If op is an rvalue
+    SymEigsBase(OpType&& op, const BOpType& Bop, Index nev, Index ncv) :
+        m_op_container(create_op_container(std::move(op))),
+        m_op(m_op_container.front()),
+        m_n(m_op.rows()),
+        m_nev(nev),
+        m_ncv(ncv > m_n ? m_n : ncv),
+        m_nmatop(0),
+        m_niter(0),
+        m_fac(ArnoldiOpType(m_op, Bop), m_ncv),
         m_info(CompInfo::NotComputed)
     {
         if (nev < 1 || nev > m_n - 1)

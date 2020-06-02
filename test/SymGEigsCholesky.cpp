@@ -14,33 +14,33 @@ using namespace Spectra;
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-typedef Eigen::MatrixXd Matrix;
-typedef Eigen::VectorXd Vector;
-typedef Eigen::SparseMatrix<double> SpMatrix;
+using Matrix = Eigen::MatrixXd;
+using Vector = Eigen::VectorXd;
+using SpMatrix = Eigen::SparseMatrix<double>;
 
 // Traits to obtain operation type from matrix type
 template <typename MatType>
 struct OpTypeTrait
 {
-    typedef DenseSymMatProd<double> OpType;
+    using OpType = DenseSymMatProd<double>;
 };
 
 template <>
 struct OpTypeTrait<SpMatrix>
 {
-    typedef SparseSymMatProd<double> OpType;
+    using OpType = SparseSymMatProd<double>;
 };
 
 template <typename MatType>
 struct BOpTypeTrait
 {
-    typedef DenseCholesky<double> OpType;
+    using OpType = DenseCholesky<double>;
 };
 
 template <>
 struct BOpTypeTrait<SpMatrix>
 {
-    typedef SparseCholesky<double> OpType;
+    using OpType = SparseCholesky<double>;
 };
 
 // Generate random sparse matrix
@@ -71,51 +71,48 @@ void gen_dense_data(int n, Matrix& A, Matrix& B)
     B.diagonal() += Eigen::VectorXd::Random(n).cwiseAbs();
 }
 
-void gen_sparse_data(int n, SpMatrix& A, SpMatrix& B)
+void gen_sparse_data(int n, SpMatrix& A, SpMatrix& B, double prob = 0.1)
 {
     // Eigen solver only uses the lower triangle of A,
     // so we don't need to make A symmetric here.
-    A = sprand(n, 0.1);
+    A = sprand(n, prob);
     B = A.transpose() * A;
     // To make sure B is positive definite
     for (int i = 0; i < n; i++)
         B.coeffRef(i, i) += 0.1;
 }
 
-template <typename MatType, int SelectionRule>
-void run_test(const MatType& A, const MatType& B, int k, int m, bool allow_fail = false)
+template <typename MatType>
+void run_test(const MatType& A, const MatType& B, int k, int m, SortRule selection, bool allow_fail = false)
 {
-    typedef typename OpTypeTrait<MatType>::OpType OpType;
-    typedef typename BOpTypeTrait<MatType>::OpType BOpType;
+    using OpType = typename OpTypeTrait<MatType>::OpType;
+    using BOpType = typename BOpTypeTrait<MatType>::OpType;
     OpType op(A);
     BOpType Bop(B);
     // Make sure B is positive definite and the decomposition is successful
-    REQUIRE(Bop.info() == SUCCESSFUL);
+    REQUIRE(Bop.info() == CompInfo::Successful);
 
-    SymGEigsSolver<double, SelectionRule, OpType, BOpType, GEIGS_CHOLESKY> eigs(&op, &Bop, k, m);
+    SymGEigsSolver<double, OpType, BOpType, GEigsMode::Cholesky> eigs(op, Bop, k, m);
     eigs.init();
-    // maxit = 100 to reduce running time for failed cases
-    int nconv = eigs.compute(100);
+    // maxit = 300 to reduce running time for failed cases
+    int nconv = eigs.compute(selection, 300);
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
-    if (allow_fail)
+    if (allow_fail && eigs.info() != CompInfo::Successful)
     {
-        if (eigs.info() != SUCCESSFUL)
-        {
-            WARN("FAILED on this test");
-            std::cout << "nconv = " << nconv << std::endl;
-            std::cout << "niter = " << niter << std::endl;
-            std::cout << "nops  = " << nops << std::endl;
-            return;
-        }
+        WARN("FAILED on this test");
+        std::cout << "nconv = " << nconv << std::endl;
+        std::cout << "niter = " << niter << std::endl;
+        std::cout << "nops  = " << nops << std::endl;
+        return;
     }
     else
     {
         INFO("nconv = " << nconv);
         INFO("niter = " << niter);
         INFO("nops  = " << nops);
-        REQUIRE(eigs.info() == SUCCESSFUL);
+        REQUIRE(eigs.info() == CompInfo::Successful);
     }
 
     Vector evals = eigs.eigenvalues();
@@ -134,23 +131,23 @@ void run_test_sets(const MatType& A, const MatType& B, int k, int m)
 {
     SECTION("Largest Magnitude")
     {
-        run_test<MatType, LARGEST_MAGN>(A, B, k, m);
+        run_test<MatType>(A, B, k, m, SortRule::LargestMagn);
     }
     SECTION("Largest Value")
     {
-        run_test<MatType, LARGEST_ALGE>(A, B, k, m);
+        run_test<MatType>(A, B, k, m, SortRule::LargestAlge);
     }
     SECTION("Smallest Magnitude")
     {
-        run_test<MatType, SMALLEST_MAGN>(A, B, k, m, true);
+        run_test<MatType>(A, B, k, m, SortRule::SmallestMagn, true);
     }
     SECTION("Smallest Value")
     {
-        run_test<MatType, SMALLEST_ALGE>(A, B, k, m);
+        run_test<MatType>(A, B, k, m, SortRule::SmallestAlge);
     }
     SECTION("Both Ends")
     {
-        run_test<MatType, BOTH_ENDS>(A, B, k, m);
+        run_test<MatType>(A, B, k, m, SortRule::BothEnds);
     }
 }
 
@@ -196,7 +193,7 @@ TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [10x10]", "[g
 
     // Eigen solver only uses the lower triangle
     SpMatrix A, B;
-    gen_sparse_data(10, A, B);
+    gen_sparse_data(10, A, B, 0.5);
     int k = 3;
     int m = 6;
 
