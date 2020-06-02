@@ -72,7 +72,7 @@ public:
     /// Returns the status of the computation.
     /// The full list of enumeration values can be found in \ref Enumerations.
     ///
-    int info() const { return m_info; }
+    CompInfo info() const { return m_info; }
 
     ///
     /// Performs the lower triangular solving operation \f$y=L^{-1}x\f$.

@@ -14,7 +14,7 @@ namespace Spectra {
 ///
 /// The enumeration to specify the mode of generalized eigenvalue solver.
 ///
-enum class GeigsMode
+enum class GEigsMode
 {
     Cholesky,        ///< Using Cholesky decomposition to solve generalized eigenvalues.
     RegularInverse,  ///< Regular inverse mode for generalized eigenvalue solver.
