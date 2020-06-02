@@ -76,16 +76,23 @@ private:
     // Implicitly restarted Lanczos factorization
     void restart(Index k, SortRule selection)
     {
+        using std::abs;
+
         if (k >= m_ncv)
             return;
 
         TridiagQR<Scalar> decomp(m_ncv);
         Matrix Q = Matrix::Identity(m_ncv, m_ncv);
 
-        for (Index i = k; i < m_ncv; i++)
+        // Apply large shifts first
+        const int nshift = m_ncv - k;
+        Vector shifts = m_ritz_val.tail(nshift);
+        std::sort(shifts.data(), shifts.data() + nshift, [](const Scalar& v1, const Scalar& v2) { return abs(v1) > abs(v2); });
+
+        for (Index i = 0; i < nshift; i++)
         {
             // QR decomposition of H-mu*I, mu is the shift
-            decomp.compute(m_fac.matrix_H(), m_ritz_val[i]);
+            decomp.compute(m_fac.matrix_H(), shifts[i]);
 
             // Q -> Q * Qi
             decomp.apply_YQ(Q);
