@@ -96,22 +96,24 @@ public:
 
             // Note that H[i+1, i] equals to the unrestarted beta
             m_fac_H(i, i - 1) = restart ? Scalar(0) : m_beta;
+            m_fac_H(i - 1, i) = m_fac_H(i, i - 1);  // Due to symmetry
 
             // w <- A * v
             m_op.perform_op(v.data(), w.data());
             op_counter++;
 
-            // H[i+1, i+1] = <v, w> = v'Bw
-            m_fac_H(i - 1, i) = m_fac_H(i, i - 1);  // Due to symmetry
-            m_fac_H(i, i) = m_op.inner_product(v, w);
-
             // f <- w - V * V'Bw = w - H[i+1, i] * V{i} - H[i+1, i+1] * V{i+1}
             // If restarting, we know that H[i+1, i] = 0
-            if (restart)
-                m_fac_f.noalias() = w - m_fac_H(i, i) * v;
-            else
-                m_fac_f.noalias() = w - m_fac_H(i, i - 1) * m_fac_V.col(i - 1) - m_fac_H(i, i) * v;
+            // First do w <- w - H[i+1, i] * V{i}, see the discussions in Section 2.3 of
+            // Cullum and Willoughby (2002). Lanczos Algorithms for Large Symmetric Eigenvalue Computations: Vol. 1
+            if (!restart)
+                w.noalias() -= m_fac_H(i, i - 1) * m_fac_V.col(i - 1);
 
+            // H[i+1, i+1] = <v, w> = v'Bw
+            m_fac_H(i, i) = m_op.inner_product(v, w);
+
+            // f <- w - H[i+1, i+1] * V{i+1}
+            m_fac_f.noalias() = w - m_fac_H(i, i) * v;
             m_beta = m_op.norm(m_fac_f);
 
             // f/||f|| is going to be the next column of V, so we need to test
