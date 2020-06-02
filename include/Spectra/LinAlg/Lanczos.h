@@ -86,7 +86,7 @@ public:
             if (m_beta < m_near_0)
             {
                 MapConstMat V(m_fac_V.data(), m_n, i);  // The first i columns
-                this->expand_basis(V, 2 * i, m_fac_f, m_beta);
+                this->expand_basis(V, 2 * i, m_fac_f, m_beta, op_counter);
                 restart = true;
             }
 

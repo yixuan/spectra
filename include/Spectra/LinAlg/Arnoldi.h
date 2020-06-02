@@ -56,17 +56,19 @@ protected:
 
     // Given orthonormal basis functions V, find a nonzero vector f such that V'Bf = 0
     // Assume that f has been properly allocated
-    void expand_basis(MapConstMat& V, const Index seed, Vector& f, Scalar& fnorm)
+    void expand_basis(MapConstMat& V, const Index seed, Vector& f, Scalar& fnorm, Index& op_counter)
     {
         using std::sqrt;
 
         const Scalar thresh = m_eps * sqrt(Scalar(m_n));
-        Vector Vf(V.cols());
+        Vector v(m_n), Vf(V.cols());
         for (Index iter = 0; iter < 5; iter++)
         {
             // Randomly generate a new vector and orthogonalize it against V
             SimpleRandom<Scalar> rng(seed + 123 * iter);
-            f.noalias() = rng.random_vec(m_n);
+            v.noalias() = rng.random_vec(m_n);
+            m_op.perform_op(v.data(), m_fac_f.data());
+            op_counter++;
             // f <- f - V * V'Bf, so that f is orthogonal to V in B-norm
             m_op.trans_product(V, f, Vf);
             f.noalias() -= V * Vf;
@@ -113,9 +115,13 @@ public:
 
         // Points to the first column of V
         MapVec v(m_fac_V.data(), m_n);
+        // Force v to be in the range of A, i.e., v = A * v0
+        m_op.perform_op(v0.data(), v.data());
+        op_counter++;
 
         // Normalize
-        v.noalias() = v0 / v0norm;
+        const Scalar vnorm = m_op.norm(v);
+        v /= vnorm;
 
         // Compute H and f
         Vector w(m_n);
@@ -175,7 +181,7 @@ public:
             if (m_beta < m_near_0)
             {
                 MapConstMat V(m_fac_V.data(), m_n, i);  // The first i columns
-                expand_basis(V, 2 * i, m_fac_f, m_beta);
+                expand_basis(V, 2 * i, m_fac_f, m_beta, op_counter);
                 restart = true;
             }
 
