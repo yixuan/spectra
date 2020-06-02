@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -22,12 +22,12 @@ template <typename Scalar, int Uplo = Eigen::Lower>
 class DenseSymMatProd
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Map<const Vector> MapConstVec;
-    typedef Eigen::Map<Vector> MapVec;
-    typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
+    using Index = Eigen::Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using MapConstVec = Eigen::Map<const Vector>;
+    using MapVec = Eigen::Map<Vector>;
+    using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
     ConstGenericMatrix m_mat;
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -11,6 +11,7 @@
 #include <Eigen/SparseCore>
 #include <Eigen/SparseCholesky>
 #include <stdexcept>
+
 #include "../Util/CompInfo.h"
 
 namespace Spectra {
@@ -27,16 +28,16 @@ template <typename Scalar, int Uplo = Eigen::Lower, int Flags = 0, typename Stor
 class SparseCholesky
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Map<const Vector> MapConstVec;
-    typedef Eigen::Map<Vector> MapVec;
-    typedef Eigen::SparseMatrix<Scalar, Flags, StorageIndex> SparseMatrix;
-    typedef const Eigen::Ref<const SparseMatrix> ConstGenericSparseMatrix;
+    using Index = Eigen::Index;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using MapConstVec = Eigen::Map<const Vector>;
+    using MapVec = Eigen::Map<Vector>;
+    using SparseMatrix = Eigen::SparseMatrix<Scalar, Flags, StorageIndex>;
+    using ConstGenericSparseMatrix = const Eigen::Ref<const SparseMatrix>;
 
     const Index m_n;
     Eigen::SimplicialLLT<SparseMatrix, Uplo> m_decomp;
-    int m_info;  // status of the decomposition
+    CompInfo m_info;  // status of the decomposition
 
 public:
     ///
@@ -54,8 +55,8 @@ public:
 
         m_decomp.compute(mat);
         m_info = (m_decomp.info() == Eigen::Success) ?
-            SUCCESSFUL :
-            NUMERICAL_ISSUE;
+            CompInfo::Successful :
+            CompInfo::NumericalIssue;
     }
 
     ///

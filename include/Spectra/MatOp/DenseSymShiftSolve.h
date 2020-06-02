@@ -34,7 +34,7 @@ private:
     using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
     ConstGenericMatrix m_mat;
-    const int m_n;
+    const Index m_n;
     BKLDLT<Scalar> m_solver;
 
 public:

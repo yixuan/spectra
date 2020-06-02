@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -10,6 +10,7 @@
 #include <Eigen/Core>
 #include <Eigen/Cholesky>
 #include <stdexcept>
+
 #include "../Util/CompInfo.h"
 
 namespace Spectra {
@@ -26,17 +27,16 @@ template <typename Scalar, int Uplo = Eigen::Lower>
 class DenseCholesky
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Map<const Matrix> MapConstMat;
-    typedef Eigen::Map<const Vector> MapConstVec;
-    typedef Eigen::Map<Vector> MapVec;
-    typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
+    using Index = Eigen::Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using MapConstVec = Eigen::Map<const Vector>;
+    using MapVec = Eigen::Map<Vector>;
+    using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
     const Index m_n;
     Eigen::LLT<Matrix, Uplo> m_decomp;
-    int m_info;  // status of the decomposition
+    CompInfo m_info;  // status of the decomposition
 
 public:
     ///
@@ -48,15 +48,15 @@ public:
     /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
     ///
     DenseCholesky(ConstGenericMatrix& mat) :
-        m_n(mat.rows()), m_info(NOT_COMPUTED)
+        m_n(mat.rows()), m_info(CompInfo::NotComputed)
     {
-        if (mat.rows() != mat.cols())
+        if (m_n != mat.cols())
             throw std::invalid_argument("DenseCholesky: matrix must be square");
 
         m_decomp.compute(mat);
         m_info = (m_decomp.info() == Eigen::Success) ?
-            SUCCESSFUL :
-            NUMERICAL_ISSUE;
+            CompInfo::Successful :
+            CompInfo::NumericalIssue;
     }
 
     ///
@@ -72,7 +72,7 @@ public:
     /// Returns the status of the computation.
     /// The full list of enumeration values can be found in \ref Enumerations.
     ///
-    int info() const { return m_info; }
+    CompInfo info() const { return m_info; }
 
     ///
     /// Performs the lower triangular solving operation \f$y=L^{-1}x\f$.

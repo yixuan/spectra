@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -25,23 +25,23 @@ template <typename Scalar>
 class DenseGenComplexShiftSolve
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Map<const Vector> MapConstVec;
-    typedef Eigen::Map<Vector> MapVec;
-    typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
+    using Index = Eigen::Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using MapConstVec = Eigen::Map<const Vector>;
+    using MapVec = Eigen::Map<Vector>;
+    using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
-    typedef std::complex<Scalar> Complex;
-    typedef Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic> ComplexMatrix;
-    typedef Eigen::Matrix<Complex, Eigen::Dynamic, 1> ComplexVector;
+    using Complex = std::complex<Scalar>;
+    using ComplexMatrix = Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic>;
+    using ComplexVector = Eigen::Matrix<Complex, Eigen::Dynamic, 1>;
 
-    typedef Eigen::PartialPivLU<ComplexMatrix> ComplexSolver;
+    using ComplexSolver = Eigen::PartialPivLU<ComplexMatrix>;
 
     ConstGenericMatrix m_mat;
     const Index m_n;
     ComplexSolver m_solver;
-    ComplexVector m_x_cache;
+    mutable ComplexVector m_x_cache;
 
 public:
     ///
@@ -89,7 +89,7 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = Re( inv(A - sigma * I) * x_in )
-    void perform_op(const Scalar* x_in, Scalar* y_out)
+    void perform_op(const Scalar* x_in, Scalar* y_out) const
     {
         m_x_cache.real() = MapConstVec(x_in, m_n);
         MapVec y(y_out, m_n);
