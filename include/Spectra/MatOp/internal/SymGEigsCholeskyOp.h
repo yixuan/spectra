@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -8,6 +8,7 @@
 #define SYM_GEIGS_CHOLESKY_OP_H
 
 #include <Eigen/Core>
+
 #include "../DenseSymMatProd.h"
 #include "../DenseCholesky.h"
 
@@ -23,28 +24,39 @@ namespace Spectra {
 ///
 template <typename Scalar = double,
           typename OpType = DenseSymMatProd<double>,
-          typename BOpType = DenseCholesky<double> >
+          typename BOpType = DenseCholesky<double>>
 class SymGEigsCholeskyOp
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
+    using Index = Eigen::Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
-    OpType& m_op;
-    BOpType& m_Bop;
-    Vector m_cache;  // temporary working space
+    const OpType& m_op;
+    const BOpType& m_Bop;
+    mutable Vector m_cache;  // temporary working space
 
 public:
     ///
     /// Constructor to create the matrix operation object.
     ///
-    /// \param op   Pointer to the \f$A\f$ matrix operation object.
-    /// \param Bop  Pointer to the \f$B\f$ matrix operation object.
+    /// \param op   The \f$A\f$ matrix operation object.
+    /// \param Bop  The \f$B\f$ matrix operation object.
     ///
-    SymGEigsCholeskyOp(OpType& op, BOpType& Bop) :
+    SymGEigsCholeskyOp(const OpType& op, const BOpType& Bop) :
         m_op(op), m_Bop(Bop), m_cache(op.rows())
     {}
+
+    ///
+    /// Move constructor
+    ///
+    SymGEigsCholeskyOp(SymGEigsCholeskyOp&& other) :
+        m_op(other.m_op), m_Bop(other.m_Bop)
+    {
+        // Vector does not have a move constructor, but we can emulate
+        // it using Vector::swap()
+        m_cache.swap(other.m_cache);
+    }
 
     ///
     /// Return the number of rows of the underlying matrix.
@@ -62,7 +74,7 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = inv(L) * A * inv(L') * x_in
-    void perform_op(const Scalar* x_in, Scalar* y_out)
+    void perform_op(const Scalar* x_in, Scalar* y_out) const
     {
         m_Bop.upper_triangular_solve(x_in, y_out);
         m_op.perform_op(y_out, m_cache.data());
