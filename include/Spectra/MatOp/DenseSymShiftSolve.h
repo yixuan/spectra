@@ -26,7 +26,7 @@ template <typename Scalar, int Uplo = Eigen::Lower>
 class DenseSymShiftSolve
 {
 private:
-    using Index = Eigen::Index Index;
+    using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using MapConstVec = Eigen::Map<const Vector>;
