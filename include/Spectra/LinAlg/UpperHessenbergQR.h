@@ -12,6 +12,8 @@
 #include <algorithm>  // std::fill
 #include <stdexcept>  // std::logic_error
 
+#include "../Util/TypeTraits.h"
+
 namespace Spectra {
 
 ///
@@ -532,6 +534,8 @@ public:
     ///
     void compute(ConstGenericMatrix& mat, const Scalar& shift = Scalar(0)) override
     {
+        using std::abs;
+
         m_n = mat.rows();
         if (m_n != mat.cols())
             throw std::invalid_argument("TridiagQR: matrix must be square");
@@ -545,6 +549,14 @@ public:
         m_T_subd.resize(m_n - 1);
         m_T_diag.noalias() = mat.diagonal();
         m_T_subd.noalias() = mat.diagonal(-1);
+
+        // Deflation of small sub-diagonal elements
+        constexpr Scalar m_eps = TypeTraits<Scalar>::epsilon();
+        for (Index i = 0; i < m_n - 1; i++)
+        {
+            if (abs(m_T_subd[i]) <= m_eps * (abs(m_T_diag[i]) + abs(m_T_diag[i + 1])))
+                m_T_subd[i] = Scalar(0);
+        }
 
         // Apply shift and copy T to R
         m_R_diag.resize(m_n);
@@ -673,7 +685,7 @@ public:
             // Update the diagonal and the lower subdiagonal of dest
             dest.coeffRef(i, i) = c2x - csy2 + s2z;                  // x'
             dest.coeffRef(i + 1, i) = cs * (x - z) + (c2 - s2) * y;  // y'
-            dest.coeffRef(i + 1, i + 1) = s2x + csy2 + c2z;          //z'
+            dest.coeffRef(i + 1, i + 1) = s2x + csy2 + c2z;          // z'
 
             if (i < n2)
             {
@@ -683,6 +695,15 @@ public:
                 dest.coeffRef(i + 2, i + 1) *= c;                                // w'
                 dest.coeffRef(i + 1, i) = ci1 * dest.coeff(i + 1, i) - si1 * o;  // y''
             }
+        }
+
+        // Deflation of small sub-diagonal elements
+        constexpr Scalar m_eps = TypeTraits<Scalar>::epsilon();
+        for (Index i = 0; i < n1; i++)
+        {
+            const Scalar diag = abs(dest.coeff(i, i)) + abs(dest.coeff(i + 1, i + 1));
+            if (abs(dest.coeff(i + 1, i)) <= m_eps * diag)
+                dest.coeffRef(i + 1, i) = Scalar(0);
         }
 
         // Copy the lower subdiagonal to upper subdiagonal
