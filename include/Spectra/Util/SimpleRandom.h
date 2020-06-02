@@ -62,22 +62,32 @@ public:
         m_rand(init_seed ? (init_seed & m_max) : 1)
     {}
 
+    // Return a single random number, ranging from -0.5 to 0.5
     Scalar random()
     {
         m_rand = next_long_rand(m_rand);
         return Scalar(m_rand) / Scalar(m_max) - Scalar(0.5);
     }
 
-    // Vector of random numbers of type Scalar
+    // Fill the given vector with random numbers
+    // Ranging from -0.5 to 0.5
+    void random_vec(Vector& vec)
+    {
+        const Index len = vec.size();
+        for (Index i = 0; i < len; i++)
+        {
+            m_rand = next_long_rand(m_rand);
+            vec[i] = Scalar(m_rand);
+        }
+        vec.array() = vec.array() / Scalar(m_max) - Scalar(0.5);
+    }
+
+    // Return a vector of random numbers
     // Ranging from -0.5 to 0.5
     Vector random_vec(const Index len)
     {
         Vector res(len);
-        for (Index i = 0; i < len; i++)
-        {
-            m_rand = next_long_rand(m_rand);
-            res[i] = Scalar(m_rand) / Scalar(m_max) - Scalar(0.5);
-        }
+        random_vec(res);
         return res;
     }
 };
