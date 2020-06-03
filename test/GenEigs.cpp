@@ -12,23 +12,23 @@ using namespace Spectra;
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-typedef Eigen::MatrixXd Matrix;
-typedef Eigen::VectorXd Vector;
-typedef Eigen::MatrixXcd ComplexMatrix;
-typedef Eigen::VectorXcd ComplexVector;
-typedef Eigen::SparseMatrix<double> SpMatrix;
+using Matrix = Eigen::MatrixXd;
+using Vector = Eigen::VectorXd;
+using ComplexMatrix = Eigen::MatrixXcd;
+using ComplexVector = Eigen::VectorXcd;
+using SpMatrix = Eigen::SparseMatrix<double>;
 
 // Traits to obtain operation type from matrix type
 template <typename MatType>
 struct OpTypeTrait
 {
-    typedef DenseGenMatProd<double> OpType;
+    using OpType = DenseGenMatProd<double>;
 };
 
 template <>
 struct OpTypeTrait<SpMatrix>
 {
-    typedef SparseGenMatProd<double> OpType;
+    using OpType = SparseGenMatProd<double>;
 };
 
 // Generate random sparse matrix
@@ -49,35 +49,32 @@ SpMatrix gen_sparse_data(int n, double prob = 0.5)
     return mat;
 }
 
-template <typename MatType, int SelectionRule>
-void run_test(const MatType& mat, int k, int m, bool allow_fail = false)
+template <typename MatType>
+void run_test(const MatType& mat, int k, int m, SortRule selection, bool allow_fail = false)
 {
-    typename OpTypeTrait<MatType>::OpType op(mat);
-    GenEigsSolver<double, SelectionRule, typename OpTypeTrait<MatType>::OpType>
-        eigs(&op, k, m);
+    using OpType = typename OpTypeTrait<MatType>::OpType;
+    OpType op(mat);
+    GenEigsSolver<double, OpType> eigs(op, k, m);
     eigs.init();
     // maxit = 500 to reduce running time for failed cases
-    int nconv = eigs.compute(500);
+    int nconv = eigs.compute(selection, 500);
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
-    if (allow_fail)
+    if (allow_fail && eigs.info() != CompInfo::Successful)
     {
-        if (eigs.info() != SUCCESSFUL)
-        {
-            WARN("FAILED on this test");
-            std::cout << "nconv = " << nconv << std::endl;
-            std::cout << "niter = " << niter << std::endl;
-            std::cout << "nops  = " << nops << std::endl;
-            return;
-        }
+        WARN("FAILED on this test");
+        std::cout << "nconv = " << nconv << std::endl;
+        std::cout << "niter = " << niter << std::endl;
+        std::cout << "nops  = " << nops << std::endl;
+        return;
     }
     else
     {
         INFO("nconv = " << nconv);
         INFO("niter = " << niter);
         INFO("nops  = " << nops);
-        REQUIRE(eigs.info() == SUCCESSFUL);
+        REQUIRE(eigs.info() == CompInfo::Successful);
     }
 
     ComplexVector evals = eigs.eigenvalues();
@@ -95,27 +92,27 @@ void run_test_sets(const MatType& A, int k, int m)
 {
     SECTION("Largest Magnitude")
     {
-        run_test<MatType, LARGEST_MAGN>(A, k, m);
+        run_test<MatType>(A, k, m, SortRule::LargestMagn);
     }
     SECTION("Largest Real Part")
     {
-        run_test<MatType, LARGEST_REAL>(A, k, m);
+        run_test<MatType>(A, k, m, SortRule::LargestReal);
     }
     SECTION("Largest Imaginary Part")
     {
-        run_test<MatType, LARGEST_IMAG>(A, k, m);
+        run_test<MatType>(A, k, m, SortRule::LargestImag);
     }
     SECTION("Smallest Magnitude")
     {
-        run_test<MatType, SMALLEST_MAGN>(A, k, m, true);
+        run_test<MatType>(A, k, m, SortRule::SmallestMagn, true);
     }
     SECTION("Smallest Real Part")
     {
-        run_test<MatType, SMALLEST_REAL>(A, k, m);
+        run_test<MatType>(A, k, m, SortRule::SmallestReal);
     }
     SECTION("Smallest Imaginary Part")
     {
-        run_test<MatType, SMALLEST_IMAG>(A, k, m, true);
+        run_test<MatType>(A, k, m, SortRule::SmallestImag, true);
     }
 }
 
