@@ -83,6 +83,7 @@ private:
     CompInfo      m_info;       // status of the computation
     // clang-format on
 
+    // Move rvalue object to the container
     static std::vector<OpType> create_op_container(OpType&& rval)
     {
         std::vector<OpType> container;
@@ -131,13 +132,13 @@ private:
         using std::pow;
 
         // The machine precision, ~= 1e-16 for the "double" type
-        constexpr Scalar m_eps = TypeTraits<Scalar>::epsilon();
-        // std::pow() is not constexpr, so we do not declare m_eps23 to be constexpr
-        // But most compilers should be able to compute m_eps23 at compile time
-        const Scalar m_eps23 = pow(m_eps, Scalar(2) / 3);
+        constexpr Scalar eps = TypeTraits<Scalar>::epsilon();
+        // std::pow() is not constexpr, so we do not declare eps23 to be constexpr
+        // But most compilers should be able to compute eps23 at compile time
+        const Scalar eps23 = pow(eps, Scalar(2) / 3);
 
-        // thresh = tol * max(m_eps23, abs(theta)), theta for Ritz value
-        Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(m_eps23);
+        // thresh = tol * max(eps23, abs(theta)), theta for Ritz value
+        Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(eps23);
         Array resid = m_ritz_est.head(m_nev).array().abs() * m_fac.f_norm();
         // Converged "wanted" Ritz values
         m_ritz_conv = (resid < thresh);
@@ -150,13 +151,13 @@ private:
     {
         using std::abs;
 
-        // A very small value, but 1.0 / m_near_0 does not overflow
+        // A very small value, but 1.0 / near_0 does not overflow
         // ~= 1e-307 for the "double" type
-        constexpr Scalar m_near_0 = TypeTraits<Scalar>::min() * Scalar(10);
+        constexpr Scalar near_0 = TypeTraits<Scalar>::min() * Scalar(10);
 
         Index nev_new = m_nev;
         for (Index i = m_nev; i < m_ncv; i++)
-            if (abs(m_ritz_est[i]) < m_near_0)
+            if (abs(m_ritz_est[i]) < near_0)
                 nev_new++;
 
         // Adjust nev_new, according to dsaup2.f line 677~684 in ARPACK
@@ -390,6 +391,7 @@ public:
 
     ///
     /// Conducts the major computation procedure.
+    ///
     /// \param selection  An enumeration value indicating the selection rule of
     ///                   the requested eigenvalues, for example `SortRule::LargestMagn`
     ///                   to retrieve eigenvalues with the largest magnitude.

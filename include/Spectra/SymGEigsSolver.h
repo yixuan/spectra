@@ -195,7 +195,7 @@ public:
 
     /// \cond
 
-    Matrix eigenvectors(Index nvec) const
+    Matrix eigenvectors(Index nvec) const override
     {
         Matrix res = SymEigsBase<Scalar, SymGEigsCholeskyOp<Scalar, OpType, BOpType>, IdentityBOp>::eigenvectors(nvec);
         Vector tmp(res.rows());
@@ -209,7 +209,7 @@ public:
         return res;
     }
 
-    Matrix eigenvectors() const
+    Matrix eigenvectors() const override
     {
         return SymGEigsSolver<Scalar, OpType, BOpType, GEigsMode::Cholesky>::eigenvectors(this->m_nev);
     }
