@@ -236,51 +236,44 @@ public:
 /// is always preferred. If the users need to define their own operation classes, then they
 /// should implement all the public member functions as in those built-in classes.
 ///
-/// \tparam Scalar        The element type of the matrix.
-///                       Currently supported types are `float`, `double` and `long double`.
-/// \tparam SelectionRule An enumeration value indicating the selection rule of
-///                       the requested eigenvalues, for example `LARGEST_MAGN`
-///                       to retrieve eigenvalues with the largest magnitude.
-///                       The full list of enumeration values can be found in
-///                       \ref Enumerations.
-/// \tparam OpType        The name of the matrix operation class for \f$A\f$. Users could either
-///                       use the wrapper classes such as DenseSymMatProd and
-///                       SparseSymMatProd, or define their
-///                       own that implements all the public member functions as in
-///                       DenseSymMatProd.
-/// \tparam BOpType       The name of the matrix operation class for \f$B\f$. Users could either
-///                       use the wrapper class SparseRegularInverse, or define their
-///                       own that implements all the public member functions as in
-///                       SparseRegularInverse.
-/// \tparam GEigsMode     Mode of the generalized eigen solver. In this solver
-///                       it is Spectra::GEIGS_REGULAR_INVERSE.
+/// \tparam Scalar   The element type of the matrix.
+///                  Currently supported types are `float`, `double` and `long double`.
+/// \tparam OpType   The name of the matrix operation class for \f$A\f$. Users could either
+///                  use the wrapper classes such as DenseSymMatProd and
+///                  SparseSymMatProd, or define their
+///                  own that implements all the public member functions as in
+///                  DenseSymMatProd.
+/// \tparam BOpType  The name of the matrix operation class for \f$B\f$. Users could either
+///                  use the wrapper class SparseRegularInverse, or define their
+///                  own that implements all the public member functions as in
+///                  SparseRegularInverse.
+/// \tparam mode     Mode of the generalized eigen solver. In this solver
+///                  it is Spectra::GEigsMode::RegularInverse.
 ///
 
-// Partial specialization for GEigsMode = GEIGS_REGULAR_INVERSE
+// Partial specialization for mode = GEigsMode::RegularInverse
 template <typename Scalar,
-          int SelectionRule,
           typename OpType,
           typename BOpType>
-class SymGEigsSolver<Scalar, SelectionRule, OpType, BOpType, GEIGS_REGULAR_INVERSE> :
-    public SymEigsBase<Scalar, SelectionRule, SymGEigsRegInvOp<Scalar, OpType, BOpType>, BOpType>
+class SymGEigsSolver<Scalar, OpType, BOpType, GEigsMode::RegularInverse> :
+    public SymEigsBase<Scalar, SymGEigsRegInvOp<Scalar, OpType, BOpType>, BOpType>
 {
 private:
-    typedef Eigen::Index Index;
+    using Index = Eigen::Index;
 
 public:
     ///
     /// Constructor to create a solver object.
     ///
-    /// \param op   Pointer to the \f$A\f$ matrix operation object. It
-    ///             should implement the matrix-vector multiplication operation of \f$A\f$:
+    /// \param op   The \f$A\f$ matrix operation object that implements the matrix-vector
+    ///             multiplication operation of \f$A\f$:
     ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
     ///             create the object from the wrapper classes such as DenseSymMatProd, or
     ///             define their own that implements all the public member functions
     ///             as in DenseSymMatProd.
-    /// \param Bop  Pointer to the \f$B\f$ matrix operation object. It should
-    ///             implement the multiplication operation \f$Bv\f$ and the linear equation
-    ///             solving operation \f$B^{-1}v\f$ for any vector \f$v\f$. Users could either
-    ///             create the object from the wrapper class SparseRegularInverse, or
+    /// \param Bop  The \f$B\f$ matrix operation object that implements the multiplication operation
+    ///             \f$Bv\f$ and the linear equation solving operation \f$B^{-1}v\f$ for any vector \f$v\f$.
+    ///             Users could either create the object from the wrapper class SparseRegularInverse, or
     ///             define their own that implements all the public member functions
     ///             as in SparseRegularInverse.
     /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
@@ -291,18 +284,10 @@ public:
     ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
-    SymGEigsSolver(OpType* op, BOpType* Bop, Index nev, Index ncv) :
-        SymEigsBase<Scalar, SelectionRule, SymGEigsRegInvOp<Scalar, OpType, BOpType>, BOpType>(
-            new SymGEigsRegInvOp<Scalar, OpType, BOpType>(*op, *Bop), Bop, nev, ncv)
+    SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv) :
+        SymEigsBase<Scalar, SymGEigsRegInvOp<Scalar, OpType, BOpType>, BOpType>(
+            SymGEigsRegInvOp<Scalar, OpType, BOpType>(op, Bop), Bop, nev, ncv)
     {}
-
-    /// \cond
-    ~SymGEigsSolver()
-    {
-        // m_op contains the constructed SymGEigsRegInvOp object
-        delete this->m_op;
-    }
-    /// \endcond
 };
 
 }  // namespace Spectra
