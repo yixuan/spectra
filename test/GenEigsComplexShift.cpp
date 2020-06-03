@@ -9,39 +9,36 @@ using namespace Spectra;
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-typedef Eigen::MatrixXd Matrix;
-typedef Eigen::VectorXd Vector;
-typedef Eigen::MatrixXcd ComplexMatrix;
-typedef Eigen::VectorXcd ComplexVector;
+using Matrix = Eigen::MatrixXd;
+using Vector = Eigen::VectorXd;
+using ComplexMatrix = Eigen::MatrixXcd;
+using ComplexVector = Eigen::VectorXcd;
 
-template <int SelectionRule>
-void run_test(const Matrix &mat, int k, int m, double sigmar, double sigmai, bool allow_fail = false)
+void run_test(const Matrix &mat, int k, int m, double sigmar, double sigmai,
+              SortRule selection, bool allow_fail = false)
 {
     DenseGenComplexShiftSolve<double> op(mat);
-    GenEigsComplexShiftSolver<double, SelectionRule, DenseGenComplexShiftSolve<double>> eigs(&op, k, m, sigmar, sigmai);
+    GenEigsComplexShiftSolver<double, DenseGenComplexShiftSolve<double>> eigs(op, k, m, sigmar, sigmai);
     eigs.init();
     // maxit = 100 to reduce running time for failed cases
-    int nconv = eigs.compute(100);
+    int nconv = eigs.compute(selection, 100);
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
-    if (allow_fail)
+    if (allow_fail && eigs.info() != CompInfo::Successful)
     {
-        if (eigs.info() != SUCCESSFUL)
-        {
-            WARN("FAILED on this test");
-            std::cout << "nconv = " << nconv << std::endl;
-            std::cout << "niter = " << niter << std::endl;
-            std::cout << "nops  = " << nops << std::endl;
-            return;
-        }
+        WARN("FAILED on this test");
+        std::cout << "nconv = " << nconv << std::endl;
+        std::cout << "niter = " << niter << std::endl;
+        std::cout << "nops  = " << nops << std::endl;
+        return;
     }
     else
     {
         INFO("nconv = " << nconv);
         INFO("niter = " << niter);
         INFO("nops  = " << nops);
-        REQUIRE(eigs.info() == SUCCESSFUL);
+        REQUIRE(eigs.info() == CompInfo::Successful);
     }
 
     ComplexVector evals = eigs.eigenvalues();
@@ -59,27 +56,27 @@ void run_test_sets(const Matrix &A, int k, int m, double sigmar, double sigmai)
 {
     SECTION("Largest Magnitude")
     {
-        run_test<LARGEST_MAGN>(A, k, m, sigmar, sigmai);
+        run_test(A, k, m, sigmar, sigmai, SortRule::LargestMagn);
     }
     SECTION("Largest Real Part")
     {
-        run_test<LARGEST_REAL>(A, k, m, sigmar, sigmai);
+        run_test(A, k, m, sigmar, sigmai, SortRule::LargestReal);
     }
     SECTION("Largest Imaginary Part")
     {
-        run_test<LARGEST_IMAG>(A, k, m, sigmar, sigmai);
+        run_test(A, k, m, sigmar, sigmai, SortRule::LargestImag);
     }
     SECTION("Smallest Magnitude")
     {
-        run_test<SMALLEST_MAGN>(A, k, m, sigmar, sigmai, true);
+        run_test(A, k, m, sigmar, sigmai, SortRule::SmallestMagn, true);
     }
     SECTION("Smallest Real Part")
     {
-        run_test<SMALLEST_REAL>(A, k, m, sigmar, sigmai);
+        run_test(A, k, m, sigmar, sigmai, SortRule::SmallestReal);
     }
     SECTION("Smallest Imaginary Part")
     {
-        run_test<SMALLEST_IMAG>(A, k, m, sigmar, sigmai, true);
+        run_test(A, k, m, sigmar, sigmai, SortRule::SmallestImag, true);
     }
 }
 

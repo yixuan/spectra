@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -23,45 +23,41 @@ namespace Spectra {
 /// knowledge of the shift-and-invert mode can be found in the documentation
 /// of the SymEigsShiftSolver class.
 ///
-/// \tparam Scalar        The element type of the matrix.
-///                       Currently supported types are `float`, `double` and `long double`.
-/// \tparam SelectionRule An enumeration value indicating the selection rule of
-///                       the shifted-and-inverted eigenvalues.
-///                       The full list of enumeration values can be found in
-///                       \ref Enumerations.
-/// \tparam OpType        The name of the matrix operation class. Users could either
-///                       use the wrapper classes such as DenseGenRealShiftSolve and
-///                       SparseGenRealShiftSolve, or define their
-///                       own that implements all the public member functions as in
-///                       DenseGenRealShiftSolve.
+/// \tparam Scalar  The element type of the matrix.
+/// \tparam OpType  The name of the matrix operation class. Users could either
+///                 use the wrapper classes such as DenseGenRealShiftSolve and
+///                 SparseGenRealShiftSolve, or define their
+///                 own that implements all the public member functions as in
+///                 DenseGenRealShiftSolve.
 ///
 template <typename Scalar = double,
-          int SelectionRule = LARGEST_MAGN,
-          typename OpType = DenseGenRealShiftSolve<double> >
-class GenEigsRealShiftSolver : public GenEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>
+          typename OpType = DenseGenRealShiftSolve<double>>
+class GenEigsRealShiftSolver : public GenEigsBase<Scalar, OpType, IdentityBOp>
 {
 private:
-    typedef Eigen::Index Index;
-    typedef std::complex<Scalar> Complex;
-    typedef Eigen::Array<Complex, Eigen::Dynamic, 1> ComplexArray;
+    using Index = Eigen::Index;
+    using Complex = std::complex<Scalar>;
+    using ComplexArray = Eigen::Array<Complex, Eigen::Dynamic, 1>;
+
+    using GenEigsBase<Scalar, OpType, IdentityBOp>::m_nev;
+    using GenEigsBase<Scalar, OpType, IdentityBOp>::m_ritz_val;
 
     const Scalar m_sigma;
 
     // First transform back the Ritz values, and then sort
-    void sort_ritzpair(int sort_rule)
+    void sort_ritzpair(SortRule sort_rule) override
     {
         // The eigenvalues we get from the iteration is nu = 1 / (lambda - sigma)
         // So the eigenvalues of the original problem is lambda = 1 / nu + sigma
-        ComplexArray ritz_val_org = Scalar(1.0) / this->m_ritz_val.head(this->m_nev).array() + m_sigma;
-        this->m_ritz_val.head(this->m_nev) = ritz_val_org;
-        GenEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>::sort_ritzpair(sort_rule);
+        m_ritz_val.head(m_nev) = Scalar(1) / m_ritz_val.head(m_nev).array() + m_sigma;;
+        GenEigsBase<Scalar, OpType, IdentityBOp>::sort_ritzpair(sort_rule);
     }
 
 public:
     ///
     /// Constructor to create a eigen solver object using the shift-and-invert mode.
     ///
-    /// \param op     Pointer to the matrix operation object. This class should implement
+    /// \param op     The matrix operation object that implements
     ///               the shift-solve operation of \f$A\f$: calculating
     ///               \f$(A-\sigma I)^{-1}v\f$ for any vector \f$v\f$. Users could either
     ///               create the object from the wrapper class such as DenseGenRealShiftSolve, or
@@ -76,11 +72,11 @@ public:
     ///               and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
     /// \param sigma  The real-valued shift.
     ///
-    GenEigsRealShiftSolver(OpType* op, Index nev, Index ncv, Scalar sigma) :
-        GenEigsBase<Scalar, SelectionRule, OpType, IdentityBOp>(op, NULL, nev, ncv),
+    GenEigsRealShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma) :
+        GenEigsBase<Scalar, OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv),
         m_sigma(sigma)
     {
-        this->m_op->set_shift(m_sigma);
+        op.set_shift(m_sigma);
     }
 };
 

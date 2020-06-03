@@ -99,10 +99,10 @@ TEST_CASE("QR of upper Hessenberg matrix", "[QR]")
     MatrixXd H = m.triangularView<Eigen::Upper>();
     H.diagonal(-1) = m.diagonal(-1);
 
-    run_test<UpperHessenbergQR<double> >(H, 1.2345);
+    run_test<UpperHessenbergQR<double>>(H, 1.2345);
 
     MapMat Hmap(H.data(), H.rows(), H.cols());
-    run_test<UpperHessenbergQR<double> >(Hmap, 0.6789);
+    run_test<UpperHessenbergQR<double>>(Hmap, 0.6789);
 }
 
 TEST_CASE("QR of Tridiagonal matrix", "[QR]")
@@ -116,10 +116,10 @@ TEST_CASE("QR of Tridiagonal matrix", "[QR]")
     H.diagonal(-1) = m.diagonal(-1);
     H.diagonal(1) = m.diagonal(-1);
 
-    run_test<TridiagQR<double> >(H, 1.2345);
+    run_test<TridiagQR<double>>(H, 1.2345);
 
     MapMat Hmap(H.data(), H.rows(), H.cols());
-    run_test<TridiagQR<double> >(Hmap, 0.6789);
+    run_test<TridiagQR<double>>(Hmap, 0.6789);
 }
 
 TEST_CASE("QR decomposition with double shifts", "[QR]")

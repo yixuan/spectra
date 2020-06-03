@@ -154,13 +154,17 @@ private:
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
+    using SymEigsBase<Scalar, OpType, IdentityBOp>::m_nev;
+    using SymEigsBase<Scalar, OpType, IdentityBOp>::m_ritz_val;
+
     const Scalar m_sigma;
 
     // First transform back the Ritz values, and then sort
     void sort_ritzpair(SortRule sort_rule) override
     {
-        Array m_ritz_val_org = Scalar(1) / this->m_ritz_val.head(this->m_nev).array() + m_sigma;
-        this->m_ritz_val.head(this->m_nev) = m_ritz_val_org;
+        // The eigenvalues we get from the iteration is nu = 1 / (lambda - sigma)
+        // So the eigenvalues of the original problem is lambda = 1 / nu + sigma
+        m_ritz_val.head(m_nev).array() = Scalar(1) / m_ritz_val.head(m_nev).array() + m_sigma;
         SymEigsBase<Scalar, OpType, IdentityBOp>::sort_ritzpair(sort_rule);
     }
 
