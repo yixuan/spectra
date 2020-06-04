@@ -49,7 +49,7 @@ private:
     {
         // The eigenvalues we get from the iteration is nu = 1 / (lambda - sigma)
         // So the eigenvalues of the original problem is lambda = 1 / nu + sigma
-        m_ritz_val.head(m_nev) = Scalar(1) / m_ritz_val.head(m_nev).array() + m_sigma;;
+        m_ritz_val.head(m_nev) = Scalar(1) / m_ritz_val.head(m_nev).array() + m_sigma;
         GenEigsBase<Scalar, OpType, IdentityBOp>::sort_ritzpair(sort_rule);
     }
 
