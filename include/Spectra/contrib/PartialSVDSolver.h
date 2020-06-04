@@ -55,11 +55,11 @@ public:
     {}
 
     // These are the rows and columns of A' * A
-    Index rows() const { return m_dim; }
-    Index cols() const { return m_dim; }
+    Index rows() const override { return m_dim; }
+    Index cols() const override { return m_dim; }
 
     // y_out = A' * A * x_in
-    void perform_op(const Scalar* x_in, Scalar* y_out) const
+    void perform_op(const Scalar* x_in, Scalar* y_out) const override
     {
         MapConstVec x(x_in, m_mat.cols());
         MapVec y(y_out, m_mat.cols());
@@ -94,11 +94,11 @@ public:
     {}
 
     // These are the rows and columns of A * A'
-    Index rows() const { return m_dim; }
-    Index cols() const { return m_dim; }
+    Index rows() const override { return m_dim; }
+    Index cols() const override { return m_dim; }
 
     // y_out = A * A' * x_in
-    void perform_op(const Scalar* x_in, Scalar* y_out) const
+    void perform_op(const Scalar* x_in, Scalar* y_out) const override
     {
         MapConstVec x(x_in, m_mat.rows());
         MapVec y(y_out, m_mat.rows());
