@@ -11,9 +11,9 @@ using namespace Spectra;
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-typedef Eigen::MatrixXd Matrix;
-typedef Eigen::VectorXd Vector;
-typedef Eigen::SparseMatrix<double> SpMatrix;
+using Matrix = Eigen::MatrixXd;
+using Vector = Eigen::VectorXd;
+using SpMatrix = Eigen::SparseMatrix<double>;
 
 // Generate random sparse matrix
 SpMatrix gen_sparse_data(int m, int n, double prob = 0.5)
