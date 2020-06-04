@@ -102,15 +102,15 @@ int main()
     DenseSymMatProd<double> op(M);
 
     // Construct eigen solver object, requesting the largest three eigenvalues
-    SymEigsSolver< double, LARGEST_ALGE, DenseSymMatProd<double> > eigs(&op, 3, 6);
+    SymEigsSolver<double, DenseSymMatProd<double>> eigs(op, 3, 6);
 
     // Initialize and compute
     eigs.init();
-    int nconv = eigs.compute();
+    int nconv = eigs.compute(SortRule::LargestAlge);
 
     // Retrieve results
     Eigen::VectorXd evalues;
-    if(eigs.info() == SUCCESSFUL)
+    if(eigs.info() == CompInfo::Successful)
         evalues = eigs.eigenvalues();
 
     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
@@ -150,15 +150,15 @@ int main()
     SparseGenMatProd<double> op(M);
 
     // Construct eigen solver object, requesting the largest three eigenvalues
-    GenEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op, 3, 6);
+    GenEigsSolver<double, SparseGenMatProd<double>> eigs(op, 3, 6);
 
     // Initialize and compute
     eigs.init();
-    int nconv = eigs.compute();
+    int nconv = eigs.compute(SortRule::LargestMagn);
 
     // Retrieve results
     Eigen::VectorXcd evalues;
-    if(eigs.info() == SUCCESSFUL)
+    if(eigs.info() == CompInfo::Successful)
         evalues = eigs.eigenvalues();
 
     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
@@ -183,7 +183,7 @@ public:
     int rows() { return 10; }
     int cols() { return 10; }
     // y_out = M * x_in
-    void perform_op(const double *x_in, double *y_out)
+    void perform_op(const double *x_in, double *y_out) const
     {
         for(int i = 0; i < rows(); i++)
         {
@@ -195,10 +195,10 @@ public:
 int main()
 {
     MyDiagonalTen op;
-    SymEigsSolver<double, LARGEST_ALGE, MyDiagonalTen> eigs(&op, 3, 6);
+    SymEigsSolver<double, MyDiagonalTen> eigs(op, 3, 6);
     eigs.init();
-    eigs.compute();
-    if(eigs.info() == SUCCESSFUL)
+    eigs.compute(SortRule::LargestAlge);
+    if(eigs.info() == CompInfo::Successful)
     {
         Eigen::VectorXd evalues = eigs.eigenvalues();
         std::cout << "Eigenvalues found:\n" << evalues << std::endl;
@@ -235,9 +235,9 @@ More information can be found in the project page [https://spectralib.org](https
 An optional CMake installation is supported, if you have CMake with at least v3.10 installed. You can install the headers using the following commands:
 
 ```bash
-    mkdir build && cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX='intended installation directory' -DCMAKE_PREFIX_PATH='path where the installation of Eigen3 can be found' -DBUILD_TESTS=TRUE
-    make all && make tests && make install
+mkdir build && cd build
+cmake .. -DCMAKE_INSTALL_PREFIX='intended installation directory' -DCMAKE_PREFIX_PATH='path where the installation of Eigen3 can be found' -DBUILD_TESTS=TRUE
+make all && make tests && make install
 ```
 
 By installing Spectra in this way, you also create a CMake target 'Spectra::Spectra' that can be used in subsequent build procedures for other programs.
