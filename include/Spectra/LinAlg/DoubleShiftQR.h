@@ -380,6 +380,16 @@ public:
             update_block(start, end);
         }
 
+        // Deflation on the computed result
+        Hii = m_mat_H.data();
+        for (Index i = 0; i < m_n - 1; i++, Hii += (m_n + 1))
+        {
+            const Scalar h = abs(Hii[1]);
+            const Scalar diag = abs(Hii[0]) + abs(Hii[m_n + 1]);
+            if (h <= eps_abs || h <= eps_rel * diag)
+                Hii[1] = 0;
+        }
+
         m_computed = true;
     }
 
