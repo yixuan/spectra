@@ -1,3 +1,29 @@
+## [Unreleased]
+### Changed
+- **API change**: Spectra now requires C++11
+- **API change**: All enumerations have been converted to enum classes
+  (e.g. `LARGEST_MAGN` is now `SortRule::LargestMagn`)
+- **API change**: Selection rules are no longer template parameters. They are now
+  specified in the `compute()` member function as arguments
+- **API change**: Constructors of solvers now request references of matrix operators
+  instead of pointers
+- Clang-Format now uses the C++11 standard to format code
+- Many internal changes to make use of C++11 features
+- Improved the precision of `UpperHessenbergQR` and `TridiagQR` by computing the
+  Givens rotations in a more stable way
+- Added a deflation test to `TridiagQR` to accelerate the convergence of eigen solvers
+- Improved the precision of `TridiagQR::matrix_QtHQ()` by directly applying rotations
+  to the original input matrix
+- Improved the precision of `DoubleShiftQR` by computing the Householder reflectors
+  in a more stable way
+- Improved the deflation test in `DoubleShiftQR`
+- More careful computation of residual vectors in the `Lanczos` process
+- Initial vectors in the `Lanczos` and `Arnoldi` processes are now forced to be in the
+  range of the `A` matrix
+- In symmetric eigen solvers large shifts are applied first to increase precision
+- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.12.2
+
+
 ## [0.9.0] - 2020-05-19
 ### Added
 - Added support for CMake build, contributed by
@@ -7,7 +33,7 @@
   thanks to [Guillaume Acke](https://github.com/guacke) and [Julien Schueller](https://github.com/jschueller)
   ([#81](https://github.com/yixuan/spectra/pull/81), [#85](https://github.com/yixuan/spectra/pull/85))
 - The source code of Spectra is now formatted using
-  [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html), suggested by
+  [Clang-Format](https://clang.llvm.org/docs/ClangFormat.html), suggested by
   [Jens Wehner](https://github.com/JensWehner)
 
 ### Changed
