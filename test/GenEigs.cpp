@@ -56,8 +56,8 @@ void run_test(const MatType& mat, int k, int m, SortRule selection, bool allow_f
     OpType op(mat);
     GenEigsSolver<double, OpType> eigs(op, k, m);
     eigs.init();
-    // maxit = 500 to reduce running time for failed cases
-    int nconv = eigs.compute(selection, 500);
+    // maxit = 350 to reduce running time for failed cases
+    int nconv = eigs.compute(selection, 350);
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
@@ -133,7 +133,7 @@ TEST_CASE("Eigensolver of general real matrix [100x100]", "[eigs_gen]")
 
     const Matrix A = Eigen::MatrixXd::Random(100, 100);
     int k = 10;
-    int m = 20;
+    int m = 30;
 
     run_test_sets(A, k, m);
 }
@@ -166,7 +166,7 @@ TEST_CASE("Eigensolver of sparse real matrix [100x100]", "[eigs_gen]")
 
     const SpMatrix A = gen_sparse_data(100, 0.5);
     int k = 10;
-    int m = 20;
+    int m = 30;
 
     run_test_sets(A, k, m);
 }
