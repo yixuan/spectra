@@ -352,7 +352,7 @@ public:
         zero_ind.reserve(m_n - 1);
         zero_ind.push_back(0);
         Scalar* Hii = m_mat_H.data();
-        for (Index i = 0; i < m_n - 2; i++, Hii += (m_n + 1))
+        for (Index i = 0; i < m_n - 1; i++, Hii += (m_n + 1))
         {
             // Hii[0] => m_mat_H(i, i)
             // Hii[1] => m_mat_H(i + 1, i)
