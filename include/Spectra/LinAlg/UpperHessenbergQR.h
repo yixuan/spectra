@@ -710,6 +710,8 @@ public:
     ///
     void matrix_QtHQ(Matrix& dest) const override
     {
+        using std::abs;
+
         if (!m_computed)
             throw std::logic_error("TridiagQR: need to call compute() first");
 
