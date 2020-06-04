@@ -147,4 +147,3 @@ TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [1000x1000]",
 
     run_test_sets(A, B, k, m);
 }
-

@@ -58,8 +58,10 @@ private:
         x2 = abs(x2);
         x3 = abs(x3);
         // Make x1 >= {x2, x3}
-        if (x1 < x2) std::swap(x1, x2);
-        if (x1 < x3) std::swap(x1, x3);
+        if (x1 < x2)
+            std::swap(x1, x2);
+        if (x1 < x3)
+            std::swap(x1, x3);
         // If x1 is too small, return 0
         if (x1 < m_near_0)
             return Scalar(0);
