@@ -23,23 +23,19 @@ template <typename Scalar = double>
 class TridiagEigen
 {
 private:
-    typedef Eigen::Index Index;
+    using Index = Eigen::Index;
     // For convenience in adapting the tridiagonal_qr_step() function
-    typedef Scalar RealScalar;
-
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-
-    typedef Eigen::Ref<Matrix> GenericMatrix;
-    typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
+    using RealScalar = Scalar;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using GenericMatrix = Eigen::Ref<Matrix>;
+    using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
     Index m_n;
     Vector m_main_diag;  // Main diagonal elements of the matrix
     Vector m_sub_diag;   // Sub-diagonal elements of the matrix
     Matrix m_evecs;      // To store eigenvectors
-
     bool m_computed;
-    const Scalar m_near_0;  // a very small value, ~= 1e-307 for the "double" type
 
     // Adapted from Eigen/src/Eigenvaleus/SelfAdjointEigenSolver.h
     static void tridiagonal_qr_step(RealScalar* diag,
@@ -107,13 +103,11 @@ private:
 
 public:
     TridiagEigen() :
-        m_n(0), m_computed(false),
-        m_near_0(TypeTraits<Scalar>::min() * Scalar(10))
+        m_n(0), m_computed(false)
     {}
 
     TridiagEigen(ConstGenericMatrix& mat) :
-        m_n(mat.rows()), m_computed(false),
-        m_near_0(TypeTraits<Scalar>::min() * Scalar(10))
+        m_n(mat.rows()), m_computed(false)
     {
         compute(mat);
     }
@@ -121,6 +115,10 @@ public:
     void compute(ConstGenericMatrix& mat)
     {
         using std::abs;
+
+        // A very small value, but 1.0 / near_0 does not overflow
+        // ~= 1e-307 for the "double" type
+        constexpr Scalar near_0 = TypeTraits<Scalar>::min() * Scalar(10);
 
         m_n = mat.rows();
         if (m_n != mat.cols())
@@ -135,7 +133,7 @@ public:
         const Scalar scale = std::max(mat.diagonal().cwiseAbs().maxCoeff(),
                                       mat.diagonal(-1).cwiseAbs().maxCoeff());
         // If scale=0, mat is a zero matrix, so we can early stop
-        if (scale < m_near_0)
+        if (scale < near_0)
         {
             // m_main_diag contains eigenvalues
             m_main_diag.setZero();

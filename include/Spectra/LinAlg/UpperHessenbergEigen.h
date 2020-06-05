@@ -21,23 +21,21 @@ template <typename Scalar = double>
 class UpperHessenbergEigen
 {
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
+    using Index = Eigen::Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using GenericMatrix = Eigen::Ref<Matrix>;
+    using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
-    typedef Eigen::Ref<Matrix> GenericMatrix;
-    typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
-
-    typedef std::complex<Scalar> Complex;
-    typedef Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic> ComplexMatrix;
-    typedef Eigen::Matrix<Complex, Eigen::Dynamic, 1> ComplexVector;
+    using Complex = std::complex<Scalar>;
+    using ComplexMatrix = Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic>;
+    using ComplexVector = Eigen::Matrix<Complex, Eigen::Dynamic, 1>;
 
     Index m_n;                             // Size of the matrix
     Eigen::RealSchur<Matrix> m_realSchur;  // Schur decomposition solver
     Matrix m_matT;                         // Schur T matrix
     Matrix m_eivec;                        // Storing eigenvectors
     ComplexVector m_eivalues;              // Eigenvalues
-
     bool m_computed;
 
     void doComputeEigenvectors()
