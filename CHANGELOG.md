@@ -1,4 +1,8 @@
 ## [Unreleased]
+### Added
+- Added version macros `SPECTRA_MAJOR_VERSION`, `SPECTRA_MINOR_VERSION`,
+  `SPECTRA_PATCH_VERSION`, and `SPECTRA_VERSION` that are included by all eigen solvers
+
 ### Changed
 - **API change**: Spectra now requires C++11
 - **API change**: All enumerations have been converted to enum classes
