@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef SELECTION_RULE_H
-#define SELECTION_RULE_H
+#ifndef SPECTRA_SELECTION_RULE_H
+#define SPECTRA_SELECTION_RULE_H
 
 #include <vector>     // std::vector
 #include <cmath>      // std::abs
@@ -225,4 +225,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // SELECTION_RULE_H
+#endif  // SPECTRA_SELECTION_RULE_H

@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef SPARSE_SYM_SHIFT_SOLVE_H
-#define SPARSE_SYM_SHIFT_SOLVE_H
+#ifndef SPECTRA_SPARSE_SYM_SHIFT_SOLVE_H
+#define SPECTRA_SPARSE_SYM_SHIFT_SOLVE_H
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
@@ -92,4 +92,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // SPARSE_SYM_SHIFT_SOLVE_H
+#endif  // SPECTRA_SPARSE_SYM_SHIFT_SOLVE_H

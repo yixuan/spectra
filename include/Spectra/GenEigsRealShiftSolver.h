@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef GEN_EIGS_REAL_SHIFT_SOLVER_H
-#define GEN_EIGS_REAL_SHIFT_SOLVER_H
+#ifndef SPECTRA_GEN_EIGS_REAL_SHIFT_SOLVER_H
+#define SPECTRA_GEN_EIGS_REAL_SHIFT_SOLVER_H
 
 #include <Eigen/Core>
 
@@ -82,4 +82,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // GEN_EIGS_REAL_SHIFT_SOLVER_H
+#endif  // SPECTRA_GEN_EIGS_REAL_SHIFT_SOLVER_H

@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef SIMPLE_RANDOM_H
-#define SIMPLE_RANDOM_H
+#ifndef SPECTRA_SIMPLE_RANDOM_H
+#define SPECTRA_SIMPLE_RANDOM_H
 
 #include <Eigen/Core>
 
@@ -96,4 +96,4 @@ public:
 
 /// \endcond
 
-#endif  // SIMPLE_RANDOM_H
+#endif  // SPECTRA_SIMPLE_RANDOM_H

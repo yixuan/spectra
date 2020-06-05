@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef DENSE_SYM_SHIFT_SOLVE_H
-#define DENSE_SYM_SHIFT_SOLVE_H
+#ifndef SPECTRA_DENSE_SYM_SHIFT_SOLVE_H
+#define SPECTRA_DENSE_SYM_SHIFT_SOLVE_H
 
 #include <Eigen/Core>
 #include <stdexcept>
@@ -89,4 +89,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // DENSE_SYM_SHIFT_SOLVE_H
+#endif  // SPECTRA_DENSE_SYM_SHIFT_SOLVE_H

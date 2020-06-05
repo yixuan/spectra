@@ -2,14 +2,14 @@
 //
 // Copyright (C) 2008 Gael Guennebaud <gael.guennebaud@inria.fr>
 // Copyright (C) 2010,2012 Jitse Niesen <jitse@maths.leeds.ac.uk>
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef UPPER_HESSENBERG_EIGEN_H
-#define UPPER_HESSENBERG_EIGEN_H
+#ifndef SPECTRA_UPPER_HESSENBERG_EIGEN_H
+#define SPECTRA_UPPER_HESSENBERG_EIGEN_H
 
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
@@ -316,4 +316,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // UPPER_HESSENBERG_EIGEN_H
+#endif  // SPECTRA_UPPER_HESSENBERG_EIGEN_H

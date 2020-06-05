@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef DOUBLE_SHIFT_QR_H
-#define DOUBLE_SHIFT_QR_H
+#ifndef SPECTRA_DOUBLE_SHIFT_QR_H
+#define SPECTRA_DOUBLE_SHIFT_QR_H
 
 #include <Eigen/Core>
 #include <vector>     // std::vector
@@ -437,4 +437,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // DOUBLE_SHIFT_QR_H
+#endif  // SPECTRA_DOUBLE_SHIFT_QR_H

@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef TYPE_TRAITS_H
-#define TYPE_TRAITS_H
+#ifndef SPECTRA_TYPE_TRAITS_H
+#define SPECTRA_TYPE_TRAITS_H
 
 #include <Eigen/Core>
 #include <limits>
@@ -90,4 +90,4 @@ using ElemType = typename Eigen::NumTraits<T>::Real;
 
 /// \endcond
 
-#endif  // TYPE_TRAITS_H
+#endif  // SPECTRA_TYPE_TRAITS_H

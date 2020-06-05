@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef SPARSE_REGULAR_INVERSE_H
-#define SPARSE_REGULAR_INVERSE_H
+#ifndef SPECTRA_SPARSE_REGULAR_INVERSE_H
+#define SPECTRA_SPARSE_REGULAR_INVERSE_H
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
@@ -97,4 +97,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // SPARSE_REGULAR_INVERSE_H
+#endif  // SPECTRA_SPARSE_REGULAR_INVERSE_H

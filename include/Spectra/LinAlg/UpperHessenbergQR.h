@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef UPPER_HESSENBERG_QR_H
-#define UPPER_HESSENBERG_QR_H
+#ifndef SPECTRA_UPPER_HESSENBERG_QR_H
+#define SPECTRA_UPPER_HESSENBERG_QR_H
 
 #include <Eigen/Core>
 #include <cmath>      // std::abs, std::sqrt, std::pow
@@ -783,4 +783,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // UPPER_HESSENBERG_QR_H
+#endif  // SPECTRA_UPPER_HESSENBERG_QR_H

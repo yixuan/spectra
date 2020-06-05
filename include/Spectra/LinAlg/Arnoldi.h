@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef ARNOLDI_H
-#define ARNOLDI_H
+#ifndef SPECTRA_ARNOLDI_H
+#define SPECTRA_ARNOLDI_H
 
 #include <Eigen/Core>
 #include <cmath>      // std::sqrt
@@ -286,4 +286,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // ARNOLDI_H
+#endif  // SPECTRA_ARNOLDI_H

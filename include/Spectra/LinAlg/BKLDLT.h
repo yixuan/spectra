@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef BK_LDLT_H
-#define BK_LDLT_H
+#ifndef SPECTRA_BK_LDLT_H
+#define SPECTRA_BK_LDLT_H
 
 #include <Eigen/Core>
 #include <vector>
@@ -526,4 +526,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // BK_LDLT_H
+#endif  // SPECTRA_BK_LDLT_H

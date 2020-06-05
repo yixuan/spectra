@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef SPARSE_GEN_MAT_PROD_H
-#define SPARSE_GEN_MAT_PROD_H
+#ifndef SPECTRA_SPARSE_GEN_MAT_PROD_H
+#define SPECTRA_SPARSE_GEN_MAT_PROD_H
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
@@ -71,4 +71,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // SPARSE_GEN_MAT_PROD_H
+#endif  // SPECTRA_SPARSE_GEN_MAT_PROD_H

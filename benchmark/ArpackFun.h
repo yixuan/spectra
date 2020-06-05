@@ -1,5 +1,5 @@
-#ifndef ARPACKFUN_H
-#define ARPACKFUN_H
+#ifndef SPECTRA_ARPACKFUN_H
+#define SPECTRA_ARPACKFUN_H
 
 #define F77_CALL(x) x##_
 #define F77_NAME(x) F77_CALL(x)
@@ -189,4 +189,4 @@ inline void neupd(bool rvec, char howmny, double dr[], double di[],
     delete[] select_pass;
 }
 
-#endif  // ARPACKFUN_H
+#endif  // SPECTRA_ARPACKFUN_H

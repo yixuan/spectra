@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef PARTIAL_SVD_SOLVER_H
-#define PARTIAL_SVD_SOLVER_H
+#ifndef SPECTRA_PARTIAL_SVD_SOLVER_H
+#define SPECTRA_PARTIAL_SVD_SOLVER_H
 
 #include <Eigen/Core>
 #include "../SymEigsSolver.h"
@@ -205,4 +205,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // PARTIAL_SVD_SOLVER_H
+#endif  // SPECTRA_PARTIAL_SVD_SOLVER_H

@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef GEIGS_MODE_H
-#define GEIGS_MODE_H
+#ifndef SPECTRA_GEIGS_MODE_H
+#define SPECTRA_GEIGS_MODE_H
 
 namespace Spectra {
 
@@ -25,4 +25,4 @@ enum class GEigsMode
 
 }  // namespace Spectra
 
-#endif  // GEIGS_MODE_H
+#endif  // SPECTRA_GEIGS_MODE_H

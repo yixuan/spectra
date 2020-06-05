@@ -2,8 +2,8 @@
 // Modified by Yixuan Qiu
 // License: MIT
 
-#ifndef LOBPCG_SOLVER
-#define LOBPCG_SOLVER
+#ifndef SPECTRA_LOBPCG_SOLVER_H
+#define SPECTRA_LOBPCG_SOLVER_H
 
 #include <functional>
 #include <map>
@@ -549,4 +549,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // LOBPCG_SOLVER
+#endif  // SPECTRA_LOBPCG_SOLVER_H

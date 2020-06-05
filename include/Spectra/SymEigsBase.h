@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef SYM_EIGS_BASE_H
-#define SYM_EIGS_BASE_H
+#ifndef SPECTRA_SYM_EIGS_BASE_H
+#define SPECTRA_SYM_EIGS_BASE_H
 
 #include <Eigen/Core>
 #include <vector>     // std::vector
@@ -527,4 +527,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // SYM_EIGS_BASE_H
+#endif  // SPECTRA_SYM_EIGS_BASE_H
