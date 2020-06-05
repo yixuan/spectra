@@ -615,10 +615,10 @@ public:
         m_T_subd.noalias() = mat.diagonal(-1);
 
         // Deflation of small sub-diagonal elements
-        constexpr Scalar m_eps = TypeTraits<Scalar>::epsilon();
+        constexpr Scalar eps = TypeTraits<Scalar>::epsilon();
         for (Index i = 0; i < m_n - 1; i++)
         {
-            if (abs(m_T_subd[i]) <= m_eps * (abs(m_T_diag[i]) + abs(m_T_diag[i + 1])))
+            if (abs(m_T_subd[i]) <= eps * (abs(m_T_diag[i]) + abs(m_T_diag[i + 1])))
                 m_T_subd[i] = Scalar(0);
         }
 
@@ -764,11 +764,11 @@ public:
         }
 
         // Deflation of small sub-diagonal elements
-        constexpr Scalar m_eps = TypeTraits<Scalar>::epsilon();
+        constexpr Scalar eps = TypeTraits<Scalar>::epsilon();
         for (Index i = 0; i < n1; i++)
         {
             const Scalar diag = abs(dest.coeff(i, i)) + abs(dest.coeff(i + 1, i + 1));
-            if (abs(dest.coeff(i + 1, i)) <= m_eps * diag)
+            if (abs(dest.coeff(i + 1, i)) <= eps * diag)
                 dest.coeffRef(i + 1, i) = Scalar(0);
         }
 
