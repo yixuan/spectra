@@ -48,8 +48,7 @@ public:
     ArnoldiOp(ArnoldiOp&& other) :
         m_op(other.m_op), m_Bop(other.m_Bop)
     {
-        // Vector does not have a move constructor, but we can emulate
-        // it using Vector::swap()
+        // We emulate the move constructor for Vector using Vector::swap()
         m_cache.swap(other.m_cache);
     }
 
