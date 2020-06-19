@@ -21,7 +21,7 @@ namespace Spectra {
 /// i.e., calculating \f$y=(A-\sigma I)^{-1}x\f$ for any real \f$\sigma\f$ and
 /// vector \f$x\f$. It is mainly used in the SymEigsShiftSolver eigen solver.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower, int Flags = 0, typename StorageIndex = int>
+template <typename Scalar, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor, typename StorageIndex = int>
 class SparseSymShiftSolve
 {
 private:

@@ -24,7 +24,7 @@ namespace Spectra {
 /// matrix. It is mainly used in the SymGEigsSolver generalized eigen solver
 /// in the Cholesky decomposition mode.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower, int Flags = 0, typename StorageIndex = int>
+template <typename Scalar, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor, typename StorageIndex = int>
 class SparseCholesky
 {
 private:

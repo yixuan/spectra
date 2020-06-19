@@ -25,7 +25,7 @@ namespace Spectra {
 /// This class is intended to be used with the SymGEigsSolver generalized eigen solver
 /// in the regular inverse mode.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower, int Flags = 0, typename StorageIndex = int>
+template <typename Scalar, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor, typename StorageIndex = int>
 class SparseRegularInverse
 {
 private:

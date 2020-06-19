@@ -19,7 +19,7 @@ namespace Spectra {
 /// sparse real symmetric matrix \f$A\f$, i.e., calculating \f$y=Ax\f$ for any vector
 /// \f$x\f$. It is mainly used in the SymEigsSolver eigen solver.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower, int Flags = 0, typename StorageIndex = int>
+template <typename Scalar, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor, typename StorageIndex = int>
 class SparseSymMatProd
 {
 private:
