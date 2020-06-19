@@ -21,19 +21,19 @@ namespace Spectra {
 /// \f$\sigma\f$ and real-valued vector \f$x\f$. It is mainly used in the
 /// GenEigsComplexShiftSolver eigen solver.
 ///
-template <typename Scalar>
+template <typename Scalar, int Flags = Eigen::ColMajor>
 class DenseGenComplexShiftSolve
 {
 private:
     using Index = Eigen::Index;
-    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using MapConstVec = Eigen::Map<const Vector>;
     using MapVec = Eigen::Map<Vector>;
     using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
     using Complex = std::complex<Scalar>;
-    using ComplexMatrix = Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic>;
+    using ComplexMatrix = Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using ComplexVector = Eigen::Matrix<Complex, Eigen::Dynamic, 1>;
 
     using ComplexSolver = Eigen::PartialPivLU<ComplexMatrix>;
