@@ -24,7 +24,7 @@ namespace Spectra {
 /// of the SymEigsShiftSolver class.
 ///
 /// \tparam Scalar  The element type of the matrix.
-///                 Currently supported types are `float`, `double` and `long double`.
+///                 Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType  The name of the matrix operation class. Users could either
 ///                 use the DenseGenComplexShiftSolve wrapper class, or define their
 ///                 own that implements all the public member functions as in

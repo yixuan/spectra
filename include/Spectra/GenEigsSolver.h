@@ -26,7 +26,7 @@ namespace Spectra {
 /// and eigenvectors of a general matrix can now be complex-valued.
 ///
 /// \tparam Scalar  The element type of the matrix.
-///                 Currently supported types are `float`, `double` and `long double`.
+///                 Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType  The name of the matrix operation class. Users could either
 ///                 use the wrapper classes such as DenseGenMatProd and
 ///                 SparseGenMatProd, or define their

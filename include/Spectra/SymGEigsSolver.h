@@ -27,7 +27,7 @@ namespace Spectra {
 /// matrices, i.e., to solve \f$Ax=\lambda Bx\f$ where \f$A\f$ is symmetric and
 /// \f$B\f$ is positive definite.
 ///
-/// There are two modes of this solver, specified by the template parameter mode.
+/// There are two modes of this solver, specified by the template parameter `Mode`.
 /// See the pages for the specialized classes for details.
 /// - The Cholesky mode assumes that \f$B\f$ can be factorized using Cholesky
 ///   decomposition, which is the preferred mode when the decomposition is
@@ -38,13 +38,13 @@ namespace Spectra {
 ///   linear equation solving operation \f$B^{-1}v\f$. This mode should only be
 ///   used when the Cholesky decomposition of \f$B\f$ is hard to implement, or
 ///   when computing \f$B^{-1}v\f$ is much faster than the Cholesky decomposition.
-///   See \ref SymGEigsSolver<Scalar, SelectionRule, OpType, BOpType, GEigsMode::RegularInverse> "SymGEigsSolver (Regular inverse mode)" for more details.
+///   See \ref SymGEigsSolver<Scalar, OpType, BOpType, GEigsMode::RegularInverse> "SymGEigsSolver (Regular inverse mode)" for more details.
 
 // Empty class template
 template <typename Scalar,
           typename OpType,
           typename BOpType,
-          GEigsMode mode>
+          GEigsMode Mode>
 class SymGEigsSolver
 {};
 
@@ -67,7 +67,7 @@ class SymGEigsSolver
 /// should implement all the public member functions as in those built-in classes.
 ///
 /// \tparam Scalar   The element type of the matrix.
-///                  Currently supported types are `float`, `double` and `long double`.
+///                  Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType   The name of the matrix operation class for \f$A\f$. Users could either
 ///                  use the wrapper classes such as DenseSymMatProd and
 ///                  SparseSymMatProd, or define their own that implements all the
@@ -76,7 +76,7 @@ class SymGEigsSolver
 ///                  use the wrapper classes such as DenseCholesky and
 ///                  SparseCholesky, or define their own that implements all the
 ///                  public member functions as in DenseCholesky.
-/// \tparam mode     Mode of the generalized eigen solver. In this solver
+/// \tparam Mode     Mode of the generalized eigen solver. In this solver
 ///                  it is Spectra::GEigsMode::Cholesky.
 ///
 /// Below is an example that demonstrates the usage of this class.
@@ -239,7 +239,7 @@ public:
 /// should implement all the public member functions as in those built-in classes.
 ///
 /// \tparam Scalar   The element type of the matrix.
-///                  Currently supported types are `float`, `double` and `long double`.
+///                  Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType   The name of the matrix operation class for \f$A\f$. Users could either
 ///                  use the wrapper classes such as DenseSymMatProd and
 ///                  SparseSymMatProd, or define their
@@ -249,7 +249,7 @@ public:
 ///                  use the wrapper class SparseRegularInverse, or define their
 ///                  own that implements all the public member functions as in
 ///                  SparseRegularInverse.
-/// \tparam mode     Mode of the generalized eigen solver. In this solver
+/// \tparam Mode     Mode of the generalized eigen solver. In this solver
 ///                  it is Spectra::GEigsMode::RegularInverse.
 ///
 

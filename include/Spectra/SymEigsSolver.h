@@ -44,7 +44,7 @@ namespace Spectra {
 /// class, it should implement all the public member functions as in DenseSymMatProd.
 ///
 /// \tparam Scalar  The element type of the matrix.
-///                 Currently supported types are `float`, `double` and `long double`.
+///                 Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType  The name of the matrix operation class. Users could either
 ///                 use the wrapper classes such as DenseSymMatProd and
 ///                 SparseSymMatProd, or define their
