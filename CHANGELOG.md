@@ -2,6 +2,12 @@
 ### Added
 - Added version macros `SPECTRA_MAJOR_VERSION`, `SPECTRA_MINOR_VERSION`,
   `SPECTRA_PATCH_VERSION`, and `SPECTRA_VERSION` that are included by all eigen solvers
+- Added the `SymGEigsShiftSolver` class for symmetric generalized eigen solver with real shifts
+- Added the wrapper class `SymShiftInvert` that can be used with `SymGEigsShiftSolver`
+- Added test code for symmetric generalized eigen solver with real shifts
+- Added a `Flags` template parameter to every dense matrix operation class
+  (e.g. `DenseCholesky` and `DenseSymMatProd`), whose possible values are `Eigen::ColMajor`
+  and `Eigen::RowMajor`. This parameter allows these wrapper classes to handle row-major matrices
 
 ### Changed
 - **API change**: Spectra now requires C++11
@@ -13,6 +19,11 @@
   instead of pointers
 - Clang-Format now uses the C++11 standard to format code
 - Many internal changes to make use of C++11 features
+- Added a `SPECTRA_` prefix to each header guard to prevent potential name clash
+- Changed the default value of the `Flags` template parameter that exists in various
+  class templates from `0` to the more readable constant `Eigen::ColMajor`
+- Renamed the function `mat_prod` to `perform_op` in the `SparseRegularInverse` wrapper class.
+  This makes the API more consistent when implementing new generalized eigen solvers
 - Improved the precision of `UpperHessenbergQR` and `TridiagQR` by computing the
   Givens rotations in a more stable way
 - Added a deflation test to `TridiagQR` to accelerate the convergence of eigen solvers
