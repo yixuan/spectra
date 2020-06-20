@@ -91,7 +91,6 @@ public:
 
 /// \endcond
 
-
 ///
 /// \ingroup MatOp
 ///
@@ -161,8 +160,7 @@ private:
     using FacType = typename std::conditional<
         ASparse::value && BSparse::value,
         Eigen::SparseLU<ResType>,
-        BKLDLT<Scalar>
-        >::type;
+        BKLDLT<Scalar>>::type;
 
     using ConstGenericMatrixA = const Eigen::Ref<const MatrixA>;
     using ConstGenericMatrixB = const Eigen::Ref<const MatrixB>;
