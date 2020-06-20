@@ -45,7 +45,7 @@ public:
     {}
 
     ///
-    /// Move constructor
+    /// Move constructor.
     ///
     SymGEigsRegInvOp(SymGEigsRegInvOp&& other) :
         m_op(other.m_op), m_Bop(other.m_Bop)

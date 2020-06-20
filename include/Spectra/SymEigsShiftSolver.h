@@ -76,7 +76,7 @@ namespace Spectra {
 /// {
 ///     // A size-10 diagonal matrix with elements 1, 2, ..., 10
 ///     Eigen::MatrixXd M = Eigen::MatrixXd::Zero(10, 10);
-///     for(int i = 0; i < M.rows(); i++)
+///     for (int i = 0; i < M.rows(); i++)
 ///         M(i, i) = i + 1;
 ///
 ///     // Construct matrix operation object using the wrapper class
@@ -88,7 +88,7 @@ namespace Spectra {
 ///
 ///     eigs.init();
 ///     eigs.compute(SortRule::LargestMagn);
-///     if(eigs.info() == CompInfo::Successful)
+///     if (eigs.info() == CompInfo::Successful)
 ///     {
 ///         Eigen::VectorXd evalues = eigs.eigenvalues();
 ///         // Will get (3.0, 2.0, 1.0)
@@ -121,7 +121,7 @@ namespace Spectra {
 ///     // inv(A - sigma * I) = diag(1/(1-sigma), 1/(2-sigma), ...)
 ///     void perform_op(double *x_in, double *y_out) const
 ///     {
-///         for(int i = 0; i < rows(); i++)
+///         for (int i = 0; i < rows(); i++)
 ///         {
 ///             y_out[i] = x_in[i] / (i + 1 - sigma_);
 ///         }
@@ -135,7 +135,7 @@ namespace Spectra {
 ///     SymEigsShiftSolver<double, MyDiagonalTenShiftSolve> eigs(op, 3, 6, 3.14);
 ///     eigs.init();
 ///     eigs.compute(SortRule::LargestMagn);
-///     if(eigs.info() == CompInfo::Successful)
+///     if (eigs.info() == CompInfo::Successful)
 ///     {
 ///         Eigen::VectorXd evalues = eigs.eigenvalues();
 ///         // Will get (4.0, 3.0, 2.0)

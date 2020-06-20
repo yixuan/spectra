@@ -47,7 +47,7 @@ public:
     {}
 
     ///
-    /// Move constructor
+    /// Move constructor.
     ///
     SymGEigsCholeskyOp(SymGEigsCholeskyOp&& other) :
         m_op(other.m_op), m_Bop(other.m_Bop)

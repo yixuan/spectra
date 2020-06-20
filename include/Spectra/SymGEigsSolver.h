@@ -104,16 +104,16 @@ class SymGEigsSolver
 ///     // Define the B matrix, a band matrix with 2 on the diagonal and 1 on the subdiagonals
 ///     Eigen::SparseMatrix<double> B(n, n);
 ///     B.reserve(Eigen::VectorXi::Constant(n, 3));
-///     for(int i = 0; i < n; i++)
+///     for (int i = 0; i < n; i++)
 ///     {
 ///         B.insert(i, i) = 2.0;
-///         if(i > 0)
+///         if (i > 0)
 ///             B.insert(i - 1, i) = 1.0;
-///         if(i < n - 1)
+///         if (i < n - 1)
 ///             B.insert(i + 1, i) = 1.0;
 ///     }
 ///
-///     // Construct matrix operation object using the wrapper classes
+///     // Construct matrix operation objects using the wrapper classes
 ///     DenseSymMatProd<double> op(A);
 ///     SparseCholesky<double>  Bop(B);
 ///
@@ -128,7 +128,7 @@ class SymGEigsSolver
 ///     // Retrieve results
 ///     Eigen::VectorXd evalues;
 ///     Eigen::MatrixXd evecs;
-///     if(geigs.info() == CompInfo::Successful)
+///     if (geigs.info() == CompInfo::Successful)
 ///     {
 ///         evalues = geigs.eigenvalues();
 ///         evecs = geigs.eigenvectors();
