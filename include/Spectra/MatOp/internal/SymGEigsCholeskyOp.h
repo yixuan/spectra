@@ -29,7 +29,6 @@ class SymGEigsCholeskyOp
 {
 private:
     using Index = Eigen::Index;
-    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
     const OpType& m_op;
