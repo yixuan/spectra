@@ -8,7 +8,6 @@
 #define SPECTRA_SYM_GEIGS_SHIFT_INVERT_OP_H
 
 #include <Eigen/Core>
-#include <Eigen/SparseCore>
 
 #include "../SymShiftInvert.h"
 #include "../SparseSymMatProd.h"
@@ -25,7 +24,7 @@ namespace Spectra {
 /// This class is intended for internal use.
 ///
 template <typename Scalar = double,
-          typename OpType = SymShiftInvert<Eigen::SparseMatrix<double>, Eigen::SparseMatrix<double>>,
+          typename OpType = SymShiftInvert<double>,
           typename BOpType = SparseSymMatProd<double>>
 class SymGEigsShiftInvertOp
 {
@@ -49,7 +48,7 @@ public:
     {}
 
     ///
-    /// Move constructor
+    /// Move constructor.
     ///
     SymGEigsShiftInvertOp(SymGEigsShiftInvertOp&& other) :
         m_op(other.m_op), m_Bop(other.m_Bop)
@@ -76,7 +75,7 @@ public:
     }
 
     ///
-    /// Perform the matrix operation \f$y=(A-\sigma B)^{-1}Bx\f$\f$.
+    /// Perform the matrix operation \f$y=(A-\sigma B)^{-1}Bx\f$.
     ///
     /// \param x_in  Pointer to the \f$x\f$ vector.
     /// \param y_out Pointer to the \f$y\f$ vector.
