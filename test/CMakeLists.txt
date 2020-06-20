@@ -11,6 +11,7 @@ list(APPEND test_target_sources
         GenEigsComplexShift.cpp
         SymGEigsCholesky.cpp
         SymGEigsRegInv.cpp
+        SymGEigsShift.cpp
         SVD.cpp
         )
 
