@@ -26,10 +26,10 @@ template <bool AIsSparse, bool BIsSparse, int UploA, int UploB>
 class SymShiftInvertHelper
 {
 public:
-    template <typename Scalar, typename Fac, typename TypeA, typename TypeB>
-    static bool factorize(Fac& fac, const TypeA& A, const TypeB& B, const Scalar& sigma)
+    template <typename Scalar, typename Fac, typename ArgA, typename ArgB>
+    static bool factorize(Fac& fac, const ArgA& A, const ArgB& B, const Scalar& sigma)
     {
-        using SpMat = typename TypeA::PlainObject;
+        using SpMat = typename ArgA::PlainObject;
         SpMat matA = A.template selfadjointView<UploA>();
         SpMat matB = B.template selfadjointView<UploB>();
         SpMat mat = matA - sigma * matB;
@@ -46,10 +46,10 @@ template <bool BIsSparse, int UploA, int UploB>
 class SymShiftInvertHelper<false, BIsSparse, UploA, UploB>
 {
 public:
-    template <typename Scalar, typename Fac, typename TypeA, typename TypeB>
-    static bool factorize(Fac& fac, const TypeA& A, const TypeB& B, const Scalar& sigma)
+    template <typename Scalar, typename Fac, typename ArgA, typename ArgB>
+    static bool factorize(Fac& fac, const ArgA& A, const ArgB& B, const Scalar& sigma)
     {
-        using Matrix = typename TypeA::PlainObject;
+        using Matrix = typename ArgA::PlainObject;
         // Make a copy of the <UploA> triangular part of A
         Matrix mat(A.rows(), A.cols());
         mat.template triangularView<UploA>() = A;
@@ -70,10 +70,10 @@ template <int UploA, int UploB>
 class SymShiftInvertHelper<true, false, UploA, UploB>
 {
 public:
-    template <typename Scalar, typename Fac, typename TypeA, typename TypeB>
-    static bool factorize(Fac& fac, const TypeA& A, const TypeB& B, const Scalar& sigma)
+    template <typename Scalar, typename Fac, typename ArgA, typename ArgB>
+    static bool factorize(Fac& fac, const ArgA& A, const ArgB& B, const Scalar& sigma)
     {
-        using Matrix = typename TypeB::PlainObject;
+        using Matrix = typename ArgB::PlainObject;
         // Construct the <UploB> triangular part of -sigma*B
         Matrix mat(B.rows(), B.cols());
         mat.template triangularView<UploB>() = -sigma * B;
@@ -102,31 +102,53 @@ public:
 ///
 /// This class is intended to be used with the SymGEigsShiftSolver generalized eigen solver.
 ///
-/// \tparam TypeA  The type of the \f$A\f$ matrix. Possible values are `Eigen::Matrix<...>`
-///                and `Eigen::SparseMatrix<...>`.
-/// \tparam TypeB  The type of the \f$B\f$ matrix. Possible values are `Eigen::Matrix<...>`
-///                and `Eigen::SparseMatrix<...>`.
-/// \tparam UploA  Whether the lower or upper triangular part of \f$A\f$ should be used.
-///                Possible values are `Eigen::Lower` and `Eigen::Upper`.
-/// \tparam UploB  Whether the lower or upper triangular part of \f$B\f$ should be used.
-///                Possible values are `Eigen::Lower` and `Eigen::Upper`.
-template <typename TypeA, typename TypeB, int UploA = Eigen::Lower, int UploB = Eigen::Lower>
+/// \tparam Scalar         The element type of the matrices.
+///                        Currently supported types are `float`, `double`, and `long double`.
+/// \tparam TypeA          The type of the \f$A\f$ matrix, indicating whether \f$A\f$ is
+///                        dense or sparse. Possible values are `Eigen::Dense` and `Eigen::Sparse`.
+/// \tparam TypeB          The type of the \f$B\f$ matrix, indicating whether \f$B\f$ is
+///                        dense or sparse. Possible values are `Eigen::Dense` and `Eigen::Sparse`.
+/// \tparam UploA          Whether the lower or upper triangular part of \f$A\f$ should be used.
+///                        Possible values are `Eigen::Lower` and `Eigen::Upper`.
+/// \tparam UploB          Whether the lower or upper triangular part of \f$B\f$ should be used.
+///                        Possible values are `Eigen::Lower` and `Eigen::Upper`.
+/// \tparam FlagsA         Additional flags for the matrix class of \f$A\f$.
+///                        Possible values are `Eigen::ColMajor` and `Eigen::RowMajor`.
+/// \tparam FlagsB         Additional flags for the matrix class of \f$B\f$.
+///                        Possible values are `Eigen::ColMajor` and `Eigen::RowMajor`.
+/// \tparam StorageIndexA  The storage index type of the \f$A\f$ matrix, only used when \f$A\f$
+///                        is a sparse matrix.
+/// \tparam StorageIndexB  The storage index type of the \f$B\f$ matrix, only used when \f$B\f$
+///                        is a sparse matrix.
+template <typename Scalar, typename TypeA = Eigen::Sparse, typename TypeB = Eigen::Sparse,
+          int UploA = Eigen::Lower, int UploB = Eigen::Lower,
+          int FlagsA = Eigen::ColMajor, int FlagsB = Eigen::ColMajor,
+          typename StorageIndexA = int, typename StorageIndexB = int>
 class SymShiftInvert
 {
 private:
     using Index = Eigen::Index;
-    using MatrixA = typename TypeA::PlainObject;
-    using MatrixB = typename TypeB::PlainObject;
-    using Scalar = typename MatrixA::RealScalar;
+
+    // Hypothetical type of the A matrix, either dense or sparse
+    using DenseTypeA = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, FlagsA>;
+    using SparseTypeA = Eigen::SparseMatrix<Scalar, FlagsA, StorageIndexA>;
+    // Whether A is sparse
+    using ASparse = std::is_same<TypeA, Eigen::Sparse>;
+    // Actual type of the A matrix
+    using MatrixA = typename std::conditional<ASparse::value, SparseTypeA, DenseTypeA>::type;
+
+    // Hypothetical type of the B matrix, either dense or sparse
+    using DenseTypeB = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, FlagsB>;
+    using SparseTypeB = Eigen::SparseMatrix<Scalar, FlagsB, StorageIndexB>;
+    // Whether B is sparse
+    using BSparse = std::is_same<TypeB, Eigen::Sparse>;
+    // Actual type of the B matrix
+    using MatrixB = typename std::conditional<BSparse::value, SparseTypeB, DenseTypeB>::type;
 
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using MapConstVec = Eigen::Map<const Vector>;
     using MapVec = Eigen::Map<Vector>;
 
-    // Whether A is sparse
-    using ASparse = std::is_same<typename MatrixA::StorageKind, Eigen::Sparse>;
-    // Whether B is sparse
-    using BSparse = std::is_same<typename MatrixB::StorageKind, Eigen::Sparse>;
     // The type of A-sigma*B if one of A and B is dense
     // DenseType = if (A is dense) MatrixA else MatrixB
     using DenseType = typename std::conditional<ASparse::value, MatrixB, MatrixA>::type;
