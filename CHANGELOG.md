@@ -18,6 +18,7 @@
 - **API change**: Constructors of solvers now request references of matrix operators
   instead of pointers
 - Clang-Format now uses the C++11 standard to format code
+- Updated documentation to reflect the new API
 - Many internal changes to make use of C++11 features
 - Added a `SPECTRA_` prefix to each header guard to prevent potential name clash
 - Changed the default value of the `Flags` template parameter that exists in various
