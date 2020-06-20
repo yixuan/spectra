@@ -160,6 +160,9 @@ private:
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
+    using ModeMatOp = SymGEigsCholeskyOp<Scalar, OpType, BOpType>;
+    using Base = SymEigsBase<Scalar, ModeMatOp, IdentityBOp>;
+
     const BOpType& m_Bop;
 
 public:
@@ -188,8 +191,7 @@ public:
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
     SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv) :
-        SymEigsBase<Scalar, SymGEigsCholeskyOp<Scalar, OpType, BOpType>, IdentityBOp>(
-            SymGEigsCholeskyOp<Scalar, OpType, BOpType>(op, Bop), IdentityBOp(), nev, ncv),
+        Base(ModeMatOp(op, Bop), IdentityBOp(), nev, ncv),
         m_Bop(Bop)
     {}
 
@@ -197,7 +199,7 @@ public:
 
     Matrix eigenvectors(Index nvec) const override
     {
-        Matrix res = SymEigsBase<Scalar, SymGEigsCholeskyOp<Scalar, OpType, BOpType>, IdentityBOp>::eigenvectors(nvec);
+        Matrix res = Base::eigenvectors(nvec);
         Vector tmp(res.rows());
         const Index nconv = res.cols();
         for (Index i = 0; i < nconv; i++)
@@ -261,6 +263,9 @@ class SymGEigsSolver<Scalar, OpType, BOpType, GEigsMode::RegularInverse> :
 private:
     using Index = Eigen::Index;
 
+    using ModeMatOp = SymGEigsRegInvOp<Scalar, OpType, BOpType>;
+    using Base = SymEigsBase<Scalar, ModeMatOp, BOpType>;
+
 public:
     ///
     /// Constructor to create a solver object.
@@ -285,8 +290,7 @@ public:
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
     SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv) :
-        SymEigsBase<Scalar, SymGEigsRegInvOp<Scalar, OpType, BOpType>, BOpType>(
-            SymGEigsRegInvOp<Scalar, OpType, BOpType>(op, Bop), Bop, nev, ncv)
+        Base(ModeMatOp(op, Bop), Bop, nev, ncv)
     {}
 };
 
