@@ -7,10 +7,12 @@
 #ifndef SPECTRA_SYM_GEIGS_SHIFT_SOLVER_H
 #define SPECTRA_SYM_GEIGS_SHIFT_SOLVER_H
 
+#include <utility>  // std::move
 #include "SymEigsBase.h"
 #include "Util/GEigsMode.h"
 #include "MatOp/internal/SymGEigsShiftInvertOp.h"
 #include "MatOp/internal/SymGEigsBucklingOp.h"
+#include "MatOp/internal/SymGEigsCayleyOp.h"
 
 namespace Spectra {
 
@@ -32,6 +34,10 @@ namespace Spectra {
 ///   where \f$\nu=\lambda/(\lambda-\sigma)\f$. This mode assumes that \f$A\f$ is positive definite.
 ///   See \ref SymGEigsShiftSolver<Scalar, OpType, BOpType, GEigsMode::Buckling>
 ///   "SymGEigsShiftSolver (Buckling mode)" for more details.
+/// - The Cayley mode transforms the problem into \f$(A-\sigma B)^{-1}(A+\sigma B)x=\nu x\f$,
+///   where \f$\nu=(\lambda+\sigma)/(\lambda-\sigma)\f$. This mode assumes that \f$B\f$ is positive definite.
+///   See \ref SymGEigsShiftSolver<Scalar, OpType, BOpType, GEigsMode::Cayley>
+///   "SymGEigsShiftSolver (Cayley mode)" for more details.
 
 // Empty class template
 template <typename Scalar,
@@ -156,6 +162,13 @@ private:
 
     const Scalar m_sigma;
 
+    // Set shift and forward
+    static ModeMatOp set_shift_and_move(ModeMatOp&& op, const Scalar& sigma)
+    {
+        op.set_shift(sigma);
+        return std::move(op);
+    }
+
     // First transform back the Ritz values, and then sort
     void sort_ritzpair(SortRule sort_rule) override
     {
@@ -188,11 +201,9 @@ public:
     /// \param sigma  The value of the shift.
     ///
     SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma) :
-        Base(ModeMatOp(op, Bop), Bop, nev, ncv),
+        Base(set_shift_and_move(ModeMatOp(op, Bop), sigma), Bop, nev, ncv),
         m_sigma(sigma)
-    {
-        op.set_shift(m_sigma);
-    }
+    {}
 };
 
 ///
@@ -310,6 +321,15 @@ private:
 
     const Scalar m_sigma;
 
+    // Set shift and forward
+    static ModeMatOp set_shift_and_move(ModeMatOp&& op, const Scalar& sigma)
+    {
+        if (sigma == Scalar(0))
+            throw std::invalid_argument("SymGEigsShiftSolver: sigma cannot be zero in the buckling mode");
+        op.set_shift(sigma);
+        return std::move(op);
+    }
+
     // First transform back the Ritz values, and then sort
     void sort_ritzpair(SortRule sort_rule) override
     {
@@ -343,13 +363,104 @@ public:
     /// \param sigma  The value of the shift.
     ///
     SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma) :
-        Base(ModeMatOp(op, Bop), Bop, nev, ncv),
+        Base(set_shift_and_move(ModeMatOp(op, Bop), sigma), Bop, nev, ncv),
         m_sigma(sigma)
+    {}
+};
+
+///
+/// \ingroup GEigenSolver
+///
+/// This class implements the generalized eigen solver for real symmetric
+/// matrices using the Cayley spectral transformation. The original problem is
+/// to solve \f$Ax=\lambda Bx\f$, where \f$A\f$ is symmetric and \f$B\f$ is positive definite.
+/// The transformed problem is \f$(A-\sigma B)^{-1}(A+\sigma B)x=\nu x\f$, where
+/// \f$\nu=(\lambda+\sigma)/(\lambda-\sigma)\f$, and \f$\sigma\f$ is a user-specified shift.
+///
+/// This solver requires two matrix operation objects: one to compute \f$y=(A-\sigma B)^{-1}x\f$
+/// for any vector \f$v\f$, and one for the matrix multiplication \f$Bv\f$.
+///
+/// If \f$A\f$ and \f$B\f$ are stored as Eigen matrices, then the first operation object
+/// can be created using the SymShiftInvert class, and the second one can be created
+/// using the DenseSymMatProd or SparseSymMatProd classes. If the users need to define their
+/// own operation classes, then they should implement all the public member functions as
+/// in those built-in classes.
+///
+/// \tparam Scalar   The element type of the matrix.
+///                  Currently supported types are `float`, `double`, and `long double`.
+/// \tparam OpType   The type of the first operation object. Users could either
+///                  use the wrapper class SymShiftInvert, or define their own that implements
+///                  all the public member functions as in SymShiftInvert.
+/// \tparam BOpType  The name of the matrix operation class for \f$B\f$. Users could either
+///                  use the wrapper classes such as DenseSymMatProd and
+///                  SparseSymMatProd, or define their own that implements all the
+///                  public member functions as in DenseSymMatProd.
+/// \tparam Mode     Mode of the generalized eigen solver. In this solver
+///                  it is Spectra::GEigsMode::Cayley.
+
+// Partial specialization for mode = GEigsMode::Cayley
+template <typename Scalar,
+          typename OpType,
+          typename BOpType>
+class SymGEigsShiftSolver<Scalar, OpType, BOpType, GEigsMode::Cayley> :
+    public SymEigsBase<Scalar, SymGEigsCayleyOp<Scalar, OpType, BOpType>, BOpType>
+{
+private:
+    using Index = Eigen::Index;
+    using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
+
+    using ModeMatOp = SymGEigsCayleyOp<Scalar, OpType, BOpType>;
+    using Base = SymEigsBase<Scalar, ModeMatOp, BOpType>;
+    using Base::m_nev;
+    using Base::m_ritz_val;
+
+    const Scalar m_sigma;
+
+    // Set shift and forward
+    static ModeMatOp set_shift_and_move(ModeMatOp&& op, const Scalar& sigma)
     {
         if (sigma == Scalar(0))
-            throw std::invalid_argument("SymGEigsShiftSolver: sigma cannot be zero in the buckling mode");
-        op.set_shift(m_sigma);
+            throw std::invalid_argument("SymGEigsShiftSolver: sigma cannot be zero in the Cayley mode");
+        op.set_shift(sigma);
+        return std::move(op);
     }
+
+    // First transform back the Ritz values, and then sort
+    void sort_ritzpair(SortRule sort_rule) override
+    {
+        // The eigenvalues we get from the iteration is nu = (lambda + sigma) / (lambda - sigma)
+        // So the eigenvalues of the original problem is lambda = sigma * (nu + 1) / (nu - 1)
+        m_ritz_val.head(m_nev).array() = m_sigma * (m_ritz_val.head(m_nev).array() + Scalar(1)) /
+            (m_ritz_val.head(m_nev).array() - Scalar(1));
+        Base::sort_ritzpair(sort_rule);
+    }
+
+public:
+    ///
+    /// Constructor to create a solver object.
+    ///
+    /// \param op     The matrix operation object that computes \f$y=(A-\sigma B)^{-1}v\f$
+    ///               for any vector \f$v\f$. Users could either create the object from the
+    ///               wrapper class SymShiftInvert, or define their own that implements all
+    ///               the public member functions as in SymShiftInvert.
+    /// \param Bop    The \f$B\f$ matrix operation object that implements the matrix-vector
+    ///               multiplication \f$Bv\f$. Users could either create the object from the
+    ///               wrapper classes such as DenseSymMatProd and SparseSymMatProd, or
+    ///               define their own that implements all the public member functions
+    ///               as in DenseSymMatProd. \f$B\f$ needs to be positive definite.
+    /// \param nev    Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///               where \f$n\f$ is the size of matrix.
+    /// \param ncv    Parameter that controls the convergence speed of the algorithm.
+    ///               Typically a larger `ncv` means faster convergence, but it may
+    ///               also result in greater memory use and more matrix operations
+    ///               in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    /// \param sigma  The value of the shift.
+    ///
+    SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma) :
+        Base(set_shift_and_move(ModeMatOp(op, Bop), sigma), Bop, nev, ncv),
+        m_sigma(sigma)
+    {}
 };
 
 }  // namespace Spectra
