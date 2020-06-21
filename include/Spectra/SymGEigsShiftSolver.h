@@ -10,6 +10,7 @@
 #include "SymEigsBase.h"
 #include "Util/GEigsMode.h"
 #include "MatOp/internal/SymGEigsShiftInvertOp.h"
+#include "MatOp/internal/SymGEigsBucklingOp.h"
 
 namespace Spectra {
 
@@ -27,6 +28,10 @@ namespace Spectra {
 ///   where \f$\nu=1/(\lambda-\sigma)\f$. This mode assumes that \f$B\f$ is positive definite.
 ///   See \ref SymGEigsShiftSolver<Scalar, OpType, BOpType, GEigsMode::ShiftInvert>
 ///   "SymGEigsShiftSolver (Shift-and-invert mode)" for more details.
+/// - The buckling mode transforms the problem into \f$(A-\sigma B)^{-1}Ax=\nu x\f$,
+///   where \f$\nu=\lambda/(\lambda-\sigma)\f$. This mode assumes that \f$A\f$ is positive definite.
+///   See \ref SymGEigsShiftSolver<Scalar, OpType, BOpType, GEigsMode::Buckling>
+///   "SymGEigsShiftSolver (Buckling mode)" for more details.
 
 // Empty class template
 template <typename Scalar,
@@ -144,7 +149,8 @@ private:
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
-    using Base = SymEigsBase<Scalar, SymGEigsShiftInvertOp<Scalar, OpType, BOpType>, BOpType>;
+    using ModeMatOp = SymGEigsShiftInvertOp<Scalar, OpType, BOpType>;
+    using Base = SymEigsBase<Scalar, ModeMatOp, BOpType>;
     using Base::m_nev;
     using Base::m_ritz_val;
 
@@ -171,7 +177,7 @@ public:
     ///             multiplication \f$Bv\f$. Users could either create the object from the
     ///             wrapper classes such as DenseSymMatProd and SparseSymMatProd, or
     ///             define their own that implements all the public member functions
-    ///             as in DenseSymMatProd.
+    ///             as in DenseSymMatProd. \f$B\f$ needs to be positive definite.
     /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
     ///             where \f$n\f$ is the size of matrix.
     /// \param ncv  Parameter that controls the convergence speed of the algorithm.
@@ -181,9 +187,165 @@ public:
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
     SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma) :
-        Base(SymGEigsShiftInvertOp<Scalar, OpType, BOpType>(op, Bop), Bop, nev, ncv),
+        Base(ModeMatOp(op, Bop), Bop, nev, ncv),
         m_sigma(sigma)
     {
+        op.set_shift(m_sigma);
+    }
+};
+
+///
+/// \ingroup GEigenSolver
+///
+/// This class implements the generalized eigen solver for real symmetric
+/// matrices in the buckling mode. The original problem is
+/// to solve \f$Kx=\lambda K_G x\f$, where \f$K\f$ is positive definite and \f$K_G\f$ is symmetric.
+/// The transformed problem is \f$(K-\sigma K_G)^{-1}Kx=\nu x\f$, where
+/// \f$\nu=\lambda/(\lambda-\sigma)\f$, and \f$\sigma\f$ is a user-specified shift.
+///
+/// This solver requires two matrix operation objects: one to compute \f$y=(K-\sigma K_G)^{-1}x\f$
+/// for any vector \f$v\f$, and one for the matrix multiplication \f$Kv\f$.
+///
+/// If \f$K\f$ and \f$K_G\f$ are stored as Eigen matrices, then the first operation object
+/// can be created using the SymShiftInvert class, and the second one can be created
+/// using the DenseSymMatProd or SparseSymMatProd classes. If the users need to define their
+/// own operation classes, then they should implement all the public member functions as
+/// in those built-in classes.
+///
+/// \tparam Scalar   The element type of the matrix.
+///                  Currently supported types are `float`, `double`, and `long double`.
+/// \tparam OpType   The type of the first operation object. Users could either
+///                  use the wrapper class SymShiftInvert, or define their own that implements
+///                  all the public member functions as in SymShiftInvert.
+/// \tparam BOpType  The name of the matrix operation class for \f$K\f$. Users could either
+///                  use the wrapper classes such as DenseSymMatProd and
+///                  SparseSymMatProd, or define their own that implements all the
+///                  public member functions as in DenseSymMatProd.
+/// \tparam Mode     Mode of the generalized eigen solver. In this solver
+///                  it is Spectra::GEigsMode::Buckling.
+///
+/// Below is an example that demonstrates the usage of this class.
+///
+/// \code{.cpp}
+/// #include <Eigen/Core>
+/// #include <Eigen/SparseCore>
+/// #include <Spectra/SymGEigsShiftSolver.h>
+/// #include <Spectra/MatOp/SymShiftInvert.h>
+/// #include <Spectra/MatOp/SparseSymMatProd.h>
+/// #include <iostream>
+///
+/// using namespace Spectra;
+///
+/// int main()
+/// {
+///     // We are going to solve the generalized eigenvalue problem K * x = lambda * KG * x
+///     const int n = 100;
+///
+///     // Define the K matrix, a band matrix with 2 on the diagonal and 1 on the subdiagonals
+///     Eigen::SparseMatrix<double> K(n, n);
+///     K.reserve(Eigen::VectorXi::Constant(n, 3));
+///     for (int i = 0; i < n; i++)
+///     {
+///         K.insert(i, i) = 2.0;
+///         if (i > 0)
+///             K.insert(i - 1, i) = 1.0;
+///         if (i < n - 1)
+///             K.insert(i + 1, i) = 1.0;
+///     }
+///
+///     // Define the KG matrix
+///     Eigen::MatrixXd M = Eigen::MatrixXd::Random(n, n);
+///     Eigen::MatrixXd KG = M + M.transpose();
+///
+///     // Construct matrix operation objects using the wrapper classes
+///     // K is sparse, B is dense
+///     using OpType = SymShiftInvert<double, Eigen::Sparse, Eigen::Dense>;
+///     using BOpType = SparseSymMatProd<double>;
+///     OpType op(K, KG);
+///     BOpType Bop(K);
+///
+///     // Construct generalized eigen solver object, seeking three generalized eigenvalues
+///     // that are closest to and larger than 1.0. This is equivalent to specifying a shift
+///     // sigma = 1.0 combined with the SortRule::LargestAlge selection rule
+///     SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::ShiftInvert>
+///         geigs(op, Bop, 3, 6, 1.0);
+///
+///     // Initialize and compute
+///     geigs.init();
+///     int nconv = geigs.compute(SortRule::LargestAlge);
+///
+///     // Retrieve results
+///     Eigen::VectorXd evalues;
+///     Eigen::MatrixXd evecs;
+///     if (geigs.info() == CompInfo::Successful)
+///     {
+///         evalues = geigs.eigenvalues();
+///         evecs = geigs.eigenvectors();
+///     }
+///
+///     std::cout << "Number of converged generalized eigenvalues: " << nconv << std::endl;
+///     std::cout << "Generalized eigenvalues found:\n" << evalues << std::endl;
+///     std::cout << "Generalized eigenvectors found:\n" << evecs.topRows(10) << std::endl;
+///
+///     return 0;
+/// }
+/// \endcode
+
+// Partial specialization for mode = GEigsMode::Buckling
+template <typename Scalar,
+          typename OpType,
+          typename BOpType>
+class SymGEigsShiftSolver<Scalar, OpType, BOpType, GEigsMode::Buckling> :
+    public SymEigsBase<Scalar, SymGEigsBucklingOp<Scalar, OpType, BOpType>, BOpType>
+{
+private:
+    using Index = Eigen::Index;
+    using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
+
+    using ModeMatOp = SymGEigsBucklingOp<Scalar, OpType, BOpType>;
+    using Base = SymEigsBase<Scalar, ModeMatOp, BOpType>;
+    using Base::m_nev;
+    using Base::m_ritz_val;
+
+    const Scalar m_sigma;
+
+    // First transform back the Ritz values, and then sort
+    void sort_ritzpair(SortRule sort_rule) override
+    {
+        // The eigenvalues we get from the iteration is nu = lambda / (lambda - sigma)
+        // So the eigenvalues of the original problem is lambda = sigma * nu / (nu - 1)
+        m_ritz_val.head(m_nev).array() = m_sigma * m_ritz_val.head(m_nev).array() /
+            (m_ritz_val.head(m_nev).array() - Scalar(1));
+        Base::sort_ritzpair(sort_rule);
+    }
+
+public:
+    ///
+    /// Constructor to create a solver object.
+    ///
+    /// \param op   The matrix operation object that computes \f$y=(K-\sigma K_G)^{-1}v\f$
+    ///             for any vector \f$v\f$. Users could either create the object from the
+    ///             wrapper class SymShiftInvert, or define their own that implements all
+    ///             the public member functions as in SymShiftInvert.
+    /// \param Bop  The \f$K\f$ matrix operation object that implements the matrix-vector
+    ///             multiplication \f$Kv\f$. Users could either create the object from the
+    ///             wrapper classes such as DenseSymMatProd and SparseSymMatProd, or
+    ///             define their own that implements all the public member functions
+    ///             as in DenseSymMatProd. \f$K\f$ needs to be positive definite.
+    /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///             where \f$n\f$ is the size of matrix.
+    /// \param ncv  Parameter that controls the convergence speed of the algorithm.
+    ///             Typically a larger `ncv` means faster convergence, but it may
+    ///             also result in greater memory use and more matrix operations
+    ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    ///
+    SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma) :
+        Base(ModeMatOp(op, Bop), Bop, nev, ncv),
+        m_sigma(sigma)
+    {
+        if (sigma == Scalar(0))
+            throw std::invalid_argument("SymGEigsShiftSolver: sigma cannot be zero in the buckling mode");
         op.set_shift(m_sigma);
     }
 };

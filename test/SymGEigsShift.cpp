@@ -118,8 +118,9 @@ void run_test_sets(const TypeA& A, const TypeB& B, Solver& eigs)
     }
 }
 
+// ======================== Shift-and-invert mode ======================== //
 // A is sparse, B is sparse
-TEST_CASE("Generalized eigensolver of symmetric real matrices [ss, 100x100]", "[geigs_sym]")
+TEST_CASE("Generalized eigensolver of symmetric real matrices [shift-and-invert, ss, 100x100]", "[geigs_sym]")
 {
     std::srand(123);
 
@@ -141,7 +142,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [ss, 100x100]", "[
 }
 
 // A is sparse, B is dense
-TEST_CASE("Generalized eigensolver of symmetric real matrices [sd, 100x100]", "[geigs_sym]")
+TEST_CASE("Generalized eigensolver of symmetric real matrices [shift-and-invert, sd, 100x100]", "[geigs_sym]")
 {
     std::srand(123);
 
@@ -165,7 +166,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [sd, 100x100]", "[
 }
 
 // A is dense, B is sparse
-TEST_CASE("Generalized eigensolver of symmetric real matrices [ds, 100x100]", "[geigs_sym]")
+TEST_CASE("Generalized eigensolver of symmetric real matrices [shift-and-invert, ds, 100x100]", "[geigs_sym]")
 {
     std::srand(123);
 
@@ -189,7 +190,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [ds, 100x100]", "[
 }
 
 // A is dense, B is dense
-TEST_CASE("Generalized eigensolver of symmetric real matrices [dd, 100x100]", "[geigs_sym]")
+TEST_CASE("Generalized eigensolver of symmetric real matrices [shift-and-invert, dd, 100x100]", "[geigs_sym]")
 {
     std::srand(123);
 
@@ -208,4 +209,97 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [dd, 100x100]", "[
     SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::ShiftInvert> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(A, B, eigs);
+}
+
+// ======================== Buckling mode ======================== //
+// K is sparse, KG is sparse
+TEST_CASE("Generalized eigensolver of symmetric real matrices [buckling, ss, 100x100]", "[geigs_sym]")
+{
+    std::srand(123);
+
+    // Eigen solver only uses the lower triangle
+    SpMatrix K, KG;
+    gen_sparse_data(100, KG, K, 0.1);
+    int k = 10;
+    int m = 20;
+    double sigma = 1.2345;
+
+    using OpType = SymShiftInvert<double, Eigen::Sparse, Eigen::Sparse>;
+    using BOpType = SparseSymMatProd<double>;
+
+    OpType op(K, KG);
+    BOpType Bop(K);
+    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Buckling> eigs(op, Bop, k, m, sigma);
+
+    run_test_sets(K, KG, eigs);
+}
+
+// K is sparse, KG is dense
+TEST_CASE("Generalized eigensolver of symmetric real matrices [buckling, sd, 100x100]", "[geigs_sym]")
+{
+    std::srand(123);
+
+    // Eigen solver only uses the lower triangle
+    SpMatrix Ks, KGs;
+    gen_sparse_data(100, KGs, Ks, 0.1);
+    Matrix Kd, KGd;
+    gen_dense_data(100, KGd, Kd);
+    int k = 10;
+    int m = 20;
+    double sigma = 1.2345;
+
+    using OpType = SymShiftInvert<double, Eigen::Sparse, Eigen::Dense>;
+    using BOpType = SparseSymMatProd<double>;
+
+    OpType op(Ks, KGd);
+    BOpType Bop(Ks);
+    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Buckling> eigs(op, Bop, k, m, sigma);
+
+    run_test_sets(Ks, KGd, eigs);
+}
+
+// K is dense, KG is sparse
+TEST_CASE("Generalized eigensolver of symmetric real matrices [buckling, ds, 100x100]", "[geigs_sym]")
+{
+    std::srand(123);
+
+    // Eigen solver only uses the lower triangle
+    SpMatrix Ks, KGs;
+    gen_sparse_data(100, KGs, Ks, 0.1);
+    Matrix Kd, KGd;
+    gen_dense_data(100, KGd, Kd);
+    int k = 10;
+    int m = 20;
+    double sigma = 1.2345;
+
+    using OpType = SymShiftInvert<double, Eigen::Dense, Eigen::Sparse>;
+    using BOpType = DenseSymMatProd<double>;
+
+    OpType op(Kd, KGs);
+    BOpType Bop(Kd);
+    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Buckling> eigs(op, Bop, k, m, sigma);
+
+    run_test_sets(Kd, KGs, eigs);
+}
+
+// K is dense, KG is dense
+TEST_CASE("Generalized eigensolver of symmetric real matrices [buckling, dd, 100x100]", "[geigs_sym]")
+{
+    std::srand(123);
+
+    // Eigen solver only uses the lower triangle
+    Matrix K, KG;
+    gen_dense_data(100, KG, K);
+    int k = 10;
+    int m = 20;
+    double sigma = 1.2345;
+
+    using OpType = SymShiftInvert<double, Eigen::Dense, Eigen::Dense>;
+    using BOpType = DenseSymMatProd<double>;
+
+    OpType op(K, KG);
+    BOpType Bop(K);
+    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Buckling> eigs(op, Bop, k, m, sigma);
+
+    run_test_sets(K, KG, eigs);
 }
