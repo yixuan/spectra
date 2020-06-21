@@ -181,7 +181,7 @@ public:
     ///             \f$v\f$, where \f$LL'=B\f$. Users could either
     ///             create the object from the wrapper classes such as DenseCholesky, or
     ///             define their own that implements all the public member functions
-    ///             as in DenseCholesky.
+    ///             as in DenseCholesky. \f$B\f$ needs to be positive definite.
     /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
     ///             where \f$n\f$ is the size of matrix.
     /// \param ncv  Parameter that controls the convergence speed of the algorithm.
@@ -280,7 +280,7 @@ public:
     ///             \f$Bv\f$ and the linear equation solving operation \f$B^{-1}v\f$ for any vector \f$v\f$.
     ///             Users could either create the object from the wrapper class SparseRegularInverse, or
     ///             define their own that implements all the public member functions
-    ///             as in SparseRegularInverse.
+    ///             as in SparseRegularInverse. \f$B\f$ needs to be positive definite.
     /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
     ///             where \f$n\f$ is the size of matrix.
     /// \param ncv  Parameter that controls the convergence speed of the algorithm.

@@ -18,9 +18,9 @@ namespace Spectra {
 /// \ingroup Operators
 ///
 /// This class defines the matrix operation for generalized eigen solver in the
-/// shift-and-invert mode. It calculates \f$y=(A-\sigma B)^{-1}Bx\f$ for any
-/// vector \f$x\f$, where \f$A\f$ and \f$B\f$ are symmetric matrices, and
-/// \f$\sigma\f$ is a real shift.
+/// shift-and-invert mode. It computes \f$y=(A-\sigma B)^{-1}Bx\f$ for any
+/// vector \f$x\f$, where \f$A\f$ is a symmetric matrix, \f$B\f$ is positive definite,
+/// and \f$\sigma\f$ is a real shift.
 /// This class is intended for internal use.
 ///
 template <typename Scalar = double,
