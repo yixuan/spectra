@@ -169,22 +169,23 @@ public:
     ///
     /// Constructor to create a solver object.
     ///
-    /// \param op   The matrix operation object that computes \f$y=(A-\sigma B)^{-1}v\f$
-    ///             for any vector \f$v\f$. Users could either create the object from the
-    ///             wrapper class SymShiftInvert, or define their own that implements all
-    ///             the public member functions as in SymShiftInvert.
-    /// \param Bop  The \f$B\f$ matrix operation object that implements the matrix-vector
-    ///             multiplication \f$Bv\f$. Users could either create the object from the
-    ///             wrapper classes such as DenseSymMatProd and SparseSymMatProd, or
-    ///             define their own that implements all the public member functions
-    ///             as in DenseSymMatProd. \f$B\f$ needs to be positive definite.
-    /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
-    ///             where \f$n\f$ is the size of matrix.
-    /// \param ncv  Parameter that controls the convergence speed of the algorithm.
-    ///             Typically a larger `ncv` means faster convergence, but it may
-    ///             also result in greater memory use and more matrix operations
-    ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
-    ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    /// \param op     The matrix operation object that computes \f$y=(A-\sigma B)^{-1}v\f$
+    ///               for any vector \f$v\f$. Users could either create the object from the
+    ///               wrapper class SymShiftInvert, or define their own that implements all
+    ///               the public member functions as in SymShiftInvert.
+    /// \param Bop    The \f$B\f$ matrix operation object that implements the matrix-vector
+    ///               multiplication \f$Bv\f$. Users could either create the object from the
+    ///               wrapper classes such as DenseSymMatProd and SparseSymMatProd, or
+    ///               define their own that implements all the public member functions
+    ///               as in DenseSymMatProd. \f$B\f$ needs to be positive definite.
+    /// \param nev    Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///               where \f$n\f$ is the size of matrix.
+    /// \param ncv    Parameter that controls the convergence speed of the algorithm.
+    ///               Typically a larger `ncv` means faster convergence, but it may
+    ///               also result in greater memory use and more matrix operations
+    ///               in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    /// \param sigma  The value of the shift.
     ///
     SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma) :
         Base(ModeMatOp(op, Bop), Bop, nev, ncv),
@@ -323,22 +324,23 @@ public:
     ///
     /// Constructor to create a solver object.
     ///
-    /// \param op   The matrix operation object that computes \f$y=(K-\sigma K_G)^{-1}v\f$
-    ///             for any vector \f$v\f$. Users could either create the object from the
-    ///             wrapper class SymShiftInvert, or define their own that implements all
-    ///             the public member functions as in SymShiftInvert.
-    /// \param Bop  The \f$K\f$ matrix operation object that implements the matrix-vector
-    ///             multiplication \f$Kv\f$. Users could either create the object from the
-    ///             wrapper classes such as DenseSymMatProd and SparseSymMatProd, or
-    ///             define their own that implements all the public member functions
-    ///             as in DenseSymMatProd. \f$K\f$ needs to be positive definite.
-    /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
-    ///             where \f$n\f$ is the size of matrix.
-    /// \param ncv  Parameter that controls the convergence speed of the algorithm.
-    ///             Typically a larger `ncv` means faster convergence, but it may
-    ///             also result in greater memory use and more matrix operations
-    ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
-    ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    /// \param op     The matrix operation object that computes \f$y=(K-\sigma K_G)^{-1}v\f$
+    ///               for any vector \f$v\f$. Users could either create the object from the
+    ///               wrapper class SymShiftInvert, or define their own that implements all
+    ///               the public member functions as in SymShiftInvert.
+    /// \param Bop    The \f$K\f$ matrix operation object that implements the matrix-vector
+    ///               multiplication \f$Kv\f$. Users could either create the object from the
+    ///               wrapper classes such as DenseSymMatProd and SparseSymMatProd, or
+    ///               define their own that implements all the public member functions
+    ///               as in DenseSymMatProd. \f$K\f$ needs to be positive definite.
+    /// \param nev    Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///               where \f$n\f$ is the size of matrix.
+    /// \param ncv    Parameter that controls the convergence speed of the algorithm.
+    ///               Typically a larger `ncv` means faster convergence, but it may
+    ///               also result in greater memory use and more matrix operations
+    ///               in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    /// \param sigma  The value of the shift.
     ///
     SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma) :
         Base(ModeMatOp(op, Bop), Bop, nev, ncv),
