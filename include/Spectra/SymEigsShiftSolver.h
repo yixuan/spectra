@@ -154,8 +154,9 @@ private:
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
-    using SymEigsBase<Scalar, OpType, IdentityBOp>::m_nev;
-    using SymEigsBase<Scalar, OpType, IdentityBOp>::m_ritz_val;
+    using Base = SymEigsBase<Scalar, OpType, IdentityBOp>;
+    using Base::m_nev;
+    using Base::m_ritz_val;
 
     const Scalar m_sigma;
 
@@ -188,7 +189,7 @@ public:
     /// \param sigma  The value of the shift.
     ///
     SymEigsShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma) :
-        SymEigsBase<Scalar, OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv),
+        Base(op, IdentityBOp(), nev, ncv),
         m_sigma(sigma)
     {
         op.set_shift(m_sigma);

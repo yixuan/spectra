@@ -40,8 +40,9 @@ private:
     using Complex = std::complex<Scalar>;
     using ComplexArray = Eigen::Array<Complex, Eigen::Dynamic, 1>;
 
-    using GenEigsBase<Scalar, OpType, IdentityBOp>::m_nev;
-    using GenEigsBase<Scalar, OpType, IdentityBOp>::m_ritz_val;
+    using Base = GenEigsBase<Scalar, OpType, IdentityBOp>;
+    using Base::m_nev;
+    using Base::m_ritz_val;
 
     const Scalar m_sigma;
 
@@ -51,7 +52,7 @@ private:
         // The eigenvalues we get from the iteration is nu = 1 / (lambda - sigma)
         // So the eigenvalues of the original problem is lambda = 1 / nu + sigma
         m_ritz_val.head(m_nev) = Scalar(1) / m_ritz_val.head(m_nev).array() + m_sigma;
-        GenEigsBase<Scalar, OpType, IdentityBOp>::sort_ritzpair(sort_rule);
+        Base::sort_ritzpair(sort_rule);
     }
 
 public:
@@ -74,7 +75,7 @@ public:
     /// \param sigma  The real-valued shift.
     ///
     GenEigsRealShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma) :
-        GenEigsBase<Scalar, OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv),
+        Base(op, IdentityBOp(), nev, ncv),
         m_sigma(sigma)
     {
         op.set_shift(m_sigma);
