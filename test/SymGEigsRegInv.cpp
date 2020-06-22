@@ -45,13 +45,9 @@ void gen_sparse_data(int n, SpMatrix& A, SpMatrix& B, double prob = 0.1)
         B.coeffRef(i, i) += 0.1;
 }
 
-void run_test(const SpMatrix& A, const SpMatrix& B, int k, int m, SortRule selection, bool allow_fail = false)
+template <typename Solver>
+void run_test(const SpMatrix& A, const SpMatrix& B, Solver& eigs, SortRule selection, bool allow_fail = false)
 {
-    using OpType = SparseSymMatProd<double>;
-    using BOpType = SparseRegularInverse<double>;
-    OpType op(A);
-    BOpType Bop(B);
-    SymGEigsSolver<double, OpType, BOpType, GEigsMode::RegularInverse> eigs(op, Bop, k, m);
     eigs.init();
     // maxit = 100 to reduce running time for failed cases
     int nconv = eigs.compute(selection, 100);
@@ -87,25 +83,31 @@ void run_test(const SpMatrix& A, const SpMatrix& B, int k, int m, SortRule selec
 
 void run_test_sets(const SpMatrix& A, const SpMatrix& B, int k, int m)
 {
+    using OpType = SparseSymMatProd<double>;
+    using BOpType = SparseRegularInverse<double>;
+    OpType op(A);
+    BOpType Bop(B);
+    SymGEigsSolver<double, OpType, BOpType, GEigsMode::RegularInverse> eigs(op, Bop, k, m);
+
     SECTION("Largest Magnitude")
     {
-        run_test(A, B, k, m, SortRule::LargestMagn);
+        run_test(A, B, eigs, SortRule::LargestMagn);
     }
     SECTION("Largest Value")
     {
-        run_test(A, B, k, m, SortRule::LargestAlge);
+        run_test(A, B, eigs, SortRule::LargestAlge);
     }
     SECTION("Smallest Magnitude")
     {
-        run_test(A, B, k, m, SortRule::SmallestMagn, true);
+        run_test(A, B, eigs, SortRule::SmallestMagn, true);
     }
     SECTION("Smallest Value")
     {
-        run_test(A, B, k, m, SortRule::SmallestAlge);
+        run_test(A, B, eigs, SortRule::SmallestAlge);
     }
     SECTION("Both Ends")
     {
-        run_test(A, B, k, m, SortRule::BothEnds);
+        run_test(A, B, eigs, SortRule::BothEnds);
     }
 }
 
@@ -141,7 +143,7 @@ TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [1000x1000]",
 
     // Eigen solver only uses the lower triangle
     SpMatrix A, B;
-    gen_sparse_data(1000, A, B, 0.001);
+    gen_sparse_data(1000, A, B, 0.01);
     int k = 20;
     int m = 50;
 
