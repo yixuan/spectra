@@ -2,6 +2,7 @@
 ### Added
 - Added version macros `SPECTRA_MAJOR_VERSION`, `SPECTRA_MINOR_VERSION`,
   `SPECTRA_PATCH_VERSION`, and `SPECTRA_VERSION` that are included by all eigen solvers
+- Added the wrapper class `SparseGenComplexShiftSolve` for eigen solver with complex shifts
 - Added the `SymGEigsShiftSolver` class for symmetric generalized eigen solver with real shifts
 - Added the wrapper class `SymShiftInvert` that can be used with `SymGEigsShiftSolver`
 - Added test code for symmetric generalized eigen solver with real shifts
