@@ -91,14 +91,17 @@ class SymGEigsShiftSolver
 ///
 /// int main()
 /// {
-///     // We are going to solve the generalized eigenvalue problem A * x = lambda * B * x
+///     // We are going to solve the generalized eigenvalue problem
+///     //     A * x = lambda * B * x,
+///     // where A is symmetric and B is positive definite
 ///     const int n = 100;
 ///
 ///     // Define the A matrix
 ///     Eigen::MatrixXd M = Eigen::MatrixXd::Random(n, n);
 ///     Eigen::MatrixXd A = M + M.transpose();
 ///
-///     // Define the B matrix, a band matrix with 2 on the diagonal and 1 on the subdiagonals
+///     // Define the B matrix, a tridiagonal matrix with 2 on the diagonal
+///     // and 1 on the subdiagonals
 ///     Eigen::SparseMatrix<double> B(n, n);
 ///     B.reserve(Eigen::VectorXi::Constant(n, 3));
 ///     for (int i = 0; i < n; i++)
@@ -117,9 +120,9 @@ class SymGEigsShiftSolver
 ///     OpType op(A, B);
 ///     BOpType Bop(B);
 ///
-///     // Construct generalized eigen solver object, seeking three generalized eigenvalues
-///     // that are closest to zero. This is equivalent to specifying a shift sigma = 0.0
-///     // combined with the SortRule::LargestMagn selection rule
+///     // Construct generalized eigen solver object, seeking three generalized
+///     // eigenvalues that are closest to zero. This is equivalent to specifying
+///     // a shift sigma = 0.0 combined with the SortRule::LargestMagn selection rule
 ///     SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::ShiftInvert>
 ///         geigs(op, Bop, 3, 6, 0.0);
 ///
@@ -250,10 +253,13 @@ public:
 ///
 /// int main()
 /// {
-///     // We are going to solve the generalized eigenvalue problem K * x = lambda * KG * x
+///     // We are going to solve the generalized eigenvalue problem
+///     //     K * x = lambda * KG * x,
+///     // where K is positive definite, and KG is symmetric
 ///     const int n = 100;
 ///
-///     // Define the K matrix, a band matrix with 2 on the diagonal and 1 on the subdiagonals
+///     // Define the K matrix, a tridiagonal matrix with 2 on the diagonal
+///     // and 1 on the subdiagonals
 ///     Eigen::SparseMatrix<double> K(n, n);
 ///     K.reserve(Eigen::VectorXi::Constant(n, 3));
 ///     for (int i = 0; i < n; i++)
@@ -270,16 +276,17 @@ public:
 ///     Eigen::MatrixXd KG = M + M.transpose();
 ///
 ///     // Construct matrix operation objects using the wrapper classes
-///     // K is sparse, B is dense
+///     // K is sparse, KG is dense
 ///     using OpType = SymShiftInvert<double, Eigen::Sparse, Eigen::Dense>;
 ///     using BOpType = SparseSymMatProd<double>;
 ///     OpType op(K, KG);
 ///     BOpType Bop(K);
 ///
-///     // Construct generalized eigen solver object, seeking three generalized eigenvalues
-///     // that are closest to and larger than 1.0. This is equivalent to specifying a shift
-///     // sigma = 1.0 combined with the SortRule::LargestAlge selection rule
-///     SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::ShiftInvert>
+///     // Construct generalized eigen solver object, seeking three generalized
+///     // eigenvalues that are closest to and larger than 1.0. This is equivalent to
+///     // specifying a shift sigma = 1.0 combined with the SortRule::LargestAlge
+///     // selection rule
+///     SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Buckling>
 ///         geigs(op, Bop, 3, 6, 1.0);
 ///
 ///     // Initialize and compute
