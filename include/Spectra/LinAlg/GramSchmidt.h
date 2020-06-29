@@ -61,6 +61,7 @@ public:
         }
         return Q;
     }
+};
 
 }  // namespace Spectra
 
