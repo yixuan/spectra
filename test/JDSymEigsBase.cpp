@@ -21,5 +21,5 @@ TEST_CASE("Constructing JDSymObject", "[eigs_gen]")
 {
     const Matrix A = Eigen::MatrixXd::Random(10, 10);
     DenseGenMatProd<double> op(A);
-    JDSymEigsBase<double, DenseGenMatProd<double>> solver(op, 5);
+    JDSymEigsBase<double, DenseGenMatProd<double> > eigs(op, 5);
 }

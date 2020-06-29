@@ -19,7 +19,8 @@
 #include "Util/SelectionRule.h"
 #include "Util/CompInfo.h"
 #include "Util/SimpleRandom.h"
-namespace spectra {
+namespace Spectra {
+
 
 template <typename Scalar,
           typename OpType>
@@ -42,11 +43,7 @@ public:
         m_n(op.rows()),
         m_nev(nev)
     {
-        if (nev < 1 || nev > m_n - 1)
-            throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
-
-        if (ncv <= nev || ncv > m_n)
-            throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
+        check_argument();
     }
 
     // If op is an rvalue
@@ -55,13 +52,8 @@ public:
         m_op(m_op_container.front()),
         m_n(m_op.rows()),
         m_nev(nev)
-
     {
-        if (nev < 1 || nev > m_n - 1)
-            throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
-
-        if (ncv <= nev || ncv > m_n)
-            throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
+        check_argument();
     }
 
     ///
@@ -75,12 +67,12 @@ protected:
                    // e.g. matrix-vector product
 
     Index m_niter = 0;
-    const Index m_n;    // dimension of matrix A
-    const Index m_nev;  // number of eigenvalues requested
-    Index         m_nmatop=0;     // number of matrix operations called
+    const Index m_n;     // dimension of matrix A
+    const Index m_nev;   // number of eigenvalues requested
+    Index m_nmatop = 0;  // number of matrix operations called
 
 private:
-    CompInfo m_info = CompInfo::NotComputed;  // status of the computation
+    CompInfo m_info=CompInfo::NotComputed;  // status of the computation
 
     // Move rvalue object to the container
     static std::vector<OpType> create_op_container(OpType&& rval)
@@ -90,14 +82,44 @@ private:
         return container;
     }
 
-    void check_argument() const {
-        if (nev < 1 || nev > m_n - 1)
+    void check_argument() const
+    {
+        if (m_nev < 1 || m_nev > m_n - 1)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
-
-        if (ncv <= nev || ncv > m_n)
-            throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
-
     }
-}
+
+    // struct RitzEigenPair {
+    //     Eigen::VectorXd lambda;  // eigenvalues
+    //     Eigen::MatrixXd q;       // Ritz (or harmonic Ritz) eigenvectors
+    //     Eigen::MatrixXd U;       // eigenvectors of the small subspace
+    //     Eigen::MatrixXd res;     // residues of the pairs
+    //     Eigen::ArrayXd res_norm() const {
+    //     return res.colwise().norm();
+    //     }  // norm of the residues
+    // };
+
+    // struct ProjectedSpace {
+    //     Eigen::MatrixXd V;   // basis of vectors
+    //     Eigen::MatrixXd AV;  // A * V
+    //     Eigen::MatrixXd T;   // V.T * A * V
+    //     Index search_space() const {
+    //     return V.cols();
+    //     };                  // size of the projection i.e. number of cols in V
+    //     Index size_update;  // size update ...
+    //     std::vector<bool> root_converged;  // keep track of which root have onverged
+    // };
+
+// public
+    // Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
+    //               Scalar tol = 1e-10) 
+    // {
+        
+
+
+    // }
+
+    // virtual void get_correction_vector = 0;
+};
 
 }  // namespace spectra
+#endif // SPECTRA_JD_SYM_EIGS_BASE_H
