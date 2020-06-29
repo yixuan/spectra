@@ -9,6 +9,7 @@ list(APPEND test_target_sources
         GenEigs.cpp
         GenEigsRealShift.cpp
         GenEigsComplexShift.cpp
+        GramSchmidt.cpp
         SymGEigsCholesky.cpp
         SymGEigsRegInv.cpp
         SVD.cpp
