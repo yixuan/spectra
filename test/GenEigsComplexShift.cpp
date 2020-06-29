@@ -38,7 +38,7 @@ SpMatrix gen_sparse_data(int n, double prob = 0.5)
 }
 
 template <typename MatType, typename Solver>
-void run_test(const MatType &mat, Solver& eigs, SortRule selection, bool allow_fail = false)
+void run_test(const MatType& mat, Solver& eigs, SortRule selection, bool allow_fail = false)
 {
     eigs.init();
     // maxit = 100 to reduce running time for failed cases
@@ -74,7 +74,7 @@ void run_test(const MatType &mat, Solver& eigs, SortRule selection, bool allow_f
 }
 
 template <typename MatType>
-void run_test_sets(const MatType &A, int k, int m, double sigmar, double sigmai)
+void run_test_sets(const MatType& A, int k, int m, double sigmar, double sigmai)
 {
     constexpr bool is_dense = std::is_same<MatType, Matrix>::value;
     using DenseOp = DenseGenComplexShiftSolve<double>;
