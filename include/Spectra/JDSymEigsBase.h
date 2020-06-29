@@ -7,7 +7,7 @@
 #ifndef SPECTRA_JD_SYM_EIGS_BASE_H
 #define SPECTRA_JD_SYM_EIGS_BASE_H
 
-#include <Eigen/Core>
+#include <Eigen/Dense>
 #include <vector>     // std::vector
 #include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min
@@ -38,23 +38,23 @@ private:
 public:
     // If op is an lvalue
     JDSymEigsBase(OpType& op, Index nev) :
-        m_op(op),
-        m_n(op.rows()),
-        m_nev(nev),
-        m_max_search_space_size(10*m_nev),
-        m_initial_search_space_size(2*m_nev)
+        matrix_operator_(op),
+        operator_dimension_(op.rows()),
+        number_eigenvalues_(nev),
+        max_search_space_size_(10*number_eigenvalues_),
+        initial_search_space_size_(2*number_eigenvalues_)
     {
         check_argument();
     }
 
     // If op is an rvalue
     JDSymEigsBase(OpType&& op, Index nev) :
-        m_op_container(create_op_container(std::move(op))),
-        m_op(m_op_container.front()),
-        m_n(m_op.rows()),
-        m_nev(nev),
-        m_max_search_space_size(10*m_nev),
-        m_initial_search_space_size(2*m_nev)
+        matrix_op_container_(create_op_container(std::move(op))),
+        matrix_operator_(matrix_op_container_.front()),
+        operator_dimension_(matrix_operator_.rows()),
+        number_eigenvalues_(nev),
+        max_search_space_size_(10*number_eigenvalues_),
+        initial_search_space_size_(2*number_eigenvalues_)
     {
         check_argument();
     }
@@ -63,7 +63,7 @@ public:
     /// Sets the Maxmium SearchspaceSize after which is deflated
     ///
     void setMaxSearchspaceSize(Index max_search_space_size){
-        m_max_search_space_size=max_search_space_size;
+        max_search_space_size_=max_search_space_size;
     }
 
 
@@ -71,7 +71,7 @@ public:
     /// Sets the Initial SearchspaceSize for Ritz values
     ///
     void setInitialSearchspaceSize(Index initial_search_space_size){
-        m_initial_search_space_size=initial_search_space_size;
+        initial_search_space_size_=initial_search_space_size;
     }
 
     ///
@@ -88,30 +88,31 @@ public:
     ///
     /// Returns the number of iterations used in the computation.
     ///
-    Index num_iterations() const { return m_niter; }
+    Index num_iterations() const { return niter_; }
 
     ///
     /// Returns the number of matrix operations used in the computation.
     ///
-    Index num_operations() const { return m_nmatop; }
+    Index num_operations() const { return number_matrix_mul_; }
 
-    struct RitzEigenPair
+    struct RitzEigenPairs
     {
-        Vector lambda;  // eigenvalues
-        Matrix q;       // Ritz (or harmonic Ritz) eigenvectors
-        Matrix U;       // eigenvectors of the small subspace
+        Vector eval;    // eigenvalues
+        Matrix evect;   // Ritz (or harmonic Ritz) eigenvectors
         Matrix res;     // residues of the pairs
         Array res_norm() const
         {
             return res.colwise().norm();
         }  // norm of the residues
+
+        Index size() const{return eval.size();}
     };
 
     struct ProjectedSpace
     {
         Matrix vect;   // basis of vectors
         Matrix m_vect;  // A * V
-        Matrix vect_m_vect;   // V.T * A * V
+        
         Index current_size() const
         {
             return vect.cols();
@@ -128,8 +129,8 @@ public:
     ///
     void init(const Matrix& init_space)
     {
-        m_nmatop = 0;
-        m_niter = 0;
+        number_matrix_mul_ = 0;
+        niter_ = 0;
     }
 
     ///
@@ -147,18 +148,18 @@ protected:
     virtual Matrix SetupInitialSearchSpace() const = 0;
 
     virtual Matrix CalculateCorrectionVector() const = 0;
-    std::vector<OpType> m_op_container;
-    OpType& m_op;  // object to conduct marix operation,
+    std::vector<OpType> matrix_op_container_;
+    OpType& matrix_operator_;  // object to conduct marix operation,
                    // e.g. matrix-vector product
 
-    Index m_niter = 0;
-    const Index m_n;             // dimension of matrix A
-    const Index m_nev;           // number of eigenvalues requested
-    Index m_max_search_space_size;
-    Index m_initial_search_space_size;
-    Index m_nmatop = 0;          // number of matrix operations called
-    RitzEigenPair m_ritz_pairs;  // Ritz eigen pair structure
-    ProjectedSpace m_proj_space; // Projected Space structure     
+    Index niter_ = 0;
+    const Index operator_dimension_;             // dimension of matrix A
+    const Index number_eigenvalues_;           // number of eigenvalues requested
+    Index max_search_space_size_;
+    Index initial_search_space_size_;
+    Index number_matrix_mul_ = 0;          // number of matrix operations called
+    RitzEigenPairs ritz_pairs_;  // Ritz eigen pair structure
+    ProjectedSpace proj_space_; // Projected Space structure     
 
 private:
     CompInfo m_info = CompInfo::NotComputed;  // status of the computation
@@ -173,41 +174,83 @@ private:
 
     void check_argument() const
     {
-        if (m_nev < 1 || m_nev > m_n - 1)
+        if (number_eigenvalues_ < 1 || number_eigenvalues_ > operator_dimension_ - 1)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
     }
 
     void restart(Index size) {
-        m_proj_space.vect = m_ritz_pairs.q.leftCols(size);
-        m_proj_space.m_vect= m_proj_space.m_vect * m_ritz_pairs.U.leftCols(size); // ? 
-        m_proj_space.vect_m_vect = m_proj_space.vect.transpose() * m_proj_space.m_vect;
+        proj_space_.vect = ritz_pairs_.q.leftCols(size);
+        proj_space_.m_vect= proj_space_.m_vect * ritz_pairs_.U.leftCols(size); // ? 
     }
 
     void full_update_projected_space() 
     {
-        m_proj_space.m_vect = m_op * m_proj_space.vect;
-        m_nmatop ++;
-
-        m_proj_space.vect_m_vect = m_proj_space.vect.transpose() * m_proj_space.m_vect;        
-        
+        proj_space_.m_vect = matrix_operator_ * proj_space_.vect;
+        number_matrix_mul_ ++;        
     }
 
     void update_projected_space()
     {
-      Index old_dim = m_proj_space.vect_m_vect.cols();
-      Index new_dim = m_proj_space.vect.cols();
+      Index old_dim = proj_space_.vect_m_vect.cols();
+      Index new_dim = proj_space_.vect.cols();
       Index nvec = new_dim - old_dim;
 
-      m_proj_space.m_vect.conservativeResize(Eigen::NoChange, new_dim);
-      
-      m_proj_space.m_vect.rightCols(nvec) = m_op * m_proj_space.vect.rightCols(nvec);
-      m_nmatop ++;
+      proj_space_.m_vect.conservativeResize(Eigen::NoChange, new_dim);      
+      proj_space_.m_vect.rightCols(nvec) = matrix_operator_ * proj_space_.vect.rightCols(nvec);
+      number_matrix_mul_ ++;
 
-      Matrix tmp_proj = m_proj_space.vect.transpose() * m_proj_space.m_vect.rightCols(nvec);
-      m_proj_space.vect_m_vect.conservativeResize(new_dim, new_dim);
-      m_proj_space.vect_m_vect.rightCols(nvec) = tmp_proj;
-      m_proj_space.vect_m_vect.bottomLeftCorner(nvec, old_dim) =
-        m_proj_space.vect_m_vect.topRightCorner(old_dim, nvec).transpose();
+    }
+
+    void compute_ritz_pairs() {
+        
+        // form the small eigenvalue
+        Matrix vect_m_vect = proj_space_.vect.transpose() * proj_space_.vect;
+
+        // small eigenvalue problem
+        Eigen::SelfAdjointEigenSolver<Matrix> eigen_solver(vect_m_vect);
+        ritz_pairs_.eval = eigen_solver.eigenvalues();
+
+        // ritz vectors
+        ritz_pairs_.evect = proj_space_.vect * eigen_solver.eigenvectors();;
+
+        // residues
+        ritz_pairs_.res = proj_space_.m_vect * eigen_solver.eigenvectors(); - ritz_pairs_.q * ritz_pairs_.lambda.asDiagaonal();
+    }
+
+    static void sort_ritz_pairs(SortRule selection,RitzEigenPairs & pairs ){
+        std::vector<Index> ind=argsort(selection,pairs.lambda);
+
+        RitzEigenPairs temp=pairs;
+        // Copy the Ritz values and vectors to m_ritz_val and m_ritz_vec, respectively
+        for (Index i = 0; i < pairs.size(); i++)
+        {
+            pairs.evals[i]=temp.evals[ind[i]];
+            pairs.evect.col(i)=temp.evect.col(ind[i]);
+            pairs.res.col(i)=temp.res.col(ind[i]);
+        }
+    }
+
+    Index extend_projected_space() {
+
+        Matrix corr_vect = CalculateCorrectionVector();
+        Index num_update = corr_vect.cols();
+        proj_space_.vect.conservativeResize(Eigen::NoChange, proj_space_.vect.cols() + num_update);
+        proj_space_.vect.rightCols(corr_vect.cols()) = corr_vect;
+        return num_update;
+    }
+
+    bool check_convergence(Scalar tol) const{
+        
+        const Array& res_norm = ritz_pairs_.res_norm();
+        bool converged = true;
+        
+        for (Index j = 0; j < proj_space_.size_update; j++) {
+            proj_space_.root_converged[j] = (res_norm[j] < tol);
+            if (j < number_eigenvalues_) {
+            converged &= (res_norm[j] < tol);
+            }
+        }
+        return converged;   
     }
 
 public:
@@ -215,16 +258,25 @@ public:
                   Scalar tol = 1e-10)
     {
         
-        for(m_niter=0; m_niter < maxit; m_niter++)
+        for(niter_=0; niter_ < maxit; niter_++)
         {
-            bool do_restart = (m_proj_space.current_size() > m_max_search_space_size);
+            bool do_restart = (proj_space_.current_size() > max_search_space_size_);
             
             if (do_restart) {
-                restart(m_initial_search_space_size);
+                restart(initial_search_space_size_);
             }
 
             update_projected_space();
             
+            compute_ritz_pairs();
+            
+            sort_ritz_pairs(selection,ritz_pairs_);
+
+            bool converged = check_convergence(tol);
+
+            Index num_update = extend_projected_space();
+            
+            //orthogonalize(m_proj_space.vect, num_update);
 
 
         }
