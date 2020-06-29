@@ -26,7 +26,9 @@ TEST_CASE("complete orthonormalization", "[Gram-Schmidt]")
 
     MatrixXd mat = MatrixXd::Random(n, n);
     Orthogonalization<double> gs{mat};
-    check_orthogonality(gs.orthonormalize());
+    check_orthogonality(gs.twice_modified_gramschmidt());
+    check_orthogonality(gs.modified_gramschmidt());
+    check_orthogonality(gs.QR());
 }
 
 TEST_CASE("Partial orthonormalization", "[Gram-Schmidt]")
@@ -37,12 +39,14 @@ TEST_CASE("Partial orthonormalization", "[Gram-Schmidt]")
     // Create a n x 20 orthonormal basis
     MatrixXd mat = MatrixXd::Random(n, n - 20);
     Orthogonalization<double> gs{mat};
-    mat.leftCols(n - 20) = gs.orthonormalize();
+    mat.leftCols(n - 20) = gs.twice_modified_gramschmidt();
 
     mat.conservativeResize(Eigen::NoChange, n);
     mat.rightCols(20) = MatrixXd::Random(n, 20);
 
     // Orthogonalize from 80 onwards
     Orthogonalization<double> new_gs{mat, 80};
-    check_orthogonality(new_gs.orthonormalize());
+    check_orthogonality(new_gs.twice_modified_gramschmidt());
+    check_orthogonality(new_gs.modified_gramschmidt());
+    check_orthogonality(new_gs.QR());
 }
