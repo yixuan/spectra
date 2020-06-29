@@ -1,5 +1,5 @@
 #include <Eigen/Core>
-#include <Spectra/LinAlg/GramSchmidt.h>
+#include <Spectra/LinAlg/Orthogonalization.h>
 
 using namespace Spectra;
 
@@ -25,7 +25,7 @@ TEST_CASE("complete orthonormalization", "[Gram-Schmidt]")
     const Index n = 100;
 
     MatrixXd mat = MatrixXd::Random(n, n);
-    Gramschmidt<double> gs{mat};
+    Orthogonalization<double> gs{mat};
     check_orthogonality(gs.orthonormalize());
 }
 
@@ -36,13 +36,13 @@ TEST_CASE("Partial orthonormalization", "[Gram-Schmidt]")
 
     // Create a n x 20 orthonormal basis
     MatrixXd mat = MatrixXd::Random(n, n - 20);
-    Gramschmidt<double> gs{mat};
+    Orthogonalization<double> gs{mat};
     mat.leftCols(n - 20) = gs.orthonormalize();
 
     mat.conservativeResize(Eigen::NoChange, n);
     mat.rightCols(20) = MatrixXd::Random(n, 20);
 
     // Orthogonalize from 80 onwards
-    Gramschmidt<double> new_gs{mat, 80};
+    Orthogonalization<double> new_gs{mat, 80};
     check_orthogonality(new_gs.orthonormalize());
 }

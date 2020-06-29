@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef SPECTRA_GRAM_SCHIMDT_H
-#define SPECTRA_GRAM_SCHIMDT_H
+#ifndef SPECTRA_ORTHOGONALIZATION_H
+#define SPECTRA_ORTHOGONALIZATION_H
 
 #include <Eigen/Core>
 
@@ -19,7 +19,7 @@ namespace Spectra {
 /// n-1 vectors are already orthonormal.
 
 template <typename Scalar>
-class Gramschmidt
+class Orthogonalization
 {
 private:
     using Index = Eigen::Index;
@@ -29,10 +29,10 @@ private:
     Index start_index = 0;
 
 public:
-    Gramschmidt(const Matrix& A, Index nstart) :
+    Orthogonalization(const Matrix& A, Index nstart) :
         basis{A}, start_index{nstart} {}
 
-    Gramschmidt(const Matrix& A) :
+    Orthogonalization(const Matrix& A) :
         basis{A} {}
 
     Matrix orthonormalize()
@@ -55,7 +55,7 @@ public:
             {
                 throw std::runtime_error(
                     "There is a Linear dependencies in Gram-Schmidt."
-                    "Hint: try the modified Gram-Schmidt or the QR method.");
+                    "Hint: try the QR method.");
             }
             Q.col(j).normalize();
         }
@@ -65,4 +65,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  //SPECTRA_GRAM_SCHIMDT_H
+#endif  //SPECTRA_ORTHOGONALIZATION_H
