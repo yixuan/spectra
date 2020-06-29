@@ -11,12 +11,12 @@
 
 namespace Spectra {
 
-// Gram-Schmidt process to orthoganlize a given basis A. Each column correspond
-// to a vector on the basis.
-// The start index indicates from what vector to start
-// the orthogonalization, 0 is the default.
-// Warnings: Starting the normalization at index n imples that the previous
-// n-1 vectors are already orthonormal.
+/// Gram-Schmidt process to orthoganlize a given basis A. Each column correspond
+/// to a vector on the basis.
+/// The start index indicates from what vector to start
+/// the orthogonalization, 0 is the default.
+/// Warnings: Starting the normalization at index n imples that the previous
+/// n-1 vectors are already orthonormal.
 
 template <typename Scalar>
 class Gramschmidt
@@ -24,6 +24,7 @@ class Gramschmidt
 private:
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     const Matrix& basis;
     Index start_index = 0;
 
@@ -60,7 +61,6 @@ public:
         }
         return Q;
     }
-};
 
 }  // namespace Spectra
 

@@ -10,25 +10,29 @@ using Eigen::MatrixXd;
 using Eigen::VectorXd;
 using Eigen::Index;
 
+template <typename Matrix>
+void check_orthogonality(Matrix&& basis)
+{
+    const double tol = 1e-12;
+    Matrix xs = basis.transpose() * basis;
+    INFO("The orthonormalized basis must fulfill that basis.T * basis = I");
+    REQUIRE(xs.isIdentity(tol));
+}
+
 TEST_CASE("complete orthonormalization", "[Gram-Schmidt]")
 {
     std::srand(123);
-    const int n = 100;
-    const double tol = 1e-12;
+    const Index n = 100;
 
     MatrixXd mat = MatrixXd::Random(n, n);
     Gramschmidt<double> gs{mat};
-    MatrixXd basis = gs.orthonormalize();
-    MatrixXd xs = basis.transpose() * basis;
-    INFO("The orthonormalized basis must fulfill that basis.T * basis = I");
-    REQUIRE(xs.isIdentity(tol));
+    check_orthogonality(gs.orthonormalize());
 }
 
 TEST_CASE("Partial orthonormalization", "[Gram-Schmidt]")
 {
     std::srand(123);
-    const int n = 100;
-    const double tol = 1e-12;
+    const Index n = 100;
 
     // Create a n x 20 orthonormal basis
     MatrixXd mat = MatrixXd::Random(n, n - 20);
@@ -38,10 +42,7 @@ TEST_CASE("Partial orthonormalization", "[Gram-Schmidt]")
     mat.conservativeResize(Eigen::NoChange, n);
     mat.rightCols(20) = MatrixXd::Random(n, 20);
 
-    // Orthogonalize from 100 onwards
-    Gramschmidt<double> new_gs{mat, 20};
-    MatrixXd basis = new_gs.orthonormalize();
-    MatrixXd xs = basis.transpose() * basis;
-    INFO("The orthonormalized basis must fulfill that basis.T * basis = I");
-    REQUIRE(xs.isIdentity(tol));
+    // Orthogonalize from 80 onwards
+    Gramschmidt<double> new_gs{mat, 80};
+    check_orthogonality(new_gs.orthonormalize());
 }
