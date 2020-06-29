@@ -11,7 +11,7 @@ using Eigen::VectorXd;
 using Eigen::Index;
 
 template <typename Matrix>
-void check_orthogonality(Matrix&& basis)
+void check_orthogonality(const Matrix& basis)
 {
     const double tol = 1e-12;
     Matrix xs = basis.transpose() * basis;
