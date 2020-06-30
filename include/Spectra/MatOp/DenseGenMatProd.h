@@ -74,6 +74,14 @@ public:
         MapVec y(y_out, m_mat.rows());
         y.noalias() = m_mat * x;
     }
+
+    ///
+    /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
+    ///
+    Matrix operator*(const Matrix mat_in)
+    {
+        return m_mat * mat_in;
+    }
 };
 
 }  // namespace Spectra

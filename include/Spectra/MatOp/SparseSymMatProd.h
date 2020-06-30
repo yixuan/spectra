@@ -67,8 +67,15 @@ public:
         MapVec y(y_out, m_mat.rows());
         y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
     }
-};
 
+    ///
+    /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
+    ///
+    SparseMatrix operator*(const SparseMatrix mat_in)
+    {
+        return m_mat * mat_in;
+    }
+};
 }  // namespace Spectra
 
 #endif  // SPECTRA_SPARSE_SYM_MAT_PROD_H
