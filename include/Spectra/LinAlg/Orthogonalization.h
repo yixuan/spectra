@@ -92,7 +92,12 @@ public:
         }
         for (Index j = nstart; j < basis.cols(); ++j)
         {
-            Q.col(j) -= Q.leftCols(j) * (Q.leftCols(j).transpose() * basis.col(j));
+            Vector tmp = Q.col(j);
+            for (Index k = 0; k < j; k++)
+            {
+                tmp -= Q.col(k).dot(tmp) * Q.col(k);
+            }
+            Q.col(j) = tmp;
             check_linear_dependency(Q.col(j), j);
             Q.col(j).normalize();
         }
