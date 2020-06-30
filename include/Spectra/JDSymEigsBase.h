@@ -19,7 +19,7 @@
 #include "Util/SelectionRule.h"
 #include "Util/CompInfo.h"
 #include "Util/SimpleRandom.h"
-#include "Util/ProjectedSpace.h"
+#include "Util/SearchSpace.h"
 #include "Util/RitzPairs.h"
 
 namespace Spectra {
@@ -74,16 +74,16 @@ public:
     /// Returns the status of the computation.
     /// The full list of enumeration values can be found in \ref Enumerations.
     ///
-    CompInfo info() const { return m_info; }
+    CompInfo info() const { return info_; }
 
     ///
     /// Returns the number of iterations used in the computation.
     ///
     Index num_iterations() const { return niter_; }
 
-    Vector eigenvalues() const { return ritz_pairs_.RitzValues(); }
+    Vector eigenvalues() const { return ritz_pairs_.RitzValues().head(number_eigenvalues_); }
 
-    Matrix eigenvectors() const { return ritz_pairs_.RitzVectors(); }
+    Matrix eigenvectors() const { return ritz_pairs_.RitzVectors().leftCols(number_eigenvalues_); }
 
     ///
     /// Initializes the solver by providing an initial search space.
@@ -94,12 +94,7 @@ public:
     void init(const Eigen::Ref<const Matrix>& init_space)
     {
         niter_ = 0;
-        proj_space_.BasisVectors() = init_space;
-        if (proj_space_.size() < initial_search_space_size_)
-        {
-            Index noadditionalvectors = initial_search_space_size_ - proj_space_.size();
-            proj_space_.vect.extend_basis(SetupInitialSearchSpace(noadditionalvectors))
-        }
+        search_space_.BasisVectors() = init_space;
     }
 
     ///
@@ -109,12 +104,13 @@ public:
     ///
     void init()
     {
-        Matrix intial_space = SetupInitialSearchSpace(initial_search_space_size_);
+        Matrix intial_space = SetupInitialSearchSpace();
+          //TODO orthogonalize
         init(intial_space);
     }
 
 protected:
-    virtual Matrix SetupInitialSearchSpace(Index size) const = 0;
+    virtual Matrix SetupInitialSearchSpace() const = 0;
 
     virtual Matrix CalculateCorrectionVector() const = 0;
     const OpType& matrix_operator_;  // object to conduct marix operation,
@@ -125,11 +121,11 @@ protected:
     const Index number_eigenvalues_;  // number of eigenvalues requested
     Index max_search_space_size_;
     Index initial_search_space_size_;
-    RitzEigenPairs ritz_pairs_;    // Ritz eigen pair structure
-    SearchSpace search_space_;    // search space
+    RitzPairs<Scalar> ritz_pairs_;    // Ritz eigen pair structure
+    SearchSpace<Scalar> search_space_;    // search space
 
 private:
-    CompInfo m_info = CompInfo::NotComputed;  // status of the computation
+    CompInfo info_ = CompInfo::NotComputed;  // status of the computation
 
     // Move rvalue object to the container
     static std::vector<OpType> create_op_container(OpType&& rval)
@@ -164,14 +160,20 @@ public:
 
             ritz_pairs_.sort(selection);
 
-            bool converged = ritz_pairs_.check_convergence(tol);
-
-            Index num_update = extend_projected_space();
+            bool converged = ritz_pairs_.check_convergence(tol,number_eigenvalues_);
+            if(converged){
+                info_=CompInfo::Successful;
+                break;
+            }else if(niter_ == maxit-1){
+                info_=CompInfo::NotConverging;
+                break;
+            }
 
             Matrix corr_vect = CalculateCorrectionVector();
             
             search_space_.extend_basis(corr_vect);
         }
+        return Index(ritz_pairs_.ConvergedEigenvalues().sum());
     }
 };
 

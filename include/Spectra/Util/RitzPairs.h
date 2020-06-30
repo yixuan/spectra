@@ -11,12 +11,12 @@
 
 #include <Eigen/Dense>
 
-namespace Spectra{
+namespace Spectra {
 template <typename Scalar>
 class SearchSpace;
 
 template <typename Scalar>
-class RitzEigenPairs
+class RitzPairs
 {
 private:
     using Index = Eigen::Index;
@@ -27,9 +27,9 @@ private:
     using MapConstVec = Eigen::Map<const Vector>;
 
 public:
-    RitzEigenPairs() = default;
+    RitzPairs() = default;
 
-    void compute_eigen_pairs(SearchSpace<Scalar> const &search_space);  
+    void compute_eigen_pairs(SearchSpace<Scalar> const& search_space);
 
     Array res_norm() const
     {
@@ -41,7 +41,7 @@ public:
     void sort(SortRule selection)
     {
         std::vector<Index> ind = argsort(selection, values_);
-        RitzEigenPairs temp = *this;
+        RitzPairs<Scalar> temp = *this;
         for (Index i = 0; i < size(); i++)
         {
             values_[i] = temp.values_[ind[i]];
@@ -50,63 +50,61 @@ public:
         }
     }
 
-    bool check_convergence(Scalar tol) const
+    bool check_convergence(Scalar tol, Index number_eigenvalues) const
     {
         const Array norms = res_norm();
         bool converged = true;
-
+        root_converged_ = BoolArray::Zero(norms.size());
         for (Index j = 0; j < norms.size(); j++)
         {
-            root_converged[j] = (norms[j] < tol);
-            if (j < number_eigenvalues_)
+            root_converged_[j] = (norms[j] < tol);
+            if (j < number_eigenvalues)
             {
-                converged &= (res_norm[j] < tol);
+                converged &= (norms[j] < tol);
             }
         }
         return converged;
     }
 
-    const Matrix RitzVectors() const { return vectors_; }
-    const Vector RitzValues() const { return values_; }
-    const Matrix SmallRitzVectors() const { return small_vectors_; }
-    const Matrix Residues() const { return residues_; }
+    const Matrix& RitzVectors() const { return vectors_; }
+    const Vector& RitzValues() const { return values_; }
+    const Matrix& SmallRitzVectors() const { return small_vectors_; }
+    const Matrix& Residues() const { return residues_; }
+    const BoolArray& ConvergedEigenvalues() const { return root_converged_; }
 
 private:
     Vector values_;         // eigenvalues
     Matrix small_vectors_;  // eigenvectors of the small problem, makes restart cheaper.
     Matrix vectors_;        // Ritz (or harmonic Ritz) eigenvectors
     Matrix residues_;       // residues of the pairs
+    BoolArray root_converged_;
 };
 
-}
-#include "ProjectedSpace.h"
+}  // namespace Spectra
+#include "SearchSpace.h"
 namespace Spectra {
 
 template <typename Scalar>
- void RitzEigenPairs::compute_eigen_pairs(SearchSpace<Scalar> const &search_space)
-    {
-        const Matrix& basis_vectors = search_space.BasisVectors()
-        const Matrix& op_basis_prod = search_space.OperatorBasisProduct()
+void RitzPairs<Scalar>::compute_eigen_pairs(SearchSpace<Scalar> const& search_space)
+{
+    const Matrix& basis_vectors = search_space.BasisVectors();
+    const Matrix& op_basis_prod = search_space.OperatorBasisProduct();
 
-        // form the small eigenvalue
-        Matrix small_matrix = basis_vectors.transpose() * op_basis_prod;
+    // form the small eigenvalue
+    Matrix small_matrix = basis_vectors.transpose() * op_basis_prod;
 
-        // small eigenvalue problem
-        Eigen::SelfAdjointEigenSolver<Matrix> eigen_solver(small_matrix);
-        values_ = eigen_solver.eigenvalues();
-        small_vectors_ = eigen_solver.eigenvectors();
+    // small eigenvalue problem
+    Eigen::SelfAdjointEigenSolver<Matrix> eigen_solver(small_matrix);
+    values_ = eigen_solver.eigenvalues();
+    small_vectors_ = eigen_solver.eigenvectors();
 
-        // ritz vectors
-        vectors_ = basis_vectors * small_vectors_;
+    // ritz vectors
+    vectors_ = basis_vectors * small_vectors_;
 
-        // residues
-        residues_ = op_basis_prod * small_vectors_ - vectors_ * values_.asDiagaonal();
-    }
-
-
-
-
+    // residues
+    residues_ = op_basis_prod * small_vectors_ - vectors_ * values_.asDiagaonal();
 }
 
+}  // namespace Spectra
 
 #endif  // SPECTRA_RITZ_PAIR_H

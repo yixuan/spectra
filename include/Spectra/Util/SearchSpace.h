@@ -11,6 +11,8 @@
 
 #include <Eigen/Dense>
 #include "RitzPairs.h"
+
+namespace Spectra{
 template <typename Scalar>
 class SearchSpace
 {
@@ -45,10 +47,10 @@ public:
         op_basis_product_ = op * basis_vectors_;
     }
 
-    void restart(RitzEigenPairs &ritz_pairs, Index size)
+    void restart(RitzPairs<Scalar> &ritz_pairs, Index size)
     {
-        Matrix ritz_vectors = ritz_pairs.Vectors();
-        Matrix small_vectors = ritz_pairs.SmallRitzVectors();
+        const Matrix& ritz_vectors = ritz_pairs.Vectors();
+        const Matrix& small_vectors = ritz_pairs.SmallRitzVectors();
 
         basis_vectors_ = ritz_vectors.leftCols(size);
         op_basis_product_ = op_basis_product_ * small_vectors.leftCols(size); 
@@ -65,7 +67,9 @@ public:
     {
         Index num_update = new_vect.cols();
         append_new_vectors_to_basis(new_vect);
-        basis_vectors_ = orthogonalize(basis_vectors_, num_update);
+        //basis_vectors_ = orthogonalize(basis_vectors_, num_update);
+
+        //TODO orthogonalize
     }
 
 const Matrix& BasisVectors()const{return basis_vectors_;}
@@ -76,6 +80,8 @@ private:
     Matrix basis_vectors_;
     Matrix op_basis_product_;
 
+
+};
 
 }
 

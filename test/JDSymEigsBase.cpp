@@ -23,7 +23,7 @@ class JDMock : public JDSymEigsBase<Scalar,OpType>{
 
 public:
 JDMock(OpType& op, Index nev):JDSymEigsBase<Scalar,OpType>(op,nev){}
-  Matrix SetupInitialSearchSpace(Index)const{
+  Matrix SetupInitialSearchSpace()const{
       return Matrix::Zero(0,0);
   }
 
@@ -41,6 +41,5 @@ TEST_CASE("Constructing JDSymObject", "[eigs_gen]")
     JDMock<double, DenseGenMatProd<double> > eigs(op, 5);
 
     REQUIRE( eigs.num_iterations() == 0 );
-    REQUIRE( eigs.num_operations() == 0 );
     REQUIRE( eigs.info() == Spectra::CompInfo::NotComputed );
 }
