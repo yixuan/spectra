@@ -149,7 +149,7 @@ protected:
 
     virtual Matrix CalculateCorrectionVector() const = 0;
     std::vector<OpType> matrix_op_container_;
-    OpType& matrix_operator_;  // object to conduct marix operation,
+    OpType& matrix_operator_;  // object to conduct matrix operation,
                    // e.g. matrix-vector product
 
     Index niter_ = 0;
