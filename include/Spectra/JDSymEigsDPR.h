@@ -16,30 +16,30 @@ template <typename Scalar, typename OpType>
 class JDSymEigsDPR : public JDSymEigsBase<Scalar, OpType>
 {
 public:
-    // virtual Matrix SetupInitialSearchSpace() const final;
-
-    Matrix CalculateCorrectionVector() const final
+    Matrix SetupInitialSearchSpace() const final
     {
-        Index nresidues = search_space_.size();
-        Matrix correction = Matrix::zero(operator_dimension_, nresidues);
-        for (Index k = 0; k < ncols; k++)
-        {
-            // Vector tmp =
-            correction.col(k) = residues / tmp;
-        }
     }
 
-    // let d = self.target.diagonal();
-    // let mut correction = DMatrix::<f64>::zeros(self.target.nrows(), residues.ncols());
-    // for (k, lambda) in eigenvalues.iter().enumerate() {
-    //     let tmp = DVector::<f64>::repeat(self.target.nrows(), *lambda) - &d;
-    //     let rs = residues.column(k).component_div(&tmp);
-    //     correction.set_column(k, &rs);
-    // }
-    correction
-}
-
-};  // namespace Spectra
+    /// compute the corrections using the DPR method.
+    /// \return new correction vectors.
+    Matrix CalculateCorrectionVector() const final
+    {
+        Vector diagonal(operator_dimension_);
+        for (Index i = 0; i < operator_dimension_; i++)
+        {
+            diagonal(i) = matrix_operator_(i, i);
+        }
+        Index nresidues = search_space_.size();
+        const Vector& eigenvalues = ritz_pairs_.RitzValues();
+        Matrix correction = Matrix::zero(operator_dimension_, nresidues);
+        for (Index k = 0; k < nresidues; k++)
+        {
+            Vector tmp = Vector::Constant(eigenvalues(k)) - diagonal;
+            correction.col(k) = residues / tmp;
+        }
+        return correction;
+    }
+};
 
 }  // namespace Spectra
 
