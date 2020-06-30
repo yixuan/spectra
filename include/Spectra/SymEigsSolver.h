@@ -44,7 +44,7 @@ namespace Spectra {
 /// class, it should implement all the public member functions as in DenseSymMatProd.
 ///
 /// \tparam Scalar  The element type of the matrix.
-///                 Currently supported types are `float`, `double` and `long double`.
+///                 Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType  The name of the matrix operation class. Users could either
 ///                 use the wrapper classes such as DenseSymMatProd and
 ///                 SparseSymMatProd, or define their
@@ -79,7 +79,7 @@ namespace Spectra {
 ///
 ///     // Retrieve results
 ///     Eigen::VectorXd evalues;
-///     if(eigs.info() == CompInfo::Successful)
+///     if (eigs.info() == CompInfo::Successful)
 ///         evalues = eigs.eigenvalues();
 ///
 ///     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
@@ -106,7 +106,7 @@ namespace Spectra {
 ///     // y_out = M * x_in
 ///     void perform_op(double *x_in, double *y_out) const
 ///     {
-///         for(int i = 0; i < rows(); i++)
+///         for (int i = 0; i < rows(); i++)
 ///         {
 ///             y_out[i] = x_in[i] * (i + 1);
 ///         }
@@ -119,7 +119,7 @@ namespace Spectra {
 ///     SymEigsSolver<double, MyDiagonalTen> eigs(op, 3, 6);
 ///     eigs.init();
 ///     eigs.compute(SortRule::LargestAlge);
-///     if(eigs.info() == CompInfo::Successful)
+///     if (eigs.info() == CompInfo::Successful)
 ///     {
 ///         Eigen::VectorXd evalues = eigs.eigenvalues();
 ///         // Will get (10, 9, 8)
