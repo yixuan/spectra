@@ -73,7 +73,9 @@ public:
     ///
     Matrix operator*(const Matrix mat_in)
     {
-        return m_mat * mat_in;
+        Matrix result;
+        result.noalias() = m_mat.template selfadjointView<Uplo>() * mat_in;
+        return result;
     }
 
     ///

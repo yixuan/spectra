@@ -73,7 +73,9 @@ public:
     ///
     SparseMatrix operator*(const SparseMatrix mat_in)
     {
-        return m_mat * mat_in;
+        SparseMatrix result;
+        result.noalias() = m_mat.template selfadjointView<Uplo>() * mat_in;
+        return result;
     }
 
     ///
