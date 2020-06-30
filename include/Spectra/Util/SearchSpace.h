@@ -28,7 +28,7 @@ private:
 public:
     SearchSpace() = default;
 
-    void size() const
+    Index size() const
     {
         return basis_vectors_.cols();
     }

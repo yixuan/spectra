@@ -18,12 +18,14 @@ class JDSymEigsDPR : public JDSymEigsBase<Scalar, OpType>
 public:
     // virtual Matrix SetupInitialSearchSpace() const final;
 
-    virtual Matrix CalculateCorrectionVector() const final
+    Matrix CalculateCorrectionVector() const final
     {
-        Matrix correction = Matrix::zero(operator_dimension_, ncols);
+        Index nresidues = search_space_.size();
+        Matrix correction = Matrix::zero(operator_dimension_, nresidues);
         for (Index k = 0; k < ncols; k++)
         {
-            correction.col(k);
+            // Vector tmp =
+            correction.col(k) = residues / tmp;
         }
     }
 
