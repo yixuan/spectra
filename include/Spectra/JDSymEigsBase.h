@@ -173,7 +173,7 @@ public:
             
             search_space_.extend_basis(corr_vect);
         }
-        return Index(ritz_pairs_.ConvergedEigenvalues().sum());
+        return Index(ritz_pairs_.ConvergedEigenvalues().head(number_eigenvalues_).sum());
     }
 };
 
