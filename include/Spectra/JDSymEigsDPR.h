@@ -61,7 +61,8 @@ public:
         Matrix correction = Matrix::zero(operator_dimension_, nresidues);
         for (Index k = 0; k < nresidues; k++)
         {
-            correction.col(k) = residues.col(k) / (Vector::Constant(eigenvalues(k)) - diagonal_);
+            Vector tmp = Vector::Constant(eigenvalues(k)) - diagonal_;
+            correction.col(k) = residues.col(k).array() / tmp.array();
         }
         return correction;
     }
