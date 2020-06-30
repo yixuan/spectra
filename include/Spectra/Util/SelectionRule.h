@@ -223,67 +223,66 @@ public:
     inline void swap(IndexArray& other) { m_index.swap(other); }
 };
 
-
-template< class Scalar> 
- std::vector<Eigen::Index> argsort(SortRule selection,const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>& values){
-        // Sort Ritz values and put the wanted ones at the beginning
-        using Index = Eigen::Index;
-        std::vector<Index> ind;
-        switch (selection)
+template <class Scalar>
+std::vector<Eigen::Index> argsort(SortRule selection, const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>& values)
+{
+    // Sort Ritz values and put the wanted ones at the beginning
+    using Index = Eigen::Index;
+    std::vector<Index> ind;
+    switch (selection)
+    {
+        case SortRule::LargestMagn:
         {
-            case SortRule::LargestMagn:
-            {
-                SortEigenvalue<Scalar, SortRule::LargestMagn> sorting(values.data(), values.size());
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::BothEnds:
-            case SortRule::LargestAlge:
-            {
-                SortEigenvalue<Scalar, SortRule::LargestAlge> sorting(values.data(), values.size());
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::SmallestMagn:
-            {
-                SortEigenvalue<Scalar, SortRule::SmallestMagn> sorting(values.data(), values.size());
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::SmallestAlge:
-            {
-                SortEigenvalue<Scalar, SortRule::SmallestAlge> sorting(values.data(), values.size());
-                sorting.swap(ind);
-                break;
-            }
-            default:
-                throw std::invalid_argument("unsupported selection rule");
+            SortEigenvalue<Scalar, SortRule::LargestMagn> sorting(values.data(), values.size());
+            sorting.swap(ind);
+            break;
         }
-
-        // For SortRule::BothEnds, the eigenvalues are sorted according to the
-        // SortRule::LargestAlge rule, so we need to move those smallest values to the left
-        // The order would be
-        //     Largest => Smallest => 2nd largest => 2nd smallest => ...
-        // We keep this order since the first k values will always be
-        // the wanted collection, no matter k is nev_updated (used in restart())
-        // or is nev (used in sort_ritzpair())
-        if (selection == SortRule::BothEnds)
+        case SortRule::BothEnds:
+        case SortRule::LargestAlge:
         {
-            std::vector<Index> ind_copy(ind);
-            for (Index i = 0; i < values.size(); i++)
-            {
-                // If i is even, pick values from the left (large values)
-                // If i is odd, pick values from the right (small values)
-                if (i % 2 == 0)
-                    ind[i] = ind_copy[i / 2];
-                else
-                    ind[i] = ind_copy[values.size() - 1 - i / 2];
-            }
+            SortEigenvalue<Scalar, SortRule::LargestAlge> sorting(values.data(), values.size());
+            sorting.swap(ind);
+            break;
         }
+        case SortRule::SmallestMagn:
+        {
+            SortEigenvalue<Scalar, SortRule::SmallestMagn> sorting(values.data(), values.size());
+            sorting.swap(ind);
+            break;
+        }
+        case SortRule::SmallestAlge:
+        {
+            SortEigenvalue<Scalar, SortRule::SmallestAlge> sorting(values.data(), values.size());
+            sorting.swap(ind);
+            break;
+        }
+        default:
+            throw std::invalid_argument("unsupported selection rule");
+    }
 
-        return ind;
- }
+    // For SortRule::BothEnds, the eigenvalues are sorted according to the
+    // SortRule::LargestAlge rule, so we need to move those smallest values to the left
+    // The order would be
+    //     Largest => Smallest => 2nd largest => 2nd smallest => ...
+    // We keep this order since the first k values will always be
+    // the wanted collection, no matter k is nev_updated (used in restart())
+    // or is nev (used in sort_ritzpair())
+    if (selection == SortRule::BothEnds)
+    {
+        std::vector<Index> ind_copy(ind);
+        for (Index i = 0; i < values.size(); i++)
+        {
+            // If i is even, pick values from the left (large values)
+            // If i is odd, pick values from the right (small values)
+            if (i % 2 == 0)
+                ind[i] = ind_copy[i / 2];
+            else
+                ind[i] = ind_copy[values.size() - 1 - i / 2];
+        }
+    }
 
+    return ind;
+}
 
 /// \endcond
 

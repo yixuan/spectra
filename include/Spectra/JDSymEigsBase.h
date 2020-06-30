@@ -105,7 +105,7 @@ public:
     void init()
     {
         Matrix intial_space = SetupInitialSearchSpace();
-          //TODO orthogonalize
+        //TODO orthogonalize
         init(intial_space);
     }
 
@@ -121,8 +121,8 @@ protected:
     const Index number_eigenvalues_;  // number of eigenvalues requested
     Index max_search_space_size_;
     Index initial_search_space_size_;
-    RitzPairs<Scalar> ritz_pairs_;    // Ritz eigen pair structure
-    SearchSpace<Scalar> search_space_;    // search space
+    RitzPairs<Scalar> ritz_pairs_;      // Ritz eigen pair structure
+    SearchSpace<Scalar> search_space_;  // search space
 
 private:
     CompInfo info_ = CompInfo::NotComputed;  // status of the computation
@@ -160,17 +160,20 @@ public:
 
             ritz_pairs_.sort(selection);
 
-            bool converged = ritz_pairs_.check_convergence(tol,number_eigenvalues_);
-            if(converged){
-                info_=CompInfo::Successful;
+            bool converged = ritz_pairs_.check_convergence(tol, number_eigenvalues_);
+            if (converged)
+            {
+                info_ = CompInfo::Successful;
                 break;
-            }else if(niter_ == maxit-1){
-                info_=CompInfo::NotConverging;
+            }
+            else if (niter_ == maxit - 1)
+            {
+                info_ = CompInfo::NotConverging;
                 break;
             }
 
             Matrix corr_vect = CalculateCorrectionVector();
-            
+
             search_space_.extend_basis(corr_vect);
         }
         return Index(ritz_pairs_.ConvergedEigenvalues().head(number_eigenvalues_).sum());
