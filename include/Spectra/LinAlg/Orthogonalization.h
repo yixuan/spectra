@@ -58,7 +58,7 @@ public:
     /// http://stoppels.blog/posts/orthogonalization-performance
     /// \return Returned matrix type will be `Eigen::Matrix<Scalar, ...>`, depending on
     /// the template parameter `Scalar` defined.
-    Matrix twice_modified_gramschmidt()
+    Matrix twice_gramschmidt()
     {
         Matrix Q = basis;
         Index nstart = start_index;
