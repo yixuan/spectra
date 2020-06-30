@@ -41,6 +41,5 @@ TEST_CASE("Constructing JDSymObject", "[eigs_gen]")
     JDMock<double, DenseGenMatProd<double> > eigs(op, 5);
 
     REQUIRE( eigs.num_iterations() == 0 );
-    REQUIRE( eigs.num_operations() == 0 );
     REQUIRE( eigs.info() == Spectra::CompInfo::NotComputed );
 }
