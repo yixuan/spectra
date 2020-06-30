@@ -81,7 +81,7 @@ public:
     ///
     Scalar operator()(Index i, Index j)
     {
-        return m_mat(i, j);
+        return m_mat.coeff(i, j);
     }
 };
 
