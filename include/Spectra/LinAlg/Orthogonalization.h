@@ -54,11 +54,11 @@ public:
     Orthogonalization(const Matrix& A) :
         basis{A} {}
 
-    /// two consecutive Gram-schmidt iterations are enough to converge
+    /// two consecutive modified Gram-schmidt iterations are enough to converge
     /// http://stoppels.blog/posts/orthogonalization-performance
     /// \return Returned matrix type will be `Eigen::Matrix<Scalar, ...>`, depending on
     /// the template parameter `Scalar` defined.
-    Matrix twice_gramschmidt()
+    Matrix twice_modified_gramschmidt()
     {
         Matrix Q = basis;
         Index nstart = start_index;
@@ -92,12 +92,7 @@ public:
         }
         for (Index j = nstart; j < basis.cols(); ++j)
         {
-            Vector tmp = Q.col(j);
-            for (Index k = 0; k < j; k++)
-            {
-                tmp -= Q.col(k).dot(tmp) * Q.col(k);
-            }
-            Q.col(j) = tmp;
+            Q.col(j) -= Q.leftCols(j) * (Q.leftCols(j).transpose() * Q.col(j));
             check_linear_dependency(Q.col(j), j);
             Q.col(j).normalize();
         }
