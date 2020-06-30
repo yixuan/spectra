@@ -44,20 +44,15 @@ public:
         op_basis_product_ = op * basis_vectors_;
     }
 
-    void restart(RitzPairs<Scalar> &ritz_pairs, Index size)
+    void restart(const RitzPairs<Scalar> &ritz_pairs, Index size)
     {
         basis_vectors_ = ritz_pairs.Vectors().leftCols(size);
         op_basis_product_ = op_basis_product_ * ritz_pairs.SmallRitzVectors().leftCols(size);
     }
 
-    void append_new_vectors_to_basis(Matrix &new_vect)
-    {
-        Index num_update = new_vect.cols();
-        basis_vectors_.conservativeResize(Eigen::NoChange, basis_vectors_.cols() + num_update);
-        basis_vectors_.rightCols(new_vect.cols()) = new_vect;
-    }
+   
 
-    void extend_basis(Matrix &new_vect)
+    void extend_basis(const Matrix &new_vect)
     {
         Index num_update = new_vect.cols();
         append_new_vectors_to_basis(new_vect);
@@ -73,6 +68,13 @@ public:
 private:
     Matrix basis_vectors_;
     Matrix op_basis_product_;
+
+     void append_new_vectors_to_basis(const Matrix &new_vect)
+    {
+        Index num_update = new_vect.cols();
+        basis_vectors_.conservativeResize(Eigen::NoChange, basis_vectors_.cols() + num_update);
+        basis_vectors_.rightCols(new_vect.cols()) = new_vect;
+    }
 };
 
 }  // namespace Spectra
