@@ -23,7 +23,7 @@ template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor
 class SparseSymMatProd
 {
 private:
-    typedef Scalar_ Scalar;
+    using Scalar  = Scalar_;
     using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using MapConstVec = Eigen::Map<const Vector>;
@@ -74,6 +74,13 @@ public:
     SparseMatrix operator*(const SparseMatrix mat_in)
     {
         return m_mat * mat_in;
+    }
+
+    ///
+    /// Extract (i,j) element of the underlying matrix.
+    ///
+    Scalar operator()(Index i, Index j) {
+      return m_mat(i,j);
     }
 };
 }  // namespace Spectra

@@ -22,7 +22,7 @@ template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor
 class DenseSymMatProd
 {
 private:
-    typedef Scalar_ Scalar;
+    using Scalar  = Scalar_;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
@@ -76,6 +76,12 @@ public:
         return m_mat * mat_in;
     }
 
+    ///
+    /// Extract (i,j) element of the underlying matrix.
+    ///
+    Scalar operator()(Index i, Index j) {
+      return m_mat(i,j);
+    }
 };
 
 }  // namespace Spectra
