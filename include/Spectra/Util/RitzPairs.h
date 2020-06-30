@@ -30,7 +30,7 @@ private:
 public:
     RitzPairs() = default;
 
-    void compute_eigen_pairs(const SearchSpace<Scalar> & search_space);
+    void compute_eigen_pairs(const SearchSpace<Scalar>& search_space);
 
     Array res_norm() const
     {

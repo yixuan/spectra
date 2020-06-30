@@ -50,8 +50,6 @@ public:
         op_basis_product_ = op_basis_product_ * ritz_pairs.SmallRitzVectors().leftCols(size);
     }
 
-   
-
     void extend_basis(const Matrix &new_vect)
     {
         Index num_update = new_vect.cols();
@@ -69,7 +67,7 @@ private:
     Matrix basis_vectors_;
     Matrix op_basis_product_;
 
-     void append_new_vectors_to_basis(const Matrix &new_vect)
+    void append_new_vectors_to_basis(const Matrix &new_vect)
     {
         Index num_update = new_vect.cols();
         basis_vectors_.conservativeResize(Eigen::NoChange, basis_vectors_.cols() + num_update);
