@@ -10,6 +10,7 @@
 #define SPECTRA_RITZ_PAIR_H
 
 #include <Eigen/Dense>
+#include "SelectionRule.h"
 
 namespace Spectra {
 template <typename Scalar>
@@ -29,7 +30,7 @@ private:
 public:
     RitzPairs() = default;
 
-    void compute_eigen_pairs(SearchSpace<Scalar> const& search_space);
+    void compute_eigen_pairs(const SearchSpace<Scalar>& search_space);
 
     Array res_norm() const
     {
@@ -85,7 +86,7 @@ private:
 namespace Spectra {
 
 template <typename Scalar>
-void RitzPairs<Scalar>::compute_eigen_pairs(SearchSpace<Scalar> const& search_space)
+void RitzPairs<Scalar>::compute_eigen_pairs(const SearchSpace<Scalar>& search_space)
 {
     const Matrix& basis_vectors = search_space.BasisVectors();
     const Matrix& op_basis_prod = search_space.OperatorBasisProduct();

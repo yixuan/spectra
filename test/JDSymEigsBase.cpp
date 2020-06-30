@@ -16,30 +16,31 @@ using Vector = Eigen::VectorXd;
 using ComplexMatrix = Eigen::MatrixXcd;
 using ComplexVector = Eigen::VectorXcd;
 using SpMatrix = Eigen::SparseMatrix<double>;
-using Index =Eigen::Index;
+using Index = Eigen::Index;
 template <typename Scalar,
           typename OpType>
-class JDMock : public JDSymEigsBase<Scalar,OpType>{
-
+class JDMock : public JDSymEigsBase<Scalar, OpType>
+{
 public:
-JDMock(OpType& op, Index nev):JDSymEigsBase<Scalar,OpType>(op,nev){}
-  Matrix SetupInitialSearchSpace()const{
-      return Matrix::Zero(0,0);
-  }
+    JDMock(OpType& op, Index nev) :
+        JDSymEigsBase<Scalar, OpType>(op, nev) {}
+    Matrix SetupInitialSearchSpace() const
+    {
+        return Matrix::Zero(0, 0);
+    }
 
-  Matrix CalculateCorrectionVector() const{
-       return Matrix::Zero(0,0);
-  }
-
-
+    Matrix CalculateCorrectionVector() const
+    {
+        return Matrix::Zero(0, 0);
+    }
 };
 
 TEST_CASE("Constructing JDSymObject", "[eigs_gen]")
 {
     const Matrix A = Eigen::MatrixXd::Random(10, 10);
     DenseGenMatProd<double> op(A);
-    JDMock<double, DenseGenMatProd<double> > eigs(op, 5);
+    JDMock<double, DenseGenMatProd<double>> eigs(op, 5);
 
-    REQUIRE( eigs.num_iterations() == 0 );
-    REQUIRE( eigs.info() == Spectra::CompInfo::NotComputed );
+    REQUIRE(eigs.num_iterations() == 0);
+    REQUIRE(eigs.info() == Spectra::CompInfo::NotComputed);
 }

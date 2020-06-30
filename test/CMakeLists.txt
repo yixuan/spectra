@@ -13,6 +13,8 @@ list(APPEND test_target_sources
         SymGEigsRegInv.cpp
         SVD.cpp
         JDSymEigsBase.cpp
+        RitzPairs.cpp
+        SearchSpace.cpp
         )
 
 foreach(TEST_SOURCE ${test_target_sources})
