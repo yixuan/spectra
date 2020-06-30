@@ -10,6 +10,7 @@ list(APPEND test_target_sources
         GenEigsComplexShift.cpp
         QR.cpp
         SparseGenMatProd.cpp
+        SparseSymMatProd.cpp
         SVD.cpp
         SymEigs.cpp
         SymEigsShift.cpp

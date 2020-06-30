@@ -74,7 +74,7 @@ public:
     SparseMatrix operator*(const SparseMatrix mat_in)
     {
         SparseMatrix result;
-        result.noalias() = m_mat.template selfadjointView<Uplo>() * mat_in;
+        result = m_mat.template selfadjointView<Uplo>() * mat_in;
         return result;
     }
 
@@ -83,7 +83,7 @@ public:
     ///
     Scalar operator()(Index i, Index j)
     {
-        return m_mat(i, j);
+        return m_mat.coeff(i, j);
     }
 };
 }  // namespace Spectra
