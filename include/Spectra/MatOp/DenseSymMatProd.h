@@ -18,10 +18,11 @@ namespace Spectra {
 /// symmetric real matrix \f$A\f$, i.e., calculating \f$y=Ax\f$ for any vector
 /// \f$x\f$. It is mainly used in the SymEigsSolver eigen solver.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor>
+template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor>
 class DenseSymMatProd
 {
 private:
+    typedef Scalar_ Scalar;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
@@ -29,6 +30,7 @@ private:
     using MapVec = Eigen::Map<Vector>;
     using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
+ 
     ConstGenericMatrix m_mat;
 
 public:

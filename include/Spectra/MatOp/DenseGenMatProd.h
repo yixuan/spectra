@@ -25,10 +25,11 @@ namespace Spectra {
 /// \f$x\f$. It is mainly used in the GenEigsSolver and
 /// SymEigsSolver eigen solvers.
 ///
-template <typename Scalar, int Flags = Eigen::ColMajor>
+template <typename Scalar_, int Flags = Eigen::ColMajor>
 class DenseGenMatProd
 {
 private:
+    typedef Scalar_ Scalar;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
