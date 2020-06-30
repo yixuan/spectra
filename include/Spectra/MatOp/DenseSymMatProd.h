@@ -30,7 +30,6 @@ private:
     using MapVec = Eigen::Map<Vector>;
     using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
- 
     ConstGenericMatrix m_mat;
 
 public:
