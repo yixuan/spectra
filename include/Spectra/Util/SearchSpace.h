@@ -49,11 +49,8 @@ public:
 
     void restart(RitzPairs<Scalar> &ritz_pairs, Index size)
     {
-        const Matrix& ritz_vectors = ritz_pairs.Vectors();
-        const Matrix& small_vectors = ritz_pairs.SmallRitzVectors();
-
-        basis_vectors_ = ritz_vectors.leftCols(size);
-        op_basis_product_ = op_basis_product_ * small_vectors.leftCols(size); 
+        basis_vectors_ = ritz_pairs.Vectors().leftCols(size);
+        op_basis_product_ = op_basis_product_ * ritz_pairs.SmallRitzVectors().leftCols(size); 
     }
 
     void append_new_vectors_to_basis(Matrix &new_vect)
