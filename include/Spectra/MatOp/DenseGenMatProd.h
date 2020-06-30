@@ -29,7 +29,7 @@ template <typename Scalar_, int Flags = Eigen::ColMajor>
 class DenseGenMatProd
 {
 private:
-    using Scalar  = Scalar_;
+    using Scalar = Scalar_;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
@@ -86,8 +86,9 @@ public:
     ///
     /// Extract (i,j) element of the underlying matrix.
     ///
-    Scalar operator()(Index i, Index j) {
-      return m_mat(i,j);
+    Scalar operator()(Index i, Index j)
+    {
+        return m_mat(i, j);
     }
 };
 
