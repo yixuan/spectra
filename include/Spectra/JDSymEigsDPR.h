@@ -39,7 +39,8 @@ private:
 
 public:
     /// Create initial search space based on the diagonal
-    // and the spectrum'target (highest or lowest)
+    /// and the spectrum'target (highest or lowest)
+    /// \return Matrix with the initial orthonormal basis
     Matrix SetupInitialSearchSpace(SortRule selection) const final
     {
         extract_diagonal();
