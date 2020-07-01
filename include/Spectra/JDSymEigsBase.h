@@ -123,6 +123,7 @@ protected:
     Index initial_search_space_size_;
     RitzPairs<Scalar> ritz_pairs_;      // Ritz eigen pair structure
     SearchSpace<Scalar> search_space_;  // search space
+    Index size_update_;                 // size of the current correction
 
 private:
     CompInfo info_ = CompInfo::NotComputed;  // status of the computation

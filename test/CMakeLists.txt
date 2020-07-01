@@ -13,6 +13,7 @@ list(APPEND test_target_sources
         SymGEigsRegInv.cpp
         SVD.cpp
         JDSymEigsBase.cpp
+        JDSymEigsDPR.cpp
         RitzPairs.cpp
         SearchSpace.cpp
         )
