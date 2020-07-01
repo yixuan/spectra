@@ -79,7 +79,7 @@ public:
     ///
     /// Extract (i,j) element of the underlying matrix.
     ///
-    Scalar operator()(Index i, Index j)
+    Scalar operator()(Index i, Index j) const
     {
         return m_mat(i, j);
     }

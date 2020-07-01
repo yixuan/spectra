@@ -110,7 +110,7 @@ public:
     }
 
 protected:
-    virtual Matrix SetupInitialSearchSpace() const = 0;
+    virtual Matrix SetupInitialSearchSpace(SortRule selection) = 0;
 
     virtual Matrix CalculateCorrectionVector() const = 0;
     const OpType& matrix_operator_;  // object to conduct matrix operation,

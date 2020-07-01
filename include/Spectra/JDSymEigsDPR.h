@@ -52,11 +52,14 @@ private:
     }
 
 public:
+    JDSymEigsDPR(OpType& op, Index nev) :
+        JDSymEigsBase<Scalar, OpType>{op, nev} {}
+
     /// Create initial search space based on the diagonal
     /// and the spectrum'target (highest or lowest)
     /// \param selection spectrum section to target (e.g. lowest, etc.)
     /// \return Matrix with the initial orthonormal basis
-    Matrix SetupInitialSearchSpace(SortRule selection) const final
+    Matrix SetupInitialSearchSpace(SortRule selection) final
     {
         extract_diagonal();
         calculate_indices_diagonal_sorted(selection);
@@ -66,7 +69,7 @@ public:
         for (Index k = 0; k < this->initial_search_space_size_; k++)
         {
             Index row = indices_sorted_[k];
-            initial_basis.coeff(row, k) = 1.0;
+            initial_basis(row, k) = 1.0;
         }
         return initial_basis;
     }
@@ -75,7 +78,7 @@ public:
     /// \return new correction vectors.
     Matrix CalculateCorrectionVector() const final
     {
-        const Matrix& residues = this->Residues();
+        const Matrix& residues = this->ritz_pairs_.Residues();
         const Vector& eigvals = this->ritz_pairs_.RitzValues();
         Matrix correction = Matrix::Zero(this->operator_dimension_, this->size_update_);
         for (Index k = 0; k < this->size_update_; k++)
