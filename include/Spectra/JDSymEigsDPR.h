@@ -13,6 +13,20 @@
 
 namespace Spectra {
 
+///
+/// \ingroup EigenSolver
+///
+/// This class implement the DPR correction for the Davidson algorithms.
+/// The algorithms in the Davidson family only differ in how the correction
+/// vectors are computed and optionally in the initial orthogonal basis set.
+///
+/// the DPR correction compute the new correction vector using the following expression:
+/// \f[ correction = -(\boldsymbol{D} - \rho \boldsymbol{I})^{-1} \boldsymbol{r} \f]
+/// where
+/// \f$D\f$ is the diagonal of the target matrix, \f$\rho\f$ the Ritz eigenvalue,
+/// \f$I\f$ the identity matrix and \f$r\f$ the residue vector.
+///
+
 template <typename Scalar, typename OpType>
 class JDSymEigsDPR : public JDSymEigsBase<Scalar, OpType>
 {
@@ -40,6 +54,7 @@ private:
 public:
     /// Create initial search space based on the diagonal
     /// and the spectrum'target (highest or lowest)
+    /// \param selection spectrum section to target (e.g. lowest, etc.)
     /// \return Matrix with the initial orthonormal basis
     Matrix SetupInitialSearchSpace(SortRule selection) const final
     {
