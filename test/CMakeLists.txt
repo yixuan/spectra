@@ -1,21 +1,25 @@
 set(test_target_sources)
 
 list(APPEND test_target_sources
-        QR.cpp
-        Eigen.cpp
         BKLDLT.cpp
-        SymEigs.cpp
-        SymEigsShift.cpp
+        DenseGenMatProd.cpp
+        DenseSymMatProd.cpp
+        Eigen.cpp
         GenEigs.cpp
         GenEigsRealShift.cpp
         GenEigsComplexShift.cpp
-        SymGEigsCholesky.cpp
-        SymGEigsRegInv.cpp
-        SVD.cpp
         JDSymEigsBase.cpp
         JDSymEigsDPR.cpp
+        QR.cpp
         RitzPairs.cpp
         SearchSpace.cpp
+        SparseGenMatProd.cpp
+        SparseSymMatProd.cpp
+        SVD.cpp
+        SymEigs.cpp
+        SymEigsShift.cpp
+        SymGEigsCholesky.cpp
+        SymGEigsRegInv.cpp
         )
 
 foreach(TEST_SOURCE ${test_target_sources})

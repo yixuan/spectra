@@ -25,10 +25,11 @@ namespace Spectra {
 /// \f$x\f$. It is mainly used in the GenEigsSolver and
 /// SymEigsSolver eigen solvers.
 ///
-template <typename Scalar, int Flags = Eigen::ColMajor>
+template <typename Scalar_, int Flags = Eigen::ColMajor>
 class DenseGenMatProd
 {
 private:
+    using Scalar = Scalar_;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
@@ -72,6 +73,22 @@ public:
         MapConstVec x(x_in, m_mat.cols());
         MapVec y(y_out, m_mat.rows());
         y.noalias() = m_mat * x;
+    }
+
+    ///
+    /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
+    ///
+    Matrix operator*(const Matrix mat_in)
+    {
+        return m_mat * mat_in;
+    }
+
+    ///
+    /// Extract (i,j) element of the underlying matrix.
+    ///
+    Scalar operator()(Index i, Index j)
+    {
+        return m_mat(i, j);
     }
 };
 
