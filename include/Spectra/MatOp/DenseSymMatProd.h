@@ -73,13 +73,13 @@ public:
     ///
     Matrix operator*(const Matrix mat_in)
     {
-       return m_mat.template selfadjointView<Uplo>() * mat_in;
+        return m_mat.template selfadjointView<Uplo>() * mat_in;
     }
 
     ///
     /// Extract (i,j) element of the underlying matrix.
     ///
-    Scalar operator()(Index i, Index j)
+    Scalar operator()(Index i, Index j) const
     {
         return m_mat(i, j);
     }
