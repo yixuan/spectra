@@ -19,7 +19,7 @@ Suppose we want to find the 2 eigenpairs with the Largest value from a 1000x1000
 Eigen::SparseMatrix<double> gen_sym_data_sparse(int n)
 {
     double prob = 0.5;
-    SpMatrix<T> mat(n, n);
+    Eigen::SparseMatrix<double> mat(n, n);
     std::default_random_engine gen;
     gen.seed(0);
     std::uniform_real_distribution<double> distr(0.0, 1.0);
@@ -31,13 +31,36 @@ Eigen::SparseMatrix<double> gen_sym_data_sparse(int n)
                 mat.insert(i, j) = distr(gen) - 0.5;
         }
     }
-    return mat;
+    return mat + Eigen::SparseMatrix<double>(mat.transpose);
 }
 
 Eigen::SparseMatrix<double> A = gen_sym_data_sparse(1000)
 ```
 
-- Then we have to construct a Matrix Product operation, which is provided by Spectra for Sparse Eigen matrices. 
+- Then we have to construct a Matrix Product operation, which is provided by Spectra for Sparse Symmetric Eigen matrices. 
 
 `Note: For the solver only a Matrix product operation is required, thus you can specify a custom one without underlying matrix if you wish`
 
+```cpp
+#include <Spectra/MatOp/SparseSymMatProd.h>
+
+Spectra::SparseSymMatProd<double> op(mat); // Create the Matrix Product operation
+```
+
+- Afterwards the solver can be constructed, and desired parameters can be set 
+
+TODO: explain the constructor (link to doxygen)? Explain that an initial guess can be provided?
+
+```cpp
+#include <Spectra/JDSymEigsDPR.h>
+
+Spectra::JDSymEigsDPR<OpType> solver(op,2); //Create Solver
+//Set maximum number of allowed iterations
+//TODO
+```
+
+- This solver can then be executed through the compute method, where we also specify which EigenPairs we want through the [Sortrule enum](https://spectralib.org/doc/selectionrule_8h_source)
+
+```cpp
+solver.compute(Spectra::SortRule::LargestMagn)
+```
