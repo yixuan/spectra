@@ -44,11 +44,13 @@ public:
         this->search_space_.OperatorBasisProduct() = this->matrix_operator_ * V;
     }
 
+    void InitResidues() { this->ritz_pairs_.Residues() = 1E-6 * Matrix::Random(10, 10); }
     void InitRitzPairs() { this->ritz_pairs_.compute_eigen_pairs(this->search_space_); }
     void SortRitzPairs() { this->ritz_pairs_.sort(Spectra::SortRule::LargestAlge); }
+    bool checkConvergence(double tol, Index nev) const { return this->ritz_pairs_.check_convergence(tol, nev); }
 };
 
-TEST_CASE("Sorting", "[RitzPairs]")
+TEST_CASE("compute_eigen_pairs", "[RitzPairs]")
 {
     Matrix A = Eigen::MatrixXd::Random(10, 10);
     Matrix B = A + A.transpose();
@@ -69,8 +71,10 @@ TEST_CASE("Sorting", "[RitzPairs]")
 
 TEST_CASE("Convergence", "[RitzPairs]")
 {
-}
-
-TEST_CASE("compute_eigen_pairs", "[RitzPairs]")
-{
+    Matrix A = Eigen::MatrixXd::Random(10, 10);
+    Matrix B = A + A.transpose();
+    DenseGenMatProd<double> op(B);
+    JDMock<DenseGenMatProd<double>> eigs(op, 5);
+    eigs.InitResidues();
+    // CHECK(eigs.checkConvergence(1E-3, 5));
 }

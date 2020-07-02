@@ -83,6 +83,7 @@ public:
     const Vector& RitzValues() const { return values_; }
     const Matrix& SmallRitzVectors() const { return small_vectors_; }
     const Matrix& Residues() const { return residues_; }
+    Matrix& Residues() { return residues_; }
     const BoolArray& ConvergedEigenvalues() const { return root_converged_; }
 
 private:
