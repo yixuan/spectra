@@ -36,12 +36,13 @@ private:
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
-    Vector diagonal_ = Vector::Zero(this->matrix_operator_.rows());
+    Vector diagonal_;
 
 public:
     JDSymEigsDPR(OpType& op, Index nev) :
         JDSymEigsBase<OpType>{op, nev}
     {
+        diagonal_.resize(this->matrix_operator_.rows());
         for (Index i = 0; i < op.rows(); i++)
         {
             diagonal_(i) = op(i, i);
