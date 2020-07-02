@@ -30,6 +30,7 @@ private:
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using MapConstVec = Eigen::Map<const Vector>;
     using MapVec = Eigen::Map<Vector>;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using SparseMatrix = Eigen::SparseMatrix<Scalar, Flags, StorageIndex>;
     using ConstGenericSparseMatrix = const Eigen::Ref<const SparseMatrix>;
 
@@ -73,7 +74,7 @@ public:
     ///
     /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
     ///
-    SparseMatrix operator*(const SparseMatrix& mat_in) const
+    Matrix operator*(const Eigen::Ref<const Matrix>& mat_in) const
     {
         return m_mat * mat_in;
     }

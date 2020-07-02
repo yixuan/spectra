@@ -125,7 +125,7 @@ public:
                            Scalar tol = 1e-10)
 
     {
-        search_space_.BasisVectors() = initial_space;
+        search_space_.InitializeSearchSpace(initial_space);
         niter_ = 0;
         for (niter_ = 0; niter_ < maxit; niter_++)
         {
