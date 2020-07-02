@@ -28,7 +28,7 @@ Eigen::Index sanity_check(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 template <typename Matrix>
 void QR_orthogonalisation(Matrix& in_output)
 {
-    using InternalMatrix= Eigen::Matrix<typename Matrix::Scalar,Eigen::Dynamic, Eigen::Dynamic>;
+    using InternalMatrix = Eigen::Matrix<typename Matrix::Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     Eigen::Index nrows = in_output.rows();
     Eigen::Index ncols = in_output.cols();
     ncols = std::min(nrows, ncols);
