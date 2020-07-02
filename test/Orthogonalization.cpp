@@ -1,6 +1,6 @@
 #include <Eigen/Core>
 #include <Spectra/LinAlg/Orthogonalization.h>
-
+#include <iostream>
 using namespace Spectra;
 
 #define CATCH_CONFIG_MAIN
@@ -16,37 +16,71 @@ void check_orthogonality(const Matrix& basis)
     const double tol = 1e-12;
     Matrix xs = basis.transpose() * basis;
     INFO("The orthonormalized basis must fulfill that basis.T * basis = I");
-    REQUIRE(xs.isIdentity(tol));
+    INFO( "Matrix is\n " << basis );
+    INFO( "Overlap is\n " << xs );
+    CHECK(xs.isIdentity(tol));
 }
 
-TEST_CASE("complete orthonormalization", "[Gram-Schmidt]")
+TEST_CASE("complete orthonormalization", "[orthogonalisation]")
 {
     std::srand(123);
-    const Index n = 100;
+    const Index n = 20;
 
     MatrixXd mat = MatrixXd::Random(n, n);
-    Orthogonalization<double> gs{mat};
-    check_orthogonality(gs.twice_modified_gramschmidt());
-    check_orthogonality(gs.modified_gramschmidt());
-    check_orthogonality(gs.QR());
+
+    SECTION("MGS")
+    {
+        MGS_orthogonalisation(mat);
+        check_orthogonality(mat);
+    }
+
+    SECTION("GS")
+    {
+        GS_orthogonalisation(mat);
+        check_orthogonality(mat);
+    }
+
+    SECTION("QR")
+    {
+        QR_orthogonalisation(mat);
+        check_orthogonality(mat);
+    }
+
+    SECTION("twice_is_enough")
+    {
+        twice_is_enough_orthogonalisation(mat);
+        check_orthogonality(mat);
+    }
 }
 
-TEST_CASE("Partial orthonormalization", "[Gram-Schmidt]")
+TEST_CASE("Partial orthonormalization", "[orthogonalisation]")
 {
     std::srand(123);
-    const Index n = 100;
-
+    const Index n = 20;
+const Index sub = 5;
+Index start=n-sub;
     // Create a n x 20 orthonormal basis
-    MatrixXd mat = MatrixXd::Random(n, n - 20);
-    Orthogonalization<double> gs{mat};
-    mat.leftCols(n - 20) = gs.twice_modified_gramschmidt();
+    MatrixXd mat = MatrixXd::Random(n, start);
+    QR_orthogonalisation(mat);
 
     mat.conservativeResize(Eigen::NoChange, n);
-    mat.rightCols(20) = MatrixXd::Random(n, 20);
+    mat.rightCols(20) = MatrixXd::Random(n, sub);
 
-    // Orthogonalize from 80 onwards
-    Orthogonalization<double> new_gs{mat, 80};
-    check_orthogonality(new_gs.twice_modified_gramschmidt());
-    check_orthogonality(new_gs.modified_gramschmidt());
-    check_orthogonality(new_gs.QR());
+    SECTION("MGS")
+    {
+        MGS_orthogonalisation(mat, start);
+        check_orthogonality(mat);
+    }
+
+    SECTION("GS")
+    {
+        GS_orthogonalisation(mat, start);
+        check_orthogonality(mat);
+    }
+
+    SECTION("twice_is_enough")
+    {
+        twice_is_enough_orthogonalisation(mat, start);
+        check_orthogonality(mat);
+    }
 }

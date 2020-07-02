@@ -12,106 +12,51 @@
 
 namespace Spectra {
 
-/** \ingroup LinAlg
-  *
-  *
-  * \class 
-  *
-  * \brief Methods to orthogalize a given basis A.
-  *
-  * Each column correspond to a vector on the basis.
-  * The start index indicates from what vector to start
-  * the orthogonalization, 0 is the default.
-  * Warnings: Starting the normalization at index n imples that the previous
-  * n-1 vectors are already orthonormal.
-  */
-template <typename Scalar>
-class Orthogonalization
+template <typename Matrix>
+void QR_orthogonalisation(Matrix& in_output)
 {
-private:
-    using Index = Eigen::Index;
-    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
-    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    const Matrix& basis;
-    Index start_index = 0;
-    void check_linear_dependency(const Vector& vec, Index j)
+    Eigen::Index nrows = in_output.rows();
+    Eigen::Index ncols = in_output.cols();
+    ncols = std::min(nrows, ncols);
+    Matrix I = Matrix::Identity(nrows, ncols);
+    Eigen::HouseholderQR<Matrix> qr(in_output);
+    in_output = qr.householderQ() * I;
+}
+
+template <typename Matrix>
+void MGS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+{
+    assert(in_output.cols()>leftColsToSkip && "leftColsToSkip is larger than columns of matrix");
+    assert(leftColsToSkip>=0 && "leftColsToSkip is negative");
+    if (leftColsToSkip == 0)
     {
-        if (vec.norm() <= 1E-12 * basis.col(j).norm())
-        {
-            throw std::runtime_error(
-                "There is a Linear dependencies in Gram-Schmidt."
-                "Hint: try the QR method.");
-        }
+        in_output.col(0).normalize();
+        leftColsToSkip = 1;
     }
 
-public:
-    /// \param mat Matrix type can be `Eigen::Matrix<Scalar, ...>` (e.g.
-    /// `Eigen::MatrixXd` and `Eigen::MatrixXf`)
-    /// \param nstart index of the column from which to start the process
-    Orthogonalization(const Matrix& A, Index nstart) :
-        basis{A}, start_index{nstart} {}
-
-    Orthogonalization(const Matrix& A) :
-        basis{A} {}
-
-    /// two consecutive modified Gram-schmidt iterations are enough to converge
-    /// http://stoppels.blog/posts/orthogonalization-performance
-    /// \return Returned matrix type will be `Eigen::Matrix<Scalar, ...>`, depending on
-    /// the template parameter `Scalar` defined.
-    Matrix twice_modified_gramschmidt()
+    for (Eigen::Index j = leftColsToSkip; j < in_output.cols(); ++j)
     {
-        Matrix Q = basis;
-        Index nstart = start_index;
-        if (start_index == 0)
-        {
-            Q.col(0).normalize();
-            nstart = 1;
-        }
-        for (Index j = nstart; j < basis.cols(); ++j)
-        {
-            Q.col(j) -= Q.leftCols(j) * (Q.leftCols(j).transpose() * basis.col(j));
-            Q.col(j).normalize();
-            Q.col(j) -= Q.leftCols(j) * (Q.leftCols(j).transpose() * Q.col(j));
-            check_linear_dependency(Q.col(j), j);
-            Q.col(j).normalize();
-        }
-        return Q;
+        in_output.col(j) -= in_output.leftCols(j) * (in_output.leftCols(j).transpose() * in_output.col(j));
+        in_output.col(j).normalize();
     }
+}
 
-    /// Standard modified Gram-Schmidt process
-    /// \return Returned matrix type will be `Eigen::Matrix<Scalar, ...>`, depending on
-    /// the template parameter `Scalar` defined.
-    Matrix modified_gramschmidt()
-    {
-        Matrix Q = basis;
-        Index nstart = start_index;
-        if (start_index == 0)
-        {
-            Q.col(0).normalize();
-            nstart = 1;
-        }
-        for (Index j = nstart; j < basis.cols(); ++j)
-        {
-            Q.col(j) -= Q.leftCols(j) * (Q.leftCols(j).transpose() * Q.col(j));
-            check_linear_dependency(Q.col(j), j);
-            Q.col(j).normalize();
-        }
-        return Q;
-    }
+template <typename Matrix>
+void GS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+{
+    assert(in_output.cols()>leftColsToSkip && "leftColsToSkip is larger than columns of matrix");
+    assert(leftColsToSkip>=0 && "leftColsToSkip is negative");
+    Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
+    in_output.rightCols(rightColToOrtho) -= in_output.rightCols(rightColToOrtho) * (in_output.transpose() * in_output);
+    in_output.rightCols(rightColToOrtho).colwise().normalize();
+}
 
-    /// Use the QR method to orthonormalize the basis.
-    /// \return Returned matrix type will be `Eigen::Matrix<Scalar, ...>`, depending on
-    /// the template parameter `Scalar` defined.
-    Matrix QR()
-    {
-        Index nrows = basis.rows();
-        Index ncols = basis.cols();
-        ncols = std::min(nrows, ncols);
-        Matrix I = Matrix::Identity(nrows, ncols);
-        Eigen::HouseholderQR<Matrix> qr(basis);
-        return qr.householderQ() * I;
-    }
-};
+template <typename Matrix>
+void twice_is_enough_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+{
+    GS_orthogonalisation(in_output, leftColsToSkip);
+    GS_orthogonalisation(in_output, leftColsToSkip);
+}
 
 }  // namespace Spectra
 
