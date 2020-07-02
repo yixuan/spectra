@@ -72,8 +72,8 @@ public:
     {
         const Matrix& residues = this->ritz_pairs_.Residues();
         const Vector& eigvals = this->ritz_pairs_.RitzValues();
-        Matrix correction = Matrix::Zero(this->matrix_operator_.rows(), this->size_update_);
-        for (Index k = 0; k < this->size_update_; k++)
+        Matrix correction = Matrix::Zero(this->matrix_operator_.rows(), this->correction_size_);
+        for (Index k = 0; k < this->correction_size_; k++)
         {
             Vector tmp = eigvals(k) - diagonal_.array();
             correction.col(k) = residues.col(k).array() / tmp.array();
