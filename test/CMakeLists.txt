@@ -10,6 +10,7 @@ list(APPEND test_target_sources
         GenEigsRealShift.cpp
         GenEigsComplexShift.cpp
         JDSymEigsBase.cpp
+        Orthogonalization.cpp
         QR.cpp
         RitzPairs.cpp
         SearchSpace.cpp

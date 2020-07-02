@@ -4,3 +4,5 @@ include/Eigen/*
 .idea/
 cmake-build*/
 build/*
+.vscode
+*~
