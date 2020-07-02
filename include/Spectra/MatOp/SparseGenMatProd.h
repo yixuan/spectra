@@ -71,7 +71,7 @@ public:
     ///
     /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
     ///
-    SparseMatrix operator*(const SparseMatrix mat_in) const
+    SparseMatrix operator*(const SparseMatrix& mat_in) const
     {
         return m_mat * mat_in;
     }
