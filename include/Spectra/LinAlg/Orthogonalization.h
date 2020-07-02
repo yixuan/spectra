@@ -76,7 +76,7 @@ void partial_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 
     leftColsToSkip = sanity_check(in_output, leftColsToSkip);
 
     Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
-    in_output.rightCols(rightColToOrtho) -= in_output.leftCols(leftColsToSkip) * (in_output.leftCols(leftColsToSkip).transpose() * in_output.rightCols(rightColToOrtho));
+    in_output.rightCols(rightColToOrtho) -= (in_output.leftCols(leftColsToSkip) * in_output.leftCols(leftColsToSkip).transpose()) * in_output.rightCols(rightColToOrtho);
     in_output.rightCols(rightColToOrtho).colwise().normalize();
 }
 
@@ -86,8 +86,8 @@ void JensWhener_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip
     leftColsToSkip = sanity_check(in_output, leftColsToSkip);
 
     Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
-    Matrix right_cols = in_output.rightCols(rightColToOrtho);
     partial_orthogonalisation(in_output, leftColsToSkip);
+    Matrix right_cols = in_output.rightCols(rightColToOrtho);
     QR_orthogonalisation(right_cols);
     in_output.rightCols(rightColToOrtho) = right_cols;
 }
