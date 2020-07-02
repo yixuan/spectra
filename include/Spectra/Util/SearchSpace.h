@@ -35,6 +35,12 @@ public:
         op_basis_product_.rightCols(nvec) = op * basis_vectors_.rightCols(nvec);
     }
 
+    void InitializeSearchSpace(const Eigen::Ref<const Matrix> &initial_vectors)
+    {
+        basis_vectors_ = initial_vectors;
+        op_basis_product_ = Matrix(initial_vectors.rows(), 0);
+    }
+
     template <typename OpType>
     void full_update(OpType &op)
     {
@@ -55,7 +61,6 @@ public:
     }
 
     const Matrix &BasisVectors() const { return basis_vectors_; }
-    Matrix &BasisVectors() { return basis_vectors_; }
     const Matrix &OperatorBasisProduct() const { return op_basis_product_; }
 
 private:
