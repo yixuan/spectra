@@ -35,12 +35,12 @@ private:
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
-    Vector diagonal_ = Vector::Zero(this->operator_dimension_);
+    Vector diagonal_ = Vector::Zero(this->matrix_operator_.rows());
     std::vector<Eigen::Index> indices_sorted_;
 
     void extract_diagonal()
     {
-        for (Index i = 0; i < this->operator_dimension_; i++)
+        for (Index i = 0; i < this->matrix_operator_.rows(); i++)
         {
             diagonal_(i) = this->matrix_operator_(i, i);
         }
@@ -64,7 +64,7 @@ public:
         extract_diagonal();
         calculate_indices_diagonal_sorted(selection);
 
-        Matrix initial_basis = Matrix::Zero(this->operator_dimension_, this->initial_search_space_size_);
+        Matrix initial_basis = Matrix::Zero(this->matrix_operator_.rows(), this->initial_search_space_size_);
 
         for (Index k = 0; k < this->initial_search_space_size_; k++)
         {
@@ -80,7 +80,7 @@ public:
     {
         const Matrix& residues = this->ritz_pairs_.Residues();
         const Vector& eigvals = this->ritz_pairs_.RitzValues();
-        Matrix correction = Matrix::Zero(this->operator_dimension_, this->size_update_);
+        Matrix correction = Matrix::Zero(this->matrix_operator_.rows(), this->size_update_);
         for (Index k = 0; k < this->size_update_; k++)
         {
             Vector tmp = eigvals(k) - diagonal_.array();
