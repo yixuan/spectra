@@ -63,7 +63,7 @@ public:
     ///
     /// Set the real shift \f$\sigma\f$.
     ///
-    void set_shift(Scalar sigma)
+    void set_shift(const Scalar& sigma)
     {
         m_solver.compute(m_mat - sigma * Matrix::Identity(m_n, m_n));
     }
