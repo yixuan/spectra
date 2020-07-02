@@ -28,8 +28,10 @@ namespace Spectra {
 template <typename Scalar_, int Flags = Eigen::ColMajor>
 class DenseGenMatProd
 {
-private:
+public:
     using Scalar = Scalar_;
+
+private:
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
