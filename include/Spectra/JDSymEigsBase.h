@@ -41,7 +41,6 @@ private:
 public:
     JDSymEigsBase(OpType& op, Index nev) :
         matrix_operator_(op),
-        operator_dimension_(op.rows()),
         number_eigenvalues_(nev),
         max_search_space_size_(10 * number_eigenvalues_),
         initial_search_space_size_(2 * number_eigenvalues_)
@@ -117,7 +116,6 @@ protected:
                                      // e.g. matrix-vector product
 
     Index niter_ = 0;
-    const Index operator_dimension_;  // dimension of matrix A
     const Index number_eigenvalues_;  // number of eigenvalues requested
     Index max_search_space_size_;
     Index initial_search_space_size_;
@@ -138,7 +136,7 @@ private:
 
     void check_argument() const
     {
-        if (number_eigenvalues_ < 1 || number_eigenvalues_ > operator_dimension_ - 1)
+        if (number_eigenvalues_ < 1 || number_eigenvalues_ > matrix_operator_.cols() - 1)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
     }
 
