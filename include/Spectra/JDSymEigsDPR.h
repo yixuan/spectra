@@ -36,39 +36,30 @@ private:
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
     Vector diagonal_ = Vector::Zero(this->matrix_operator_.rows());
-    std::vector<Eigen::Index> indices_sorted_;
-
-    void extract_diagonal()
-    {
-        for (Index i = 0; i < this->matrix_operator_.rows(); i++)
-        {
-            diagonal_(i) = this->matrix_operator_(i, i);
-        }
-    }
-
-    void calculate_indices_diagonal_sorted(SortRule selection)
-    {
-        indices_sorted_ = argsort(selection, diagonal_);
-    }
 
 public:
     JDSymEigsDPR(OpType& op, Index nev) :
-        JDSymEigsBase<Scalar, OpType>{op, nev} {}
+        JDSymEigsBase<Scalar, OpType>{op, nev}
+    {
+        for (Index i = 0; i < op.rows(); i++)
+        {
+            diagonal_(i) = op(i, i);
+        }
+    }
 
     /// Create initial search space based on the diagonal
     /// and the spectrum'target (highest or lowest)
     /// \param selection spectrum section to target (e.g. lowest, etc.)
     /// \return Matrix with the initial orthonormal basis
-    Matrix SetupInitialSearchSpace(SortRule selection) final
+    Matrix SetupInitialSearchSpace(SortRule selection) const final
     {
-        extract_diagonal();
-        calculate_indices_diagonal_sorted(selection);
+        std::vector<Eigen::Index> indices_sorted = argsort(selection, diagonal_);
 
         Matrix initial_basis = Matrix::Zero(this->matrix_operator_.rows(), this->initial_search_space_size_);
 
         for (Index k = 0; k < this->initial_search_space_size_; k++)
         {
-            Index row = indices_sorted_[k];
+            Index row = indices_sorted[k];
             initial_basis(row, k) = 1.0;
         }
         return initial_basis;
