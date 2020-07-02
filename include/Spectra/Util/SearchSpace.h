@@ -50,9 +50,9 @@ public:
     void extend_basis(const Matrix &new_vect)
     {
         Index num_update = new_vect.cols();
-        Index leftColstoSkip=size();
+        Index leftColstoSkip = size();
         append_new_vectors_to_basis(new_vect);
-        Spectra::twice_is_enough_orthogonalisation(basis_vectors_,leftColstoSkip);
+        Spectra::twice_is_enough_orthogonalisation(basis_vectors_, leftColstoSkip);
     }
 
     const Matrix &BasisVectors() const { return basis_vectors_; }
