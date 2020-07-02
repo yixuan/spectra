@@ -1,6 +1,7 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <iostream>
+#include <type_traits>
 #include <random>  // Requires C++ 11
 
 #include <Spectra/GenEigsSolver.h>
@@ -17,19 +18,6 @@ using Vector = Eigen::VectorXd;
 using ComplexMatrix = Eigen::MatrixXcd;
 using ComplexVector = Eigen::VectorXcd;
 using SpMatrix = Eigen::SparseMatrix<double>;
-
-// Traits to obtain operation type from matrix type
-template <typename MatType>
-struct OpTypeTrait
-{
-    using OpType = DenseGenMatProd<double>;
-};
-
-template <>
-struct OpTypeTrait<SpMatrix>
-{
-    using OpType = SparseGenMatProd<double>;
-};
 
 // Generate random sparse matrix
 SpMatrix gen_sparse_data(int n, double prob = 0.5)
@@ -49,15 +37,12 @@ SpMatrix gen_sparse_data(int n, double prob = 0.5)
     return mat;
 }
 
-template <typename MatType>
-void run_test(const MatType& mat, int k, int m, SortRule selection, bool allow_fail = false)
+template <typename MatType, typename Solver>
+void run_test(const MatType& mat, Solver& eigs, SortRule selection, bool allow_fail = false)
 {
-    using OpType = typename OpTypeTrait<MatType>::OpType;
-    OpType op(mat);
-    GenEigsSolver<double, OpType> eigs(op, k, m);
     eigs.init();
-    // maxit = 350 to reduce running time for failed cases
-    int nconv = eigs.compute(selection, 350);
+    // maxit = 300 to reduce running time for failed cases
+    int nconv = eigs.compute(selection, 300);
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
@@ -90,29 +75,37 @@ void run_test(const MatType& mat, int k, int m, SortRule selection, bool allow_f
 template <typename MatType>
 void run_test_sets(const MatType& A, int k, int m)
 {
+    constexpr bool is_dense = std::is_same<MatType, Matrix>::value;
+    using DenseOp = DenseGenMatProd<double>;
+    using SparseOp = SparseGenMatProd<double>;
+    using OpType = typename std::conditional<is_dense, DenseOp, SparseOp>::type;
+
+    OpType op(A);
+    GenEigsSolver<double, OpType> eigs(op, k, m);
+
     SECTION("Largest Magnitude")
     {
-        run_test<MatType>(A, k, m, SortRule::LargestMagn);
+        run_test(A, eigs, SortRule::LargestMagn);
     }
     SECTION("Largest Real Part")
     {
-        run_test<MatType>(A, k, m, SortRule::LargestReal);
+        run_test(A, eigs, SortRule::LargestReal);
     }
     SECTION("Largest Imaginary Part")
     {
-        run_test<MatType>(A, k, m, SortRule::LargestImag);
+        run_test(A, eigs, SortRule::LargestImag);
     }
     SECTION("Smallest Magnitude")
     {
-        run_test<MatType>(A, k, m, SortRule::SmallestMagn, true);
+        run_test(A, eigs, SortRule::SmallestMagn, true);
     }
     SECTION("Smallest Real Part")
     {
-        run_test<MatType>(A, k, m, SortRule::SmallestReal);
+        run_test(A, eigs, SortRule::SmallestReal);
     }
     SECTION("Smallest Imaginary Part")
     {
-        run_test<MatType>(A, k, m, SortRule::SmallestImag, true);
+        run_test(A, eigs, SortRule::SmallestImag, true);
     }
 }
 
@@ -120,7 +113,7 @@ TEST_CASE("Eigensolver of general real matrix [10x10]", "[eigs_gen]")
 {
     std::srand(123);
 
-    const Matrix A = Eigen::MatrixXd::Random(10, 10);
+    const Matrix A = Matrix::Random(10, 10);
     int k = 3;
     int m = 6;
 
@@ -131,7 +124,7 @@ TEST_CASE("Eigensolver of general real matrix [100x100]", "[eigs_gen]")
 {
     std::srand(123);
 
-    const Matrix A = Eigen::MatrixXd::Random(100, 100);
+    const Matrix A = Matrix::Random(100, 100);
     int k = 10;
     int m = 30;
 
@@ -142,7 +135,7 @@ TEST_CASE("Eigensolver of general real matrix [1000x1000]", "[eigs_gen]")
 {
     std::srand(123);
 
-    const Matrix A = Eigen::MatrixXd::Random(1000, 1000);
+    const Matrix A = Matrix::Random(1000, 1000);
     int k = 20;
     int m = 50;
 
@@ -164,7 +157,7 @@ TEST_CASE("Eigensolver of sparse real matrix [100x100]", "[eigs_gen]")
 {
     std::srand(123);
 
-    const SpMatrix A = gen_sparse_data(100, 0.5);
+    const SpMatrix A = gen_sparse_data(100, 0.1);
     int k = 10;
     int m = 30;
 
@@ -175,7 +168,7 @@ TEST_CASE("Eigensolver of sparse real matrix [1000x1000]", "[eigs_gen]")
 {
     std::srand(123);
 
-    const SpMatrix A = gen_sparse_data(1000, 0.5);
+    const SpMatrix A = gen_sparse_data(1000, 0.01);
     int k = 20;
     int m = 50;
 

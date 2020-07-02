@@ -24,7 +24,7 @@ namespace Spectra {
 /// of the SymEigsShiftSolver class.
 ///
 /// \tparam Scalar  The element type of the matrix.
-///                 Currently supported types are `float`, `double` and `long double`.
+///                 Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType  The name of the matrix operation class. Users could either
 ///                 use the DenseGenComplexShiftSolve wrapper class, or define their
 ///                 own that implements all the public member functions as in
@@ -40,12 +40,13 @@ private:
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using ComplexArray = Eigen::Array<Complex, Eigen::Dynamic, 1>;
 
-    using GenEigsBase<Scalar, OpType, IdentityBOp>::m_op;
-    using GenEigsBase<Scalar, OpType, IdentityBOp>::m_n;
-    using GenEigsBase<Scalar, OpType, IdentityBOp>::m_nev;
-    using GenEigsBase<Scalar, OpType, IdentityBOp>::m_fac;
-    using GenEigsBase<Scalar, OpType, IdentityBOp>::m_ritz_val;
-    using GenEigsBase<Scalar, OpType, IdentityBOp>::m_ritz_vec;
+    using Base = GenEigsBase<Scalar, OpType, IdentityBOp>;
+    using Base::m_op;
+    using Base::m_n;
+    using Base::m_nev;
+    using Base::m_fac;
+    using Base::m_ritz_val;
+    using Base::m_ritz_vec;
 
     const Scalar m_sigmar;
     const Scalar m_sigmai;
@@ -123,7 +124,7 @@ private:
             }
         }
 
-        GenEigsBase<Scalar, OpType, IdentityBOp>::sort_ritzpair(sort_rule);
+        Base::sort_ritzpair(sort_rule);
     }
 
 public:
@@ -147,7 +148,7 @@ public:
     /// \param sigmai  The imaginary part of the shift.
     ///
     GenEigsComplexShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigmar, const Scalar& sigmai) :
-        GenEigsBase<Scalar, OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv),
+        Base(op, IdentityBOp(), nev, ncv),
         m_sigmar(sigmar), m_sigmai(sigmai)
     {
         op.set_shift(m_sigmar, m_sigmai);

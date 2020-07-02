@@ -65,7 +65,7 @@ public:
     ///
     /// Set the real shift \f$\sigma\f$.
     ///
-    void set_shift(Scalar sigma)
+    void set_shift(const Scalar& sigma)
     {
         m_solver.compute(m_mat, Uplo, sigma);
         if (m_solver.info() != CompInfo::Successful)
