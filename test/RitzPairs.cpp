@@ -27,41 +27,44 @@ class JDMock : public JDSymEigsBase<OpType>
 public:
     JDMock(OpType& op, Index nev) :
         JDSymEigsBase<OpType>(op, nev) {}
+
     Matrix SetupInitialSearchSpace(SortRule) const
     {
-        Matrix V = Matrix::Random(10, 10);
+        Matrix V = Matrix::Random(10, 5);
         QR_orthogonalisation(V);
         return V;
     }
 
-    Matrix CalculateCorrectionVector() const
+    Matrix CalculateCorrectionVector() const { return Matrix::Zero(0, 0); }
+
+    void InitSearchSpace()
     {
-        return Matrix::Zero(0, 0);
+        Matrix V = this->SetupInitialSearchSpace(Spectra::SortRule::LargestAlge);
+        this->search_space_.BasisVectors() = V;
+        this->search_space_.OperatorBasisProduct() = this->matrix_operator_ * V;
     }
+
+    void InitRitzPairs() { this->ritz_pairs_.compute_eigen_pairs(this->search_space_); }
+    void SortRitzPairs() { this->ritz_pairs_.sort(Spectra::SortRule::LargestAlge); }
 };
-
-TEST_CASE("Constructing JDSymObject", "[eigs_gen]")
-{
-    const Matrix A = Eigen::MatrixXd::Random(10, 10);
-    DenseGenMatProd<double> op(A);
-    JDMock<DenseGenMatProd<double>> eigs(op, 5);
-
-    REQUIRE(eigs.num_iterations() == 0);
-    REQUIRE(eigs.info() == Spectra::CompInfo::NotComputed);
-}
 
 TEST_CASE("Sorting", "[RitzPairs]")
 {
-    const Matrix A = Eigen::MatrixXd::Random(10, 10);
-    DenseGenMatProd<double> op(A);
+    Matrix A = Eigen::MatrixXd::Random(10, 10);
+    Matrix B = A + A.transpose();
+    DenseGenMatProd<double> op(B);
     JDMock<DenseGenMatProd<double>> eigs(op, 5);
-    eigs.search_space_.BasisVectors() = eigs.SetupInitialSearchSpace();
-    eigs.search_space_.update_operator_basis_product(eigs.matrix_operator_);
-    eigs.ritz_pairs_.compute_eigen_pairs(eigs.search_space_);
 
-    // pair.values_ = Eigen::Vector::Random(10);
-    // pair.vectors_ = Eigen::Matrix::Random(10, 10);
-    // pair.sort(Spectra::LargestReal)
+    eigs.InitSearchSpace();
+
+    eigs.InitRitzPairs();
+    eigs.SortRitzPairs();
+    Vector ev = eigs.eigenvalues();
+
+    for (Index i = 1; i < 5; i++)
+    {
+        CHECK(ev(i) < ev(i - 1));
+    }
 }
 
 TEST_CASE("Convergence", "[RitzPairs]")

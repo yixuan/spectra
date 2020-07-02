@@ -86,6 +86,9 @@ public:
     /// Returns the operator applied to basis vector
     const Matrix &OperatorBasisProduct() const { return op_basis_product_; }
 
+    /// Returns the operator applied to basis vector
+    Matrix &OperatorBasisProduct() { return op_basis_product_; }
+
 private:
     Matrix basis_vectors_;
     Matrix op_basis_product_;

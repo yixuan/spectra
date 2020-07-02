@@ -118,7 +118,7 @@ void RitzPairs<Scalar>::compute_eigen_pairs(const SearchSpace<Scalar>& search_sp
     vectors_ = basis_vectors * small_vectors_;
 
     // residues
-    residues_ = op_basis_prod * small_vectors_ - vectors_ * values_.asDiagaonal();
+    residues_ = op_basis_prod * small_vectors_ - vectors_ * values_.asDiagonal();
 }
 
 }  // namespace Spectra
