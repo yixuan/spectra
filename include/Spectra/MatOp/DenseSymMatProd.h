@@ -21,8 +21,10 @@ namespace Spectra {
 template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor>
 class DenseSymMatProd
 {
-private:
+public:
     using Scalar = Scalar_;
+
+private:
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
