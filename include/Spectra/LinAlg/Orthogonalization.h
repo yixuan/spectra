@@ -13,10 +13,15 @@
 namespace Spectra {
 
 template <typename Matrix>
-Eigen::Index sanity_check(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+void assert_leftColsToSkip(Matrix& in_output, Eigen::Index leftColsToSkip)
 {
     assert(in_output.cols() > leftColsToSkip && "leftColsToSkip is larger than columns of matrix");
     assert(leftColsToSkip >= 0 && "leftColsToSkip is negative");
+}
+
+template <typename Matrix>
+Eigen::Index treatFirstCol(Matrix& in_output, Eigen::Index leftColsToSkip)
+{
     if (leftColsToSkip == 0)
     {
         in_output.col(0).normalize();
@@ -39,7 +44,8 @@ void QR_orthogonalisation(Matrix& in_output)
 template <typename Matrix>
 void MGS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 {
-    leftColsToSkip = sanity_check(in_output, leftColsToSkip);
+    assert_leftColsToSkip(in_output, leftColsToSkip);
+    leftColsToSkip = treatFirstCol(in_output, leftColsToSkip);
 
     for (Eigen::Index k = leftColsToSkip; k < in_output.cols(); ++k)
     {
@@ -54,7 +60,8 @@ void MGS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 template <typename Matrix>
 void GS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 {
-    leftColsToSkip = sanity_check(in_output, leftColsToSkip);
+    assert_leftColsToSkip(in_output, leftColsToSkip);
+    leftColsToSkip = treatFirstCol(in_output, leftColsToSkip);
 
     for (Eigen::Index j = leftColsToSkip; j < in_output.cols(); ++j)
     {
@@ -73,17 +80,19 @@ void twice_is_enough_orthogonalisation(Matrix& in_output, Eigen::Index leftColsT
 template <typename Matrix>
 void partial_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 {
-    leftColsToSkip = sanity_check(in_output, leftColsToSkip);
+    assert_leftColsToSkip(in_output, leftColsToSkip);
+    leftColsToSkip = treatFirstCol(in_output, leftColsToSkip);
 
     Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
-    in_output.rightCols(rightColToOrtho) -= (in_output.leftCols(leftColsToSkip) * in_output.leftCols(leftColsToSkip).transpose()) * in_output.rightCols(rightColToOrtho);
+    in_output.rightCols(rightColToOrtho) -= in_output.leftCols(leftColsToSkip) * (in_output.leftCols(leftColsToSkip).transpose() * in_output.rightCols(rightColToOrtho));
     in_output.rightCols(rightColToOrtho).colwise().normalize();
 }
 
 template <typename Matrix>
 void JensWhener_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 {
-    leftColsToSkip = sanity_check(in_output, leftColsToSkip);
+    assert_leftColsToSkip(in_output, leftColsToSkip);
+    leftColsToSkip = treatFirstCol(in_output, leftColsToSkip);
 
     Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
     partial_orthogonalisation(in_output, leftColsToSkip);
