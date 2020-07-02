@@ -28,7 +28,7 @@ namespace Spectra {
 ///
 
 template <typename OpType>
-class JDSymEigsDPR : public JDSymEigsBase<OpType>
+class DavidsonSymEig : public JDSymEigsBase<OpType>
 {
 private:
     using Index = Eigen::Index;
@@ -39,7 +39,7 @@ private:
     Vector diagonal_;
 
 public:
-    JDSymEigsDPR(OpType& op, Index nev) :
+    DavidsonSymEig(OpType& op, Index nev) :
         JDSymEigsBase<OpType>{op, nev}
     {
         diagonal_.resize(this->matrix_operator_.rows());

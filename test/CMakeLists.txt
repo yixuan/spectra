@@ -2,6 +2,7 @@ set(test_target_sources)
 
 list(APPEND test_target_sources
         BKLDLT.cpp
+        DavidsonSymEig.cpp
         DenseGenMatProd.cpp
         DenseSymMatProd.cpp
         Eigen.cpp
@@ -9,7 +10,6 @@ list(APPEND test_target_sources
         GenEigsRealShift.cpp
         GenEigsComplexShift.cpp
         JDSymEigsBase.cpp
-        JDSymEigsDPR.cpp
         QR.cpp
         RitzPairs.cpp
         SearchSpace.cpp
