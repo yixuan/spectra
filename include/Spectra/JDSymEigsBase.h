@@ -24,19 +24,16 @@
 
 namespace Spectra {
 
-template <typename Scalar,
-          typename OpType>
+template <typename OpType>
 class JDSymEigsBase
 {
 private:
     using Index = Eigen::Index;
+    using Scalar = OpType::Scalar;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
     using BoolArray = Eigen::Array<bool, Eigen::Dynamic, 1>;
-    using MapMat = Eigen::Map<Matrix>;
-    using MapVec = Eigen::Map<Vector>;
-    using MapConstVec = Eigen::Map<const Vector>;
 
 public:
     JDSymEigsBase(OpType& op, Index nev) :
@@ -85,30 +82,6 @@ public:
 
     Matrix eigenvectors() const { return ritz_pairs_.RitzVectors().leftCols(number_eigenvalues_); }
 
-    ///
-    /// Initializes the solver by providing an initial search space.
-    ///
-    /// \param init_resid Matrix containing initial search space.
-    ///
-    ///
-    void init(const Eigen::Ref<const Matrix>& init_space)
-    {
-        niter_ = 0;
-        search_space_.BasisVectors() = init_space;
-    }
-
-    ///
-    /// Initializes the solver by providing  initial search sapce.
-    ///
-    /// Depending n the method this search space is initialized in a different way
-    ///
-    void init()
-    {
-        Matrix intial_space = SetupInitialSearchSpace();
-        //TODO orthogonalize
-        init(intial_space);
-    }
-
 protected:
     virtual Matrix SetupInitialSearchSpace() const = 0;
 
@@ -127,14 +100,6 @@ protected:
 private:
     CompInfo info_ = CompInfo::NotComputed;  // status of the computation
 
-    // Move rvalue object to the container
-    static std::vector<OpType> create_op_container(OpType&& rval)
-    {
-        std::vector<OpType> container;
-        container.emplace_back(std::move(rval));
-        return container;
-    }
-
     void check_argument() const
     {
         if (number_eigenvalues_ < 1 || number_eigenvalues_ > operator_dimension_ - 1)
@@ -143,8 +108,17 @@ private:
 
 public:
     Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
+                  Scalar tol = 1e-10){
+                      Matrix intial_space = SetupInitialSearchSpace();
+                      return computeWithGuess(selection,intial_space,maxit,tol);
+
+                  }
+    Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space, SortRule selection = SortRule::LargestMagn,  Index maxit = 1000,
                   Scalar tol = 1e-10)
+    
     {
+        search_space_.BasisVectors() = initial_space;
+        niter_ = 0;
         for (niter_ = 0; niter_ < maxit; niter_++)
         {
             bool do_restart = (search_space_.size() > max_search_space_size_);
