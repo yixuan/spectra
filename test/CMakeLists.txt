@@ -8,6 +8,7 @@ list(APPEND test_target_sources
         GenEigs.cpp
         GenEigsRealShift.cpp
         GenEigsComplexShift.cpp
+        Orthogonalization.cpp
         QR.cpp
         SparseGenMatProd.cpp
         SparseSymMatProd.cpp
