@@ -16,8 +16,8 @@ void check_orthogonality(const Matrix& basis)
     const double tol = 1e-12;
     Matrix xs = basis.transpose() * basis;
     INFO("The orthonormalized basis must fulfill that basis.T * basis = I");
-    INFO( "Matrix is\n " << basis );
-    INFO( "Overlap is\n " << xs );
+    INFO("Matrix is\n " << basis);
+    INFO("Overlap is\n " << xs);
     CHECK(xs.isIdentity(tol));
 }
 
@@ -51,20 +51,27 @@ TEST_CASE("complete orthonormalization", "[orthogonalisation]")
         twice_is_enough_orthogonalisation(mat);
         check_orthogonality(mat);
     }
+
+    // SECTION("JensWhener")
+    // {
+    //     JensWhener_orthogonalisation(mat);
+    //     check_orthogonality(mat);
+    // }
 }
 
 TEST_CASE("Partial orthonormalization", "[orthogonalisation]")
 {
     std::srand(123);
     const Index n = 20;
-const Index sub = 5;
-Index start=n-sub;
+    const Index sub = 5;
+    Index start = n - sub;
+
     // Create a n x 20 orthonormal basis
     MatrixXd mat = MatrixXd::Random(n, start);
     QR_orthogonalisation(mat);
 
     mat.conservativeResize(Eigen::NoChange, n);
-    mat.rightCols(20) = MatrixXd::Random(n, sub);
+    mat.rightCols(sub) = MatrixXd::Random(n, sub);
 
     SECTION("MGS")
     {
@@ -83,4 +90,10 @@ Index start=n-sub;
         twice_is_enough_orthogonalisation(mat, start);
         check_orthogonality(mat);
     }
+
+    // SECTION("JensWhener")
+    // {
+    //     JensWhener_orthogonalisation(mat, start);
+    //     check_orthogonality(mat);
+    // }
 }

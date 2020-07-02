@@ -13,6 +13,19 @@
 namespace Spectra {
 
 template <typename Matrix>
+Eigen::Index sanity_check(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+{
+    assert(in_output.cols() > leftColsToSkip && "leftColsToSkip is larger than columns of matrix");
+    assert(leftColsToSkip >= 0 && "leftColsToSkip is negative");
+    if (leftColsToSkip == 0)
+    {
+        in_output.col(0).normalize();
+        leftColsToSkip = 1;
+    }
+    return leftColsToSkip;
+}
+
+template <typename Matrix>
 void QR_orthogonalisation(Matrix& in_output)
 {
     Eigen::Index nrows = in_output.rows();
@@ -26,13 +39,22 @@ void QR_orthogonalisation(Matrix& in_output)
 template <typename Matrix>
 void MGS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 {
-    assert(in_output.cols()>leftColsToSkip && "leftColsToSkip is larger than columns of matrix");
-    assert(leftColsToSkip>=0 && "leftColsToSkip is negative");
-    if (leftColsToSkip == 0)
+    leftColsToSkip = sanity_check(in_output, leftColsToSkip);
+
+    for (Eigen::Index k = leftColsToSkip; k < in_output.cols(); ++k)
     {
-        in_output.col(0).normalize();
-        leftColsToSkip = 1;
+        for (Eigen::Index j = 0; j < k; j++)
+        {
+            in_output.col(k) -= in_output.col(j).dot(in_output.col(k)) / (in_output.col(j).dot(in_output.col(j))) * in_output.col(j);
+        }
+        in_output.col(k).normalize();
     }
+}
+
+template <typename Matrix>
+void GS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+{
+    leftColsToSkip = sanity_check(in_output, leftColsToSkip);
 
     for (Eigen::Index j = leftColsToSkip; j < in_output.cols(); ++j)
     {
@@ -42,20 +64,32 @@ void MGS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 }
 
 template <typename Matrix>
-void GS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
-{
-    assert(in_output.cols()>leftColsToSkip && "leftColsToSkip is larger than columns of matrix");
-    assert(leftColsToSkip>=0 && "leftColsToSkip is negative");
-    Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
-    in_output.rightCols(rightColToOrtho) -= in_output.rightCols(rightColToOrtho) * (in_output.transpose() * in_output);
-    in_output.rightCols(rightColToOrtho).colwise().normalize();
-}
-
-template <typename Matrix>
 void twice_is_enough_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 {
     GS_orthogonalisation(in_output, leftColsToSkip);
     GS_orthogonalisation(in_output, leftColsToSkip);
+}
+
+template <typename Matrix>
+void partial_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+{
+    leftColsToSkip = sanity_check(in_output, leftColsToSkip);
+
+    Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
+    in_output.rightCols(rightColToOrtho) -= in_output.leftCols(leftColsToSkip) * (in_output.leftCols(leftColsToSkip).transpose() * in_output.rightCols(rightColToOrtho));
+    in_output.rightCols(rightColToOrtho).colwise().normalize();
+}
+
+template <typename Matrix>
+void JensWhener_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+{
+    leftColsToSkip = sanity_check(in_output, leftColsToSkip);
+
+    Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
+    Matrix right_cols = in_output.rightCols(rightColToOrtho);
+    partial_orthogonalisation(in_output, leftColsToSkip);
+    QR_orthogonalisation(right_cols);
+    in_output.rightCols(rightColToOrtho) = right_cols;
 }
 
 }  // namespace Spectra
