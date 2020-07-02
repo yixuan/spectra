@@ -23,7 +23,7 @@ class JDMock : public JDSymEigsBase<OpType>
 public:
     JDMock(OpType& op, Index nev) :
         JDSymEigsBase<OpType>(op, nev) {}
-    Matrix SetupInitialSearchSpace() const
+    Matrix SetupInitialSearchSpace(SortRule) const
     {
         return Matrix::Zero(0, 0);
     }

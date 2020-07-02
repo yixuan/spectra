@@ -92,7 +92,7 @@ public:
     Matrix eigenvectors() const { return ritz_pairs_.RitzVectors().leftCols(number_eigenvalues_); }
 
 protected:
-    virtual Matrix SetupInitialSearchSpace() const = 0;
+    virtual Matrix SetupInitialSearchSpace(SortRule selection) const = 0;
 
     virtual Matrix CalculateCorrectionVector() const = 0;
     const OpType& matrix_operator_;  // object to conduct marix operation,
