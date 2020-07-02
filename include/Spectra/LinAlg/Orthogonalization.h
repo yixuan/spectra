@@ -28,10 +28,11 @@ Eigen::Index sanity_check(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 template <typename Matrix>
 void QR_orthogonalisation(Matrix& in_output)
 {
+    using InternalMatrix= Eigen::Matrix<typename Matrix::Scalar,Eigen::Dynamic, Eigen::Dynamic>;
     Eigen::Index nrows = in_output.rows();
     Eigen::Index ncols = in_output.cols();
     ncols = std::min(nrows, ncols);
-    Matrix I = Matrix::Identity(nrows, ncols);
+    InternalMatrix I = InternalMatrix::Identity(nrows, ncols);
     Eigen::HouseholderQR<Matrix> qr(in_output);
     in_output = qr.householderQ() * I;
 }
@@ -81,13 +82,13 @@ void partial_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 
 }
 
 template <typename Matrix>
-void JensWhener_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+void JensWehner_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 {
     leftColsToSkip = sanity_check(in_output, leftColsToSkip);
 
     Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
     partial_orthogonalisation(in_output, leftColsToSkip);
-    Matrix right_cols = in_output.rightCols(rightColToOrtho);
+    Eigen::Ref<Matrix> right_cols = in_output.rightCols(rightColToOrtho);
     QR_orthogonalisation(right_cols);
     in_output.rightCols(rightColToOrtho) = right_cols;
 }

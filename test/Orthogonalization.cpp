@@ -52,9 +52,9 @@ TEST_CASE("complete orthonormalization", "[orthogonalisation]")
         check_orthogonality(mat);
     }
 
-    SECTION("JensWhener")
+    SECTION("JensWehner")
     {
-        JensWhener_orthogonalisation(mat);
+        JensWehner_orthogonalisation(mat);
         check_orthogonality(mat);
     }
 }
@@ -91,9 +91,9 @@ TEST_CASE("Partial orthonormalization", "[orthogonalisation]")
         check_orthogonality(mat);
     }
 
-    SECTION("JensWhener")
+    SECTION("JensWehner")
     {
-        JensWhener_orthogonalisation(mat, start);
+        JensWehner_orthogonalisation(mat, start);
         check_orthogonality(mat);
     }
 }
