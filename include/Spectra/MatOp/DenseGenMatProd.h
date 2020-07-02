@@ -78,7 +78,7 @@ public:
     ///
     /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
     ///
-    Matrix operator*(const Matrix mat_in)
+    Matrix operator*(const Matrix mat_in) const
     {
         return m_mat * mat_in;
     }

@@ -71,7 +71,7 @@ public:
     ///
     /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
     ///
-    SparseMatrix operator*(const SparseMatrix mat_in)
+    SparseMatrix operator*(const SparseMatrix mat_in) const
     {
         SparseMatrix result;
         result = m_mat.template selfadjointView<Uplo>() * mat_in;
