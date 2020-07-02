@@ -45,7 +45,7 @@ public:
         }
     }
 
-    bool check_convergence(Scalar tol, Index number_eigenvalues) const
+    bool check_convergence(Scalar tol, Index number_eigenvalues)
     {
         const Array norms = residues_.colwise().norm();
         bool converged = true;
@@ -97,7 +97,7 @@ void RitzPairs<Scalar>::compute_eigen_pairs(const SearchSpace<Scalar>& search_sp
     vectors_ = basis_vectors * small_vectors_;
 
     // residues
-    residues_ = op_basis_prod * small_vectors_ - vectors_ * values_.asDiagaonal();
+    residues_ = op_basis_prod * small_vectors_ - vectors_ * values_.asDiagonal();
 }
 
 }  // namespace Spectra
