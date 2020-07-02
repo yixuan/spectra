@@ -32,11 +32,6 @@ public:
 
     void compute_eigen_pairs(const SearchSpace<Scalar>& search_space);
 
-    Array res_norm() const
-    {
-        return residues_.colwise().norm();
-    }  // norm of the residues
-
     Index size() const { return values_.size(); }
 
     void sort(SortRule selection)
@@ -53,7 +48,7 @@ public:
 
     bool check_convergence(Scalar tol, Index number_eigenvalues) const
     {
-        const Array norms = res_norm();
+        const Array norms = residues_.colwise().norm();
         bool converged = true;
         root_converged_ = BoolArray::Zero(norms.size());
         for (Index j = 0; j < norms.size(); j++)
