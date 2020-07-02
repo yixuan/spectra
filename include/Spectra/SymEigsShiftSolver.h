@@ -55,7 +55,7 @@ namespace Spectra {
 /// same for both the original problem and the shifted-and-inverted problem.
 ///
 /// \tparam Scalar  The element type of the matrix.
-///                 Currently supported types are `float`, `double` and `long double`.
+///                 Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType  The name of the matrix operation class. Users could either
 ///                 use the wrapper classes such as DenseSymShiftSolve and
 ///                 SparseSymShiftSolve, or define their
@@ -76,7 +76,7 @@ namespace Spectra {
 /// {
 ///     // A size-10 diagonal matrix with elements 1, 2, ..., 10
 ///     Eigen::MatrixXd M = Eigen::MatrixXd::Zero(10, 10);
-///     for(int i = 0; i < M.rows(); i++)
+///     for (int i = 0; i < M.rows(); i++)
 ///         M(i, i) = i + 1;
 ///
 ///     // Construct matrix operation object using the wrapper class
@@ -88,7 +88,7 @@ namespace Spectra {
 ///
 ///     eigs.init();
 ///     eigs.compute(SortRule::LargestMagn);
-///     if(eigs.info() == CompInfo::Successful)
+///     if (eigs.info() == CompInfo::Successful)
 ///     {
 ///         Eigen::VectorXd evalues = eigs.eigenvalues();
 ///         // Will get (3.0, 2.0, 1.0)
@@ -121,7 +121,7 @@ namespace Spectra {
 ///     // inv(A - sigma * I) = diag(1/(1-sigma), 1/(2-sigma), ...)
 ///     void perform_op(double *x_in, double *y_out) const
 ///     {
-///         for(int i = 0; i < rows(); i++)
+///         for (int i = 0; i < rows(); i++)
 ///         {
 ///             y_out[i] = x_in[i] / (i + 1 - sigma_);
 ///         }
@@ -135,7 +135,7 @@ namespace Spectra {
 ///     SymEigsShiftSolver<double, MyDiagonalTenShiftSolve> eigs(op, 3, 6, 3.14);
 ///     eigs.init();
 ///     eigs.compute(SortRule::LargestMagn);
-///     if(eigs.info() == CompInfo::Successful)
+///     if (eigs.info() == CompInfo::Successful)
 ///     {
 ///         Eigen::VectorXd evalues = eigs.eigenvalues();
 ///         // Will get (4.0, 3.0, 2.0)
@@ -154,8 +154,9 @@ private:
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
-    using SymEigsBase<Scalar, OpType, IdentityBOp>::m_nev;
-    using SymEigsBase<Scalar, OpType, IdentityBOp>::m_ritz_val;
+    using Base = SymEigsBase<Scalar, OpType, IdentityBOp>;
+    using Base::m_nev;
+    using Base::m_ritz_val;
 
     const Scalar m_sigma;
 
@@ -188,7 +189,7 @@ public:
     /// \param sigma  The value of the shift.
     ///
     SymEigsShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma) :
-        SymEigsBase<Scalar, OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv),
+        Base(op, IdentityBOp(), nev, ncv),
         m_sigma(sigma)
     {
         op.set_shift(m_sigma);

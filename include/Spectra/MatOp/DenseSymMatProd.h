@@ -18,10 +18,11 @@ namespace Spectra {
 /// symmetric real matrix \f$A\f$, i.e., calculating \f$y=Ax\f$ for any vector
 /// \f$x\f$. It is mainly used in the SymEigsSolver eigen solver.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor>
+template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor>
 class DenseSymMatProd
 {
 private:
+    using Scalar = Scalar_;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
@@ -65,6 +66,22 @@ public:
         MapConstVec x(x_in, m_mat.cols());
         MapVec y(y_out, m_mat.rows());
         y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
+    }
+
+    ///
+    /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
+    ///
+    Matrix operator*(const Matrix& mat_in) const
+    {
+        return m_mat.template selfadjointView<Uplo>() * mat_in;
+    }
+
+    ///
+    /// Extract (i,j) element of the underlying matrix.
+    ///
+    Scalar operator()(Index i, Index j) const
+    {
+        return m_mat(i, j);
     }
 };
 

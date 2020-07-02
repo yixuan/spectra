@@ -1,14 +1,15 @@
-// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2020 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef SPECTRA_DENSE_GEN_COMPLEX_SHIFT_SOLVE_H
-#define SPECTRA_DENSE_GEN_COMPLEX_SHIFT_SOLVE_H
+#ifndef SPECTRA_SPARSE_GEN_COMPLEX_SHIFT_SOLVE_H
+#define SPECTRA_SPARSE_GEN_COMPLEX_SHIFT_SOLVE_H
 
 #include <Eigen/Core>
-#include <Eigen/LU>
+#include <Eigen/SparseCore>
+#include <Eigen/SparseLU>
 #include <stdexcept>
 
 namespace Spectra {
@@ -16,29 +17,29 @@ namespace Spectra {
 ///
 /// \ingroup MatOp
 ///
-/// This class defines the complex shift-solve operation on a general real matrix \f$A\f$,
+/// This class defines the complex shift-solve operation on a sparse real matrix \f$A\f$,
 /// i.e., calculating \f$y=\mathrm{Re}\{(A-\sigma I)^{-1}x\}\f$ for any complex-valued
 /// \f$\sigma\f$ and real-valued vector \f$x\f$. It is mainly used in the
 /// GenEigsComplexShiftSolver eigen solver.
 ///
-template <typename Scalar, int Flags = Eigen::ColMajor>
-class DenseGenComplexShiftSolve
+template <typename Scalar, int Flags = Eigen::ColMajor, typename StorageIndex = int>
+class SparseGenComplexShiftSolve
 {
 private:
     using Index = Eigen::Index;
-    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using MapConstVec = Eigen::Map<const Vector>;
     using MapVec = Eigen::Map<Vector>;
-    using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
+    using SparseMatrix = Eigen::SparseMatrix<Scalar, Flags, StorageIndex>;
+    using ConstGenericSparseMatrix = const Eigen::Ref<const SparseMatrix>;
 
     using Complex = std::complex<Scalar>;
-    using ComplexMatrix = Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using ComplexVector = Eigen::Matrix<Complex, Eigen::Dynamic, 1>;
+    using SparseComplexMatrix = Eigen::SparseMatrix<Complex, Flags, StorageIndex>;
 
-    using ComplexSolver = Eigen::PartialPivLU<ComplexMatrix>;
+    using ComplexSolver = Eigen::SparseLU<SparseComplexMatrix>;
 
-    ConstGenericMatrix m_mat;
+    ConstGenericSparseMatrix m_mat;
     const Index m_n;
     ComplexSolver m_solver;
     mutable ComplexVector m_x_cache;
@@ -47,16 +48,15 @@ public:
     ///
     /// Constructor to create the matrix operation object.
     ///
-    /// \param mat An **Eigen** matrix object, whose type can be
-    /// `Eigen::Matrix<Scalar, ...>` (e.g. `Eigen::MatrixXd` and
-    /// `Eigen::MatrixXf`), or its mapped version
-    /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
+    /// \param mat An **Eigen** sparse matrix object, whose type can be
+    /// `Eigen::SparseMatrix<Scalar, ...>` or its mapped version
+    /// `Eigen::Map<Eigen::SparseMatrix<Scalar, ...> >`.
     ///
-    DenseGenComplexShiftSolve(ConstGenericMatrix& mat) :
+    SparseGenComplexShiftSolve(ConstGenericSparseMatrix& mat) :
         m_mat(mat), m_n(mat.rows())
     {
         if (mat.rows() != mat.cols())
-            throw std::invalid_argument("DenseGenComplexShiftSolve: matrix must be square");
+            throw std::invalid_argument("SparseGenComplexShiftSolve: matrix must be square");
     }
 
     ///
@@ -76,7 +76,12 @@ public:
     ///
     void set_shift(const Scalar& sigmar, const Scalar& sigmai)
     {
-        m_solver.compute(m_mat.template cast<Complex>() - Complex(sigmar, sigmai) * ComplexMatrix::Identity(m_n, m_n));
+        // Create a sparse idendity matrix (1 + 0i on diagonal)
+        SparseComplexMatrix I(m_n, m_n);
+        I.setIdentity();
+        // Sparse LU decomposition
+        m_solver.compute(m_mat.template cast<Complex>() - Complex(sigmar, sigmai) * I);
+        // Set cache to zero
         m_x_cache.resize(m_n);
         m_x_cache.setZero();
     }
@@ -99,4 +104,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // SPECTRA_DENSE_GEN_COMPLEX_SHIFT_SOLVE_H
+#endif  // SPECTRA_SPARSE_GEN_COMPLEX_SHIFT_SOLVE_H
