@@ -24,9 +24,10 @@ namespace Spectra {
 ///
 /// This is the base class for symmetric JD eigen solvers, mainly for internal use.
 /// It is kept here to provide the documentation for member functions of concrete eigen solvers
-/// such as DavidsonSym.
+/// such as DavidsonSym. .
 ///
-template <typename OpType>
+/// This class uses the CRTP method to call functions from the derived class.
+template <typename Derived, typename OpType>
 class JDSymEigsBase
 {
 protected:
@@ -120,8 +121,9 @@ public:
     Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
                   Scalar tol = 1e-10)
     {
-        Matrix intial_space = SetupInitialSearchSpace();
-        return computeWithGuess(selection, intial_space, maxit, tol);
+        Derived& derived = static_cast<Derived&>(*this);
+        Matrix intial_space = derived.SetupInitialSearchSpace(selection);
+        return computeWithGuess(intial_space,selection, maxit, tol);
     }
     Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space, SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
                            Scalar tol = 1e-10)
@@ -155,8 +157,8 @@ public:
                 info_ = CompInfo::NotConverging;
                 break;
             }
-
-            Matrix corr_vect = CalculateCorrectionVector();
+            Derived& derived = static_cast<Derived&>(*this);
+            Matrix corr_vect = derived.CalculateCorrectionVector();
 
             search_space_.extend_basis(corr_vect);
         }
