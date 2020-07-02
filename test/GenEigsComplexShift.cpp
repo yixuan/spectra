@@ -1,8 +1,12 @@
 #include <Eigen/Core>
+#include <Eigen/SparseCore>
 #include <iostream>
+#include <type_traits>
+#include <random>  // Requires C++ 11
 
 #include <Spectra/GenEigsComplexShiftSolver.h>
 #include <Spectra/MatOp/DenseGenComplexShiftSolve.h>
+#include <Spectra/MatOp/SparseGenComplexShiftSolve.h>
 
 using namespace Spectra;
 
@@ -13,12 +17,29 @@ using Matrix = Eigen::MatrixXd;
 using Vector = Eigen::VectorXd;
 using ComplexMatrix = Eigen::MatrixXcd;
 using ComplexVector = Eigen::VectorXcd;
+using SpMatrix = Eigen::SparseMatrix<double>;
 
-void run_test(const Matrix &mat, int k, int m, double sigmar, double sigmai,
-              SortRule selection, bool allow_fail = false)
+// Generate random sparse matrix
+SpMatrix gen_sparse_data(int n, double prob = 0.5)
 {
-    DenseGenComplexShiftSolve<double> op(mat);
-    GenEigsComplexShiftSolver<double, DenseGenComplexShiftSolve<double>> eigs(op, k, m, sigmar, sigmai);
+    SpMatrix mat(n, n);
+    std::default_random_engine gen;
+    gen.seed(0);
+    std::uniform_real_distribution<double> distr(0.0, 1.0);
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            if (distr(gen) < prob)
+                mat.insert(i, j) = distr(gen) - 0.5;
+        }
+    }
+    return mat;
+}
+
+template <typename MatType, typename Solver>
+void run_test(const MatType& mat, Solver& eigs, SortRule selection, bool allow_fail = false)
+{
     eigs.init();
     // maxit = 100 to reduce running time for failed cases
     int nconv = eigs.compute(selection, 100);
@@ -48,35 +69,44 @@ void run_test(const Matrix &mat, int k, int m, double sigmar, double sigmai,
     const double err = resid.array().abs().maxCoeff();
 
     INFO("||AU - UD||_inf = " << err);
-    INFO("||AU - UD||_2 colwise =" << resid.colwise().norm());
+    INFO("||AU - UD||_2 colwise = " << resid.colwise().norm());
     REQUIRE(err == Approx(0.0).margin(1e-8));
 }
 
-void run_test_sets(const Matrix &A, int k, int m, double sigmar, double sigmai)
+template <typename MatType>
+void run_test_sets(const MatType& A, int k, int m, double sigmar, double sigmai)
 {
+    constexpr bool is_dense = std::is_same<MatType, Matrix>::value;
+    using DenseOp = DenseGenComplexShiftSolve<double>;
+    using SparseOp = SparseGenComplexShiftSolve<double>;
+    using OpType = typename std::conditional<is_dense, DenseOp, SparseOp>::type;
+
+    OpType op(A);
+    GenEigsComplexShiftSolver<double, OpType> eigs(op, k, m, sigmar, sigmai);
+
     SECTION("Largest Magnitude")
     {
-        run_test(A, k, m, sigmar, sigmai, SortRule::LargestMagn);
+        run_test(A, eigs, SortRule::LargestMagn);
     }
     SECTION("Largest Real Part")
     {
-        run_test(A, k, m, sigmar, sigmai, SortRule::LargestReal);
+        run_test(A, eigs, SortRule::LargestReal);
     }
     SECTION("Largest Imaginary Part")
     {
-        run_test(A, k, m, sigmar, sigmai, SortRule::LargestImag);
+        run_test(A, eigs, SortRule::LargestImag);
     }
     SECTION("Smallest Magnitude")
     {
-        run_test(A, k, m, sigmar, sigmai, SortRule::SmallestMagn, true);
+        run_test(A, eigs, SortRule::SmallestMagn, true);
     }
     SECTION("Smallest Real Part")
     {
-        run_test(A, k, m, sigmar, sigmai, SortRule::SmallestReal);
+        run_test(A, eigs, SortRule::SmallestReal);
     }
     SECTION("Smallest Imaginary Part")
     {
-        run_test(A, k, m, sigmar, sigmai, SortRule::SmallestImag, true);
+        run_test(A, eigs, SortRule::SmallestImag, true);
     }
 }
 
@@ -84,7 +114,7 @@ TEST_CASE("Eigensolver of general real matrix [10x10]", "[eigs_gen]")
 {
     std::srand(123);
 
-    Matrix A = Eigen::MatrixXd::Random(10, 10);
+    const Matrix A = Eigen::MatrixXd::Random(10, 10);
     int k = 3;
     int m = 8;
     double sigmar = 2.0;
@@ -97,7 +127,7 @@ TEST_CASE("Eigensolver of general real matrix [100x100]", "[eigs_gen]")
 {
     std::srand(123);
 
-    Matrix A = Eigen::MatrixXd::Random(100, 100);
+    const Matrix A = Eigen::MatrixXd::Random(100, 100);
     int k = 10;
     int m = 20;
     double sigmar = 20.0;
@@ -110,7 +140,46 @@ TEST_CASE("Eigensolver of general real matrix [1000x1000]", "[eigs_gen]")
 {
     std::srand(123);
 
-    Matrix A = Eigen::MatrixXd::Random(1000, 1000);
+    const Matrix A = Eigen::MatrixXd::Random(1000, 1000);
+    int k = 20;
+    int m = 50;
+    double sigmar = 200.0;
+    double sigmai = 100.0;
+
+    run_test_sets(A, k, m, sigmar, sigmai);
+}
+
+TEST_CASE("Eigensolver of sparse real matrix [10x10]", "[eigs_gen]")
+{
+    std::srand(123);
+
+    const SpMatrix A = gen_sparse_data(10, 0.5);
+    int k = 3;
+    int m = 6;
+    double sigmar = 2.0;
+    double sigmai = 1.0;
+
+    run_test_sets(A, k, m, sigmar, sigmai);
+}
+
+TEST_CASE("Eigensolver of sparse real matrix [100x100]", "[eigs_gen]")
+{
+    std::srand(123);
+
+    const SpMatrix A = gen_sparse_data(100, 0.1);
+    int k = 10;
+    int m = 30;
+    double sigmar = 20.0;
+    double sigmai = 10.0;
+
+    run_test_sets(A, k, m, sigmar, sigmai);
+}
+
+TEST_CASE("Eigensolver of sparse real matrix [1000x1000]", "[eigs_gen]")
+{
+    std::srand(123);
+
+    const SpMatrix A = gen_sparse_data(1000, 0.01);
     int k = 20;
     int m = 50;
     double sigmar = 200.0;

@@ -4,6 +4,7 @@ LDFLAGS =
 LIBS =
 
 HEADERS = $(wildcard ../include/Spectra/MatOp/*.h) \
+	$(wildcard ../include/Spectra/MatOp/internal/*.h) \
 	$(wildcard ../include/Spectra/LinAlg/*.h) \
 	$(wildcard ../include/Spectra/Util/*.h) \
 	$(wildcard ../include/Spectra/*.h) \
@@ -13,7 +14,7 @@ HEADERS = $(wildcard ../include/Spectra/MatOp/*.h) \
 .PHONY: all test clean
 
 all: QR.out Eigen.out BKLDLT.out SymEigs.out SymEigsShift.out GenEigs.out GenEigsRealShift.out GenEigsComplexShift.out \
-	SymGEigsCholesky.out SymGEigsRegInv.out SVD.out
+	SymGEigsCholesky.out SymGEigsRegInv.out SymGEigsShift.out SVD.out
 
 test:
 	-./QR.out

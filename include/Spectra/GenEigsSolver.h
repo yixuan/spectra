@@ -26,7 +26,7 @@ namespace Spectra {
 /// and eigenvectors of a general matrix can now be complex-valued.
 ///
 /// \tparam Scalar  The element type of the matrix.
-///                 Currently supported types are `float`, `double` and `long double`.
+///                 Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType  The name of the matrix operation class. Users could either
 ///                 use the wrapper classes such as DenseGenMatProd and
 ///                 SparseGenMatProd, or define their
@@ -61,7 +61,7 @@ namespace Spectra {
 ///
 ///     // Retrieve results
 ///     Eigen::VectorXcd evalues;
-///     if(eigs.info() == CompInfo::Successful)
+///     if (eigs.info() == CompInfo::Successful)
 ///         evalues = eigs.eigenvalues();
 ///
 ///     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
@@ -88,12 +88,12 @@ namespace Spectra {
 ///     const int n = 10;
 ///     Eigen::SparseMatrix<double> M(n, n);
 ///     M.reserve(Eigen::VectorXi::Constant(n, 3));
-///     for(int i = 0; i < n; i++)
+///     for (int i = 0; i < n; i++)
 ///     {
 ///         M.insert(i, i) = 1.0;
-///         if(i > 0)
+///         if (i > 0)
 ///             M.insert(i - 1, i) = 3.0;
-///         if(i < n - 1)
+///         if (i < n - 1)
 ///             M.insert(i + 1, i) = 2.0;
 ///     }
 ///
@@ -109,7 +109,7 @@ namespace Spectra {
 ///
 ///     // Retrieve results
 ///     Eigen::VectorXcd evalues;
-///     if(eigs.info() == CompInfo::Successful)
+///     if (eigs.info() == CompInfo::Successful)
 ///         evalues = eigs.eigenvalues();
 ///
 ///     std::cout << "Eigenvalues found:\n" << evalues << std::endl;

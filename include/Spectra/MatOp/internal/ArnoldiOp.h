@@ -62,7 +62,7 @@ public:
     template <typename Arg1, typename Arg2>
     Scalar inner_product(const Arg1& x, const Arg2& y) const
     {
-        m_Bop.mat_prod(y.data(), m_cache.data());
+        m_Bop.perform_op(y.data(), m_cache.data());
         return x.dot(m_cache);
     }
 
@@ -71,7 +71,7 @@ public:
     template <typename Arg1, typename Arg2>
     void trans_product(const Arg1& x, const Arg2& y, Eigen::Ref<Vector> res) const
     {
-        m_Bop.mat_prod(y.data(), m_cache.data());
+        m_Bop.perform_op(y.data(), m_cache.data());
         res.noalias() = x.transpose() * m_cache;
     }
 

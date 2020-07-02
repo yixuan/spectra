@@ -19,10 +19,11 @@ namespace Spectra {
 /// sparse real symmetric matrix \f$A\f$, i.e., calculating \f$y=Ax\f$ for any vector
 /// \f$x\f$. It is mainly used in the SymEigsSolver eigen solver.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor, typename StorageIndex = int>
+template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor, typename StorageIndex = int>
 class SparseSymMatProd
 {
 private:
+    using Scalar = Scalar_;
     using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using MapConstVec = Eigen::Map<const Vector>;
@@ -66,8 +67,25 @@ public:
         MapVec y(y_out, m_mat.rows());
         y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
     }
-};
 
+    ///
+    /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
+    ///
+    SparseMatrix operator*(const SparseMatrix& mat_in) const
+    {
+        SparseMatrix result;
+        result = m_mat.template selfadjointView<Uplo>() * mat_in;
+        return result;
+    }
+
+    ///
+    /// Extract (i,j) element of the underlying matrix.
+    ///
+    Scalar operator()(Index i, Index j) const
+    {
+        return m_mat.coeff(i, j);
+    }
+};
 }  // namespace Spectra
 
 #endif  // SPECTRA_SPARSE_SYM_MAT_PROD_H
