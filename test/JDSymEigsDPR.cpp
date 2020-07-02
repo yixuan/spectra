@@ -73,7 +73,7 @@ void run_test(const MatType<T>& mat, int nev, SortRule selection)
 {
     using OpType = typename OpTypeTrait<MatType, T>::OpType;
     OpType op(mat);
-    JDSymEigsDPR<T, OpType> eigs(op,nev);
+    JDSymEigsDPR< OpType> eigs(op,nev);
     //int nconv = eigs.compute(selection);
 
     int niter = eigs.num_iterations();

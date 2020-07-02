@@ -9,8 +9,8 @@ list(APPEND test_target_sources
         GenEigsRealShift.cpp
         GenEigsComplexShift.cpp
         Orthogonalization.cpp
-        JDSymEigsBase.cpp
         JDSymEigsDPR.cpp
+        JDSymEigsDPRConstructor.cpp
         QR.cpp
         RitzPairs.cpp
         SearchSpace.cpp
