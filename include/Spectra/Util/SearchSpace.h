@@ -9,6 +9,7 @@
 
 #include <Eigen/Dense>
 #include "RitzPairs.h"
+#include "../LinAlg/Orthogonalization.h"
 
 namespace Spectra {
 template <typename Scalar>
@@ -17,10 +18,6 @@ class SearchSpace
 private:
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
-    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
-    using BoolArray = Eigen::Array<bool, Eigen::Dynamic, 1>;
-    using MapConstVec = Eigen::Map<const Vector>;
 
 public:
     SearchSpace() = default;
@@ -46,17 +43,15 @@ public:
 
     void restart(const RitzPairs<Scalar> &ritz_pairs, Index size)
     {
-        basis_vectors_ = ritz_pairs.Vectors().leftCols(size);
+        basis_vectors_ = ritz_pairs.RitzVectors().leftCols(size);
         op_basis_product_ = op_basis_product_ * ritz_pairs.SmallRitzVectors().leftCols(size);
     }
 
     void extend_basis(const Matrix &new_vect)
     {
-        Index num_update = new_vect.cols();
+        Index leftColstoSkip = size();
         append_new_vectors_to_basis(new_vect);
-        //basis_vectors_ = orthogonalize(basis_vectors_, num_update);
-
-        //TODO orthogonalize
+        Spectra::twice_is_enough_orthogonalisation(basis_vectors_, leftColstoSkip);
     }
 
     const Matrix &BasisVectors() const { return basis_vectors_; }
