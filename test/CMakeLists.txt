@@ -10,6 +10,7 @@ list(APPEND test_target_sources
         GenEigsComplexShift.cpp
         JDSymEigsBase.cpp
         JDSymEigsDPR.cpp
+        JDSymEigsDPR_example.cpp
         QR.cpp
         RitzPairs.cpp
         SearchSpace.cpp

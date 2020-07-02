@@ -12,8 +12,12 @@ Suppose we want to find the 2 eigenpairs with the Largest value from a 1000x1000
 
 
 - First we have to construct the matrix
+
+`Note: The Matrix has to be diagonally dominant otherwise the method will not converge`
+
 ```cpp
 #include <Eigen/Sparse>
+#include <random>
 
 // Generate Matrix
 Eigen::SparseMatrix<double> gen_sym_data_sparse(int n)
@@ -31,10 +35,10 @@ Eigen::SparseMatrix<double> gen_sym_data_sparse(int n)
                 mat.insert(i, j) = distr(gen) - 0.5;
         }
     }
-    return mat + Eigen::SparseMatrix<double>(mat.transpose);
+    return mat + Eigen::SparseMatrix<double>(mat.transpose());
 }
 
-Eigen::SparseMatrix<double> A = gen_sym_data_sparse(1000)
+Eigen::SparseMatrix<double> A = gen_sym_data_sparse(1000);
 ```
 
 - Then we have to construct a Matrix Product operation, which is provided by Spectra for Sparse Symmetric Eigen matrices. 
