@@ -2,14 +2,18 @@ set(test_target_sources)
 
 list(APPEND test_target_sources
         BKLDLT.cpp
+        DavidsonSymEig.cpp
         DenseGenMatProd.cpp
         DenseSymMatProd.cpp
         Eigen.cpp
         GenEigs.cpp
         GenEigsRealShift.cpp
         GenEigsComplexShift.cpp
+        JDSymEigsBase.cpp
         Orthogonalization.cpp
         QR.cpp
+        RitzPairs.cpp
+        SearchSpace.cpp
         SparseGenMatProd.cpp
         SparseSymMatProd.cpp
         SVD.cpp
@@ -17,10 +21,6 @@ list(APPEND test_target_sources
         SymEigsShift.cpp
         SymGEigsCholesky.cpp
         SymGEigsRegInv.cpp
-        SymGEigsShift.cpp
-        JDSymEigsBase.cpp
-        RitzPairs.cpp
-        SearchSpace.cpp
         )
 
 foreach(TEST_SOURCE ${test_target_sources})
