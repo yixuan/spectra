@@ -52,7 +52,7 @@ void MGS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
     {
         for (Eigen::Index j = 0; j < k; j++)
         {
-            in_output.col(k) -= in_output.col(j).dot(in_output.col(k)) / (in_output.col(j).dot(in_output.col(j))) * in_output.col(j);
+            in_output.col(k) -= in_output.col(j).dot(in_output.col(k)) * in_output.col(j);
         }
         in_output.col(k).normalize();
     }
@@ -79,10 +79,13 @@ void twice_is_enough_orthogonalisation(Matrix& in_output, Eigen::Index leftColsT
 }
 
 template <typename Matrix>
-void partial_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+void partial_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip)
 {
     assert_leftColsToSkip(in_output, leftColsToSkip);
-    leftColsToSkip = treatFirstCol(in_output, leftColsToSkip);
+    if (leftColsToSkip == 0)
+    {
+        return;
+    }
 
     Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
     in_output.rightCols(rightColToOrtho) -= in_output.leftCols(leftColsToSkip) * (in_output.leftCols(leftColsToSkip).transpose() * in_output.rightCols(rightColToOrtho));
@@ -93,7 +96,6 @@ template <typename Matrix>
 void JensWehner_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 {
     assert_leftColsToSkip(in_output, leftColsToSkip);
-    leftColsToSkip = treatFirstCol(in_output, leftColsToSkip);
 
     Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
     partial_orthogonalisation(in_output, leftColsToSkip);
