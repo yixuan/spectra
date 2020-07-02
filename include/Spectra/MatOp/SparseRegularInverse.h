@@ -87,7 +87,7 @@ public:
     /// \param y_out Pointer to the \f$y\f$ vector.
     ///
     // y_out = B * x_in
-    void mat_prod(const Scalar* x_in, Scalar* y_out) const
+    void perform_op(const Scalar* x_in, Scalar* y_out) const
     {
         MapConstVec x(x_in, m_n);
         MapVec y(y_out, m_n);

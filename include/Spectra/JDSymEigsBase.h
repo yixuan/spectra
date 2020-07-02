@@ -24,26 +24,25 @@
 
 namespace Spectra {
 
-template <typename Scalar,
-          typename OpType>
+template <typename OpType>
 class JDSymEigsBase
 {
-private:
+protected:
     using Index = Eigen::Index;
+    using Scalar = typename OpType::Scalar;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
     using BoolArray = Eigen::Array<bool, Eigen::Dynamic, 1>;
-    using MapMat = Eigen::Map<Matrix>;
-    using MapVec = Eigen::Map<Vector>;
-    using MapConstVec = Eigen::Map<const Vector>;
 
 public:
     JDSymEigsBase(OpType& op, Index nev) :
         matrix_operator_(op),
         number_eigenvalues_(nev),
         max_search_space_size_(10 * number_eigenvalues_),
-        initial_search_space_size_(2 * number_eigenvalues_)
+        initial_search_space_size_(2 * number_eigenvalues_),
+        correction_size_(number_eigenvalues_)
+
     {
         check_argument();
     }
@@ -54,6 +53,13 @@ public:
     void setMaxSearchspaceSize(Index max_search_space_size)
     {
         max_search_space_size_ = max_search_space_size;
+    }
+    ///
+    /// Sets how many correction vectors are added in each iteration
+    ///
+    void setCorrectionSize(Index correction_size)
+    {
+        correction_size_ = correction_size;
     }
 
     ///
@@ -84,30 +90,6 @@ public:
 
     Matrix eigenvectors() const { return ritz_pairs_.RitzVectors().leftCols(number_eigenvalues_); }
 
-    ///
-    /// Initializes the solver by providing an initial search space.
-    ///
-    /// \param init_resid Matrix containing initial search space.
-    ///
-    ///
-    void init(const Eigen::Ref<const Matrix>& init_space)
-    {
-        niter_ = 0;
-        search_space_.BasisVectors() = init_space;
-    }
-
-    ///
-    /// Initializes the solver by providing  initial search sapce.
-    ///
-    /// Depending n the method this search space is initialized in a different way
-    ///
-    void init()
-    {
-        Matrix intial_space = SetupInitialSearchSpace();
-        //TODO orthogonalize
-        init(intial_space);
-    }
-
 protected:
     virtual Matrix SetupInitialSearchSpace(SortRule selection) const = 0;
 
@@ -119,20 +101,13 @@ protected:
     const Index number_eigenvalues_;  // number of eigenvalues requested
     Index max_search_space_size_;
     Index initial_search_space_size_;
+    Index correction_size_;             // how many correction vectors are added in each iteration
     RitzPairs<Scalar> ritz_pairs_;      // Ritz eigen pair structure
     SearchSpace<Scalar> search_space_;  // search space
     Index size_update_;                 // size of the current correction
 
 private:
     CompInfo info_ = CompInfo::NotComputed;  // status of the computation
-
-    // Move rvalue object to the container
-    static std::vector<OpType> create_op_container(OpType&& rval)
-    {
-        std::vector<OpType> container;
-        container.emplace_back(std::move(rval));
-        return container;
-    }
 
     void check_argument() const
     {
@@ -144,6 +119,15 @@ public:
     Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
                   Scalar tol = 1e-10)
     {
+        Matrix intial_space = SetupInitialSearchSpace();
+        return computeWithGuess(selection, intial_space, maxit, tol);
+    }
+    Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space, SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
+                           Scalar tol = 1e-10)
+
+    {
+        search_space_.BasisVectors() = initial_space;
+        niter_ = 0;
         for (niter_ = 0; niter_ < maxit; niter_++)
         {
             bool do_restart = (search_space_.size() > max_search_space_size_);

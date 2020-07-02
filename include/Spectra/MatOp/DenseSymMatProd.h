@@ -21,8 +21,10 @@ namespace Spectra {
 template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor>
 class DenseSymMatProd
 {
-private:
+public:
     using Scalar = Scalar_;
+
+private:
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
@@ -71,7 +73,7 @@ public:
     ///
     /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
     ///
-    Matrix operator*(const Matrix mat_in) const
+    Matrix operator*(const Matrix& mat_in) const
     {
         return m_mat.template selfadjointView<Uplo>() * mat_in;
     }

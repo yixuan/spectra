@@ -22,8 +22,10 @@ namespace Spectra {
 template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor, typename StorageIndex = int>
 class SparseSymMatProd
 {
-private:
+public:
     using Scalar = Scalar_;
+
+private:
     using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using MapConstVec = Eigen::Map<const Vector>;
@@ -71,7 +73,7 @@ public:
     ///
     /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
     ///
-    SparseMatrix operator*(const SparseMatrix mat_in) const
+    SparseMatrix operator*(const SparseMatrix& mat_in) const
     {
         SparseMatrix result;
         result = m_mat.template selfadjointView<Uplo>() * mat_in;

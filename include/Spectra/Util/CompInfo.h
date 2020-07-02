@@ -26,7 +26,8 @@ enum class CompInfo
                     ///< did not converge. The `compute()`
                     ///< function returns the number of converged eigenvalues.
 
-    NumericalIssue  ///< Used in Cholesky decomposition, indicating that the
+    NumericalIssue  ///< Used in various matrix factorization classes, for example in
+                    ///< Cholesky decomposition it indicates that the
                     ///< matrix is not positive definite.
 };
 

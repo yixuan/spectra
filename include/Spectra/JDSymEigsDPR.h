@@ -27,11 +27,12 @@ namespace Spectra {
 /// \f$I\f$ the identity matrix and \f$r\f$ the residue vector.
 ///
 
-template <typename Scalar, typename OpType>
-class JDSymEigsDPR : public JDSymEigsBase<Scalar, OpType>
+template <typename OpType>
+class JDSymEigsDPR : public JDSymEigsBase<OpType>
 {
 private:
     using Index = Eigen::Index;
+    using Scalar = typename OpType::Scalar;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
@@ -39,7 +40,7 @@ private:
 
 public:
     JDSymEigsDPR(OpType& op, Index nev) :
-        JDSymEigsBase<Scalar, OpType>{op, nev}
+        JDSymEigsBase<OpType>{op, nev}
     {
         for (Index i = 0; i < op.rows(); i++)
         {

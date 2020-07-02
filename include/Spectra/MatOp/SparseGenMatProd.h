@@ -22,8 +22,10 @@ namespace Spectra {
 template <typename Scalar_, int Flags = Eigen::ColMajor, typename StorageIndex = int>
 class SparseGenMatProd
 {
-private:
+public:
     using Scalar = Scalar_;
+
+private:
     using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using MapConstVec = Eigen::Map<const Vector>;
@@ -71,7 +73,7 @@ public:
     ///
     /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
     ///
-    SparseMatrix operator*(const SparseMatrix mat_in) const
+    SparseMatrix operator*(const SparseMatrix& mat_in) const
     {
         return m_mat * mat_in;
     }
