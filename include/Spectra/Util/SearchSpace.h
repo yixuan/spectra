@@ -13,6 +13,13 @@
 
 namespace Spectra {
 template <typename Scalar>
+
+///
+/// \ingroup Search Space
+///
+/// This class handles the creation and manipulation of the search space
+/// for iterative eigensolvers such as Davidson, Jacobi-Davidson etc ....
+
 class SearchSpace
 {
 private:
@@ -22,11 +29,17 @@ private:
 public:
     SearchSpace() = default;
 
+    /// returns the current size of the search space
     void size() const
     {
         return basis_vectors_.cols();
     }
 
+    /// Updates the matrix formed by the operator applied to the search space
+    /// after the addition of new vectors in the search space. Only the product
+    /// of the operator with the new vectors is computed and the results is appended
+    /// to the op_basis_product member variable
+    /// \param OpType operator representing the matrix
     template <typename OpType>
     void update_operator_basis_product(OpType &op)
     {
@@ -35,18 +48,27 @@ public:
         op_basis_product_.rightCols(nvec) = op * basis_vectors_.rightCols(nvec);
     }
 
+    /// Computes the matrix formed by the operator applied to the search space
+    /// \param OpType operator representing the matrix
     template <typename OpType>
     void full_update(OpType &op)
     {
         op_basis_product_ = op * basis_vectors_;
     }
 
+    /// Restart the search space by reducing the basis vector to the last
+    /// Ritz eigenvector
+    /// \param ritz_pair Instance of a RitzPair class
+    /// \param size size of the restart
     void restart(const RitzPairs<Scalar> &ritz_pairs, Index size)
     {
         basis_vectors_ = ritz_pairs.Vectors().leftCols(size);
         op_basis_product_ = op_basis_product_ * ritz_pairs.SmallRitzVectors().leftCols(size);
     }
 
+    /// Append new vector to the search space and
+    /// orthogonalie the resulting matrix
+    /// \param new_vect matrix of new correction vectors
     void extend_basis(const Matrix &new_vect)
     {
         Index num_update = new_vect.cols();
@@ -55,14 +77,21 @@ public:
         Spectra::twice_is_enough_orthogonalisation(basis_vectors_, leftColstoSkip);
     }
 
+    /// Returns the basis vectors
     const Matrix &BasisVectors() const { return basis_vectors_; }
+
+    /// Return the basis vectors
     Matrix &BasisVectors() { return basis_vectors_; }
+
+    /// Returns the operator applied to basis vector
     const Matrix &OperatorBasisProduct() const { return op_basis_product_; }
 
 private:
     Matrix basis_vectors_;
     Matrix op_basis_product_;
 
+    /// Append new vector to the basis
+    /// \param new_vect matrix of new correction vectors
     void append_new_vectors_to_basis(const Matrix &new_vect)
     {
         Index num_update = new_vect.cols();

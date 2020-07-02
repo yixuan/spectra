@@ -16,6 +16,13 @@ namespace Spectra {
 template <typename Scalar>
 class SearchSpace;
 
+///
+/// \ingroup Ritz Eige Pair
+///
+/// This class handles the creation and manipulation of Ritz eigen pairs
+/// for iterative eigensolvers such as Davidson, Jacobi-Davidson etc ....
+///
+
 template <typename Scalar>
 class RitzPairs
 {
@@ -29,10 +36,16 @@ private:
 public:
     RitzPairs() = default;
 
+    /// compute the eigen values/vectors
+    /// \param SearchSpace instance of the class handling the search space
     void compute_eigen_pairs(const SearchSpace<Scalar>& search_space);
 
+    /// returns the size of the ritz eigen pairs
+    /// \return Eigen::Index number of pairs
     Index size() const { return values_.size(); }
 
+    /// Sort the eigen pairs according to the selection rule
+    /// \param selection sorting rule
     void sort(SortRule selection)
     {
         std::vector<Index> ind = argsort(selection, values_);
@@ -45,6 +58,11 @@ public:
         }
     }
 
+    /// Checks if the algorithm has converged and upate
+    /// root_converged
+    /// \param tol tolerance for convergence
+    /// \param number_eigenvalue number of request eigenvalues
+    /// \return bool true if all eigenvalues are converged
     bool check_convergence(Scalar tol, Index number_eigenvalues) const
     {
         const Array norms = residues_.colwise().norm();
@@ -79,6 +97,9 @@ private:
 #include "SearchSpace.h"
 namespace Spectra {
 
+/// Creates the small space matrix and computes its eigen pairs
+/// Also computes the ritz vectors and residues
+/// \param SearchSpace instance of the SearchSpace class
 template <typename Scalar>
 void RitzPairs<Scalar>::compute_eigen_pairs(const SearchSpace<Scalar>& search_space)
 {
