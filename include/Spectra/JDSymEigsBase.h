@@ -27,9 +27,9 @@ namespace Spectra {
 template <typename OpType>
 class JDSymEigsBase
 {
-private:
+protected:
     using Index = Eigen::Index;
-    using Scalar = OpType::Scalar;
+    using Scalar = typename OpType::Scalar;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
@@ -41,7 +41,9 @@ public:
         operator_dimension_(op.rows()),
         number_eigenvalues_(nev),
         max_search_space_size_(10 * number_eigenvalues_),
-        initial_search_space_size_(2 * number_eigenvalues_)
+        initial_search_space_size_(2 * number_eigenvalues_),
+        correction_size_(number_eigenvalues_)
+
     {
         check_argument();
     }
@@ -52,6 +54,13 @@ public:
     void setMaxSearchspaceSize(Index max_search_space_size)
     {
         max_search_space_size_ = max_search_space_size;
+    }
+    ///
+    /// Sets how many correction vectors are added in each iteration
+    ///
+    void setCorrectionSize(Index correction_size)
+    {
+        correction_size_ = correction_size;
     }
 
     ///
@@ -94,6 +103,7 @@ protected:
     const Index number_eigenvalues_;  // number of eigenvalues requested
     Index max_search_space_size_;
     Index initial_search_space_size_;
+    Index correction_size_;             // how many correction vectors are added in each iteration
     RitzPairs<Scalar> ritz_pairs_;      // Ritz eigen pair structure
     SearchSpace<Scalar> search_space_;  // search space
 
@@ -108,14 +118,14 @@ private:
 
 public:
     Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
-                  Scalar tol = 1e-10){
-                      Matrix intial_space = SetupInitialSearchSpace();
-                      return computeWithGuess(selection,intial_space,maxit,tol);
-
-                  }
-    Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space, SortRule selection = SortRule::LargestMagn,  Index maxit = 1000,
                   Scalar tol = 1e-10)
-    
+    {
+        Matrix intial_space = SetupInitialSearchSpace();
+        return computeWithGuess(selection, intial_space, maxit, tol);
+    }
+    Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space, SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
+                           Scalar tol = 1e-10)
+
     {
         search_space_.BasisVectors() = initial_space;
         niter_ = 0;
