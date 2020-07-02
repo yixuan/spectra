@@ -12,18 +12,20 @@
 #include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min
 #include <stdexcept>  // std::invalid_argument
-#include <utility>    // std::move
 
-#include "Util/Version.h"
-#include "Util/TypeTraits.h"
 #include "Util/SelectionRule.h"
 #include "Util/CompInfo.h"
-#include "Util/SimpleRandom.h"
 #include "Util/SearchSpace.h"
 #include "Util/RitzPairs.h"
 
 namespace Spectra {
-
+///
+/// \ingroup EigenSolver
+///
+/// This is the base class for symmetric JD eigen solvers, mainly for internal use.
+/// It is kept here to provide the documentation for member functions of concrete eigen solvers
+/// such as DavidsonSym.
+///
 template <typename OpType>
 class JDSymEigsBase
 {
@@ -32,8 +34,6 @@ protected:
     using Scalar = typename OpType::Scalar;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
-    using BoolArray = Eigen::Array<bool, Eigen::Dynamic, 1>;
 
 public:
     JDSymEigsBase(OpType& op, Index nev) :

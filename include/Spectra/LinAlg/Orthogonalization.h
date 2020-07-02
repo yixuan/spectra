@@ -7,7 +7,6 @@
 #ifndef SPECTRA_ORTHOGONALIZATION_H
 #define SPECTRA_ORTHOGONALIZATION_H
 
-#include <Eigen/Core>
 #include <Eigen/Dense>
 
 namespace Spectra {

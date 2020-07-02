@@ -25,7 +25,6 @@ private:
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
     using BoolArray = Eigen::Array<bool, Eigen::Dynamic, 1>;
-    using MapConstVec = Eigen::Map<const Vector>;
 
 public:
     RitzPairs() = default;
