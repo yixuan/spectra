@@ -92,7 +92,6 @@ public:
     Matrix eigenvectors() const { return ritz_pairs_.RitzVectors().leftCols(number_eigenvalues_); }
 
 protected:
-
     const OpType& matrix_operator_;  // object to conduct matrix operation,
                                      // e.g. matrix-vector product
 
@@ -120,7 +119,7 @@ public:
     {
         Derived& derived = static_cast<Derived&>(*this);
         Matrix intial_space = derived.SetupInitialSearchSpace(selection);
-        return computeWithGuess(intial_space,selection, maxit, tol);
+        return computeWithGuess(intial_space, selection, maxit, tol);
     }
     Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space, SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
                            Scalar tol = 1e-10)

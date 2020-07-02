@@ -22,12 +22,14 @@ class JDMock : public JDSymEigsBase<JDMock<OpType>, OpType>
 {
 public:
     JDMock(OpType& op, Index nev) :
-        JDSymEigsBase<JDMock<OpType>,OpType>(op, nev) {}
-    Matrix SetupInitialSearchSpace(SortRule) const     {
+        JDSymEigsBase<JDMock<OpType>, OpType>(op, nev) {}
+    Matrix SetupInitialSearchSpace(SortRule) const
+    {
         return Matrix::Zero(0, 0);
     }
 
-    Matrix CalculateCorrectionVector() const     {
+    Matrix CalculateCorrectionVector() const
+    {
         return Matrix::Zero(0, 0);
     }
 };
