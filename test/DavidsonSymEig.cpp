@@ -1,7 +1,7 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 
-#include <Spectra/JDSymEigsDPR.h>
+#include <Spectra/DavidsonSymEig.h>
 #include <Spectra/MatOp/DenseSymMatProd.h>
 #include <Spectra/MatOp/SparseSymMatProd.h>
 
@@ -73,8 +73,8 @@ void run_test(const MatType<T>& mat, int nev, SortRule selection)
 {
     using OpType = typename OpTypeTrait<MatType, T>::OpType;
     OpType op(mat);
-    JDSymEigsDPR< OpType> eigs(op,nev);
-    //int nconv = eigs.compute(selection);
+    DavidsonSymEig< OpType> eigs(op,nev);
+    int nconv = eigs.compute(selection);
 
     int niter = eigs.num_iterations();
     //int nops = eigs.num_operations();
@@ -133,7 +133,7 @@ TEMPLATE_TEST_CASE("Davidson Solver of dense symmetric real matrix [100x100]",""
     int k = 10;
     run_test_set<Matrix,TestType>(A,k);
 }
-
+#if 0
 TEMPLATE_TEST_CASE("Davidson Solver of sparse symmetric real matrix [10x10]","", float, double)
 {
     std::srand(123);
@@ -149,3 +149,4 @@ TEMPLATE_TEST_CASE("Davidson Solver of sparse symmetric real matrix [100x100]","
     const SpMatrix<TestType> A = gen_sym_data_sparse<TestType>(100);
     run_test_set<SpMatrix,TestType>(A,k);
 }
+#endif

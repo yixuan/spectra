@@ -10,7 +10,7 @@ list(APPEND test_target_sources
         GenEigsRealShift.cpp
         GenEigsComplexShift.cpp
         Orthogonalization.cpp
-        JDSymEigsDPR.cpp
+        JDSymEigsBase.cpp
         JDSymEigsDPRConstructor.cpp
         QR.cpp
         RitzPairs.cpp
@@ -22,6 +22,7 @@ list(APPEND test_target_sources
         SymEigsShift.cpp
         SymGEigsCholesky.cpp
         SymGEigsRegInv.cpp
+        SymGEigsShift.cpp
         )
 
 foreach(TEST_SOURCE ${test_target_sources})
