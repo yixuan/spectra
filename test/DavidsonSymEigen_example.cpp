@@ -32,10 +32,27 @@ Spectra::SparseSymMatProd<double> op(A); // Create the Matrix Product operation
 
 Spectra::DavidsonSymEig<Spectra::SparseSymMatProd<double>> solver(op,2); //Create Solver
 
+// Maximum size of the search space
+solver.setMaxSearchSpaceSize(250); 
+
+// Number of corretion vector to append to the
+// search space at each iteration
+solver.setCorrectionSize(4);
+
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 TEST_CASE("Davidson Symmetric EigenSolver example")
 {
-    solver.compute(Spectra::SortRule::LargestAlge);
-    REQUIRE(solver.info() == Spectra::CompInfo::Successful);
+    solver.compute(Spectra::SortRule::LargestAlge, maxit = 100, tol=1E-3);
+    REQUIRE(solve.info() == CompInfo::Successful);
+}
+
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
+TEST_CASE("Davidson Symmetric EigenSolver example with guess")
+{
+    Matrix guess = Eigen::Random(1000, 4);
+    Spectra::QR_orthogonalisation(guess);
+    solver.computeWithGuess(guess, Spectra::SortRule::LargestAlge, maxit=100, tol=1E-3);
+    REQUIRE(solve.info() == CompInfo::Successful);
 }
