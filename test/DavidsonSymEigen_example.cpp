@@ -36,6 +36,6 @@ Spectra::DavidsonSymEig<Spectra::SparseSymMatProd<double>> solver(op,2); //Creat
 #include "catch.hpp"
 TEST_CASE("Davidson Symmetric EigenSolver example")
 {
-    solver.compute(Spectra::SortRule::LargestMagn);
+    solver.compute(Spectra::SortRule::LargestAlge);
     REQUIRE(solver.info() == Spectra::CompInfo::Successful);
 }
