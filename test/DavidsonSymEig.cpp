@@ -36,12 +36,11 @@ struct OpTypeTrait<SpMatrix, T>
 template <typename T>
 Matrix<T> gen_sym_data_dense(int n)
 {
-    Matrix<T> mat = 0.01 * Matrix<T>::Random(n, n);
+    Matrix<T> mat = 0.03 * Matrix<T>::Random(n, n);
     Matrix<T> mat1 = mat + mat.transpose();
     for (Eigen::Index i=0; i<n; i++) {
         mat1(i,i) += i+1;
     }
-    // mat1.diagonal().array() = 10*n;
     return mat1;
 }
 
@@ -60,10 +59,10 @@ SpMatrix<T> gen_sym_data_sparse(int n)
         for (int j = 0; j < n; j++)
         {
             if (distr(gen) < prob)
-                mat.insert(i, j) = distr(gen) - 0.5;
+                mat.insert(i, j) = 0.02*(distr(gen) - 0.5);
             if (i == j)
             {
-                mat.coeffRef(i, j) = 10 * n;
+                mat.coeffRef(i, j) = 10 * i;
             }
         }
     }
@@ -109,15 +108,9 @@ void run_test_set(const MatType<T>& mat, int k)
     }
 
 }
-// TEMPLATE_TEST_CASE("Davidson Solver of dense symmetric real matrix [10x10]", "", double)
-// {
-//     std::srand(123);
-//     const Matrix<TestType> A = gen_sym_data_dense<TestType>(10);
-//     int k = 3;
-//     run_test_set<Matrix, TestType>(A, k);
-// }
 
-TEMPLATE_TEST_CASE("Davidson Solver of dense symmetric real matrix [100x100]", "", float)
+
+TEMPLATE_TEST_CASE("Davidson Solver of dense symmetric real matrix [100x100]", "", double,float)
 {
     std::srand(123);
     const Matrix<TestType> A = gen_sym_data_dense<TestType>(1000);
@@ -125,13 +118,7 @@ TEMPLATE_TEST_CASE("Davidson Solver of dense symmetric real matrix [100x100]", "
     run_test_set<Matrix, TestType>(A, k);
 }
 
-// TEMPLATE_TEST_CASE("Davidson Solver of sparse symmetric real matrix [10x10]", "", float, double)
-// {
-//     std::srand(123);
-//     int k = 3;
-//     const SpMatrix<TestType> A = gen_sym_data_sparse<TestType>(10);
-//     run_test_set<SpMatrix, TestType>(A, k);
-// }
+
 
 // TEMPLATE_TEST_CASE("Davidson Solver of sparse symmetric real matrix [100x100]", "", float, double)
 // {

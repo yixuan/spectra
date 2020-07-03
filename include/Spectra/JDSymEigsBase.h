@@ -126,7 +126,7 @@ private:
 
 public:
     Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 100,
-                  Scalar tol = 10*Eigen::NumTraits<Scalar>::dummy_precision())
+                  Scalar tol = 100*Eigen::NumTraits<Scalar>::dummy_precision())
     {
         Derived& derived = static_cast<Derived&>(*this);
         Matrix intial_space = derived.SetupInitialSearchSpace(selection);
@@ -135,7 +135,7 @@ public:
     Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space, 
                            SortRule selection = SortRule::LargestMagn, 
                            Index maxit = 100,
-                           Scalar tol = 10*Eigen::NumTraits<Scalar>::dummy_precision())
+                           Scalar tol = 100*Eigen::NumTraits<Scalar>::dummy_precision())
 
     {
         search_space_.InitializeSearchSpace(initial_space);
