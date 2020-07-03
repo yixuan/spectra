@@ -38,7 +38,7 @@ Matrix<T> gen_sym_data_dense(int n)
 {
     Matrix<T> mat = Matrix<T>::Random(n, n);
     Matrix<T> mat1 = mat + mat.transpose();
-    mat1.diagonal().array() += 100;
+    mat1.diagonal().array() = 10* n;
     return mat1;
 }
 
@@ -84,7 +84,7 @@ void run_test(const MatType<T>& mat, int nev, SortRule selection)
     Vector<T> evals = eigs.eigenvalues();
     Matrix<T> evecs = eigs.eigenvectors();
 
-    Matrix<T> resid = mat.template selfadjointView<Eigen::Lower>() * evecs - evecs * evals.asDiagonal();
+    Matrix<T> resid = mat* evecs - evecs * evals.asDiagonal();
     const T err = resid.array().abs().maxCoeff();
 
     INFO("||AU - UD||_inf = " << err);
