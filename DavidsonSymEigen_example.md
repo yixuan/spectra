@@ -60,7 +60,7 @@ TODO: explain the constructor (link to doxygen)? Explain that an initial guess c
 ```cpp
 #include <Spectra/JDSymEigsDPR.h>
 
-Spectra::JDSymEigsDPR<OpType> solver(op,2); //Create Solver
+Spectra::DavidsonSymEig<OpType> solver(op,2); //Create Solver
 //Set maximum number of allowed iterations
 //TODO
 ```
@@ -72,7 +72,7 @@ Spectra::JDSymEigsDPR<OpType> solver(op,2); //Create Solver
 #include "catch.hpp"
 TEST_CASE("Davidson Symmetric EigenSolver example")
 {
-    solver.compute(Spectra::SortRule::LargestMagn);
+    solver.compute(Spectra::SortRule::LargestAlge);
 ☹   REQUIRE(solve.info() == CompInfo::Successful);
 }
 ```
