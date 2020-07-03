@@ -1,6 +1,6 @@
 Hello World
 
-This is an example of how to use the Jacobi-Davidson Symmetric Eigenvalue Solver with DPR correction method. This test can also be found as a full file in the [test/JDSymEigsDPR_example.ccp](test/JDSymEigsDPR_example.cpp) file and can be compiled with cmake and run afterwards
+This is an example of how to use the Jacobi-Davidson Symmetric Eigenvalue Solver with DPR correction method. This test can also be found as a full file in the [test/DavidsonSymEigen_example.ccp](test/JDSymEigsDPR_example.cpp) file and can be compiled with cmake and run afterwards
 
 ```bash
 mkdir build && cd build && cmake ../
@@ -33,6 +33,8 @@ Eigen::SparseMatrix<double> gen_sym_data_sparse(int n)
         {
             if (distr(gen) < prob)
                 mat.insert(i, j) = distr(gen) - 0.5;
+            if (i == j)
+                mat.coeffRef(i, j) = 10 * n;
         }
     }
     return mat + Eigen::SparseMatrix<double>(mat.transpose());
@@ -66,5 +68,11 @@ Spectra::JDSymEigsDPR<OpType> solver(op,2); //Create Solver
 - This solver can then be executed through the compute method, where we also specify which EigenPairs we want through the [Sortrule enum](https://spectralib.org/doc/selectionrule_8h_source)
 
 ```cpp
-solver.compute(Spectra::SortRule::LargestMagn)
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
+TEST_CASE("Davidson Symmetric EigenSolver example")
+{
+    solver.compute(Spectra::SortRule::LargestMagn);
+☹   REQUIRE(solve.info() == CompInfo::Successful);
+}
 ```

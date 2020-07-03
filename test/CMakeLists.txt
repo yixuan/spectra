@@ -5,13 +5,13 @@ list(APPEND test_target_sources
         DavidsonSymEig.cpp
         DenseGenMatProd.cpp
         DenseSymMatProd.cpp
+        DavidsonSymEigen_example.cpp
         Eigen.cpp
         GenEigs.cpp
         GenEigsRealShift.cpp
         GenEigsComplexShift.cpp
         Orthogonalization.cpp
         JDSymEigsBase.cpp
-        JDSymEigsDPR_example.cpp
         JDSymEigsDPRConstructor.cpp
         QR.cpp
         RitzPairs.cpp

@@ -15,6 +15,8 @@ Eigen::SparseMatrix<double> gen_sym_data_sparse(int n)
         {
             if (distr(gen) < prob)
                 mat.insert(i, j) = distr(gen) - 0.5;
+            if (i == j)
+                mat.coeffRef(i, j) = 10 * n;
         }
     }
     return mat + Eigen::SparseMatrix<double>(mat.transpose());
@@ -26,13 +28,14 @@ Eigen::SparseMatrix<double> A = gen_sym_data_sparse(1000);
 
 Spectra::SparseSymMatProd<double> op(A); // Create the Matrix Product operation
 
-#include <Spectra/JDSymEigsDPR.h>
+#include <Spectra/DavidsonSymEig.h>
 
-Spectra::JDSymEigsDPR<Spectra::SparseSymMatProd<double>> solver(op,2); //Create Solver
+Spectra::DavidsonSymEig<Spectra::SparseSymMatProd<double>> solver(op,2); //Create Solver
 
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-TEST_CASE("Davidson Symmetric DPR example")
+TEST_CASE("Davidson Symmetric EigenSolver example")
 {
-    REQUIRE(true);
+    solver.compute(Spectra::SortRule::LargestMagn);
+    REQUIRE(solver.info() == Spectra::CompInfo::Successful);
 }
