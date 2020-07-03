@@ -12,19 +12,22 @@
 #include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min
 #include <stdexcept>  // std::invalid_argument
-#include <utility>    // std::move
 
-#include "Util/Version.h"
-#include "Util/TypeTraits.h"
 #include "Util/SelectionRule.h"
 #include "Util/CompInfo.h"
-#include "Util/SimpleRandom.h"
 #include "Util/SearchSpace.h"
 #include "Util/RitzPairs.h"
 
 namespace Spectra {
-
-template <typename OpType>
+///
+/// \ingroup EigenSolver
+///
+/// This is the base class for symmetric JD eigen solvers, mainly for internal use.
+/// It is kept here to provide the documentation for member functions of concrete eigen solvers
+/// such as DavidsonSym. .
+///
+/// This class uses the CRTP method to call functions from the derived class.
+template <typename Derived, typename OpType>
 class JDSymEigsBase
 {
 protected:
@@ -32,8 +35,6 @@ protected:
     using Scalar = typename OpType::Scalar;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
-    using BoolArray = Eigen::Array<bool, Eigen::Dynamic, 1>;
 
 public:
     JDSymEigsBase(OpType& op, Index nev) :
@@ -91,9 +92,6 @@ public:
     Matrix eigenvectors() const { return ritz_pairs_.RitzVectors().leftCols(number_eigenvalues_); }
 
 protected:
-    virtual Matrix SetupInitialSearchSpace(SortRule selection) const = 0;
-
-    virtual Matrix CalculateCorrectionVector() const = 0;
     const OpType& matrix_operator_;  // object to conduct matrix operation,
                                      // e.g. matrix-vector product
 
@@ -119,14 +117,15 @@ public:
     Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
                   Scalar tol = 1e-10)
     {
-        Matrix intial_space = SetupInitialSearchSpace();
-        return computeWithGuess(selection, intial_space, maxit, tol);
+        Derived& derived = static_cast<Derived&>(*this);
+        Matrix intial_space = derived.SetupInitialSearchSpace(selection);
+        return computeWithGuess(intial_space, selection, maxit, tol);
     }
     Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space, SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
                            Scalar tol = 1e-10)
 
     {
-        search_space_.BasisVectors() = initial_space;
+        search_space_.InitializeSearchSpace(initial_space);
         niter_ = 0;
         for (niter_ = 0; niter_ < maxit; niter_++)
         {
@@ -154,8 +153,8 @@ public:
                 info_ = CompInfo::NotConverging;
                 break;
             }
-
-            Matrix corr_vect = CalculateCorrectionVector();
+            Derived& derived = static_cast<Derived&>(*this);
+            Matrix corr_vect = derived.CalculateCorrectionVector();
 
             search_space_.extend_basis(corr_vect);
         }

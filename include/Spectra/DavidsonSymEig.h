@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef SPECTRA_JD_SYM_EIGS_DPR_H
-#define SPECTRA_JD_SYM_EIGS_DPR_H
+#ifndef SPECTRA_DAVIDSON_SYM_EIG_H
+#define SPECTRA_DAVIDSON_SYM_EIG_H
 
 #include <Eigen/Dense>
 #include "JDSymEigsBase.h"
@@ -28,7 +28,7 @@ namespace Spectra {
 ///
 
 template <typename OpType>
-class JDSymEigsDPR : public JDSymEigsBase<OpType>
+class DavidsonSymEig : public JDSymEigsBase<DavidsonSymEig<OpType>, OpType>
 {
 private:
     using Index = Eigen::Index;
@@ -36,12 +36,13 @@ private:
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
-    Vector diagonal_ = Vector::Zero(this->matrix_operator_.rows());
+    Vector diagonal_;
 
 public:
-    JDSymEigsDPR(OpType& op, Index nev) :
-        JDSymEigsBase<OpType>{op, nev}
+    DavidsonSymEig(OpType& op, Index nev) :
+        JDSymEigsBase<DavidsonSymEig<OpType>, OpType>{op, nev}
     {
+        diagonal_.resize(this->matrix_operator_.rows());
         for (Index i = 0; i < op.rows(); i++)
         {
             diagonal_(i) = op(i, i);
@@ -52,7 +53,7 @@ public:
     /// and the spectrum'target (highest or lowest)
     /// \param selection spectrum section to target (e.g. lowest, etc.)
     /// \return Matrix with the initial orthonormal basis
-    Matrix SetupInitialSearchSpace(SortRule selection) const final
+    Matrix SetupInitialSearchSpace(SortRule selection) const
     {
         std::vector<Eigen::Index> indices_sorted = argsort(selection, diagonal_);
 
@@ -68,7 +69,7 @@ public:
 
     /// compute the corrections using the DPR method.
     /// \return new correction vectors.
-    Matrix CalculateCorrectionVector() const final
+    Matrix CalculateCorrectionVector() const
     {
         const Matrix& residues = this->ritz_pairs_.Residues();
         const Vector& eigvals = this->ritz_pairs_.RitzValues();
@@ -84,4 +85,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // SPECTRA_JD_SYM_EIGS_DPR_H
+#endif  // SPECTRA_DAVIDSON_SYM_EIG_H

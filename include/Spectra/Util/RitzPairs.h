@@ -25,17 +25,11 @@ private:
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
     using BoolArray = Eigen::Array<bool, Eigen::Dynamic, 1>;
-    using MapConstVec = Eigen::Map<const Vector>;
 
 public:
     RitzPairs() = default;
 
     void compute_eigen_pairs(const SearchSpace<Scalar>& search_space);
-
-    Array res_norm() const
-    {
-        return residues_.colwise().norm();
-    }  // norm of the residues
 
     Index size() const { return values_.size(); }
 
@@ -51,9 +45,9 @@ public:
         }
     }
 
-    bool check_convergence(Scalar tol, Index number_eigenvalues) const
+    bool check_convergence(Scalar tol, Index number_eigenvalues)
     {
-        const Array norms = res_norm();
+        const Array norms = residues_.colwise().norm();
         bool converged = true;
         root_converged_ = BoolArray::Zero(norms.size());
         for (Index j = 0; j < norms.size(); j++)
@@ -103,7 +97,7 @@ void RitzPairs<Scalar>::compute_eigen_pairs(const SearchSpace<Scalar>& search_sp
     vectors_ = basis_vectors * small_vectors_;
 
     // residues
-    residues_ = op_basis_prod * small_vectors_ - vectors_ * values_.asDiagaonal();
+    residues_ = op_basis_prod * small_vectors_ - vectors_ * values_.asDiagonal();
 }
 
 }  // namespace Spectra
