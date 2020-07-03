@@ -38,7 +38,8 @@ public:
 
     /// compute the eigen values/vectors
     /// \param SearchSpace instance of the class handling the search space
-    void compute_eigen_pairs(const SearchSpace<Scalar>& search_space);
+    /// \return Eigen::ComputationalInfo if small eigenvalue problem worked
+    Eigen::ComputationInfo compute_eigen_pairs(const SearchSpace<Scalar>& search_space);
 
     /// returns the size of the ritz eigen pairs
     /// \return Eigen::Index number of pairs
@@ -55,6 +56,7 @@ public:
             values_[i] = temp.values_[ind[i]];
             vectors_.col(i) = temp.vectors_.col(ind[i]);
             residues_.col(i) = temp.residues_.col(ind[i]);
+            small_vectors_.col(i)= temp.small_vectors_.col(ind[i]);
         }
     }
 
@@ -63,7 +65,7 @@ public:
     /// \param tol tolerance for convergence
     /// \param number_eigenvalue number of request eigenvalues
     /// \return bool true if all eigenvalues are converged
-    bool check_convergence(Scalar tol, Index number_eigenvalues) const
+    bool check_convergence(Scalar tol, Index number_eigenvalues)
     {
         const Array norms = residues_.colwise().norm();
         bool converged = true;
@@ -83,7 +85,6 @@ public:
     const Vector& RitzValues() const { return values_; }
     const Matrix& SmallRitzVectors() const { return small_vectors_; }
     const Matrix& Residues() const { return residues_; }
-    Matrix& Residues() { return residues_; }
     const BoolArray& ConvergedEigenvalues() const { return root_converged_; }
 
 private:
@@ -102,7 +103,7 @@ namespace Spectra {
 /// Also computes the ritz vectors and residues
 /// \param SearchSpace instance of the SearchSpace class
 template <typename Scalar>
-void RitzPairs<Scalar>::compute_eigen_pairs(const SearchSpace<Scalar>& search_space)
+Eigen::ComputationInfo RitzPairs<Scalar>::compute_eigen_pairs(const SearchSpace<Scalar>& search_space)
 {
     const Matrix& basis_vectors = search_space.BasisVectors();
     const Matrix& op_basis_prod = search_space.OperatorBasisProduct();
@@ -120,6 +121,8 @@ void RitzPairs<Scalar>::compute_eigen_pairs(const SearchSpace<Scalar>& search_sp
 
     // residues
     residues_ = op_basis_prod * small_vectors_ - vectors_ * values_.asDiagonal();
+
+    return eigen_solver.info();
 }
 
 }  // namespace Spectra

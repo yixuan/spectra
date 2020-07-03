@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2020 Netherlands eScience Center <J.Wehner@esciencecenter.nl>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -12,7 +12,7 @@
 #include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min
 #include <stdexcept>  // std::invalid_argument
-
+#include <iostream>
 #include "Util/SelectionRule.h"
 #include "Util/CompInfo.h"
 #include "Util/SearchSpace.h"
@@ -24,9 +24,10 @@ namespace Spectra {
 ///
 /// This is the base class for symmetric JD eigen solvers, mainly for internal use.
 /// It is kept here to provide the documentation for member functions of concrete eigen solvers
-/// such as DavidsonSym.
+/// such as DavidsonSym. .
 ///
-template <typename OpType>
+/// This class uses the CRTP method to call functions from the derived class.
+template <typename Derived, typename OpType>
 class JDSymEigsBase
 {
 protected:
@@ -38,7 +39,6 @@ protected:
 public:
     JDSymEigsBase(OpType& op, Index nev) :
         matrix_operator_(op),
-        operator_dimension_(op.rows()),
         number_eigenvalues_(nev),
         max_search_space_size_(10 * number_eigenvalues_),
         initial_search_space_size_(2 * number_eigenvalues_),
@@ -46,6 +46,17 @@ public:
 
     {
         check_argument();
+//TODO better input validation and checks
+        if (op.cols() < max_search_space_size_)  
+        {
+            max_search_space_size_ = op.cols();
+        } 
+
+        if (op.cols() < initial_search_space_size_+ correction_size_)  
+        {
+            initial_search_space_size_ = op.cols()/3;
+            correction_size_= op.cols()/3;
+        } 
     }
 
     ///
@@ -92,44 +103,43 @@ public:
     Matrix eigenvectors() const { return ritz_pairs_.RitzVectors().leftCols(number_eigenvalues_); }
 
 protected:
-    virtual Matrix SetupInitialSearchSpace(SortRule selection) const = 0;
-
-    virtual Matrix CalculateCorrectionVector() const = 0;
-    const OpType& matrix_operator_;  // object to conduct marix operation,
+    const OpType& matrix_operator_;  // object to conduct matrix operation,
                                      // e.g. matrix-vector product
 
     Index niter_ = 0;
-    const Index operator_dimension_;  // dimension of matrix A
     const Index number_eigenvalues_;  // number of eigenvalues requested
     Index max_search_space_size_;
     Index initial_search_space_size_;
     Index correction_size_;             // how many correction vectors are added in each iteration
     RitzPairs<Scalar> ritz_pairs_;      // Ritz eigen pair structure
     SearchSpace<Scalar> search_space_;  // search space
+    Index size_update_;                 // size of the current correction
 
 private:
     CompInfo info_ = CompInfo::NotComputed;  // status of the computation
 
     void check_argument() const
     {
-        if (number_eigenvalues_ < 1 || number_eigenvalues_ > operator_dimension_ - 1)
+        if (number_eigenvalues_ < 1 || number_eigenvalues_ > matrix_operator_.cols() - 1)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
     }
 
 public:
-    Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
-                  Scalar tol = 1e-10)
+    Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 100,
+                  Scalar tol = 10*Eigen::NumTraits<Scalar>::dummy_precision())
     {
-        Matrix intial_space = SetupInitialSearchSpace();
-        return computeWithGuess(selection, intial_space, maxit, tol);
+        Derived& derived = static_cast<Derived&>(*this);
+        Matrix intial_space = derived.SetupInitialSearchSpace(selection);
+        return computeWithGuess(intial_space, selection, maxit, tol);
     }
-    Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space, SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
-                           Scalar tol = 1e-10)
+    Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space, 
+                           SortRule selection = SortRule::LargestMagn, 
+                           Index maxit = 100,
+                           Scalar tol = 10*Eigen::NumTraits<Scalar>::dummy_precision())
 
     {
-        search_space_.BasisVectors() = initial_space;
-        search_space_.OperatorBasisProduct() = matrix_operator_ * initial_space;
-
+        search_space_.InitializeSearchSpace(initial_space);
+std::cout<<"tolerance:"<<tol<<std::endl;
         niter_ = 0;
         for (niter_ = 0; niter_ < maxit; niter_++)
         {
@@ -137,14 +147,25 @@ public:
 
             if (do_restart)
             {
-                search_space_.restart(ritz_pairs_, initial_search_space_size_);
+                std::cout<<"restart"<<std::endl;
+               search_space_.restart(ritz_pairs_, initial_search_space_size_);
             }
 
             search_space_.update_operator_basis_product(matrix_operator_);
 
-            ritz_pairs_.compute_eigen_pairs(search_space_);
-
+            Eigen::ComputationInfo small_problem_info=ritz_pairs_.compute_eigen_pairs(search_space_);
+            if (small_problem_info !=Eigen::ComputationInfo::Success){
+                info_ = CompInfo::NumericalIssue;
+                break;
+            }
             ritz_pairs_.sort(selection);
+
+            std::cout << "EigenValues" << std::endl;
+            std::cout << ritz_pairs_.RitzValues().head(number_eigenvalues_) << std::endl;
+
+            std::cout << "Residues" << std::endl;
+            std::cout << ritz_pairs_.Residues().leftCols(number_eigenvalues_).colwise().norm() << std::endl;
+
 
             bool converged = ritz_pairs_.check_convergence(tol, number_eigenvalues_);
             if (converged)
@@ -157,8 +178,8 @@ public:
                 info_ = CompInfo::NotConverging;
                 break;
             }
-
-            Matrix corr_vect = CalculateCorrectionVector();
+            Derived& derived = static_cast<Derived&>(*this);
+            Matrix corr_vect = derived.CalculateCorrectionVector();
 
             search_space_.extend_basis(corr_vect);
         }

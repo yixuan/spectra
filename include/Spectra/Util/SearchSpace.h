@@ -30,7 +30,7 @@ public:
     SearchSpace() = default;
 
     /// returns the current size of the search space
-    void size() const
+    Index size() const
     {
         return basis_vectors_.cols();
     }
@@ -48,12 +48,10 @@ public:
         op_basis_product_.rightCols(nvec) = op * basis_vectors_.rightCols(nvec);
     }
 
-    /// Computes the matrix formed by the operator applied to the search space
-    /// \param OpType operator representing the matrix
-    template <typename OpType>
-    void full_update(OpType &op)
+    void InitializeSearchSpace(const Eigen::Ref<const Matrix> &initial_vectors)
     {
-        op_basis_product_ = op * basis_vectors_;
+        basis_vectors_ = initial_vectors;
+        op_basis_product_ = Matrix(initial_vectors.rows(), 0);
     }
 
     /// Restart the search space by reducing the basis vector to the last
@@ -62,7 +60,7 @@ public:
     /// \param size size of the restart
     void restart(const RitzPairs<Scalar> &ritz_pairs, Index size)
     {
-        basis_vectors_ = ritz_pairs.Vectors().leftCols(size);
+        basis_vectors_ = ritz_pairs.RitzVectors().leftCols(size);
         op_basis_product_ = op_basis_product_ * ritz_pairs.SmallRitzVectors().leftCols(size);
     }
 
@@ -71,7 +69,6 @@ public:
     /// \param new_vect matrix of new correction vectors
     void extend_basis(const Matrix &new_vect)
     {
-        Index num_update = new_vect.cols();
         Index leftColstoSkip = size();
         append_new_vectors_to_basis(new_vect);
         Spectra::twice_is_enough_orthogonalisation(basis_vectors_, leftColstoSkip);
@@ -80,14 +77,8 @@ public:
     /// Returns the basis vectors
     const Matrix &BasisVectors() const { return basis_vectors_; }
 
-    /// Return the basis vectors
-    Matrix &BasisVectors() { return basis_vectors_; }
-
     /// Returns the operator applied to basis vector
     const Matrix &OperatorBasisProduct() const { return op_basis_product_; }
-
-    /// Returns the operator applied to basis vector
-    Matrix &OperatorBasisProduct() { return op_basis_product_; }
 
 private:
     Matrix basis_vectors_;

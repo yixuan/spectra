@@ -2,9 +2,8 @@
 #include <Eigen/SparseCore>
 #include <iostream>
 
-#include <Spectra/JDSymEigsBase.h>
 #include <Spectra/MatOp/DenseGenMatProd.h>
-
+#include <Spectra/Util/SearchSpace.h>
 #include <Spectra/Util/RitzPairs.h>
 #include <Spectra/Util/SelectionRule.h>
 #include <Spectra/LinAlg/Orthogonalization.h>
@@ -21,52 +20,27 @@ using ComplexVector = Eigen::VectorXcd;
 using SpMatrix = Eigen::SparseMatrix<double>;
 using Index = Eigen::Index;
 
-template <typename OpType>
-class JDMock : public JDSymEigsBase<OpType>
-{
-public:
-    JDMock(OpType& op, Index nev) :
-        JDSymEigsBase<OpType>(op, nev) {}
-
-    Matrix SetupInitialSearchSpace(SortRule) const
-    {
-        Matrix V = Matrix::Random(10, 5);
-        QR_orthogonalisation(V);
-        return V;
-    }
-
-    Matrix CalculateCorrectionVector() const { return Matrix::Zero(0, 0); }
-
-    void InitSearchSpace()
-    {
-        Matrix V = this->SetupInitialSearchSpace(Spectra::SortRule::LargestAlge);
-        this->search_space_.BasisVectors() = V;
-        this->search_space_.OperatorBasisProduct() = this->matrix_operator_ * V;
-    }
-
-    void InitResidues() { this->ritz_pairs_.Residues() = 1E-6 * Matrix::Random(10, 10); }
-    void InitRitzPairs() { this->ritz_pairs_.compute_eigen_pairs(this->search_space_); }
-    void SortRitzPairs() { this->ritz_pairs_.sort(Spectra::SortRule::LargestAlge); }
-    bool checkConvergence(double tol, Index nev) const { return this->ritz_pairs_.check_convergence(tol, nev); }
-};
 
 TEST_CASE("compute_eigen_pairs", "[RitzPairs]")
 {
     Matrix A = Eigen::MatrixXd::Random(10, 10);
     Matrix B = A + A.transpose();
     DenseGenMatProd<double> op(B);
-    JDMock<DenseGenMatProd<double>> eigs(op, 5);
 
-    eigs.InitSearchSpace();
+    SearchSpace<double> space;
+    Matrix initial_space = Matrix::Random(10, 3);
+    Spectra::twice_is_enough_orthogonalisation(initial_space);
+    space.InitializeSearchSpace(initial_space);
+    space.update_operator_basis_product(op);
 
-    eigs.InitRitzPairs();
-    eigs.SortRitzPairs();
-    Vector ev = eigs.eigenvalues();
+    RitzPairs<double> ritzpair;
+    ritzpair.compute_eigen_pairs(space);
 
-    for (Index i = 1; i < 5; i++)
+    SECTION("Largest Magnitude")
     {
-        CHECK(ev(i) < ev(i - 1));
+        
     }
+   
 }
 
 TEST_CASE("Convergence", "[RitzPairs]")
@@ -74,7 +48,4 @@ TEST_CASE("Convergence", "[RitzPairs]")
     Matrix A = Eigen::MatrixXd::Random(10, 10);
     Matrix B = A + A.transpose();
     DenseGenMatProd<double> op(B);
-    JDMock<DenseGenMatProd<double>> eigs(op, 5);
-    eigs.InitResidues();
-    // CHECK(eigs.checkConvergence(1E-3, 5));
 }
