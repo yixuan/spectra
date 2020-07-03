@@ -1,5 +1,3 @@
-Hello World
-
 This is an example of how to use the Jacobi-Davidson Symmetric Eigenvalue Solver with DPR correction method. This test can also be found as a full file in the [test/DavidsonSymEigen_example.ccp](test/JDSymEigsDPR_example.cpp) file and can be compiled with cmake and run afterwards
 
 ```bash
@@ -61,18 +59,43 @@ TODO: explain the constructor (link to doxygen)? Explain that an initial guess c
 #include <Spectra/JDSymEigsDPR.h>
 
 Spectra::DavidsonSymEig<OpType> solver(op,2); //Create Solver
-//Set maximum number of allowed iterations
-//TODO
 ```
 
-- This solver can then be executed through the compute method, where we also specify which EigenPairs we want through the [Sortrule enum](https://spectralib.org/doc/selectionrule_8h_source)
+While their defaults values should be adequate for most situations, several internal parameters of the solver can be tuned :
+
+```cpp
+
+// Maximum size of the search space
+solver.setMaxSearchSpaceSize(250); 
+
+// Number of corretion vector to append to the
+// search space at each iteration
+solver.setCorrectionSize(4);
+```
+
+- This solver can then be executed through the compute method, where we also specify which EigenPairs we want through the [Sortrule enum](https://spectralib.org/doc/selectionrule_8h_source). The maximum number of iterations of the solver as well as the convergence criteria for the 
+norm of the residues can also be specified in the call of the `compute()` method.
 
 ```cpp
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 TEST_CASE("Davidson Symmetric EigenSolver example")
 {
-    solver.compute(Spectra::SortRule::LargestAlge);
-☹   REQUIRE(solve.info() == CompInfo::Successful);
+    solver.compute(Spectra::SortRule::LargestAlge, maxit = 100, tol=1E-3);
+    REQUIRE(solve.info() == CompInfo::Successful);
+}
+```
+
+- It is also possible to provide a staring values for the eigenvectors. This can be done with the `computeWithGuess` method as illustrated below :
+
+```cpp
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
+TEST_CASE("Davidson Symmetric EigenSolver example with guess")
+{
+    Matrix guess = Eigen::Random(1000, 4);
+    Spectra::QR_orthogonalisation(guess);
+    solver.computeWithGuess(guess, Spectra::SortRule::LargestAlge, maxit=100, tol=1E-3);
+    REQUIRE(solve.info() == CompInfo::Successful);
 }
 ```
