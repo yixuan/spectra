@@ -36,6 +36,42 @@ Spectra::DavidsonSymEig<Spectra::SparseSymMatProd<double>> solver(op,2); //Creat
 #include "catch.hpp"
 TEST_CASE("Davidson Symmetric EigenSolver example")
 {
-    solver.compute(Spectra::SortRule::LargestAlge);
+    // Maximum size of the search space
+    solver.setMaxSearchspaceSize(250); 
+
+    // Number of corretion vector to append to the
+    // search space at each iteration
+    solver.setCorrectionSize(4);
+
+    Eigen::MatrixXd guess = Eigen::MatrixXd::Random(1000, 4);
+    Spectra::QR_orthogonalisation(guess);
+    solver.computeWithGuess(guess, Spectra::SortRule::LargestAlge, 100, 1E-3);
     REQUIRE(solver.info() == Spectra::CompInfo::Successful);
+}
+
+#include <Eigen/Dense>
+
+// Generate data for testing
+Eigen::MatrixXd gen_sym_data_dense(int n)
+{
+    Eigen::MatrixXd mat = Eigen::MatrixXd::Random(n, n);
+    Eigen::MatrixXd mat1 = mat + mat.transpose();
+    mat1.diagonal().array() = 10* n;
+    return mat1;
+}
+
+Eigen::MatrixXd B = gen_sym_data_dense(1000);
+
+#include <Spectra/MatOp/DenseSymMatProd.h>
+
+Spectra::DenseSymMatProd<double> op_dense(B); // Create the Matrix Product operation
+
+Spectra::DavidsonSymEig<Spectra::DenseSymMatProd<double>> solver_dense(op_dense,2); //Create Solver
+
+TEST_CASE("Davidson Dense Symmetric EigenSolver example")
+{
+    Eigen::MatrixXd guess = Eigen::MatrixXd::Random(1000, 4);
+    Spectra::QR_orthogonalisation(guess);
+    solver_dense.computeWithGuess(guess, Spectra::SortRule::LargestAlge, 100, 1E-3);
+    REQUIRE(solver_dense.info() == Spectra::CompInfo::Successful);
 }

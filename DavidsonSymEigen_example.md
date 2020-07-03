@@ -1,9 +1,9 @@
-This is an example of how to use the Jacobi-Davidson Symmetric Eigenvalue Solver with DPR correction method. This test can also be found as a full file in the [test/DavidsonSymEigen_example.ccp](test/JDSymEigsDPR_example.cpp) file and can be compiled with cmake and run afterwards
+This is an example of how to use the Jacobi-Davidson Symmetric Eigenvalue Solver with DPR correction method. This test can also be found as a full file in the [test/DavidsonSymEigen_example.ccp](test/DavidsonSymEigen_example.cpp) file and can be compiled with cmake and run afterwards
 
 ```bash
 mkdir build && cd build && cmake ../
-make JDSymEigsDPR_example
-./test/JDSymEigsDPR_example
+make DavidsonSymEigen_example
+./test/DavidsonSymEigen_example
 ```
 
 Suppose we want to find the 2 eigenpairs with the Largest value from a 1000x1000 Sparse Matrix A, then we could use this solver to quickly find them.
@@ -53,10 +53,9 @@ Spectra::SparseSymMatProd<double> op(mat); // Create the Matrix Product operatio
 
 - Afterwards the solver can be constructed, and desired parameters can be set 
 
-TODO: explain the constructor (link to doxygen)? Explain that an initial guess can be provided?
 
 ```cpp
-#include <Spectra/JDSymEigsDPR.h>
+#include <Spectra/DavidsonSymEig.h>
 
 Spectra::DavidsonSymEig<OpType> solver(op,2); //Create Solver
 ```
@@ -91,11 +90,49 @@ TEST_CASE("Davidson Symmetric EigenSolver example")
 ```cpp
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
-TEST_CASE("Davidson Symmetric EigenSolver example with guess")
+TEST_CASE("Davidson Symmetric Sparse EigenSolver example with guess")
 {
-    Matrix guess = Eigen::Random(1000, 4);
+    Eigen::MatrixXd guess = Eigen::MatrixXd::Random(1000, 4);
     Spectra::QR_orthogonalisation(guess);
-    solver.computeWithGuess(guess, Spectra::SortRule::LargestAlge, maxit=100, tol=1E-3);
-    REQUIRE(solve.info() == CompInfo::Successful);
+    solver.computeWithGuess(guess, Spectra::SortRule::LargestAlge, 100, 1E-3);
+    REQUIRE(solver.info() == Spectra::CompInfo::Successful);
+}
+```
+- The Davidson solver can also be used in combination with Dense matrices
+
+```cpp
+#include <Eigen/Dense>
+
+// Generate data for testing
+Eigen::MatrixXd gen_sym_data_dense(int n)
+{
+    Eigen::MatrixXd mat = Eigen::MatrixXd::Random(n, n);
+    Eigen::MatrixXd mat1 = mat + mat.transpose();
+    mat1.diagonal().array() = 10* n;
+    return mat1;
+}
+
+Eigen::MatrixXd B = gen_sym_data_dense(1000);
+```
+
+- Create the Matrix Product operator and solver
+
+```cpp
+#include <Spectra/MatOp/DenseSymMatProd.h>
+
+Spectra::DenseSymMatProd<double> op_dense(B); // Create the Matrix Product operation
+
+Spectra::DavidsonSymEig<Spectra::DenseSymMatProd<double>> solver_dense(op_dense,2); //Create Solver
+```
+
+- Test the dense solver
+
+```cpp
+TEST_CASE("Davidson Dense Symmetric EigenSolver example")
+{
+    Eigen::MatrixXd guess = Eigen::MatrixXd::Random(1000, 4);
+    Spectra::QR_orthogonalisation(guess);
+    solver_dense.computeWithGuess(guess, Spectra::SortRule::LargestAlge, 100, 1E-3);
+    REQUIRE(solver_dense.info() == Spectra::CompInfo::Successful);
 }
 ```
