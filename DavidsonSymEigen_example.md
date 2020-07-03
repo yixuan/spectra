@@ -51,19 +51,12 @@ Eigen::SparseMatrix<double> A = gen_sym_data_sparse(1000);
 Spectra::SparseSymMatProd<double> op(mat); // Create the Matrix Product operation
 ```
 
-- Afterwards the solver can be constructed, and desired parameters can be set 
-
-TODO: explain the constructor (link to doxygen)? Explain that an initial guess can be provided?
+- Afterwards the solver can be constructed. Both the operator and the desired number of eigen values must be specfied in the constructor. While their defaults values should be adequate for most situations, several internal parameters of the solver, most notably the maximum size of the search space and the number of correction vectors to append to the search size at each iteration, can be tuned :
 
 ```cpp
-#include <Spectra/JDSymEigsDPR.h>
+#include <Spectra/DavidsonSymEig.h>
 
-Spectra::DavidsonSymEig<OpType> solver(op,2); //Create Solver
-```
-
-While their defaults values should be adequate for most situations, several internal parameters of the solver can be tuned :
-
-```cpp
+Spectra::DavidsonSymEig<OpType> solver(op, 2); //Create Solver
 
 // Maximum size of the search space
 solver.setMaxSearchSpaceSize(250); 
