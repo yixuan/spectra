@@ -26,7 +26,7 @@ struct OpTypeTrait
     using Scalar = typename MatType::Scalar;
     using OpType = DenseSymMatProd<Scalar>;
 };
-template<typename T>
+template <typename T>
 struct OpTypeTrait<SpMatrix<T>>
 {
     using OpType = SparseSymMatProd<T>;
@@ -38,8 +38,9 @@ Matrix gen_sym_data_dense(int n)
 {
     Matrix mat = 0.03 * Matrix::Random(n, n);
     Matrix mat1 = mat + mat.transpose();
-    for (Eigen::Index i=0; i<n; i++) {
-        mat1(i,i) += i+1;
+    for (Eigen::Index i = 0; i < n; i++)
+    {
+        mat1(i, i) += i + 1;
     }
     return mat1;
 }
@@ -59,17 +60,17 @@ SpMatrix gen_sym_data_sparse(int n)
         for (int j = 0; j < n; j++)
         {
             if (distr(gen) < prob)
-                mat.insert(i, j) = 0.1*(distr(gen) - 0.5);
+                mat.insert(i, j) = 0.1 * (distr(gen) - 0.5);
             if (i == j)
             {
-                mat.coeffRef(i, j) = i+1;
+                mat.coeffRef(i, j) = i + 1;
             }
         }
     }
     return mat;
 }
 
-template < typename MatType>
+template <typename MatType>
 void run_test(const MatType& mat, int nev, SortRule selection)
 {
     using OpType = typename OpTypeTrait<MatType>::OpType;
@@ -82,33 +83,30 @@ void run_test(const MatType& mat, int nev, SortRule selection)
     INFO("nconv = " << nconv);
     INFO("niter = " << niter);
     REQUIRE(eigs.info() == CompInfo::Successful);
-    using T=typename OpType::Scalar;
+    using T = typename OpType::Scalar;
     Vector<T> evals = eigs.eigenvalues();
     Matrix<T> evecs = eigs.eigenvectors();
 
-    Matrix<T> resid = op* evecs - evecs * evals.asDiagonal();
+    Matrix<T> resid = op * evecs - evecs * evals.asDiagonal();
     const T err = resid.array().abs().maxCoeff();
 
     INFO("||AU - UD||_inf = " << err);
-    REQUIRE(err <100*Eigen::NumTraits<T>::dummy_precision());
+    REQUIRE(err < 100 * Eigen::NumTraits<T>::dummy_precision());
 }
 
-template < typename MatType>
+template <typename MatType>
 void run_test_set(const MatType& mat, int k)
 {
-
     SECTION("Largest Value")
     {
         run_test<MatType>(mat, k, SortRule::LargestAlge);
     }
-   
+
     SECTION("Smallest Value")
     {
         run_test<MatType>(mat, k, SortRule::SmallestAlge);
     }
-
 }
-
 
 TEMPLATE_TEST_CASE("Davidson Solver of dense symmetric real matrix [1000x1000]", "", double)
 {
@@ -118,12 +116,10 @@ TEMPLATE_TEST_CASE("Davidson Solver of dense symmetric real matrix [1000x1000]",
     run_test_set<Matrix<TestType>>(A, k);
 }
 
-
-
 TEMPLATE_TEST_CASE("Davidson Solver of sparse symmetric real matrix [1000x1000]", "", double)
 {
     std::srand(123);
     int k = 10;
-    const SpMatrix<TestType> A = gen_sym_data_sparse< SpMatrix<TestType>>(1000);
+    const SpMatrix<TestType> A = gen_sym_data_sparse<SpMatrix<TestType>>(1000);
     run_test_set<SpMatrix<TestType>>(A, k);
 }

@@ -56,7 +56,7 @@ public:
             values_[i] = temp.values_[ind[i]];
             vectors_.col(i) = temp.vectors_.col(ind[i]);
             residues_.col(i) = temp.residues_.col(ind[i]);
-            small_vectors_.col(i)= temp.small_vectors_.col(ind[i]);
+            small_vectors_.col(i) = temp.small_vectors_.col(ind[i]);
         }
     }
 

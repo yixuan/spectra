@@ -20,7 +20,6 @@ using ComplexVector = Eigen::VectorXcd;
 using SpMatrix = Eigen::SparseMatrix<double>;
 using Index = Eigen::Index;
 
-
 TEST_CASE("compute_eigen_pairs", "[RitzPairs]")
 {
     Matrix A = Eigen::MatrixXd::Random(10, 10);
@@ -38,9 +37,7 @@ TEST_CASE("compute_eigen_pairs", "[RitzPairs]")
 
     SECTION("Largest Magnitude")
     {
-        
     }
-   
 }
 
 TEST_CASE("Convergence", "[RitzPairs]")

@@ -46,17 +46,17 @@ public:
 
     {
         check_argument();
-//TODO better input validation and checks
-        if (op.cols() < max_search_space_size_)  
+        //TODO better input validation and checks
+        if (op.cols() < max_search_space_size_)
         {
             max_search_space_size_ = op.cols();
-        } 
+        }
 
-        if (op.cols() < initial_search_space_size_+ correction_size_)  
+        if (op.cols() < initial_search_space_size_ + correction_size_)
         {
-            initial_search_space_size_ = op.cols()/3;
-            correction_size_= op.cols()/3;
-        } 
+            initial_search_space_size_ = op.cols() / 3;
+            correction_size_ = op.cols() / 3;
+        }
     }
 
     ///
@@ -126,16 +126,16 @@ private:
 
 public:
     Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 100,
-                  Scalar tol = 100*Eigen::NumTraits<Scalar>::dummy_precision())
+                  Scalar tol = 100 * Eigen::NumTraits<Scalar>::dummy_precision())
     {
         Derived& derived = static_cast<Derived&>(*this);
         Matrix intial_space = derived.SetupInitialSearchSpace(selection);
         return computeWithGuess(intial_space, selection, maxit, tol);
     }
-    Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space, 
-                           SortRule selection = SortRule::LargestMagn, 
+    Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space,
+                           SortRule selection = SortRule::LargestMagn,
                            Index maxit = 100,
-                           Scalar tol = 100*Eigen::NumTraits<Scalar>::dummy_precision())
+                           Scalar tol = 100 * Eigen::NumTraits<Scalar>::dummy_precision())
 
     {
         search_space_.InitializeSearchSpace(initial_space);
@@ -146,13 +146,14 @@ public:
 
             if (do_restart)
             {
-               search_space_.restart(ritz_pairs_, initial_search_space_size_);
+                search_space_.restart(ritz_pairs_, initial_search_space_size_);
             }
 
             search_space_.update_operator_basis_product(matrix_operator_);
 
-            Eigen::ComputationInfo small_problem_info=ritz_pairs_.compute_eigen_pairs(search_space_);
-            if (small_problem_info !=Eigen::ComputationInfo::Success){
+            Eigen::ComputationInfo small_problem_info = ritz_pairs_.compute_eigen_pairs(search_space_);
+            if (small_problem_info != Eigen::ComputationInfo::Success)
+            {
                 info_ = CompInfo::NumericalIssue;
                 break;
             }
