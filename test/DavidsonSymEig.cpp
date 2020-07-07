@@ -20,37 +20,37 @@ template <typename T>
 using SpMatrix = Eigen::SparseMatrix<T>;
 
 // Traits to obtain operation type from matrix type
-template <template <typename> typename MatType, typename T>
+template <typename MatType>
 struct OpTypeTrait
 {
-    using OpType = DenseSymMatProd<T>;
+    using Scalar = typename MatType::Scalar;
+    using OpType = DenseSymMatProd<Scalar>;
 };
-
-template <typename T>
-struct OpTypeTrait<SpMatrix, T>
+template<typename T>
+struct OpTypeTrait<SpMatrix<T>>
 {
     using OpType = SparseSymMatProd<T>;
 };
 
 // Generate data for testing
-template <typename T>
-Matrix<T> gen_sym_data_dense(int n)
+template <typename Matrix>
+Matrix gen_sym_data_dense(int n)
 {
-    Matrix<T> mat = 0.03 * Matrix<T>::Random(n, n);
-    Matrix<T> mat1 = mat + mat.transpose();
+    Matrix mat = 0.03 * Matrix::Random(n, n);
+    Matrix mat1 = mat + mat.transpose();
     for (Eigen::Index i=0; i<n; i++) {
         mat1(i,i) += i+1;
     }
     return mat1;
 }
 
-template <typename T>
-SpMatrix<T> gen_sym_data_sparse(int n)
+template <typename SpMatrix>
+SpMatrix gen_sym_data_sparse(int n)
 {
     // Eigen solver only uses the lower triangle of mat,
     // so we don't need to make mat symmetric here.
     double prob = 0.5;
-    SpMatrix<T> mat(n, n);
+    SpMatrix mat(n, n);
     std::default_random_engine gen;
     gen.seed(0);
     std::uniform_real_distribution<double> distr(0.0, 1.0);
@@ -69,20 +69,20 @@ SpMatrix<T> gen_sym_data_sparse(int n)
     return mat;
 }
 
-template <template <typename> typename MatType, typename T>
-void run_test(const MatType<T>& mat, int nev, SortRule selection)
+template < typename MatType>
+void run_test(const MatType& mat, int nev, SortRule selection)
 {
-    using OpType = typename OpTypeTrait<MatType, T>::OpType;
+    using OpType = typename OpTypeTrait<MatType>::OpType;
     OpType op(mat);
     DavidsonSymEig<OpType> eigs(op, nev);
     int nconv = eigs.compute(selection);
 
     int niter = eigs.num_iterations();
-
+    REQUIRE(nconv == nev);
     INFO("nconv = " << nconv);
     INFO("niter = " << niter);
     REQUIRE(eigs.info() == CompInfo::Successful);
-
+    using T=typename OpType::Scalar;
     Vector<T> evals = eigs.eigenvalues();
     Matrix<T> evecs = eigs.eigenvectors();
 
@@ -93,18 +93,18 @@ void run_test(const MatType<T>& mat, int nev, SortRule selection)
     REQUIRE(err <100*Eigen::NumTraits<T>::dummy_precision());
 }
 
-template <template <typename> typename MatType, typename T>
-void run_test_set(const MatType<T>& mat, int k)
+template < typename MatType>
+void run_test_set(const MatType& mat, int k)
 {
 
     SECTION("Largest Value")
     {
-        run_test<MatType, T>(mat, k, SortRule::LargestAlge);
+        run_test<MatType>(mat, k, SortRule::LargestAlge);
     }
    
     SECTION("Smallest Value")
     {
-        run_test<MatType, T>(mat, k, SortRule::SmallestAlge);
+        run_test<MatType>(mat, k, SortRule::SmallestAlge);
     }
 
 }
@@ -113,9 +113,9 @@ void run_test_set(const MatType<T>& mat, int k)
 TEMPLATE_TEST_CASE("Davidson Solver of dense symmetric real matrix [1000x1000]", "", double)
 {
     std::srand(123);
-    const Matrix<TestType> A = gen_sym_data_dense<TestType>(1000);
+    const Matrix<TestType> A = gen_sym_data_dense<Matrix<TestType>>(1000);
     int k = 10;
-    run_test_set<Matrix, TestType>(A, k);
+    run_test_set<Matrix<TestType>>(A, k);
 }
 
 
@@ -124,6 +124,6 @@ TEMPLATE_TEST_CASE("Davidson Solver of sparse symmetric real matrix [1000x1000]"
 {
     std::srand(123);
     int k = 10;
-    const SpMatrix<TestType> A = gen_sym_data_sparse<TestType>(1000);
-    run_test_set<SpMatrix, TestType>(A, k);
+    const SpMatrix<TestType> A = gen_sym_data_sparse< SpMatrix<TestType>>(1000);
+    run_test_set<SpMatrix<TestType>>(A, k);
 }

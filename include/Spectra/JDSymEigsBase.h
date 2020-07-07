@@ -7,7 +7,7 @@
 #ifndef SPECTRA_JD_SYM_EIGS_BASE_H
 #define SPECTRA_JD_SYM_EIGS_BASE_H
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 #include <vector>     // std::vector
 #include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min
@@ -174,7 +174,7 @@ public:
 
             search_space_.extend_basis(corr_vect);
         }
-        return Index(ritz_pairs_.ConvergedEigenvalues().head(number_eigenvalues_).sum());
+        return (ritz_pairs_.ConvergedEigenvalues()).template cast<Index>().head(number_eigenvalues_).sum();
     }
 };
 

@@ -5,7 +5,6 @@ list(APPEND test_target_sources
         DavidsonSymEig.cpp
         DenseGenMatProd.cpp
         DenseSymMatProd.cpp
-        DavidsonSymEigen_example.cpp
         Eigen.cpp
         GenEigs.cpp
         GenEigsRealShift.cpp
@@ -35,12 +34,6 @@ foreach(TEST_SOURCE ${test_target_sources})
 
     # Configure (include headers and link libraries) the test
     target_link_libraries(${TEST_NAME} PRIVATE Spectra)
-
-    # Additional compiler flags
-    target_compile_options(${TEST_NAME} PRIVATE -std=c++11 -Wall -O2 -Wno-parentheses
-            )
-    target_compile_options(${TEST_NAME} PRIVATE $<$<CXX_COMPILER_ID:GNU>:-Wno-misleading-indentation -Wno-int-in-bool-context>
-            )
 
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR})  # the working directory is the out-of-source build directory

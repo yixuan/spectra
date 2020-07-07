@@ -9,6 +9,8 @@
 - Added a `Flags` template parameter to every dense matrix operation class
   (e.g. `DenseCholesky` and `DenseSymMatProd`), whose possible values are `Eigen::ColMajor`
   and `Eigen::RowMajor`. This parameter allows these wrapper classes to handle row-major matrices
+- Implemented symmetric Davidson solver and extended matrix products to handle mat-mat products and coefficient wise accessors.
+
 
 ### Changed
 - **API change**: Spectra now requires C++11
