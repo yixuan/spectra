@@ -91,6 +91,8 @@ void GS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
     }
 }
 
+
+
 /// Orthogonalize the right cols of in_output against the left cols
 /// It assumes that the right cols are already orthogonal
 /// and it does not orthogonalize the left cols against each other
