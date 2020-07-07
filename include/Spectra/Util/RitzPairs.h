@@ -121,7 +121,6 @@ Eigen::ComputationInfo RitzPairs<Scalar>::compute_eigen_pairs(const SearchSpace<
 
     // residues
     residues_ = op_basis_prod * small_vectors_ - vectors_ * values_.asDiagonal();
-
     return eigen_solver.info();
 }
 

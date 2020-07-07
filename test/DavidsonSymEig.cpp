@@ -59,10 +59,10 @@ SpMatrix<T> gen_sym_data_sparse(int n)
         for (int j = 0; j < n; j++)
         {
             if (distr(gen) < prob)
-                mat.insert(i, j) = 0.02*(distr(gen) - 0.5);
+                mat.insert(i, j) = 0.1*(distr(gen) - 0.5);
             if (i == j)
             {
-                mat.coeffRef(i, j) = 10 * i;
+                mat.coeffRef(i, j) = i+1;
             }
         }
     }
@@ -86,11 +86,11 @@ void run_test(const MatType<T>& mat, int nev, SortRule selection)
     Vector<T> evals = eigs.eigenvalues();
     Matrix<T> evecs = eigs.eigenvectors();
 
-    Matrix<T> resid = mat* evecs - evecs * evals.asDiagonal();
+    Matrix<T> resid = op* evecs - evecs * evals.asDiagonal();
     const T err = resid.array().abs().maxCoeff();
 
     INFO("||AU - UD||_inf = " << err);
-    REQUIRE(err <10*Eigen::NumTraits<T>::dummy_precision());
+    REQUIRE(err <100*Eigen::NumTraits<T>::dummy_precision());
 }
 
 template <template <typename> typename MatType, typename T>
@@ -110,7 +110,7 @@ void run_test_set(const MatType<T>& mat, int k)
 }
 
 
-TEMPLATE_TEST_CASE("Davidson Solver of dense symmetric real matrix [100x100]", "", double,float)
+TEMPLATE_TEST_CASE("Davidson Solver of dense symmetric real matrix [1000x1000]", "", double)
 {
     std::srand(123);
     const Matrix<TestType> A = gen_sym_data_dense<TestType>(1000);
@@ -120,10 +120,10 @@ TEMPLATE_TEST_CASE("Davidson Solver of dense symmetric real matrix [100x100]", "
 
 
 
-// TEMPLATE_TEST_CASE("Davidson Solver of sparse symmetric real matrix [100x100]", "", float, double)
-// {
-//     std::srand(123);
-//     int k = 10;
-//     const SpMatrix<TestType> A = gen_sym_data_sparse<TestType>(100);
-//     run_test_set<SpMatrix, TestType>(A, k);
-// }
+TEMPLATE_TEST_CASE("Davidson Solver of sparse symmetric real matrix [1000x1000]", "", double)
+{
+    std::srand(123);
+    int k = 10;
+    const SpMatrix<TestType> A = gen_sym_data_sparse<TestType>(1000);
+    run_test_set<SpMatrix, TestType>(A, k);
+}

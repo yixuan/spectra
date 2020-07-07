@@ -7,8 +7,8 @@
 #ifndef SPECTRA_ORTHOGONALIZATION_H
 #define SPECTRA_ORTHOGONALIZATION_H
 
-#include <Eigen/Dense>
-
+#include <Eigen/Core>
+#include <Eigen/QR>
 namespace Spectra {
 
 /// Check if the number of column to skip is

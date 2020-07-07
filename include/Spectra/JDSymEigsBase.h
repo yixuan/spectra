@@ -139,7 +139,6 @@ public:
 
     {
         search_space_.InitializeSearchSpace(initial_space);
-std::cout<<"tolerance:"<<tol<<std::endl;
         niter_ = 0;
         for (niter_ = 0; niter_ < maxit; niter_++)
         {
@@ -147,7 +146,6 @@ std::cout<<"tolerance:"<<tol<<std::endl;
 
             if (do_restart)
             {
-                std::cout<<"restart"<<std::endl;
                search_space_.restart(ritz_pairs_, initial_search_space_size_);
             }
 
@@ -159,13 +157,6 @@ std::cout<<"tolerance:"<<tol<<std::endl;
                 break;
             }
             ritz_pairs_.sort(selection);
-
-            std::cout << "EigenValues" << std::endl;
-            std::cout << ritz_pairs_.RitzValues().head(number_eigenvalues_) << std::endl;
-
-            std::cout << "Residues" << std::endl;
-            std::cout << ritz_pairs_.Residues().leftCols(number_eigenvalues_).colwise().norm() << std::endl;
-
 
             bool converged = ritz_pairs_.check_convergence(tol, number_eigenvalues_);
             if (converged)
