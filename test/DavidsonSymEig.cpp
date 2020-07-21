@@ -7,7 +7,6 @@
 
 using namespace Spectra;
 
-
 #include "catch.hpp"
 
 template <typename T>

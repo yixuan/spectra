@@ -8,7 +8,6 @@
 
 using namespace Spectra;
 
-
 #include "catch.hpp"
 
 using Matrix = Eigen::MatrixXd;

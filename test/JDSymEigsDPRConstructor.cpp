@@ -6,7 +6,6 @@
 
 using namespace Spectra;
 
-
 #include "catch.hpp"
 
 TEMPLATE_TEST_CASE("Constructing JDSymEigsDPR", "[JDSymEigsDPR]", float, double)

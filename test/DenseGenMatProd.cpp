@@ -4,7 +4,6 @@
 
 using namespace Spectra;
 
-
 #include "catch.hpp"
 
 using Eigen::Matrix;

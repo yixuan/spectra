@@ -5,7 +5,6 @@
 
 using namespace Spectra;
 
-
 #include "catch.hpp"
 #include <complex>
 
