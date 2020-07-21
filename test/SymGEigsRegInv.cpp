@@ -9,7 +9,7 @@
 
 using namespace Spectra;
 
-#define CATCH_CONFIG_MAIN
+
 #include "catch.hpp"
 
 using Matrix = Eigen::MatrixXd;

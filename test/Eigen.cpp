@@ -5,10 +5,11 @@
 #include <ctime>
 #include <Spectra/LinAlg/UpperHessenbergEigen.h>
 #include <Spectra/LinAlg/TridiagEigen.h>
+#include <iostream>
 
 using namespace Spectra;
 
-#define CATCH_CONFIG_MAIN
+
 #include "catch.hpp"
 
 using Matrix = Eigen::MatrixXd;
