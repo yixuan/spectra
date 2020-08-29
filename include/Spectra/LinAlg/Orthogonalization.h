@@ -9,39 +9,39 @@
 
 #include <Eigen/Core>
 #include <Eigen/QR>
+
 namespace Spectra {
 
-/// Check if the number of column to skip is
+/// Check if the number of columns to skip is
 /// larger than 0 but smaller than the total number
-/// of column of the matrix
-/// \param in_output matrix to be orthogonalized
-/// \param leftColsToSkip Number of left columns to be left untouched
+/// of columns of the matrix
+/// \param in_output Matrix to be orthogonalized
+/// \param left_cols_to_skip Number of left columns to be left untouched
 template <typename Matrix>
-void assert_leftColsToSkip(Matrix& in_output, Eigen::Index leftColsToSkip)
+void assert_left_cols_to_skip(Matrix& in_output, Eigen::Index left_cols_to_skip)
 {
-    assert(in_output.cols() > leftColsToSkip && "leftColsToSkip is larger than columns of matrix");
-    assert(leftColsToSkip >= 0 && "leftColsToSkip is negative");
+    assert(in_output.cols() > left_cols_to_skip && "left_cols_to_skip is larger than columns of matrix");
+    assert(left_cols_to_skip >= 0 && "left_cols_to_skip is negative");
 }
 
-/// if the the number of col to skip is null
-/// normalize the first column and set lefColsToSkip=1
-/// \param in_output matrix to be orthogonalized
-/// \param leftColsToSkip Number of left columns to be left untouched
-/// \return Eigen::Index index equals to 1
+/// If the the number of columns to skip is null,
+/// normalize the first column and set left_cols_to_skip=1
+/// \param in_output Matrix to be orthogonalized
+/// \param left_cols_to_skip Number of left columns to be left untouched
+/// \return Actual number of left columns to skip
 template <typename Matrix>
-Eigen::Index treatFirstCol(Matrix& in_output, Eigen::Index leftColsToSkip)
+Eigen::Index treat_first_col(Matrix& in_output, Eigen::Index left_cols_to_skip)
 {
-    if (leftColsToSkip == 0)
+    if (left_cols_to_skip == 0)
     {
         in_output.col(0).normalize();
-        leftColsToSkip = 1;
+        left_cols_to_skip = 1;
     }
-    return leftColsToSkip;
+    return left_cols_to_skip;
 }
 
 /// Orthogonalize the in_output matrix using a QR decomposition
-/// \param in_output matrix to be orthogonalized
-/// \param leftColsToSkip Number of left columns to be left untouched
+/// \param in_output Matrix to be orthogonalized
 template <typename Matrix>
 void QR_orthogonalisation(Matrix& in_output)
 {
@@ -54,17 +54,16 @@ void QR_orthogonalisation(Matrix& in_output)
     in_output = qr.householderQ() * I;
 }
 
-/// Orthogonalize the in_output matrix using a
-/// modified Gram Schmidt process
+/// Orthogonalize the in_output matrix using a modified Gram Schmidt process
 /// \param in_output matrix to be orthogonalized
-/// \param leftColsToSkip Number of left columns to be left untouched
+/// \param left_cols_to_skip Number of left columns to be left untouched
 template <typename Matrix>
-void MGS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+void MGS_orthogonalisation(Matrix& in_output, Eigen::Index left_cols_to_skip = 0)
 {
-    assert_leftColsToSkip(in_output, leftColsToSkip);
-    leftColsToSkip = treatFirstCol(in_output, leftColsToSkip);
+    assert_left_cols_to_skip(in_output, left_cols_to_skip);
+    left_cols_to_skip = treat_first_col(in_output, left_cols_to_skip);
 
-    for (Eigen::Index k = leftColsToSkip; k < in_output.cols(); ++k)
+    for (Eigen::Index k = left_cols_to_skip; k < in_output.cols(); ++k)
     {
         for (Eigen::Index j = 0; j < k; j++)
         {
@@ -74,17 +73,16 @@ void MGS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
     }
 }
 
-/// Orthogonalize the in_output matrix using a
-/// Gram Schmidt process
+/// Orthogonalize the in_output matrix using a Gram Schmidt process
 /// \param in_output matrix to be orthogonalized
-/// \param leftColsToSkip Number of left columns to be left untouched
+/// \param left_cols_to_skip Number of left columns to be left untouched
 template <typename Matrix>
-void GS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+void GS_orthogonalisation(Matrix& in_output, Eigen::Index left_cols_to_skip = 0)
 {
-    assert_leftColsToSkip(in_output, leftColsToSkip);
-    leftColsToSkip = treatFirstCol(in_output, leftColsToSkip);
+    assert_left_cols_to_skip(in_output, left_cols_to_skip);
+    left_cols_to_skip = treat_first_col(in_output, left_cols_to_skip);
 
-    for (Eigen::Index j = leftColsToSkip; j < in_output.cols(); ++j)
+    for (Eigen::Index j = left_cols_to_skip; j < in_output.cols(); ++j)
     {
         in_output.col(j) -= in_output.leftCols(j) * (in_output.leftCols(j).transpose() * in_output.col(j));
         in_output.col(j).normalize();
@@ -95,48 +93,48 @@ void GS_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
 /// It assumes that the right cols are already orthogonal
 /// and it does not orthogonalize the left cols against each other
 /// \param in_output matrix to be orthogonalized
-/// \param leftColsToSkip Number of left columns to be left untouched
+/// \param left_cols_to_skip Number of left columns to be left untouched
 template <typename Matrix>
-void partial_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip)
+void partial_orthogonalisation(Matrix& in_output, Eigen::Index left_cols_to_skip)
 {
-    assert_leftColsToSkip(in_output, leftColsToSkip);
-    if (leftColsToSkip == 0)
+    assert_left_cols_to_skip(in_output, left_cols_to_skip);
+    if (left_cols_to_skip == 0)
     {
         return;
     }
 
-    Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
-    in_output.rightCols(rightColToOrtho) -= in_output.leftCols(leftColsToSkip) * (in_output.leftCols(leftColsToSkip).transpose() * in_output.rightCols(rightColToOrtho));
-    in_output.rightCols(rightColToOrtho).colwise().normalize();
+    Eigen::Index right_cols_to_ortho = in_output.cols() - left_cols_to_skip;
+    in_output.rightCols(right_cols_to_ortho) -= in_output.leftCols(left_cols_to_skip) *
+        (in_output.leftCols(left_cols_to_skip).transpose() * in_output.rightCols(right_cols_to_ortho));
+    in_output.rightCols(right_cols_to_ortho).colwise().normalize();
 }
 
-/// Orthogonalize the in_output matrix using a
-/// Jens process. The right cols are first orthogonalized
-/// agains the leftc cols and then a QR is applied on the right cols
+/// Orthogonalize the in_output matrix using a Jens process
+/// The subspace spanned by right columns are first orthogonalized
+/// agains the left columns, and then a QR decomposition is applied on the right columns
 /// to make them orthogonalized agains each other
-/// \param in_output matrix to be orthogonalized
-/// \param leftColsToSkip Number of left columns to be left untouched
+/// \param in_output Matrix to be orthogonalized
+/// \param left_cols_to_skip Number of left columns to be left untouched
 template <typename Matrix>
-void JensWehner_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+void JensWehner_orthogonalisation(Matrix& in_output, Eigen::Index left_cols_to_skip = 0)
 {
-    assert_leftColsToSkip(in_output, leftColsToSkip);
+    assert_left_cols_to_skip(in_output, left_cols_to_skip);
 
-    Eigen::Index rightColToOrtho = in_output.cols() - leftColsToSkip;
-    partial_orthogonalisation(in_output, leftColsToSkip);
-    Eigen::Ref<Matrix> right_cols = in_output.rightCols(rightColToOrtho);
+    Eigen::Index right_cols_to_ortho = in_output.cols() - left_cols_to_skip;
+    partial_orthogonalisation(in_output, left_cols_to_skip);
+    Eigen::Ref<Matrix> right_cols = in_output.rightCols(right_cols_to_ortho);
     QR_orthogonalisation(right_cols);
-    in_output.rightCols(rightColToOrtho) = right_cols;
+    in_output.rightCols(right_cols_to_ortho) = right_cols;
 }
 
-/// Orthogonalize the in_output matrix using a
-/// twice-is-enough Gram Schmidt process
-/// \param in_output matrix to be orthogonalized
-/// \param leftColsToSkip Number of left columns to be left untouched
+/// Orthogonalize the in_output matrix using a twice-is-enough Jens process
+/// \param in_output Matrix to be orthogonalized
+/// \param left_cols_to_skip Number of left columns to be left untouched
 template <typename Matrix>
-void twice_is_enough_orthogonalisation(Matrix& in_output, Eigen::Index leftColsToSkip = 0)
+void twice_is_enough_orthogonalisation(Matrix& in_output, Eigen::Index left_cols_to_skip = 0)
 {
-    JensWehner_orthogonalisation(in_output, leftColsToSkip);
-    JensWehner_orthogonalisation(in_output, leftColsToSkip);
+    JensWehner_orthogonalisation(in_output, left_cols_to_skip);
+    JensWehner_orthogonalisation(in_output, left_cols_to_skip);
 }
 
 }  // namespace Spectra
