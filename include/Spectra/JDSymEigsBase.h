@@ -20,12 +20,13 @@
 #include "LinAlg/RitzPairs.h"
 
 namespace Spectra {
+
 ///
 /// \ingroup EigenSolver
 ///
 /// This is the base class for symmetric JD eigen solvers, mainly for internal use.
 /// It is kept here to provide the documentation for member functions of concrete eigen solvers
-/// such as DavidsonSym. .
+/// such as DavidsonSymEigsSolver.
 ///
 /// This class uses the CRTP method to call functions from the derived class.
 template <typename Derived, typename OpType>
@@ -37,6 +38,26 @@ protected:
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
+    const OpType& matrix_operator_;  // object to conduct matrix operation,
+                                     // e.g. matrix-vector product
+    Index niter_ = 0;
+    const Index number_eigenvalues_;  // number of eigenvalues requested
+    Index max_search_space_size_;
+    Index initial_search_space_size_;
+    Index correction_size_;             // how many correction vectors are added in each iteration
+    RitzPairs<Scalar> ritz_pairs_;      // Ritz eigen pair structure
+    SearchSpace<Scalar> search_space_;  // search space
+    Index size_update_;                 // size of the current correction
+
+private:
+    CompInfo info_ = CompInfo::NotComputed;  // status of the computation
+
+    void check_argument() const
+    {
+        if (number_eigenvalues_ < 1 || number_eigenvalues_ > matrix_operator_.cols() - 1)
+            throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
+    }
+
 public:
     JDSymEigsBase(OpType& op, Index nev) :
         matrix_operator_(op),
@@ -44,7 +65,6 @@ public:
         max_search_space_size_(10 * number_eigenvalues_),
         initial_search_space_size_(2 * number_eigenvalues_),
         correction_size_(number_eigenvalues_)
-
     {
         check_argument();
         //TODO better input validation and checks
@@ -103,29 +123,6 @@ public:
 
     Matrix eigenvectors() const { return ritz_pairs_.ritz_vectors().leftCols(number_eigenvalues_); }
 
-protected:
-    const OpType& matrix_operator_;  // object to conduct matrix operation,
-                                     // e.g. matrix-vector product
-
-    Index niter_ = 0;
-    const Index number_eigenvalues_;  // number of eigenvalues requested
-    Index max_search_space_size_;
-    Index initial_search_space_size_;
-    Index correction_size_;             // how many correction vectors are added in each iteration
-    RitzPairs<Scalar> ritz_pairs_;      // Ritz eigen pair structure
-    SearchSpace<Scalar> search_space_;  // search space
-    Index size_update_;                 // size of the current correction
-
-private:
-    CompInfo info_ = CompInfo::NotComputed;  // status of the computation
-
-    void check_argument() const
-    {
-        if (number_eigenvalues_ < 1 || number_eigenvalues_ > matrix_operator_.cols() - 1)
-            throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
-    }
-
-public:
     Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 100,
                   Scalar tol = 100 * Eigen::NumTraits<Scalar>::dummy_precision())
     {
@@ -133,6 +130,7 @@ public:
         Matrix intial_space = derived.SetupInitialSearchSpace(selection);
         return computeWithGuess(intial_space, selection, maxit, tol);
     }
+
     Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space,
                            SortRule selection = SortRule::LargestMagn,
                            Index maxit = 100,
@@ -181,4 +179,5 @@ public:
 };
 
 }  // namespace Spectra
+
 #endif  // SPECTRA_JD_SYM_EIGS_BASE_H
