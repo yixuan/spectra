@@ -21,32 +21,32 @@ TEST_CASE("CompleteSearchSpace", "[SearchSpace]")
     SearchSpace<double> space;
     Matrix initial_space = Matrix::Random(10, 3);
     Spectra::twice_is_enough_orthogonalisation(initial_space);
-    space.InitializeSearchSpace(initial_space);
-    REQUIRE(space.BasisVectors().cols() == 3);
-    REQUIRE(space.OperatorBasisProduct().cols() == 0);
+    space.initialize_search_space(initial_space);
+    REQUIRE(space.basis_vectors().cols() == 3);
+    REQUIRE(space.operator_basis_product().cols() == 0);
 
     Matrix A = Eigen::MatrixXd::Random(10, 10);
     Matrix B = A + A.transpose();
     DenseGenMatProd<double> op(B);
 
     space.update_operator_basis_product(op);
-    REQUIRE(space.BasisVectors().cols() == 3);
-    REQUIRE(space.OperatorBasisProduct().cols() == 3);
-    REQUIRE(space.OperatorBasisProduct().isApprox(B * initial_space));
+    REQUIRE(space.basis_vectors().cols() == 3);
+    REQUIRE(space.operator_basis_product().cols() == 3);
+    REQUIRE(space.operator_basis_product().isApprox(B * initial_space));
 
     Matrix append_space = Matrix::Random(10, 3);
     space.extend_basis(append_space);
-    REQUIRE((space.BasisVectors().transpose() * space.BasisVectors()).isIdentity(1e-12));
-    REQUIRE(space.BasisVectors().cols() == 6);
-    REQUIRE(space.OperatorBasisProduct().cols() == 3);
+    REQUIRE((space.basis_vectors().transpose() * space.basis_vectors()).isIdentity(1e-12));
+    REQUIRE(space.basis_vectors().cols() == 6);
+    REQUIRE(space.operator_basis_product().cols() == 3);
     space.update_operator_basis_product(op);
-    REQUIRE(space.OperatorBasisProduct().cols() == 6);
+    REQUIRE(space.operator_basis_product().cols() == 6);
 
     RitzPairs<double> ritzpair;
     ritzpair.compute_eigen_pairs(space);
     REQUIRE(ritzpair.size() == 6);
     space.restart(ritzpair, 2);
 
-    REQUIRE(space.BasisVectors().cols() == 2);
-    REQUIRE(space.OperatorBasisProduct().cols() == 2);
+    REQUIRE(space.basis_vectors().cols() == 2);
+    REQUIRE(space.operator_basis_product().cols() == 2);
 }

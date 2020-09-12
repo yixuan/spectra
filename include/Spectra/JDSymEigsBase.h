@@ -98,9 +98,9 @@ public:
     ///
     Index num_iterations() const { return niter_; }
 
-    Vector eigenvalues() const { return ritz_pairs_.RitzValues().head(number_eigenvalues_); }
+    Vector eigenvalues() const { return ritz_pairs_.ritz_values().head(number_eigenvalues_); }
 
-    Matrix eigenvectors() const { return ritz_pairs_.RitzVectors().leftCols(number_eigenvalues_); }
+    Matrix eigenvectors() const { return ritz_pairs_.ritz_vectors().leftCols(number_eigenvalues_); }
 
 protected:
     const OpType& matrix_operator_;  // object to conduct matrix operation,
@@ -138,7 +138,7 @@ public:
                            Scalar tol = 100 * Eigen::NumTraits<Scalar>::dummy_precision())
 
     {
-        search_space_.InitializeSearchSpace(initial_space);
+        search_space_.initialize_search_space(initial_space);
         niter_ = 0;
         for (niter_ = 0; niter_ < maxit; niter_++)
         {
@@ -175,7 +175,7 @@ public:
 
             search_space_.extend_basis(corr_vect);
         }
-        return (ritz_pairs_.ConvergedEigenvalues()).template cast<Index>().head(number_eigenvalues_).sum();
+        return (ritz_pairs_.converged_eigenvalues()).template cast<Index>().head(number_eigenvalues_).sum();
     }
 };
 
