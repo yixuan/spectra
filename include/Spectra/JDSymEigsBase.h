@@ -13,10 +13,11 @@
 #include <algorithm>  // std::min
 #include <stdexcept>  // std::invalid_argument
 #include <iostream>
+
 #include "Util/SelectionRule.h"
 #include "Util/CompInfo.h"
-#include "Util/SearchSpace.h"
-#include "Util/RitzPairs.h"
+#include "LinAlg/SearchSpace.h"
+#include "LinAlg/RitzPairs.h"
 
 namespace Spectra {
 ///

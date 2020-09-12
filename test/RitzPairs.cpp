@@ -1,11 +1,10 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <iostream>
-
 #include <Spectra/MatOp/DenseGenMatProd.h>
-#include <Spectra/Util/SearchSpace.h>
-#include <Spectra/Util/RitzPairs.h>
 #include <Spectra/Util/SelectionRule.h>
+#include <Spectra/LinAlg/SearchSpace.h>
+#include <Spectra/LinAlg/RitzPairs.h>
 #include <Spectra/LinAlg/Orthogonalization.h>
 
 using namespace Spectra;

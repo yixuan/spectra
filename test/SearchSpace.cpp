@@ -2,7 +2,7 @@
 #include <Eigen/SparseCore>
 #include <iostream>
 #include <Spectra/MatOp/DenseGenMatProd.h>
-#include <Spectra/Util/SearchSpace.h>
+#include <Spectra/LinAlg/SearchSpace.h>
 #include <Spectra/LinAlg/Orthogonalization.h>
 
 using namespace Spectra;
