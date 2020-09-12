@@ -29,11 +29,11 @@ private:
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
     using BoolArray = Eigen::Array<bool, Eigen::Dynamic, 1>;
 
-    Vector values_;         // eigenvalues
-    Matrix small_vectors_;  // eigenvectors of the small problem, makes restart cheaper.
-    Matrix vectors_;        // Ritz (or harmonic Ritz) eigenvectors
-    Matrix residues_;       // residues of the pairs
-    BoolArray root_converged_;
+    Vector m_values;         // eigenvalues
+    Matrix m_small_vectors;  // eigenvectors of the small problem, makes restart cheaper.
+    Matrix m_vectors;        // Ritz (or harmonic Ritz) eigenvectors
+    Matrix m_residues;       // residues of the pairs
+    BoolArray m_root_converged;
 
 public:
     RitzPairs() = default;
@@ -47,21 +47,21 @@ public:
     /// Returns the size of the ritz eigen pairs
     ///
     /// \return Eigen::Index Number of pairs
-    Index size() const { return values_.size(); }
+    Index size() const { return m_values.size(); }
 
     /// Sort the eigen pairs according to the selection rule
     ///
     /// \param selection Sorting rule
     void sort(SortRule selection)
     {
-        std::vector<Index> ind = argsort(selection, values_);
+        std::vector<Index> ind = argsort(selection, m_values);
         RitzPairs<Scalar> temp = *this;
         for (Index i = 0; i < size(); i++)
         {
-            values_[i] = temp.values_[ind[i]];
-            vectors_.col(i) = temp.vectors_.col(ind[i]);
-            residues_.col(i) = temp.residues_.col(ind[i]);
-            small_vectors_.col(i) = temp.small_vectors_.col(ind[i]);
+            m_values[i] = temp.m_values[ind[i]];
+            m_vectors.col(i) = temp.m_vectors.col(ind[i]);
+            m_residues.col(i) = temp.m_residues.col(ind[i]);
+            m_small_vectors.col(i) = temp.m_small_vectors.col(ind[i]);
         }
     }
 
@@ -72,12 +72,12 @@ public:
     /// \return bool true if all eigenvalues are converged
     bool check_convergence(Scalar tol, Index number_eigenvalues)
     {
-        const Array norms = residues_.colwise().norm();
+        const Array norms = m_residues.colwise().norm();
         bool converged = true;
-        root_converged_ = BoolArray::Zero(norms.size());
+        m_root_converged = BoolArray::Zero(norms.size());
         for (Index j = 0; j < norms.size(); j++)
         {
-            root_converged_[j] = (norms[j] < tol);
+            m_root_converged[j] = (norms[j] < tol);
             if (j < number_eigenvalues)
             {
                 converged &= (norms[j] < tol);
@@ -86,11 +86,11 @@ public:
         return converged;
     }
 
-    const Matrix& ritz_vectors() const { return vectors_; }
-    const Vector& ritz_values() const { return values_; }
-    const Matrix& small_ritz_vectors() const { return small_vectors_; }
-    const Matrix& residues() const { return residues_; }
-    const BoolArray& converged_eigenvalues() const { return root_converged_; }
+    const Matrix& ritz_vectors() const { return m_vectors; }
+    const Vector& ritz_values() const { return m_values; }
+    const Matrix& small_ritz_vectors() const { return m_small_vectors; }
+    const Matrix& residues() const { return m_residues; }
+    const BoolArray& converged_eigenvalues() const { return m_root_converged; }
 };
 
 }  // namespace Spectra
@@ -114,14 +114,14 @@ Eigen::ComputationInfo RitzPairs<Scalar>::compute_eigen_pairs(const SearchSpace<
 
     // Small eigenvalue problem
     Eigen::SelfAdjointEigenSolver<Matrix> eigen_solver(small_matrix);
-    values_ = eigen_solver.eigenvalues();
-    small_vectors_ = eigen_solver.eigenvectors();
+    m_values = eigen_solver.eigenvalues();
+    m_small_vectors = eigen_solver.eigenvectors();
 
     // Ritz vectors
-    vectors_ = basis_vectors * small_vectors_;
+    m_vectors = basis_vectors * m_small_vectors;
 
     // Residues
-    residues_ = op_basis_prod * small_vectors_ - vectors_ * values_.asDiagonal();
+    m_residues = op_basis_prod * m_small_vectors - m_vectors * m_values.asDiagonal();
     return eigen_solver.info();
 }
 
