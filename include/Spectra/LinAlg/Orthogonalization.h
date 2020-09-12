@@ -89,13 +89,14 @@ void GS_orthogonalisation(Matrix& in_output, Eigen::Index left_cols_to_skip = 0)
     }
 }
 
-/// Orthogonalize the right cols of in_output against the left cols
-/// It assumes that the right cols are already orthogonal
-/// and it does not orthogonalize the left cols against each other
-/// \param in_output matrix to be orthogonalized
+/// Orthogonalize the subspace spanned by right columns of in_output
+/// against the subspace spanned by left columns
+/// It assumes that the left columns are already orthogonal and normalized,
+/// and it does not orthogonalize the left columns against each other
+/// \param in_output Matrix to be orthogonalized
 /// \param left_cols_to_skip Number of left columns to be left untouched
 template <typename Matrix>
-void partial_orthogonalisation(Matrix& in_output, Eigen::Index left_cols_to_skip)
+void subspace_orthogonalisation(Matrix& in_output, Eigen::Index left_cols_to_skip)
 {
     assert_left_cols_to_skip(in_output, left_cols_to_skip);
     if (left_cols_to_skip == 0)
@@ -106,7 +107,6 @@ void partial_orthogonalisation(Matrix& in_output, Eigen::Index left_cols_to_skip
     Eigen::Index right_cols_to_ortho = in_output.cols() - left_cols_to_skip;
     in_output.rightCols(right_cols_to_ortho) -= in_output.leftCols(left_cols_to_skip) *
         (in_output.leftCols(left_cols_to_skip).transpose() * in_output.rightCols(right_cols_to_ortho));
-    in_output.rightCols(right_cols_to_ortho).colwise().normalize();
 }
 
 /// Orthogonalize the in_output matrix using a Jens process
@@ -121,7 +121,7 @@ void JensWehner_orthogonalisation(Matrix& in_output, Eigen::Index left_cols_to_s
     assert_left_cols_to_skip(in_output, left_cols_to_skip);
 
     Eigen::Index right_cols_to_ortho = in_output.cols() - left_cols_to_skip;
-    partial_orthogonalisation(in_output, left_cols_to_skip);
+    subspace_orthogonalisation(in_output, left_cols_to_skip);
     Eigen::Ref<Matrix> right_cols = in_output.rightCols(right_cols_to_ortho);
     QR_orthogonalisation(right_cols);
     in_output.rightCols(right_cols_to_ortho) = right_cols;
