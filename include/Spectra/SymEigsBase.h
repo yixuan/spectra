@@ -182,58 +182,7 @@ private:
         const Matrix& evecs = decomp.eigenvectors();
 
         // Sort Ritz values and put the wanted ones at the beginning
-        std::vector<Index> ind;
-        switch (selection)
-        {
-            case SortRule::LargestMagn:
-            {
-                SortEigenvalue<Scalar, SortRule::LargestMagn> sorting(evals.data(), m_ncv);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::BothEnds:
-            case SortRule::LargestAlge:
-            {
-                SortEigenvalue<Scalar, SortRule::LargestAlge> sorting(evals.data(), m_ncv);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::SmallestMagn:
-            {
-                SortEigenvalue<Scalar, SortRule::SmallestMagn> sorting(evals.data(), m_ncv);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::SmallestAlge:
-            {
-                SortEigenvalue<Scalar, SortRule::SmallestAlge> sorting(evals.data(), m_ncv);
-                sorting.swap(ind);
-                break;
-            }
-            default:
-                throw std::invalid_argument("unsupported selection rule");
-        }
-
-        // For SortRule::BothEnds, the eigenvalues are sorted according to the
-        // SortRule::LargestAlge rule, so we need to move those smallest values to the left
-        // The order would be
-        //     Largest => Smallest => 2nd largest => 2nd smallest => ...
-        // We keep this order since the first k values will always be
-        // the wanted collection, no matter k is nev_updated (used in restart())
-        // or is nev (used in sort_ritzpair())
-        if (selection == SortRule::BothEnds)
-        {
-            std::vector<Index> ind_copy(ind);
-            for (Index i = 0; i < m_ncv; i++)
-            {
-                // If i is even, pick values from the left (large values)
-                // If i is odd, pick values from the right (small values)
-                if (i % 2 == 0)
-                    ind[i] = ind_copy[i / 2];
-                else
-                    ind[i] = ind_copy[m_ncv - 1 - i / 2];
-            }
-        }
+        std::vector<Index> ind = argsort(selection, evals, m_ncv);
 
         // Copy the Ritz values and vectors to m_ritz_val and m_ritz_vec, respectively
         for (Index i = 0; i < m_ncv; i++)
@@ -252,36 +201,11 @@ protected:
     // This is used to return the final results
     virtual void sort_ritzpair(SortRule sort_rule)
     {
-        std::vector<Index> ind;
-        switch (sort_rule)
-        {
-            case SortRule::LargestAlge:
-            {
-                SortEigenvalue<Scalar, SortRule::LargestAlge> sorting(m_ritz_val.data(), m_nev);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::LargestMagn:
-            {
-                SortEigenvalue<Scalar, SortRule::LargestMagn> sorting(m_ritz_val.data(), m_nev);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::SmallestAlge:
-            {
-                SortEigenvalue<Scalar, SortRule::SmallestAlge> sorting(m_ritz_val.data(), m_nev);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::SmallestMagn:
-            {
-                SortEigenvalue<Scalar, SortRule::SmallestMagn> sorting(m_ritz_val.data(), m_nev);
-                sorting.swap(ind);
-                break;
-            }
-            default:
-                throw std::invalid_argument("unsupported sorting rule");
-        }
+        if ((sort_rule != SortRule::LargestAlge) && (sort_rule != SortRule::LargestMagn) &&
+            (sort_rule != SortRule::SmallestAlge) && (sort_rule != SortRule::SmallestMagn))
+            throw std::invalid_argument("unsupported sorting rule");
+
+        std::vector<Index> ind = argsort(sort_rule, m_ritz_val, m_nev);
 
         Vector new_ritz_val(m_ncv);
         Matrix new_ritz_vec(m_ncv, m_nev);
