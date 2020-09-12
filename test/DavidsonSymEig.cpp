@@ -1,7 +1,7 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 
-#include <Spectra/DavidsonSymEig.h>
+#include <Spectra/DavidsonSymEigsSolver.h>
 #include <Spectra/MatOp/DenseSymMatProd.h>
 #include <Spectra/MatOp/SparseSymMatProd.h>
 
@@ -74,7 +74,7 @@ void run_test(const MatType& mat, int nev, SortRule selection)
 {
     using OpType = typename OpTypeTrait<MatType>::OpType;
     OpType op(mat);
-    DavidsonSymEig<OpType> eigs(op, nev);
+    DavidsonSymEigsSolver<OpType> eigs(op, nev);
     int nconv = eigs.compute(selection);
 
     int niter = eigs.num_iterations();

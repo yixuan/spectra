@@ -4,8 +4,8 @@
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef SPECTRA_DAVIDSON_SYM_EIG_H
-#define SPECTRA_DAVIDSON_SYM_EIG_H
+#ifndef SPECTRA_DAVIDSON_SYM_EIGS_SOLVER_H
+#define SPECTRA_DAVIDSON_SYM_EIGS_SOLVER_H
 
 #include <Eigen/Dense>
 #include "JDSymEigsBase.h"
@@ -28,7 +28,7 @@ namespace Spectra {
 ///
 
 template <typename OpType>
-class DavidsonSymEig : public JDSymEigsBase<DavidsonSymEig<OpType>, OpType>
+class DavidsonSymEigsSolver : public JDSymEigsBase<DavidsonSymEigsSolver<OpType>, OpType>
 {
 private:
     using Index = Eigen::Index;
@@ -39,8 +39,8 @@ private:
     Vector diagonal_;
 
 public:
-    DavidsonSymEig(OpType& op, Index nev) :
-        JDSymEigsBase<DavidsonSymEig<OpType>, OpType>{op, nev}
+    DavidsonSymEigsSolver(OpType& op, Index nev) :
+        JDSymEigsBase<DavidsonSymEigsSolver<OpType>, OpType>{op, nev}
     {
         diagonal_.resize(this->matrix_operator_.rows());
         for (Index i = 0; i < op.rows(); i++)
@@ -85,4 +85,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // SPECTRA_DAVIDSON_SYM_EIG_H
+#endif  // SPECTRA_DAVIDSON_SYM_EIGS_SOLVER_H

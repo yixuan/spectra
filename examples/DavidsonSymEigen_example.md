@@ -16,7 +16,7 @@ Suppose we want to find the 2 eigenpairs with the Largest value from a 1000x1000
 ```cpp
 
 #include <Eigen/Dense>
-#include <Spectra/DavidsonSymEig.h>
+#include <Spectra/DavidsonSymEigsSolver.h>
 #include <Spectra/MatOp/DenseSymMatProd.h> 
 #include <iostream>
 
@@ -45,7 +45,7 @@ DenseSymMatProd<double> op(mat); // Create the Matrix Product operation
 
 ```cpp
 Eigen::Index num_of_eigenvalues = 5;
-DavidsonSymEig<DenseSymMatProd<double>> solver(op_dense, num_of_eigenvalues);  //Create Solver
+DavidsonSymEigsSolver<DenseSymMatProd<double>> solver(op_dense, num_of_eigenvalues);  //Create Solver
 ```
 
 - This solver can then be executed through the compute method, where we also specify which EigenPairs we want through the [Sortrule enum](https://spectralib.org/doc/selectionrule_8h_source). The maximum number of iterations of the solver as well as the convergence criteria for the 
