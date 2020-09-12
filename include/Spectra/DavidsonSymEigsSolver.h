@@ -26,7 +26,6 @@ namespace Spectra {
 /// \f$D\f$ is the diagonal of the target matrix, \f$\rho\f$ the Ritz eigenvalue,
 /// \f$I\f$ the identity matrix and \f$r\f$ the residue vector.
 ///
-
 template <typename OpType>
 class DavidsonSymEigsSolver : public JDSymEigsBase<DavidsonSymEigsSolver<OpType>, OpType>
 {
@@ -36,16 +35,16 @@ private:
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
-    Vector diagonal_;
+    Vector m_diagonal;
 
 public:
     DavidsonSymEigsSolver(OpType& op, Index nev) :
-        JDSymEigsBase<DavidsonSymEigsSolver<OpType>, OpType>{op, nev}
+        JDSymEigsBase<DavidsonSymEigsSolver<OpType>, OpType>(op, nev)
     {
-        diagonal_.resize(this->matrix_operator_.rows());
+        m_diagonal.resize(this->m_matrix_operator.rows());
         for (Index i = 0; i < op.rows(); i++)
         {
-            diagonal_(i) = op(i, i);
+            m_diagonal(i) = op(i, i);
         }
     }
 
@@ -55,11 +54,11 @@ public:
     /// \return Matrix with the initial orthonormal basis
     Matrix SetupInitialSearchSpace(SortRule selection) const
     {
-        std::vector<Eigen::Index> indices_sorted = argsort(selection, diagonal_);
+        std::vector<Eigen::Index> indices_sorted = argsort(selection, m_diagonal);
 
-        Matrix initial_basis = Matrix::Zero(this->matrix_operator_.rows(), this->initial_search_space_size_);
+        Matrix initial_basis = Matrix::Zero(this->m_matrix_operator.rows(), this->m_initial_search_space_size);
 
-        for (Index k = 0; k < this->initial_search_space_size_; k++)
+        for (Index k = 0; k < this->m_initial_search_space_size; k++)
         {
             Index row = indices_sorted[k];
             initial_basis(row, k) = 1.0;
@@ -71,12 +70,12 @@ public:
     /// \return new correction vectors.
     Matrix CalculateCorrectionVector() const
     {
-        const Matrix& residues = this->ritz_pairs_.residues();
-        const Vector& eigvals = this->ritz_pairs_.ritz_values();
-        Matrix correction = Matrix::Zero(this->matrix_operator_.rows(), this->correction_size_);
-        for (Index k = 0; k < this->correction_size_; k++)
+        const Matrix& residues = this->m_ritz_pairs.residues();
+        const Vector& eigvals = this->m_ritz_pairs.ritz_values();
+        Matrix correction = Matrix::Zero(this->m_matrix_operator.rows(), this->m_correction_size);
+        for (Index k = 0; k < this->m_correction_size; k++)
         {
-            Vector tmp = eigvals(k) - diagonal_.array();
+            Vector tmp = eigvals(k) - m_diagonal.array();
             correction.col(k) = residues.col(k).array() / tmp.array();
         }
         return correction;

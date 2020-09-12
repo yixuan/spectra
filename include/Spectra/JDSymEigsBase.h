@@ -29,6 +29,7 @@ namespace Spectra {
 /// such as DavidsonSymEigsSolver.
 ///
 /// This class uses the CRTP method to call functions from the derived class.
+///
 template <typename Derived, typename OpType>
 class JDSymEigsBase
 {
@@ -38,45 +39,44 @@ protected:
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
-    const OpType& matrix_operator_;  // object to conduct matrix operation,
-                                     // e.g. matrix-vector product
+    const OpType& m_matrix_operator;  // object to conduct matrix operation,
+                                      // e.g. matrix-vector product
     Index niter_ = 0;
-    const Index number_eigenvalues_;  // number of eigenvalues requested
-    Index max_search_space_size_;
-    Index initial_search_space_size_;
-    Index correction_size_;             // how many correction vectors are added in each iteration
-    RitzPairs<Scalar> ritz_pairs_;      // Ritz eigen pair structure
-    SearchSpace<Scalar> search_space_;  // search space
-    Index size_update_;                 // size of the current correction
+    const Index m_number_eigenvalues;  // number of eigenvalues requested
+    Index m_max_search_space_size;
+    Index m_initial_search_space_size;
+    Index m_correction_size;             // how many correction vectors are added in each iteration
+    RitzPairs<Scalar> m_ritz_pairs;      // Ritz eigen pair structure
+    SearchSpace<Scalar> m_search_space;  // search space
 
 private:
-    CompInfo info_ = CompInfo::NotComputed;  // status of the computation
+    CompInfo m_info = CompInfo::NotComputed;  // status of the computation
 
     void check_argument() const
     {
-        if (number_eigenvalues_ < 1 || number_eigenvalues_ > matrix_operator_.cols() - 1)
+        if (m_number_eigenvalues < 1 || m_number_eigenvalues > m_matrix_operator.cols() - 1)
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
     }
 
 public:
     JDSymEigsBase(OpType& op, Index nev) :
-        matrix_operator_(op),
-        number_eigenvalues_(nev),
-        max_search_space_size_(10 * number_eigenvalues_),
-        initial_search_space_size_(2 * number_eigenvalues_),
-        correction_size_(number_eigenvalues_)
+        m_matrix_operator(op),
+        m_number_eigenvalues(nev),
+        m_max_search_space_size(10 * m_number_eigenvalues),
+        m_initial_search_space_size(2 * m_number_eigenvalues),
+        m_correction_size(m_number_eigenvalues)
     {
         check_argument();
         //TODO better input validation and checks
-        if (op.cols() < max_search_space_size_)
+        if (op.cols() < m_max_search_space_size)
         {
-            max_search_space_size_ = op.cols();
+            m_max_search_space_size = op.cols();
         }
 
-        if (op.cols() < initial_search_space_size_ + correction_size_)
+        if (op.cols() < m_initial_search_space_size + m_correction_size)
         {
-            initial_search_space_size_ = op.cols() / 3;
-            correction_size_ = op.cols() / 3;
+            m_initial_search_space_size = op.cols() / 3;
+            m_correction_size = op.cols() / 3;
         }
     }
 
@@ -85,14 +85,14 @@ public:
     ///
     void setMaxSearchspaceSize(Index max_search_space_size)
     {
-        max_search_space_size_ = max_search_space_size;
+        m_max_search_space_size = max_search_space_size;
     }
     ///
     /// Sets how many correction vectors are added in each iteration
     ///
     void setCorrectionSize(Index correction_size)
     {
-        correction_size_ = correction_size;
+        m_correction_size = correction_size;
     }
 
     ///
@@ -100,7 +100,7 @@ public:
     ///
     void setInitialSearchspaceSize(Index initial_search_space_size)
     {
-        initial_search_space_size_ = initial_search_space_size;
+        m_initial_search_space_size = initial_search_space_size;
     }
 
     ///
@@ -112,16 +112,16 @@ public:
     /// Returns the status of the computation.
     /// The full list of enumeration values can be found in \ref Enumerations.
     ///
-    CompInfo info() const { return info_; }
+    CompInfo info() const { return m_info; }
 
     ///
     /// Returns the number of iterations used in the computation.
     ///
     Index num_iterations() const { return niter_; }
 
-    Vector eigenvalues() const { return ritz_pairs_.ritz_values().head(number_eigenvalues_); }
+    Vector eigenvalues() const { return m_ritz_pairs.ritz_values().head(m_number_eigenvalues); }
 
-    Matrix eigenvectors() const { return ritz_pairs_.ritz_vectors().leftCols(number_eigenvalues_); }
+    Matrix eigenvectors() const { return m_ritz_pairs.ritz_vectors().leftCols(m_number_eigenvalues); }
 
     Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 100,
                   Scalar tol = 100 * Eigen::NumTraits<Scalar>::dummy_precision())
@@ -137,44 +137,44 @@ public:
                            Scalar tol = 100 * Eigen::NumTraits<Scalar>::dummy_precision())
 
     {
-        search_space_.initialize_search_space(initial_space);
+        m_search_space.initialize_search_space(initial_space);
         niter_ = 0;
         for (niter_ = 0; niter_ < maxit; niter_++)
         {
-            bool do_restart = (search_space_.size() > max_search_space_size_);
+            bool do_restart = (search_space_.size() > m_max_search_space_size);
 
             if (do_restart)
             {
-                search_space_.restart(ritz_pairs_, initial_search_space_size_);
+                m_search_space.restart(m_ritz_pairs, m_initial_search_space_size);
             }
 
-            search_space_.update_operator_basis_product(matrix_operator_);
+            m_search_space.update_operator_basis_product(m_matrix_operator);
 
-            Eigen::ComputationInfo small_problem_info = ritz_pairs_.compute_eigen_pairs(search_space_);
+            Eigen::ComputationInfo small_problem_info = m_ritz_pairs.compute_eigen_pairs(search_space_);
             if (small_problem_info != Eigen::ComputationInfo::Success)
             {
-                info_ = CompInfo::NumericalIssue;
+                m_info = CompInfo::NumericalIssue;
                 break;
             }
-            ritz_pairs_.sort(selection);
+            m_ritz_pairs.sort(selection);
 
-            bool converged = ritz_pairs_.check_convergence(tol, number_eigenvalues_);
+            bool converged = m_ritz_pairs.check_convergence(tol, m_number_eigenvalues);
             if (converged)
             {
-                info_ = CompInfo::Successful;
+                m_info = CompInfo::Successful;
                 break;
             }
             else if (niter_ == maxit - 1)
             {
-                info_ = CompInfo::NotConverging;
+                m_info = CompInfo::NotConverging;
                 break;
             }
             Derived& derived = static_cast<Derived&>(*this);
             Matrix corr_vect = derived.CalculateCorrectionVector();
 
-            search_space_.extend_basis(corr_vect);
+            m_search_space.extend_basis(corr_vect);
         }
-        return (ritz_pairs_.converged_eigenvalues()).template cast<Index>().head(number_eigenvalues_).sum();
+        return (m_ritz_pairs.converged_eigenvalues()).template cast<Index>().head(m_number_eigenvalues).sum();
     }
 };
 
