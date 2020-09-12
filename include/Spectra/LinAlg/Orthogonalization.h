@@ -51,7 +51,7 @@ void QR_orthogonalisation(Matrix& in_output)
     ncols = std::min(nrows, ncols);
     InternalMatrix I = InternalMatrix::Identity(nrows, ncols);
     Eigen::HouseholderQR<Matrix> qr(in_output);
-    in_output = qr.householderQ() * I;
+    in_output.leftCols(ncols).noalias() = qr.householderQ() * I;
 }
 
 /// Orthogonalize the in_output matrix using a modified Gram Schmidt process
