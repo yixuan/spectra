@@ -124,7 +124,6 @@ void JensWehner_orthogonalisation(Matrix& in_output, Eigen::Index left_cols_to_s
     subspace_orthogonalisation(in_output, left_cols_to_skip);
     Eigen::Ref<Matrix> right_cols = in_output.rightCols(right_cols_to_ortho);
     QR_orthogonalisation(right_cols);
-    in_output.rightCols(right_cols_to_ortho) = right_cols;
 }
 
 /// Orthogonalize the in_output matrix using a twice-is-enough Jens process
