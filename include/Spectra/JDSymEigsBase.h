@@ -83,14 +83,14 @@ public:
     ///
     /// Sets the Maxmium SearchspaceSize after which is deflated
     ///
-    void setMaxSearchspaceSize(Index max_search_space_size)
+    void set_max_search_space_size(Index max_search_space_size)
     {
         m_max_search_space_size = max_search_space_size;
     }
     ///
     /// Sets how many correction vectors are added in each iteration
     ///
-    void setCorrectionSize(Index correction_size)
+    void set_correction_size(Index correction_size)
     {
         m_correction_size = correction_size;
     }
@@ -98,7 +98,7 @@ public:
     ///
     /// Sets the Initial SearchspaceSize for Ritz values
     ///
-    void setInitialSearchspaceSize(Index initial_search_space_size)
+    void set_initial_search_space_size(Index initial_search_space_size)
     {
         m_initial_search_space_size = initial_search_space_size;
     }
@@ -127,14 +127,14 @@ public:
                   Scalar tol = 100 * Eigen::NumTraits<Scalar>::dummy_precision())
     {
         Derived& derived = static_cast<Derived&>(*this);
-        Matrix intial_space = derived.SetupInitialSearchSpace(selection);
-        return computeWithGuess(intial_space, selection, maxit, tol);
+        Matrix intial_space = derived.setup_initial_search_space(selection);
+        return compute_with_guess(intial_space, selection, maxit, tol);
     }
 
-    Index computeWithGuess(const Eigen::Ref<const Matrix>& initial_space,
-                           SortRule selection = SortRule::LargestMagn,
-                           Index maxit = 100,
-                           Scalar tol = 100 * Eigen::NumTraits<Scalar>::dummy_precision())
+    Index compute_with_guess(const Eigen::Ref<const Matrix>& initial_space,
+                             SortRule selection = SortRule::LargestMagn,
+                             Index maxit = 100,
+                             Scalar tol = 100 * Eigen::NumTraits<Scalar>::dummy_precision())
 
     {
         m_search_space.initialize_search_space(initial_space);
@@ -170,7 +170,7 @@ public:
                 break;
             }
             Derived& derived = static_cast<Derived&>(*this);
-            Matrix corr_vect = derived.CalculateCorrectionVector();
+            Matrix corr_vect = derived.calculate_correction_vector();
 
             m_search_space.extend_basis(corr_vect);
         }

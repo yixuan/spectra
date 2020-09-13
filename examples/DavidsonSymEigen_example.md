@@ -71,5 +71,4 @@ norm of the residues can also be specified in the call of the `compute()` method
 }
 ```
 
-- It is also possible to provide a staring values for the eigenvectors. This can be done with the `computeWithGuess` method, which takes an additional `Eigen::Matrix` as an input. The guess is expected to be normalized. 
-
+- It is also possible to provide a staring values for the eigenvectors. This can be done with the `compute_with_guess` method, which takes an additional `Eigen::Matrix` as an input. The guess is expected to be normalized.

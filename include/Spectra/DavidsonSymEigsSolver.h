@@ -7,7 +7,8 @@
 #ifndef SPECTRA_DAVIDSON_SYM_EIGS_SOLVER_H
 #define SPECTRA_DAVIDSON_SYM_EIGS_SOLVER_H
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
+
 #include "JDSymEigsBase.h"
 #include "Util/SelectionRule.h"
 
@@ -50,9 +51,10 @@ public:
 
     /// Create initial search space based on the diagonal
     /// and the spectrum'target (highest or lowest)
-    /// \param selection spectrum section to target (e.g. lowest, etc.)
+    ///
+    /// \param selection Spectrum section to target (e.g. lowest, etc.)
     /// \return Matrix with the initial orthonormal basis
-    Matrix SetupInitialSearchSpace(SortRule selection) const
+    Matrix setup_initial_search_space(SortRule selection) const
     {
         std::vector<Eigen::Index> indices_sorted = argsort(selection, m_diagonal);
 
@@ -66,9 +68,10 @@ public:
         return initial_basis;
     }
 
-    /// compute the corrections using the DPR method.
-    /// \return new correction vectors.
-    Matrix CalculateCorrectionVector() const
+    /// Compute the corrections using the DPR method.
+    ///
+    /// \return New correction vectors.
+    Matrix calculate_correction_vector() const
     {
         const Matrix& residues = this->m_ritz_pairs.residues();
         const Vector& eigvals = this->m_ritz_pairs.ritz_values();
