@@ -1,9 +1,9 @@
-This is an example of how to use the Jacobi-Davidson Symmetric Eigenvalue Solver with DPR correction method. This test can also be found as a full file in the [example/DavidsonSymEigen_example.ccp](example/DavidsonSymEigen_example.cpp) file and can be compiled with cmake and run afterwards
+This is an example of how to use the Jacobi-Davidson Symmetric Eigenvalue Solver with DPR correction method. This test can also be found as a full file in the [example/DavidsonSymEigs_example.cpp](example/DavidsonSymEigs_example.cpp) file and can be compiled with cmake and run afterwards
 
 ```bash
 mkdir build && cd build && cmake ../
-make DavidsonSymEigen_example
-./example/DavidsonSymEigen_example
+make DavidsonSymEigs_example
+./example/DavidsonSymEigs_example
 ```
 
 Suppose we want to find the 2 eigenpairs with the Largest value from a 1000x1000 Matrix A, then we could use this solver to quickly find them.

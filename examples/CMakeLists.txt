@@ -1,7 +1,7 @@
 set(example_target_sources)
 
 list(APPEND example_target_sources
-        DavidsonSymEigen_example.cpp
+        DavidsonSymEigs_example.cpp
         )
 
 foreach(EXAMPLE_SOURCE ${example_target_sources})

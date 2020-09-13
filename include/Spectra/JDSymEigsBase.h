@@ -141,7 +141,7 @@ public:
         niter_ = 0;
         for (niter_ = 0; niter_ < maxit; niter_++)
         {
-            bool do_restart = (search_space_.size() > m_max_search_space_size);
+            bool do_restart = (m_search_space.size() > m_max_search_space_size);
 
             if (do_restart)
             {
@@ -150,7 +150,7 @@ public:
 
             m_search_space.update_operator_basis_product(m_matrix_operator);
 
-            Eigen::ComputationInfo small_problem_info = m_ritz_pairs.compute_eigen_pairs(search_space_);
+            Eigen::ComputationInfo small_problem_info = m_ritz_pairs.compute_eigen_pairs(m_search_space);
             if (small_problem_info != Eigen::ComputationInfo::Success)
             {
                 m_info = CompInfo::NumericalIssue;

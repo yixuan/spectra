@@ -4,7 +4,7 @@ set(test_target_sources)
 add_library (tests-main tests-main.cpp)
 list(APPEND test_target_sources
         BKLDLT.cpp
-        DavidsonSymEig.cpp
+        DavidsonSymEigs.cpp
         DenseGenMatProd.cpp
         DenseSymMatProd.cpp
         Eigen.cpp
