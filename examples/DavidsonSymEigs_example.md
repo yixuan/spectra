@@ -1,9 +1,9 @@
-This is an example of how to use the Jacobi-Davidson Symmetric Eigenvalue Solver with DPR correction method. This test can also be found as a full file in the [example/DavidsonSymEigen_example.ccp](example/DavidsonSymEigen_example.cpp) file and can be compiled with cmake and run afterwards
+This is an example of how to use the Jacobi-Davidson Symmetric Eigenvalue Solver with DPR correction method. This test can also be found as a full file in the [example/DavidsonSymEigs_example.cpp](example/DavidsonSymEigs_example.cpp) file and can be compiled with cmake and run afterwards
 
 ```bash
 mkdir build && cd build && cmake ../
-make DavidsonSymEigen_example
-./example/DavidsonSymEigen_example
+make DavidsonSymEigs_example
+./example/DavidsonSymEigs_example
 ```
 
 Suppose we want to find the 2 eigenpairs with the Largest value from a 1000x1000 Matrix A, then we could use this solver to quickly find them.
@@ -16,7 +16,7 @@ Suppose we want to find the 2 eigenpairs with the Largest value from a 1000x1000
 ```cpp
 
 #include <Eigen/Dense>
-#include <Spectra/DavidsonSymEig.h>
+#include <Spectra/DavidsonSymEigsSolver.h>
 #include <Spectra/MatOp/DenseSymMatProd.h> 
 #include <iostream>
 
@@ -45,7 +45,7 @@ DenseSymMatProd<double> op(mat); // Create the Matrix Product operation
 
 ```cpp
 Eigen::Index num_of_eigenvalues = 5;
-DavidsonSymEig<DenseSymMatProd<double>> solver(op_dense, num_of_eigenvalues);  //Create Solver
+DavidsonSymEigsSolver<DenseSymMatProd<double>> solver(op_dense, num_of_eigenvalues);  //Create Solver
 ```
 
 - This solver can then be executed through the compute method, where we also specify which EigenPairs we want through the [Sortrule enum](https://spectralib.org/doc/selectionrule_8h_source). The maximum number of iterations of the solver as well as the convergence criteria for the 
@@ -71,5 +71,4 @@ norm of the residues can also be specified in the call of the `compute()` method
 }
 ```
 
-- It is also possible to provide a staring values for the eigenvectors. This can be done with the `computeWithGuess` method, which takes an additional `Eigen::Matrix` as an input. The guess is expected to be normalized. 
-
+- It is also possible to provide a staring values for the eigenvectors. This can be done with the `compute_with_guess` method, which takes an additional `Eigen::Matrix` as an input. The guess is expected to be normalized.

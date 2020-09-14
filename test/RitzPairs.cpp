@@ -1,11 +1,10 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <iostream>
-
 #include <Spectra/MatOp/DenseGenMatProd.h>
-#include <Spectra/Util/SearchSpace.h>
-#include <Spectra/Util/RitzPairs.h>
 #include <Spectra/Util/SelectionRule.h>
+#include <Spectra/LinAlg/SearchSpace.h>
+#include <Spectra/LinAlg/RitzPairs.h>
 #include <Spectra/LinAlg/Orthogonalization.h>
 
 using namespace Spectra;
@@ -28,7 +27,7 @@ TEST_CASE("compute_eigen_pairs", "[RitzPairs]")
     SearchSpace<double> space;
     Matrix initial_space = Matrix::Random(10, 3);
     Spectra::twice_is_enough_orthogonalisation(initial_space);
-    space.InitializeSearchSpace(initial_space);
+    space.initialize_search_space(initial_space);
     space.update_operator_basis_product(op);
 
     RitzPairs<double> ritzpair;
