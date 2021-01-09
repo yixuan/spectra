@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2017-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -25,9 +25,12 @@ namespace Spectra {
 /// This class is intended to be used with the SymGEigsSolver generalized eigen solver
 /// in the regular inverse mode.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor, typename StorageIndex = int>
+template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor, typename StorageIndex = int>
 class SparseRegularInverse
 {
+public:
+    using Scalar = Scalar_;
+
 private:
     using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;

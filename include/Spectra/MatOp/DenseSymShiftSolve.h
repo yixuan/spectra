@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -22,9 +22,12 @@ namespace Spectra {
 /// i.e., calculating \f$y=(A-\sigma I)^{-1}x\f$ for any real \f$\sigma\f$ and
 /// vector \f$x\f$. It is mainly used in the SymEigsShiftSolver eigen solver.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor>
+template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor>
 class DenseSymShiftSolve
 {
+public:
+    using Scalar = Scalar_;
+
 private:
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;

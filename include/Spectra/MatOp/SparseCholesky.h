@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -24,9 +24,12 @@ namespace Spectra {
 /// matrix. It is mainly used in the SymGEigsSolver generalized eigen solver
 /// in the Cholesky decomposition mode.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor, typename StorageIndex = int>
+template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor, typename StorageIndex = int>
 class SparseCholesky
 {
+public:
+    using Scalar = Scalar_;
+
 private:
     using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;

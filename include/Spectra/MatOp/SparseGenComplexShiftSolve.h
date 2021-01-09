@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2020-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -22,9 +22,12 @@ namespace Spectra {
 /// \f$\sigma\f$ and real-valued vector \f$x\f$. It is mainly used in the
 /// GenEigsComplexShiftSolver eigen solver.
 ///
-template <typename Scalar, int Flags = Eigen::ColMajor, typename StorageIndex = int>
+template <typename Scalar_, int Flags = Eigen::ColMajor, typename StorageIndex = int>
 class SparseGenComplexShiftSolve
 {
+public:
+    using Scalar = Scalar_;
+
 private:
     using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;

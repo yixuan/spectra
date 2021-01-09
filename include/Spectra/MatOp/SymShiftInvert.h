@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2020-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -101,7 +101,7 @@ public:
 ///
 /// This class is intended to be used with the SymGEigsShiftSolver generalized eigen solver.
 ///
-/// \tparam Scalar         The element type of the matrices.
+/// \tparam Scalar_        The element type of the matrices.
 ///                        Currently supported types are `float`, `double`, and `long double`.
 /// \tparam TypeA          The type of the \f$A\f$ matrix, indicating whether \f$A\f$ is
 ///                        dense or sparse. Possible values are `Eigen::Dense` and `Eigen::Sparse`.
@@ -119,12 +119,15 @@ public:
 ///                        is a sparse matrix.
 /// \tparam StorageIndexB  The storage index type of the \f$B\f$ matrix, only used when \f$B\f$
 ///                        is a sparse matrix.
-template <typename Scalar, typename TypeA = Eigen::Sparse, typename TypeB = Eigen::Sparse,
+template <typename Scalar_, typename TypeA = Eigen::Sparse, typename TypeB = Eigen::Sparse,
           int UploA = Eigen::Lower, int UploB = Eigen::Lower,
           int FlagsA = Eigen::ColMajor, int FlagsB = Eigen::ColMajor,
           typename StorageIndexA = int, typename StorageIndexB = int>
 class SymShiftInvert
 {
+public:
+    using Scalar = Scalar_;
+
 private:
     using Index = Eigen::Index;
 
