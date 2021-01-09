@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -130,9 +130,8 @@ namespace Spectra {
 /// }
 /// \endcode
 ///
-template <typename Scalar = double,
-          typename OpType = DenseSymMatProd<double>>
-class SymEigsSolver : public SymEigsBase<Scalar, OpType, IdentityBOp>
+template <typename OpType = DenseSymMatProd<double>>
+class SymEigsSolver : public SymEigsBase<OpType, IdentityBOp>
 {
 private:
     using Index = Eigen::Index;
@@ -156,7 +155,7 @@ public:
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
     SymEigsSolver(OpType& op, Index nev, Index ncv) :
-        SymEigsBase<Scalar, OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv)
+        SymEigsBase<OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv)
     {}
 };
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -117,9 +117,8 @@ namespace Spectra {
 ///     return 0;
 /// }
 /// \endcode
-template <typename Scalar = double,
-          typename OpType = DenseGenMatProd<double>>
-class GenEigsSolver : public GenEigsBase<Scalar, OpType, IdentityBOp>
+template <typename OpType = DenseGenMatProd<double>>
+class GenEigsSolver : public GenEigsBase<OpType, IdentityBOp>
 {
 private:
     using Index = Eigen::Index;
@@ -143,7 +142,7 @@ public:
     ///             and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
     ///
     GenEigsSolver(OpType& op, Index nev, Index ncv) :
-        GenEigsBase<Scalar, OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv)
+        GenEigsBase<OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv)
     {}
 };
 

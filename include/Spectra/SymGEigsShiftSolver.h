@@ -1,4 +1,4 @@
-// Copyright (C) 2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2020-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -40,10 +40,7 @@ namespace Spectra {
 ///   "SymGEigsShiftSolver (Cayley mode)" for more details.
 
 // Empty class template
-template <typename Scalar,
-          typename OpType,
-          typename BOpType,
-          GEigsMode Mode>
+template <typename OpType, typename BOpType, GEigsMode Mode>
 class SymGEigsShiftSolver
 {};
 
@@ -148,18 +145,16 @@ class SymGEigsShiftSolver
 /// \endcode
 
 // Partial specialization for mode = GEigsMode::ShiftInvert
-template <typename Scalar,
-          typename OpType,
-          typename BOpType>
-class SymGEigsShiftSolver<Scalar, OpType, BOpType, GEigsMode::ShiftInvert> :
-    public SymEigsBase<Scalar, SymGEigsShiftInvertOp<Scalar, OpType, BOpType>, BOpType>
+template <typename OpType, typename BOpType>
+class SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert> :
+    public SymEigsBase<SymGEigsShiftInvertOp<OpType, BOpType>, BOpType>
 {
 private:
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
-    using ModeMatOp = SymGEigsShiftInvertOp<Scalar, OpType, BOpType>;
-    using Base = SymEigsBase<Scalar, ModeMatOp, BOpType>;
+    using ModeMatOp = SymGEigsShiftInvertOp<OpType, BOpType>;
+    using Base = SymEigsBase<ModeMatOp, BOpType>;
     using Base::m_nev;
     using Base::m_ritz_val;
 
@@ -311,18 +306,16 @@ public:
 /// \endcode
 
 // Partial specialization for mode = GEigsMode::Buckling
-template <typename Scalar,
-          typename OpType,
-          typename BOpType>
-class SymGEigsShiftSolver<Scalar, OpType, BOpType, GEigsMode::Buckling> :
-    public SymEigsBase<Scalar, SymGEigsBucklingOp<Scalar, OpType, BOpType>, BOpType>
+template <typename OpType, typename BOpType>
+class SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling> :
+    public SymEigsBase<SymGEigsBucklingOp<OpType, BOpType>, BOpType>
 {
 private:
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
-    using ModeMatOp = SymGEigsBucklingOp<Scalar, OpType, BOpType>;
-    using Base = SymEigsBase<Scalar, ModeMatOp, BOpType>;
+    using ModeMatOp = SymGEigsBucklingOp<OpType, BOpType>;
+    using Base = SymEigsBase<ModeMatOp, BOpType>;
     using Base::m_nev;
     using Base::m_ritz_val;
 
@@ -406,18 +399,16 @@ public:
 ///                  it is Spectra::GEigsMode::Cayley.
 
 // Partial specialization for mode = GEigsMode::Cayley
-template <typename Scalar,
-          typename OpType,
-          typename BOpType>
-class SymGEigsShiftSolver<Scalar, OpType, BOpType, GEigsMode::Cayley> :
-    public SymEigsBase<Scalar, SymGEigsCayleyOp<Scalar, OpType, BOpType>, BOpType>
+template <typename OpType, typename BOpType>
+class SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Cayley> :
+    public SymEigsBase<SymGEigsCayleyOp<OpType, BOpType>, BOpType>
 {
 private:
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
-    using ModeMatOp = SymGEigsCayleyOp<Scalar, OpType, BOpType>;
-    using Base = SymEigsBase<Scalar, ModeMatOp, BOpType>;
+    using ModeMatOp = SymGEigsCayleyOp<OpType, BOpType>;
+    using Base = SymEigsBase<ModeMatOp, BOpType>;
     using Base::m_nev;
     using Base::m_ritz_val;
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -41,10 +41,7 @@ namespace Spectra {
 ///   See \ref SymGEigsSolver<Scalar, OpType, BOpType, GEigsMode::RegularInverse> "SymGEigsSolver (Regular inverse mode)" for more details.
 
 // Empty class template
-template <typename Scalar,
-          typename OpType,
-          typename BOpType,
-          GEigsMode Mode>
+template <typename OpType, typename BOpType, GEigsMode Mode>
 class SymGEigsSolver
 {};
 
@@ -149,19 +146,18 @@ class SymGEigsSolver
 /// \endcode
 
 // Partial specialization for mode = GEigsMode::Cholesky
-template <typename Scalar,
-          typename OpType,
-          typename BOpType>
-class SymGEigsSolver<Scalar, OpType, BOpType, GEigsMode::Cholesky> :
-    public SymEigsBase<Scalar, SymGEigsCholeskyOp<Scalar, OpType, BOpType>, IdentityBOp>
+template <typename OpType, typename BOpType>
+class SymGEigsSolver<OpType, BOpType, GEigsMode::Cholesky> :
+    public SymEigsBase<SymGEigsCholeskyOp<OpType, BOpType>, IdentityBOp>
 {
 private:
+    using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
-    using ModeMatOp = SymGEigsCholeskyOp<Scalar, OpType, BOpType>;
-    using Base = SymEigsBase<Scalar, ModeMatOp, IdentityBOp>;
+    using ModeMatOp = SymGEigsCholeskyOp<OpType, BOpType>;
+    using Base = SymEigsBase<ModeMatOp, IdentityBOp>;
 
     const BOpType& m_Bop;
 
@@ -254,17 +250,15 @@ public:
 ///
 
 // Partial specialization for mode = GEigsMode::RegularInverse
-template <typename Scalar,
-          typename OpType,
-          typename BOpType>
-class SymGEigsSolver<Scalar, OpType, BOpType, GEigsMode::RegularInverse> :
-    public SymEigsBase<Scalar, SymGEigsRegInvOp<Scalar, OpType, BOpType>, BOpType>
+template <typename OpType, typename BOpType>
+class SymGEigsSolver<OpType, BOpType, GEigsMode::RegularInverse> :
+    public SymEigsBase<SymGEigsRegInvOp<OpType, BOpType>, BOpType>
 {
 private:
     using Index = Eigen::Index;
 
-    using ModeMatOp = SymGEigsRegInvOp<Scalar, OpType, BOpType>;
-    using Base = SymEigsBase<Scalar, ModeMatOp, BOpType>;
+    using ModeMatOp = SymGEigsRegInvOp<OpType, BOpType>;
+    using Base = SymEigsBase<ModeMatOp, BOpType>;
 
 public:
     ///

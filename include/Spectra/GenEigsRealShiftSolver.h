@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -31,16 +31,16 @@ namespace Spectra {
 ///                 own that implements all the public member functions as in
 ///                 DenseGenRealShiftSolve.
 ///
-template <typename Scalar = double,
-          typename OpType = DenseGenRealShiftSolve<double>>
-class GenEigsRealShiftSolver : public GenEigsBase<Scalar, OpType, IdentityBOp>
+template <typename OpType = DenseGenRealShiftSolve<double>>
+class GenEigsRealShiftSolver : public GenEigsBase<OpType, IdentityBOp>
 {
 private:
+    using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Complex = std::complex<Scalar>;
     using ComplexArray = Eigen::Array<Complex, Eigen::Dynamic, 1>;
 
-    using Base = GenEigsBase<Scalar, OpType, IdentityBOp>;
+    using Base = GenEigsBase<OpType, IdentityBOp>;
     using Base::m_nev;
     using Base::m_ritz_val;
 

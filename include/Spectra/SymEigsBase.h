@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2018-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -39,12 +39,11 @@ namespace Spectra {
 /// It is kept here to provide the documentation for member functions of concrete eigen solvers
 /// such as SymEigsSolver and SymEigsShiftSolver.
 ///
-template <typename Scalar,
-          typename OpType,
-          typename BOpType>
+template <typename OpType, typename BOpType>
 class SymEigsBase
 {
 private:
+    using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -146,15 +146,15 @@ namespace Spectra {
 /// }
 /// \endcode
 ///
-template <typename Scalar = double,
-          typename OpType = DenseSymShiftSolve<double>>
-class SymEigsShiftSolver : public SymEigsBase<Scalar, OpType, IdentityBOp>
+template <typename OpType = DenseSymShiftSolve<double>>
+class SymEigsShiftSolver : public SymEigsBase<OpType, IdentityBOp>
 {
 private:
+    using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
-    using Base = SymEigsBase<Scalar, OpType, IdentityBOp>;
+    using Base = SymEigsBase<OpType, IdentityBOp>;
     using Base::m_nev;
     using Base::m_ritz_val;
 
@@ -166,7 +166,7 @@ private:
         // The eigenvalues we get from the iteration is nu = 1 / (lambda - sigma)
         // So the eigenvalues of the original problem is lambda = 1 / nu + sigma
         m_ritz_val.head(m_nev).array() = Scalar(1) / m_ritz_val.head(m_nev).array() + m_sigma;
-        SymEigsBase<Scalar, OpType, IdentityBOp>::sort_ritzpair(sort_rule);
+        Base::sort_ritzpair(sort_rule);
     }
 
 public:
