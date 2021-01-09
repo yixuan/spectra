@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2017-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -20,11 +20,13 @@ namespace Spectra {
 /// This class defines the matrix operation for generalized eigen solver in the
 /// regular inverse mode. This class is intended for internal use.
 ///
-template <typename Scalar = double,
-          typename OpType = SparseSymMatProd<double>,
+template <typename OpType = SparseSymMatProd<double>,
           typename BOpType = SparseRegularInverse<double>>
 class SymGEigsRegInvOp
 {
+public:
+    using Scalar = typename OpType::Scalar;
+
 private:
     using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
