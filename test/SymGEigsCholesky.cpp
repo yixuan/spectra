@@ -110,7 +110,7 @@ void run_test_sets(const MatType& A, const MatType& B, int k, int m)
     // Make sure B is positive definite and the decomposition is successful
     REQUIRE(Bop.info() == CompInfo::Successful);
 
-    SymGEigsSolver<double, OpType, BOpType, GEigsMode::Cholesky> eigs(op, Bop, k, m);
+    SymGEigsSolver<OpType, BOpType, GEigsMode::Cholesky> eigs(op, Bop, k, m);
 
     SECTION("Largest Magnitude")
     {

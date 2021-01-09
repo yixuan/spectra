@@ -81,7 +81,7 @@ void run_test_sets(const MatType& A, int k, int m, double sigmar, double sigmai)
     using OpType = typename std::conditional<is_dense, DenseOp, SparseOp>::type;
 
     OpType op(A);
-    GenEigsComplexShiftSolver<double, OpType> eigs(op, k, m, sigmar, sigmai);
+    GenEigsComplexShiftSolver<OpType> eigs(op, k, m, sigmar, sigmai);
 
     SECTION("Largest Magnitude")
     {

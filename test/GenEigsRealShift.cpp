@@ -80,7 +80,7 @@ void run_test_sets(const MatType& A, int k, int m, double sigma)
     using OpType = typename std::conditional<is_dense, DenseOp, SparseOp>::type;
 
     OpType op(A);
-    GenEigsRealShiftSolver<double, OpType> eigs(op, k, m, sigma);
+    GenEigsRealShiftSolver<OpType> eigs(op, k, m, sigma);
 
     SECTION("Largest Magnitude")
     {

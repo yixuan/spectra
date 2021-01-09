@@ -80,7 +80,7 @@ void run_test_sets(const MatType& A, int k, int m)
     using OpType = typename std::conditional<is_dense, DenseOp, SparseOp>::type;
 
     OpType op(A);
-    GenEigsSolver<double, OpType> eigs(op, k, m);
+    GenEigsSolver<OpType> eigs(op, k, m);
 
     SECTION("Largest Magnitude")
     {

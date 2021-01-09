@@ -135,7 +135,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [shift-invert, ss,
 
     OpType op(A, B);
     BOpType Bop(B);
-    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::ShiftInvert> eigs(op, Bop, k, m, sigma);
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(A, B, eigs);
 }
@@ -159,7 +159,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [shift-invert, sd,
 
     OpType op(As, Bd);
     BOpType Bop(Bd);
-    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::ShiftInvert> eigs(op, Bop, k, m, sigma);
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(As, Bd, eigs);
 }
@@ -183,7 +183,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [shift-invert, ds,
 
     OpType op(Ad, Bs);
     BOpType Bop(Bs);
-    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::ShiftInvert> eigs(op, Bop, k, m, sigma);
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(Ad, Bs, eigs);
 }
@@ -205,7 +205,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [shift-invert, dd,
 
     OpType op(A, B);
     BOpType Bop(B);
-    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::ShiftInvert> eigs(op, Bop, k, m, sigma);
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(A, B, eigs);
 }
@@ -228,7 +228,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [buckling, ss, 100
 
     OpType op(K, KG);
     BOpType Bop(K);
-    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Buckling> eigs(op, Bop, k, m, sigma);
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(K, KG, eigs);
 }
@@ -252,7 +252,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [buckling, sd, 100
 
     OpType op(Ks, KGd);
     BOpType Bop(Ks);
-    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Buckling> eigs(op, Bop, k, m, sigma);
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(Ks, KGd, eigs);
 }
@@ -276,7 +276,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [buckling, ds, 100
 
     OpType op(Kd, KGs);
     BOpType Bop(Kd);
-    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Buckling> eigs(op, Bop, k, m, sigma);
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(Kd, KGs, eigs);
 }
@@ -298,7 +298,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [buckling, dd, 100
 
     OpType op(K, KG);
     BOpType Bop(K);
-    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Buckling> eigs(op, Bop, k, m, sigma);
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(K, KG, eigs);
 }
@@ -321,7 +321,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [cayley, ss, 100x1
 
     OpType op(A, B);
     BOpType Bop(B);
-    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Cayley> eigs(op, Bop, k, m, sigma);
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Cayley> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(A, B, eigs);
 }
@@ -345,7 +345,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [cayley, sd, 100x1
 
     OpType op(As, Bd);
     BOpType Bop(Bd);
-    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Cayley> eigs(op, Bop, k, m, sigma);
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Cayley> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(As, Bd, eigs);
 }
@@ -369,7 +369,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [cayley, ds, 100x1
 
     OpType op(Ad, Bs);
     BOpType Bop(Bs);
-    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Cayley> eigs(op, Bop, k, m, sigma);
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Cayley> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(Ad, Bs, eigs);
 }
@@ -391,7 +391,7 @@ TEST_CASE("Generalized eigensolver of symmetric real matrices [cayley, dd, 100x1
 
     OpType op(A, B);
     BOpType Bop(B);
-    SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Cayley> eigs(op, Bop, k, m, sigma);
+    SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Cayley> eigs(op, Bop, k, m, sigma);
 
     run_test_sets(A, B, eigs);
 }

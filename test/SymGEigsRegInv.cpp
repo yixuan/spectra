@@ -86,7 +86,7 @@ void run_test_sets(const SpMatrix& A, const SpMatrix& B, int k, int m)
     using BOpType = SparseRegularInverse<double>;
     OpType op(A);
     BOpType Bop(B);
-    SymGEigsSolver<double, OpType, BOpType, GEigsMode::RegularInverse> eigs(op, Bop, k, m);
+    SymGEigsSolver<OpType, BOpType, GEigsMode::RegularInverse> eigs(op, Bop, k, m);
 
     SECTION("Largest Magnitude")
     {

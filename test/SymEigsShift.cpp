@@ -86,7 +86,7 @@ void run_test_sets(const MatType& mat, int k, int m, double sigma)
     using OpType = typename std::conditional<is_dense, DenseOp, SparseOp>::type;
 
     OpType op(mat);
-    SymEigsShiftSolver<double, OpType> eigs(op, k, m, sigma);
+    SymEigsShiftSolver<OpType> eigs(op, k, m, sigma);
 
     SECTION("Largest Magnitude")
     {

@@ -35,7 +35,7 @@ SpMatrix gen_sparse_data(int m, int n, double prob = 0.5)
 template <typename MatType>
 void run_test(const MatType& mat, int k, int m)
 {
-    PartialSVDSolver<double, MatType> svds(mat, k, m);
+    PartialSVDSolver<MatType> svds(mat, k, m);
     int nconv = svds.compute();
 
     INFO("nconv = " << nconv);
