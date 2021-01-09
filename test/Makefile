@@ -27,11 +27,16 @@ test:
 	-./GenEigsComplexShift.out
 	-./SymGEigsCholesky.out
 	-./SymGEigsRegInv.out
+	-./SymGEigsShift.out
 	-./SVD.out
 
-%.out: %.cpp $(HEADERS)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -o $@ $(LDFLAGS) $(LIBS)
+tests-main.o: tests-main.cpp catch.hpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -c -o $@
+
+%.out: %.cpp $(HEADERS) tests-main.o
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< tests-main.o -o $@ $(LDFLAGS) $(LIBS)
 
 clean:
 	-rm *.out
+	-rm *.o
 
