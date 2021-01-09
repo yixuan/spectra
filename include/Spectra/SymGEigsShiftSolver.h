@@ -150,6 +150,7 @@ class SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert> :
     public SymEigsBase<SymGEigsShiftInvertOp<OpType, BOpType>, BOpType>
 {
 private:
+    using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
@@ -311,6 +312,7 @@ class SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling> :
     public SymEigsBase<SymGEigsBucklingOp<OpType, BOpType>, BOpType>
 {
 private:
+    using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
@@ -404,6 +406,7 @@ class SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Cayley> :
     public SymEigsBase<SymGEigsCayleyOp<OpType, BOpType>, BOpType>
 {
 private:
+    using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 

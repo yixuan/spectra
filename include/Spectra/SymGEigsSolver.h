@@ -209,7 +209,7 @@ public:
 
     Matrix eigenvectors() const override
     {
-        return SymGEigsSolver<Scalar, OpType, BOpType, GEigsMode::Cholesky>::eigenvectors(this->m_nev);
+        return SymGEigsSolver<OpType, BOpType, GEigsMode::Cholesky>::eigenvectors(this->m_nev);
     }
 
     /// \endcond

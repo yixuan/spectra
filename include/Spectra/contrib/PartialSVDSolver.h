@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2018-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -13,9 +13,12 @@
 namespace Spectra {
 
 // Abstract class for matrix operation
-template <typename Scalar>
+template <typename Scalar_>
 class SVDMatOp
 {
+public:
+    using Scalar = Scalar_;
+
 private:
     using Index = Eigen::Index;
 
@@ -109,11 +112,11 @@ public:
 
 // Partial SVD solver
 // MatrixType is either Eigen::Matrix<Scalar, ...> or Eigen::SparseMatrix<Scalar, ...>
-template <typename Scalar = double,
-          typename MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>>
+template <typename MatrixType = Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>>
 class PartialSVDSolver
 {
 private:
+    using Scalar = typename MatrixType::Scalar;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
@@ -123,7 +126,7 @@ private:
     const Index m_m;
     const Index m_n;
     SVDMatOp<Scalar>* m_op;
-    SymEigsSolver<Scalar, SVDMatOp<Scalar>>* m_eigs;
+    SymEigsSolver<SVDMatOp<Scalar>>* m_eigs;
     Index m_nconv;
     Matrix m_evecs;
 
@@ -143,7 +146,7 @@ public:
         }
 
         // Solver object
-        m_eigs = new SymEigsSolver<Scalar, SVDMatOp<Scalar>>(*m_op, ncomp, ncv);
+        m_eigs = new SymEigsSolver<SVDMatOp<Scalar>>(*m_op, ncomp, ncv);
     }
 
     // Destructor
