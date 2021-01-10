@@ -9,8 +9,10 @@
 - Added a `Flags` template parameter to every dense matrix operation class
   (e.g. `DenseCholesky` and `DenseSymMatProd`), whose possible values are `Eigen::ColMajor`
   and `Eigen::RowMajor`. This parameter allows these wrapper classes to handle row-major matrices
-- Implemented symmetric Davidson solver and extended matrix products to handle mat-mat products and coefficient wise accessors.
-
+- Added symmetric Davidson eigen solver `DavidsonSymEigsSolver`, written by Felipe Zapata,
+  Nicolas Renaud, Victor Azizi, Pablo Lopez-Tarifa, and Jens Wehner from the Netherlands eScience Center
+- Extended matrix operations in `DenseGenMatProd`, `DenseSymMatProd`, `SparseGenMatProd`, and
+  `SparseSymMatProd` to handle matrix-matrix products and coefficient-wise accessors
 
 ### Changed
 - **API change**: Spectra now requires C++11
@@ -18,6 +20,8 @@
   (e.g. `LARGEST_MAGN` is now `SortRule::LargestMagn`)
 - **API change**: Selection rules are no longer template parameters. They are now
   specified in the `compute()` member function as arguments
+- **API change**: The `Scalar` template parameter has been removed from eigen solvers.
+  Instead, matrix operation classes now need to define a public type named `Scalar`
 - **API change**: Constructors of solvers now request references of matrix operators
   instead of pointers
 - Clang-Format now uses the C++11 standard to format code
