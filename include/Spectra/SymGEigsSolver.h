@@ -63,12 +63,11 @@ class SymGEigsSolver
 /// classes. If the users need to define their own operation classes, then they
 /// should implement all the public member functions as in those built-in classes.
 ///
-/// \tparam Scalar   The element type of the matrix.
-///                  Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType   The name of the matrix operation class for \f$A\f$. Users could either
 ///                  use the wrapper classes such as DenseSymMatProd and
-///                  SparseSymMatProd, or define their own that implements all the
-///                  public member functions as in DenseSymMatProd.
+///                  SparseSymMatProd, or define their own that implements the type
+///                  definition `Scalar` and all the public member functions as in
+///                  DenseSymMatProd.
 /// \tparam BOpType  The name of the matrix operation class for \f$B\f$. Users could either
 ///                  use the wrapper classes such as DenseCholesky and
 ///                  SparseCholesky, or define their own that implements all the
@@ -115,7 +114,7 @@ class SymGEigsSolver
 ///     SparseCholesky<double>  Bop(B);
 ///
 ///     // Construct generalized eigen solver object, requesting the largest three generalized eigenvalues
-///     SymGEigsSolver<double, DenseSymMatProd<double>, SparseCholesky<double>, GEigsMode::Cholesky>
+///     SymGEigsSolver<DenseSymMatProd<double>, SparseCholesky<double>, GEigsMode::Cholesky>
 ///         geigs(op, Bop, 3, 6);
 ///
 ///     // Initialize and compute
@@ -169,7 +168,7 @@ public:
     ///             multiplication operation of \f$A\f$:
     ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
     ///             create the object from the wrapper classes such as DenseSymMatProd, or
-    ///             define their own that implements all the public member functions
+    ///             define their own that implements all the public members
     ///             as in DenseSymMatProd.
     /// \param Bop  The \f$B\f$ matrix operation object that represents a Cholesky decomposition of \f$B\f$.
     ///             It should implement the lower and upper triangular solving operations:
@@ -234,12 +233,10 @@ public:
 /// is always preferred. If the users need to define their own operation classes, then they
 /// should implement all the public member functions as in those built-in classes.
 ///
-/// \tparam Scalar   The element type of the matrix.
-///                  Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType   The name of the matrix operation class for \f$A\f$. Users could either
 ///                  use the wrapper classes such as DenseSymMatProd and
-///                  SparseSymMatProd, or define their
-///                  own that implements all the public member functions as in
+///                  SparseSymMatProd, or define their own that implements the type
+///                  definition `Scalar` and all the public member functions as in
 ///                  DenseSymMatProd.
 /// \tparam BOpType  The name of the matrix operation class for \f$B\f$. Users could either
 ///                  use the wrapper class SparseRegularInverse, or define their
@@ -268,7 +265,7 @@ public:
     ///             multiplication operation of \f$A\f$:
     ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
     ///             create the object from the wrapper classes such as DenseSymMatProd, or
-    ///             define their own that implements all the public member functions
+    ///             define their own that implements all the public members
     ///             as in DenseSymMatProd.
     /// \param Bop  The \f$B\f$ matrix operation object that implements the multiplication operation
     ///             \f$Bv\f$ and the linear equation solving operation \f$B^{-1}v\f$ for any vector \f$v\f$.

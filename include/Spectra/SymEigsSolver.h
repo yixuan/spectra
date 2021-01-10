@@ -34,21 +34,20 @@ namespace Spectra {
 /// the constructor of SymEigsSolver.
 ///
 /// If the matrix \f$A\f$ is already stored as a matrix object in **Eigen**,
-/// for example `Eigen::MatrixXd`, then there is an easy way to construct such
+/// for example `Eigen::MatrixXd`, then there is an easy way to construct such a
 /// matrix operation class, by using the built-in wrapper class DenseSymMatProd
-/// which wraps an existing matrix object in **Eigen**. This is also the
+/// that wraps an existing matrix object in **Eigen**. This is also the
 /// default template parameter for SymEigsSolver. For sparse matrices, the
 /// wrapper class SparseSymMatProd can be used similarly.
 ///
 /// If the users need to define their own matrix-vector multiplication operation
-/// class, it should implement all the public member functions as in DenseSymMatProd.
+/// class, it should define a public type `Scalar` to indicate the element type,
+/// and implement all the public member functions as in DenseSymMatProd.
 ///
-/// \tparam Scalar  The element type of the matrix.
-///                 Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType  The name of the matrix operation class. Users could either
 ///                 use the wrapper classes such as DenseSymMatProd and
-///                 SparseSymMatProd, or define their
-///                 own that implements all the public member functions as in
+///                 SparseSymMatProd, or define their own that implements the type
+///                 definition `Scalar` and all the public member functions as in
 ///                 DenseSymMatProd.
 ///
 /// Below is an example that demonstrates the usage of this class.
@@ -71,7 +70,7 @@ namespace Spectra {
 ///     DenseSymMatProd<double> op(M);
 ///
 ///     // Construct eigen solver object, requesting the largest three eigenvalues
-///     SymEigsSolver<double, DenseSymMatProd<double>> eigs(op, 3, 6);
+///     SymEigsSolver<DenseSymMatProd<double>> eigs(op, 3, 6);
 ///
 ///     // Initialize and compute
 ///     eigs.init();
@@ -101,6 +100,7 @@ namespace Spectra {
 /// class MyDiagonalTen
 /// {
 /// public:
+///     using Scalar = double;  // A typedef named "Scalar" is required
 ///     int rows() { return 10; }
 ///     int cols() { return 10; }
 ///     // y_out = M * x_in
@@ -116,7 +116,7 @@ namespace Spectra {
 /// int main()
 /// {
 ///     MyDiagonalTen op;
-///     SymEigsSolver<double, MyDiagonalTen> eigs(op, 3, 6);
+///     SymEigsSolver<MyDiagonalTen> eigs(op, 3, 6);
 ///     eigs.init();
 ///     eigs.compute(SortRule::LargestAlge);
 ///     if (eigs.info() == CompInfo::Successful)
@@ -144,7 +144,7 @@ public:
     ///             the matrix-vector multiplication operation of \f$A\f$:
     ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
     ///             create the object from the wrapper class such as DenseSymMatProd, or
-    ///             define their own that implements all the public member functions
+    ///             define their own that implements all the public members
     ///             as in DenseSymMatProd.
     /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
     ///             where \f$n\f$ is the size of matrix.

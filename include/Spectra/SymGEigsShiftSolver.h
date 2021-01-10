@@ -62,11 +62,9 @@ class SymGEigsShiftSolver
 /// own operation classes, then they should implement all the public member functions as
 /// in those built-in classes.
 ///
-/// \tparam Scalar   The element type of the matrix.
-///                  Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType   The type of the first operation object. Users could either
 ///                  use the wrapper class SymShiftInvert, or define their own that implements
-///                  all the public member functions as in SymShiftInvert.
+///                  the type definition `Scalar` and all the public member functions as in SymShiftInvert.
 /// \tparam BOpType  The name of the matrix operation class for \f$B\f$. Users could either
 ///                  use the wrapper classes such as DenseSymMatProd and
 ///                  SparseSymMatProd, or define their own that implements all the
@@ -120,7 +118,7 @@ class SymGEigsShiftSolver
 ///     // Construct generalized eigen solver object, seeking three generalized
 ///     // eigenvalues that are closest to zero. This is equivalent to specifying
 ///     // a shift sigma = 0.0 combined with the SortRule::LargestMagn selection rule
-///     SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::ShiftInvert>
+///     SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert>
 ///         geigs(op, Bop, 3, 6, 0.0);
 ///
 ///     // Initialize and compute
@@ -184,7 +182,7 @@ public:
     /// \param op     The matrix operation object that computes \f$y=(A-\sigma B)^{-1}v\f$
     ///               for any vector \f$v\f$. Users could either create the object from the
     ///               wrapper class SymShiftInvert, or define their own that implements all
-    ///               the public member functions as in SymShiftInvert.
+    ///               the public members as in SymShiftInvert.
     /// \param Bop    The \f$B\f$ matrix operation object that implements the matrix-vector
     ///               multiplication \f$Bv\f$. Users could either create the object from the
     ///               wrapper classes such as DenseSymMatProd and SparseSymMatProd, or
@@ -223,11 +221,9 @@ public:
 /// own operation classes, then they should implement all the public member functions as
 /// in those built-in classes.
 ///
-/// \tparam Scalar   The element type of the matrix.
-///                  Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType   The type of the first operation object. Users could either
 ///                  use the wrapper class SymShiftInvert, or define their own that implements
-///                  all the public member functions as in SymShiftInvert.
+///                  the type definition `Scalar` and all the public member functions as in SymShiftInvert.
 /// \tparam BOpType  The name of the matrix operation class for \f$K\f$. Users could either
 ///                  use the wrapper classes such as DenseSymMatProd and
 ///                  SparseSymMatProd, or define their own that implements all the
@@ -282,7 +278,7 @@ public:
 ///     // eigenvalues that are closest to and larger than 1.0. This is equivalent to
 ///     // specifying a shift sigma = 1.0 combined with the SortRule::LargestAlge
 ///     // selection rule
-///     SymGEigsShiftSolver<double, OpType, BOpType, GEigsMode::Buckling>
+///     SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling>
 ///         geigs(op, Bop, 3, 6, 1.0);
 ///
 ///     // Initialize and compute
@@ -349,7 +345,7 @@ public:
     /// \param op     The matrix operation object that computes \f$y=(K-\sigma K_G)^{-1}v\f$
     ///               for any vector \f$v\f$. Users could either create the object from the
     ///               wrapper class SymShiftInvert, or define their own that implements all
-    ///               the public member functions as in SymShiftInvert.
+    ///               the public members as in SymShiftInvert.
     /// \param Bop    The \f$K\f$ matrix operation object that implements the matrix-vector
     ///               multiplication \f$Kv\f$. Users could either create the object from the
     ///               wrapper classes such as DenseSymMatProd and SparseSymMatProd, or
@@ -388,11 +384,9 @@ public:
 /// own operation classes, then they should implement all the public member functions as
 /// in those built-in classes.
 ///
-/// \tparam Scalar   The element type of the matrix.
-///                  Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType   The type of the first operation object. Users could either
 ///                  use the wrapper class SymShiftInvert, or define their own that implements
-///                  all the public member functions as in SymShiftInvert.
+///                  the type definition `Scalar` and all the public member functions as in SymShiftInvert.
 /// \tparam BOpType  The name of the matrix operation class for \f$B\f$. Users could either
 ///                  use the wrapper classes such as DenseSymMatProd and
 ///                  SparseSymMatProd, or define their own that implements all the
@@ -443,7 +437,7 @@ public:
     /// \param op     The matrix operation object that computes \f$y=(A-\sigma B)^{-1}v\f$
     ///               for any vector \f$v\f$. Users could either create the object from the
     ///               wrapper class SymShiftInvert, or define their own that implements all
-    ///               the public member functions as in SymShiftInvert.
+    ///               the public members as in SymShiftInvert.
     /// \param Bop    The \f$B\f$ matrix operation object that implements the matrix-vector
     ///               multiplication \f$Bv\f$. Users could either create the object from the
     ///               wrapper classes such as DenseSymMatProd and SparseSymMatProd, or

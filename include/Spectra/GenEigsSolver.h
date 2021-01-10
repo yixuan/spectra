@@ -25,12 +25,10 @@ namespace Spectra {
 /// also applies to the GenEigsSolver class here, except that the eigenvalues
 /// and eigenvectors of a general matrix can now be complex-valued.
 ///
-/// \tparam Scalar  The element type of the matrix.
-///                 Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType  The name of the matrix operation class. Users could either
 ///                 use the wrapper classes such as DenseGenMatProd and
-///                 SparseGenMatProd, or define their
-///                 own that implements all the public member functions as in
+///                 SparseGenMatProd, or define their own that implements the type
+///                 definition `Scalar` and all the public member functions as in
 ///                 DenseGenMatProd.
 ///
 /// An example that illustrates the usage of GenEigsSolver is give below:
@@ -53,7 +51,7 @@ namespace Spectra {
 ///
 ///     // Construct eigen solver object, requesting the largest
 ///     // (in magnitude, or norm) three eigenvalues
-///     GenEigsSolver<double, DenseGenMatProd<double>> eigs(op, 3, 6);
+///     GenEigsSolver<DenseGenMatProd<double>> eigs(op, 3, 6);
 ///
 ///     // Initialize and compute
 ///     eigs.init();
@@ -101,7 +99,7 @@ namespace Spectra {
 ///     SparseGenMatProd<double> op(M);
 ///
 ///     // Construct eigen solver object, requesting the largest three eigenvalues
-///     GenEigsSolver<double, SparseGenMatProd<double>> eigs(op, 3, 6);
+///     GenEigsSolver<SparseGenMatProd<double>> eigs(op, 3, 6);
 ///
 ///     // Initialize and compute
 ///     eigs.init();
@@ -131,7 +129,7 @@ public:
     ///             the matrix-vector multiplication operation of \f$A\f$:
     ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
     ///             create the object from the wrapper class such as DenseGenMatProd, or
-    ///             define their own that implements all the public member functions
+    ///             define their own that implements all the public members
     ///             as in DenseGenMatProd.
     /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-2\f$,
     ///             where \f$n\f$ is the size of matrix.

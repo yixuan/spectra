@@ -54,12 +54,10 @@ namespace Spectra {
 /// returning \f$\lambda\f$ rather than \f$\nu\f$), and eigenvectors are the
 /// same for both the original problem and the shifted-and-inverted problem.
 ///
-/// \tparam Scalar  The element type of the matrix.
-///                 Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType  The name of the matrix operation class. Users could either
 ///                 use the wrapper classes such as DenseSymShiftSolve and
-///                 SparseSymShiftSolve, or define their
-///                 own that implements all the public member functions as in
+///                 SparseSymShiftSolve, or define their own that implements the type
+///                 definition `Scalar` and all the public member functions as in
 ///                 DenseSymShiftSolve.
 ///
 /// Below is an example that illustrates the use of the shift-and-invert mode:
@@ -84,7 +82,7 @@ namespace Spectra {
 ///
 ///     // Construct eigen solver object with shift 0
 ///     // This will find eigenvalues that are closest to 0
-///     SymEigsShiftSolver<double, DenseSymShiftSolve<double>> eigs(op, 3, 6, 0.0);
+///     SymEigsShiftSolver<DenseSymShiftSolve<double>> eigs(op, 3, 6, 0.0);
 ///
 ///     eigs.init();
 ///     eigs.compute(SortRule::LargestMagn);
@@ -114,6 +112,7 @@ namespace Spectra {
 /// private:
 ///     double sigma_;
 /// public:
+///     using Scalar = double;  // A typedef named "Scalar" is required
 ///     int rows() { return 10; }
 ///     int cols() { return 10; }
 ///     void set_shift(double sigma) { sigma_ = sigma; }
@@ -132,7 +131,7 @@ namespace Spectra {
 /// {
 ///     MyDiagonalTenShiftSolve op;
 ///     // Find three eigenvalues that are closest to 3.14
-///     SymEigsShiftSolver<double, MyDiagonalTenShiftSolve> eigs(op, 3, 6, 3.14);
+///     SymEigsShiftSolver<MyDiagonalTenShiftSolve> eigs(op, 3, 6, 3.14);
 ///     eigs.init();
 ///     eigs.compute(SortRule::LargestMagn);
 ///     if (eigs.info() == CompInfo::Successful)
@@ -177,7 +176,7 @@ public:
     ///               the shift-solve operation of \f$A\f$: calculating
     ///               \f$(A-\sigma I)^{-1}v\f$ for any vector \f$v\f$. Users could either
     ///               create the object from the wrapper class such as DenseSymShiftSolve, or
-    ///               define their own that implements all the public member functions
+    ///               define their own that implements all the public members
     ///               as in DenseSymShiftSolve.
     /// \param nev    Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
     ///               where \f$n\f$ is the size of matrix.

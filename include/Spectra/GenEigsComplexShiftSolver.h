@@ -23,11 +23,10 @@ namespace Spectra {
 /// knowledge of the shift-and-invert mode can be found in the documentation
 /// of the SymEigsShiftSolver class.
 ///
-/// \tparam Scalar  The element type of the matrix.
-///                 Currently supported types are `float`, `double`, and `long double`.
 /// \tparam OpType  The name of the matrix operation class. Users could either
-///                 use the DenseGenComplexShiftSolve wrapper class, or define their
-///                 own that implements all the public member functions as in
+///                 use the wrapper classes such as DenseGenComplexShiftSolve and
+///                 SparseGenComplexShiftSolve, or define their own that implements the type
+///                 definition `Scalar` and all the public member functions as in
 ///                 DenseGenComplexShiftSolve.
 ///
 template <typename OpType = DenseGenComplexShiftSolve<double>>
@@ -134,8 +133,8 @@ public:
     /// \param op      The matrix operation object that implements
     ///                the complex shift-solve operation of \f$A\f$: calculating
     ///                \f$\mathrm{Re}\{(A-\sigma I)^{-1}v\}\f$ for any vector \f$v\f$. Users could either
-    ///                create the object from the DenseGenComplexShiftSolve wrapper class, or
-    ///                define their own that implements all the public member functions
+    ///                create the object from the wrapper class such as DenseGenComplexShiftSolve, or
+    ///                define their own that implements all the public members
     ///                as in DenseGenComplexShiftSolve.
     /// \param nev     Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-2\f$,
     ///                where \f$n\f$ is the size of matrix.

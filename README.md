@@ -18,9 +18,9 @@ C++ projects that require calculating eigenvalues of large matrices.
 
 ## Relation to ARPACK
 
-[ARPACK](http://www.caam.rice.edu/software/ARPACK/) is a software written in
+[ARPACK](http://www.caam.rice.edu/software/ARPACK/) is a software package written in
 FORTRAN for solving large scale eigenvalue problems. The development of
-**Spectra** is much inspired by ARPACK, and as the whole name indicates,
+**Spectra** is much inspired by ARPACK, and as the full name indicates,
 **Spectra** is a redesign of the ARPACK library using the C++ language.
 
 In fact, **Spectra** is based on the algorithm described in the
@@ -34,16 +34,15 @@ depend on ARPACK.
 ## Common Usage
 
 **Spectra** is designed to calculate a specified number (`k`) of eigenvalues
-of a large square matrix (`A`). Usually `k` is much less than the size of matrix
+of a large square matrix (`A`). Usually `k` is much less than the size of the matrix
 (`n`), so that only a few eigenvalues and eigenvectors are computed, which
 in general is more efficient than calculating the whole spectral decomposition.
-Users can choose eigenvalue selection rules to pick up the eigenvalues of interest,
-such as the largest `k` eigenvalues, or eigenvalues with largest real parts,
-etc.
+Users can choose eigenvalue selection rules to pick the eigenvalues of interest,
+such as the largest `k` eigenvalues, or eigenvalues with largest real parts, etc.
 
 To use the eigen solvers in this library, the user does not need to directly
 provide the whole matrix, but instead, the algorithm only requires certain operations
-defined on `A`, and in the basic setting, it is simply the matrix-vector
+defined on `A`. In the basic setting, it is simply the matrix-vector
 multiplication. Therefore, if the matrix-vector product `A * x` can be computed
 efficiently, which is the case when `A` is sparse, **Spectra**
 will be very powerful for large scale eigenvalue problems.
@@ -106,7 +105,7 @@ int main()
     DenseSymMatProd<double> op(M);
 
     // Construct eigen solver object, requesting the largest three eigenvalues
-    SymEigsSolver<double, DenseSymMatProd<double>> eigs(op, 3, 6);
+    SymEigsSolver<DenseSymMatProd<double>> eigs(op, 3, 6);
 
     // Initialize and compute
     eigs.init();
@@ -154,7 +153,7 @@ int main()
     SparseGenMatProd<double> op(M);
 
     // Construct eigen solver object, requesting the largest three eigenvalues
-    GenEigsSolver<double, SparseGenMatProd<double>> eigs(op, 3, 6);
+    GenEigsSolver<SparseGenMatProd<double>> eigs(op, 3, 6);
 
     // Initialize and compute
     eigs.init();
@@ -184,6 +183,7 @@ using namespace Spectra;
 class MyDiagonalTen
 {
 public:
+    using Scalar = double;  // A typedef named "Scalar" is required
     int rows() { return 10; }
     int cols() { return 10; }
     // y_out = M * x_in
@@ -199,7 +199,7 @@ public:
 int main()
 {
     MyDiagonalTen op;
-    SymEigsSolver<double, MyDiagonalTen> eigs(op, 3, 6);
+    SymEigsSolver<MyDiagonalTen> eigs(op, 3, 6);
     eigs.init();
     eigs.compute(SortRule::LargestAlge);
     if(eigs.info() == CompInfo::Successful)
