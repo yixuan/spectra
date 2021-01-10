@@ -3,29 +3,29 @@ language: cpp
 matrix:
   include:
     - os: linux
-      dist: xenial
-      name: Linux, gcc-8
-      env: CC=gcc-8 CXX=g++-8
+      dist: focal
+      name: Linux, GCC 9
+      env: CC=gcc-9 CXX=g++-9
       sudo: true
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - gcc-8
-            - g++-8
+            - gcc-9
+            - g++-9
     - os: linux
-      dist: xenial
-      name: Linux, Clang 7.0
-      env: CC=clang-7 CXX=clang++-7
+      dist: focal
+      name: Linux, Clang 9
+      env: CC=clang-9 CXX=clang++-9
       sudo: true
       addons:
         apt:
           packages:
-            - clang-7
+            - clang-9
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-7
+            - llvm-toolchain-focal-9
 
 before_cache:
   - rm -rf $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var $HOME/miniconda/conda-meta/history
