@@ -60,7 +60,7 @@ install:
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
 
-  # Install a recent version of CMake, Boost and eigen if they are not yet already installed.
+  # Install a recent version of CMake and Eigen if they are not yet installed
   - if [ ! -f $HOME/miniconda/bin/cmake ]; then
       conda install -c conda-forge cmake=3.13 eigen;
     else
@@ -72,5 +72,6 @@ install:
 script:
   - cd ${TRAVIS_BUILD_DIR}
   - mkdir build && cd build
-  - cmake .. -DCMAKE_PREFIX_PATH=${HOME}/miniconda -DBUILD_TESTS=TRUE
-  - make -j3 VERBOSE=1 && make test ARGS=-j3 && sudo make install
+  - cmake .. -DCMAKE_PREFIX_PATH=${HOME}/miniconda -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
+  - make -j2 VERBOSE=1 && make test ARGS=-j2 && sudo make install
+
