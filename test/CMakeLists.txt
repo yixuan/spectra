@@ -39,5 +39,5 @@ foreach(TEST_SOURCE ${test_target_sources})
 
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR})  # the working directory is the out-of-source build directory
-
 endforeach()
+

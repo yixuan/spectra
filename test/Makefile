@@ -10,16 +10,29 @@ HEADERS = $(wildcard ../include/Spectra/MatOp/*.h) \
 	$(wildcard ../include/Spectra/*.h) \
 	$(wildcard ../include/Spectra/contrib/*.h)
 
+OUTPUT = QR.out Eigen.out BKLDLT.out Orthogonalization.out RitzPairs.out SearchSpace.out \
+	DenseGenMatProd.out DenseSymMatProd.out SparseGenMatProd.out SparseSymMatProd.out \
+	SymEigs.out SymEigsShift.out \
+	GenEigs.out GenEigsRealShift.out GenEigsComplexShift.out \
+	SymGEigsCholesky.out SymGEigsRegInv.out SymGEigsShift.out \
+	SVD.out \
+	JDSymEigsBase.out JDSymEigsDPRConstructor.out DavidsonSymEigs.out
 
 .PHONY: all test clean
 
-all: QR.out Eigen.out BKLDLT.out SymEigs.out SymEigsShift.out GenEigs.out GenEigsRealShift.out GenEigsComplexShift.out \
-	SymGEigsCholesky.out SymGEigsRegInv.out SymGEigsShift.out SVD.out
+all: $(OUTPUT)
 
 test:
 	-./QR.out
 	-./Eigen.out
 	-./BKLDLT.out
+	-./Orthogonalization.out
+	-./RitzPairs.out
+	-./SearchSpace.out
+	-./DenseGenMatProd.out
+	-./DenseSymMatProd.out
+	-./SparseGenMatProd.out
+	-./SparseSymMatProd.out
 	-./SymEigs.out
 	-./SymEigsShift.out
 	-./GenEigs.out
@@ -29,6 +42,9 @@ test:
 	-./SymGEigsRegInv.out
 	-./SymGEigsShift.out
 	-./SVD.out
+	-./JDSymEigsBase.out
+	-./JDSymEigsDPRConstructor.out
+	-./DavidsonSymEigs.out
 
 tests-main.o: tests-main.cpp catch.hpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -c -o $@
