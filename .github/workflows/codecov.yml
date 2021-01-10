@@ -20,7 +20,7 @@ jobs:
     - name: configure
       env:
         CC: ${{ matrix.compiler }}
-      run: cmake -H. -Bbuild -DBUILD_TESTS=ON -DCMAKEBUILD_TYPE=${{ matrix.BUILD_TYPE }} -DENABLE_COVERAGE_BUILD=ON
+      run: cmake -H. -Bbuild -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=${{ matrix.BUILD_TYPE }} -DENABLE_COVERAGE_BUILD=ON
     - name: make
       run: cmake --build build -- -j4
     - name: test

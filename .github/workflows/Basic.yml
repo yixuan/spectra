@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04,ubuntu-20.04]
+        os: [ubuntu-18.04, ubuntu-20.04]
         compiler: [gcc, clang]
         BUILD_TYPE : [Debug, Release]
     steps:
@@ -22,7 +22,7 @@ jobs:
     - name: configure
       env:
         CC: ${{ matrix.compiler }}
-      run: cmake -H. -Bbuild  -DBUILD_TESTS=ON -DCMAKEBUILD_TYPE=${{ matrix.BUILD_TYPE }}
+      run: cmake -H. -Bbuild -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=${{ matrix.BUILD_TYPE }}
     - name: make
       run: cmake --build build -- -j4
     - name: test
