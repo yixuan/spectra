@@ -12,6 +12,12 @@
 
 /// \cond
 
+// Clang-Format will have unintended effects:
+//     static constexpr Scalar(min)()
+// So we turn it off here
+//
+// clang-format off
+
 namespace Spectra {
 
 // For a real value type "Scalar", we want to know its smallest
