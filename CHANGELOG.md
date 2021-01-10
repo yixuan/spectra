@@ -9,6 +9,8 @@
 - Added a `Flags` template parameter to every dense matrix operation class
   (e.g. `DenseCholesky` and `DenseSymMatProd`), whose possible values are `Eigen::ColMajor`
   and `Eigen::RowMajor`. This parameter allows these wrapper classes to handle row-major matrices
+- Added the member function `info()` and convergence tests to `SparseRegularInverse`,
+  suggested by [@Spammed](https://github.com/Spammed) ([#111](https://github.com/yixuan/spectra/issues/111))
 - Added symmetric Davidson eigen solver `DavidsonSymEigsSolver`, written by Felipe Zapata,
   Nicolas Renaud, Victor Azizi, Pablo Lopez-Tarifa, and Jens Wehner from the Netherlands eScience Center
 - Extended matrix operations in `DenseGenMatProd`, `DenseSymMatProd`, `SparseGenMatProd`, and
