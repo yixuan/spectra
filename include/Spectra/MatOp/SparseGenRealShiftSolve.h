@@ -25,6 +25,9 @@ template <typename Scalar_, int Flags = Eigen::ColMajor, typename StorageIndex =
 class SparseGenRealShiftSolve
 {
 public:
+    ///
+    /// Element type of the matrix.
+    ///
     using Scalar = Scalar_;
 
 private:

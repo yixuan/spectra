@@ -28,6 +28,9 @@ template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor
 class SparseCholesky
 {
 public:
+    ///
+    /// Element type of the matrix.
+    ///
     using Scalar = Scalar_;
 
 private:

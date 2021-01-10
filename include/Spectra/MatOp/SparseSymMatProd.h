@@ -23,6 +23,9 @@ template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor
 class SparseSymMatProd
 {
 public:
+    ///
+    /// Element type of the matrix.
+    ///
     using Scalar = Scalar_;
 
 private:

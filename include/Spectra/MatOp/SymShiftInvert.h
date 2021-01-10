@@ -126,6 +126,9 @@ template <typename Scalar_, typename TypeA = Eigen::Sparse, typename TypeB = Eig
 class SymShiftInvert
 {
 public:
+    ///
+    /// Element type of the matrix.
+    ///
     using Scalar = Scalar_;
 
 private:

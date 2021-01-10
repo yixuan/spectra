@@ -25,6 +25,9 @@ template <typename Scalar_, int Flags = Eigen::ColMajor>
 class DenseGenComplexShiftSolve
 {
 public:
+    ///
+    /// Element type of the matrix.
+    ///
     using Scalar = Scalar_;
 
 private:

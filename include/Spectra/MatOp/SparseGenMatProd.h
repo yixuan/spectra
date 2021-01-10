@@ -23,6 +23,9 @@ template <typename Scalar_, int Flags = Eigen::ColMajor, typename StorageIndex =
 class SparseGenMatProd
 {
 public:
+    ///
+    /// Element type of the matrix.
+    ///
     using Scalar = Scalar_;
 
 private:

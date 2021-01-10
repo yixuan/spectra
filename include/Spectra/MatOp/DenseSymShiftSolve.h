@@ -26,6 +26,9 @@ template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor
 class DenseSymShiftSolve
 {
 public:
+    ///
+    /// Element type of the matrix.
+    ///
     using Scalar = Scalar_;
 
 private:
