@@ -46,7 +46,7 @@
 - Initial vectors in the `Lanczos` and `Arnoldi` processes are now forced to be in the
   range of the `A` matrix
 - In symmetric eigen solvers large shifts are applied first to increase precision
-- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.12.2
+- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.13.4
 
 
 ## [0.9.0] - 2020-05-19
