@@ -45,6 +45,7 @@ private:
     ConstGenericSparseMatrix m_mat;
     const Index m_n;
     Eigen::ConjugateGradient<SparseMatrix> m_cg;
+    mutable CompInfo m_info;
 
 public:
     ///
@@ -61,6 +62,9 @@ public:
             throw std::invalid_argument("SparseRegularInverse: matrix must be square");
 
         m_cg.compute(mat);
+        m_info = (m_cg.info() == Eigen::Success) ?
+            CompInfo::Successful :
+            CompInfo::NumericalIssue;
     }
 
     ///
@@ -71,6 +75,12 @@ public:
     /// Return the number of columns of the underlying matrix.
     ///
     Index cols() const { return m_n; }
+
+    ///
+    /// Returns the status of the computation.
+    /// The full list of enumeration values can be found in \ref Enumerations.
+    ///
+    CompInfo info() const { return m_info; }
 
     ///
     /// Perform the solving operation \f$y=B^{-1}x\f$.
@@ -84,6 +94,12 @@ public:
         MapConstVec x(x_in, m_n);
         MapVec y(y_out, m_n);
         y.noalias() = m_cg.solve(x);
+
+        m_info = (m_cg.info() == Eigen::Success) ?
+            CompInfo::Successful :
+            CompInfo::NotConverging;
+        if (m_info != CompInfo::Successful)
+            throw std::runtime_error("SparseRegularInverse: CG solver does not converge");
     }
 
     ///
