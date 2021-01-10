@@ -28,15 +28,15 @@ namespace Spectra {
 /// See the pages for the specialized classes for details.
 /// - The shift-and-invert mode transforms the problem into \f$(A-\sigma B)^{-1}Bx=\nu x\f$,
 ///   where \f$\nu=1/(\lambda-\sigma)\f$. This mode assumes that \f$B\f$ is positive definite.
-///   See \ref SymGEigsShiftSolver<Scalar, OpType, BOpType, GEigsMode::ShiftInvert>
+///   See \ref SymGEigsShiftSolver<OpType, BOpType, GEigsMode::ShiftInvert>
 ///   "SymGEigsShiftSolver (Shift-and-invert mode)" for more details.
 /// - The buckling mode transforms the problem into \f$(A-\sigma B)^{-1}Ax=\nu x\f$,
 ///   where \f$\nu=\lambda/(\lambda-\sigma)\f$. This mode assumes that \f$A\f$ is positive definite.
-///   See \ref SymGEigsShiftSolver<Scalar, OpType, BOpType, GEigsMode::Buckling>
+///   See \ref SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Buckling>
 ///   "SymGEigsShiftSolver (Buckling mode)" for more details.
 /// - The Cayley mode transforms the problem into \f$(A-\sigma B)^{-1}(A+\sigma B)x=\nu x\f$,
 ///   where \f$\nu=(\lambda+\sigma)/(\lambda-\sigma)\f$. This mode assumes that \f$B\f$ is positive definite.
-///   See \ref SymGEigsShiftSolver<Scalar, OpType, BOpType, GEigsMode::Cayley>
+///   See \ref SymGEigsShiftSolver<OpType, BOpType, GEigsMode::Cayley>
 ///   "SymGEigsShiftSolver (Cayley mode)" for more details.
 
 // Empty class template

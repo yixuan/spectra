@@ -33,12 +33,12 @@ namespace Spectra {
 ///   decomposition, which is the preferred mode when the decomposition is
 ///   available. (This can be easily done in Eigen using the dense or sparse
 ///   Cholesky solver.)
-///   See \ref SymGEigsSolver<Scalar, OpType, BOpType, GEigsMode::Cholesky> "SymGEigsSolver (Cholesky mode)" for more details.
+///   See \ref SymGEigsSolver<OpType, BOpType, GEigsMode::Cholesky> "SymGEigsSolver (Cholesky mode)" for more details.
 /// - The regular inverse mode requires the matrix-vector product \f$Bv\f$ and the
 ///   linear equation solving operation \f$B^{-1}v\f$. This mode should only be
 ///   used when the Cholesky decomposition of \f$B\f$ is hard to implement, or
 ///   when computing \f$B^{-1}v\f$ is much faster than the Cholesky decomposition.
-///   See \ref SymGEigsSolver<Scalar, OpType, BOpType, GEigsMode::RegularInverse> "SymGEigsSolver (Regular inverse mode)" for more details.
+///   See \ref SymGEigsSolver<OpType, BOpType, GEigsMode::RegularInverse> "SymGEigsSolver (Regular inverse mode)" for more details.
 
 // Empty class template
 template <typename OpType, typename BOpType, GEigsMode Mode>
