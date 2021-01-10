@@ -19,7 +19,7 @@ void eigs_sym_Cpp(MatrixXd &M, VectorXd &init_resid, int k, int m,
     start = get_wall_time();
 
     DenseSymMatProd<double> op(M);
-    SymEigsSolver<double, DenseSymMatProd<double>> eigs(op, k, m);
+    SymEigsSolver<DenseSymMatProd<double>> eigs(op, k, m);
     eigs.init(init_resid.data());
 
     int nconv = eigs.compute(SortRule::LargestMagn);
@@ -49,7 +49,7 @@ void eigs_gen_Cpp(MatrixXd &M, VectorXd &init_resid, int k, int m,
     start = get_wall_time();
 
     DenseGenMatProd<double> op(M);
-    GenEigsSolver<double, DenseGenMatProd<double>> eigs(op, k, m);
+    GenEigsSolver<DenseGenMatProd<double>> eigs(op, k, m);
     eigs.init(init_resid.data());
 
     int nconv = eigs.compute(SortRule::LargestMagn);
