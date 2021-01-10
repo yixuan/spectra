@@ -161,7 +161,7 @@ private:
                 nev_new++;
 
         // Adjust nev_new, according to dsaup2.f line 677~684 in ARPACK
-        nev_new += std::min(nconv, (m_ncv - nev_new) / 2);
+        nev_new += (std::min)(nconv, (m_ncv - nev_new) / 2);
         if (nev_new == 1 && m_ncv >= 6)
             nev_new = m_ncv / 2;
         else if (nev_new == 1 && m_ncv > 2)
@@ -358,7 +358,7 @@ public:
         m_niter += i + 1;
         m_info = (nconv >= m_nev) ? CompInfo::Successful : CompInfo::NotConverging;
 
-        return std::min(m_nev, nconv);
+        return (std::min)(m_nev, nconv);
     }
 
     ///
@@ -417,7 +417,7 @@ public:
     virtual Matrix eigenvectors(Index nvec) const
     {
         const Index nconv = m_ritz_conv.count();
-        nvec = std::min(nvec, nconv);
+        nvec = (std::min)(nvec, nconv);
         Matrix res(m_n, nvec);
 
         if (!nvec)

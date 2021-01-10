@@ -130,8 +130,8 @@ public:
         m_evecs.setIdentity();
 
         // Scale matrix to improve stability
-        const Scalar scale = std::max(mat.diagonal().cwiseAbs().maxCoeff(),
-                                      mat.diagonal(-1).cwiseAbs().maxCoeff());
+        const Scalar scale = (std::max)(mat.diagonal().cwiseAbs().maxCoeff(),
+                                        mat.diagonal(-1).cwiseAbs().maxCoeff());
         // If scale=0, mat is a zero matrix, so we can early stop
         if (scale < near_0)
         {

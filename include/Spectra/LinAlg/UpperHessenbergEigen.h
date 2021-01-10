@@ -175,7 +175,7 @@ private:
                         }
 
                         // Overflow control
-                        Scalar t = std::max(abs(m_matT.coeff(i, n - 1)), abs(m_matT.coeff(i, n)));
+                        Scalar t = (std::max)(abs(m_matT.coeff(i, n - 1)), abs(m_matT.coeff(i, n)));
                         if ((eps * t) * t > Scalar(1))
                             m_matT.block(i, n - 1, size - i, 2) /= t;
                     }
@@ -247,7 +247,7 @@ public:
                 {
                     Scalar t0 = m_matT.coeff(i + 1, i);
                     Scalar t1 = m_matT.coeff(i, i + 1);
-                    Scalar maxval = std::max(abs(p), std::max(abs(t0), abs(t1)));
+                    Scalar maxval = (std::max)(abs(p), (std::max)(abs(t0), abs(t1)));
                     t0 /= maxval;
                     t1 /= maxval;
                     Scalar p0 = p / maxval;

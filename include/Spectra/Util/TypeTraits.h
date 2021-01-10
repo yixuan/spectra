@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2020 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2018-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -34,7 +34,7 @@ struct TypeTraits
     {
         return Eigen::numext::numeric_limits<Scalar>::epsilon();
     }
-    static constexpr Scalar min()
+    static constexpr Scalar (min)()
     {
         return epsilon() * epsilon() * epsilon();
     }
@@ -48,9 +48,9 @@ struct TypeTraits<float>
     {
         return std::numeric_limits<float>::epsilon();
     }
-    static constexpr float min()
+    static constexpr float (min)()
     {
-        return std::numeric_limits<float>::min();
+        return (std::numeric_limits<float>::min)();
     }
 };
 
@@ -61,9 +61,9 @@ struct TypeTraits<double>
     {
         return std::numeric_limits<double>::epsilon();
     }
-    static constexpr double min()
+    static constexpr double (min)()
     {
-        return std::numeric_limits<double>::min();
+        return (std::numeric_limits<double>::min)();
     }
 };
 
@@ -74,9 +74,9 @@ struct TypeTraits<long double>
     {
         return std::numeric_limits<long double>::epsilon();
     }
-    static constexpr long double min()
+    static constexpr long double (min)()
     {
-        return std::numeric_limits<long double>::min();
+        return (std::numeric_limits<long double>::min)();
     }
 };
 

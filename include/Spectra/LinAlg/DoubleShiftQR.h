@@ -189,7 +189,7 @@ private:
 
         // Apply the first reflector
         apply_PX(m_mat_H.block(il, il, 3, m_n - il), m_n, il);
-        apply_XP(m_mat_H.block(0, il, il + std::min(bsize, Index(4)), 3), m_n, il);
+        apply_XP(m_mat_H.block(0, il, il + (std::min)(bsize, Index(4)), 3), m_n, il);
 
         // Calculate the following reflectors
         // If entering this loop, block size is at least 4.
@@ -198,7 +198,7 @@ private:
             compute_reflector(&m_mat_H.coeffRef(il + i, il + i - 1), il + i);
             // Apply the reflector to X
             apply_PX(m_mat_H.block(il + i, il + i - 1, 3, m_n - il - i + 1), m_n, il + i);
-            apply_XP(m_mat_H.block(0, il + i, il + std::min(bsize, Index(i + 4)), 3), m_n, il + i);
+            apply_XP(m_mat_H.block(0, il + i, il + (std::min)(bsize, Index(i + 4)), 3), m_n, il + i);
         }
 
         // The last reflector
