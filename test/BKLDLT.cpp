@@ -4,27 +4,30 @@
 
 using namespace Spectra;
 
-#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-using Eigen::MatrixXd;
-using Eigen::VectorXd;
+using Matrix = Eigen::MatrixXd;
+using Vector = Eigen::VectorXd;
 
 // Solve (A - s * I)x = b
-void run_test(const MatrixXd& A, const VectorXd& b, double s)
+void run_test(const Matrix& A, const Vector& b, double s)
 {
+    // Test decomposition using only the lower triangular part
     BKLDLT<double> decompL(A, Eigen::Lower, s);
-    REQUIRE(decompL.info() == SUCCESSFUL);
+    REQUIRE(decompL.info() == CompInfo::Successful);
 
+    // Test decomposition using only the upper triangular part
     BKLDLT<double> decompU(A, Eigen::Upper, s);
-    REQUIRE(decompU.info() == SUCCESSFUL);
+    REQUIRE(decompU.info() == CompInfo::Successful);
 
-    VectorXd solL = decompL.solve(b);
-    VectorXd solU = decompU.solve(b);
+    // Test whether the solutions are identical
+    Vector solL = decompL.solve(b);
+    Vector solU = decompU.solve(b);
     REQUIRE((solL - solU).cwiseAbs().maxCoeff() == 0.0);
 
-    const double tol = 1e-9;
-    VectorXd resid = A * solL - s * solL - b;
+    // Test the accuracy of the solution
+    constexpr double tol = 1e-9;
+    Vector resid = A * solL - s * solL - b;
     INFO("||(A - s * I)x - b||_inf = " << resid.cwiseAbs().maxCoeff());
     REQUIRE(resid.cwiseAbs().maxCoeff() == Approx(0.0).margin(tol));
 }
@@ -33,9 +36,9 @@ TEST_CASE("BKLDLT decomposition of symmetric real matrix [10x10]", "[BKLDLT]")
 {
     std::srand(123);
     const int n = 10;
-    MatrixXd A = MatrixXd::Random(n, n);
+    Matrix A = Matrix::Random(n, n);
     A = (A + A.transpose()).eval();
-    VectorXd b = VectorXd::Random(n);
+    Vector b = Vector::Random(n);
     const double shift = 1.0;
 
     run_test(A, b, shift);
@@ -45,9 +48,9 @@ TEST_CASE("BKLDLT decomposition of symmetric real matrix [100x100]", "[BKLDLT]")
 {
     std::srand(123);
     const int n = 100;
-    MatrixXd A = MatrixXd::Random(n, n);
+    Matrix A = Matrix::Random(n, n);
     A = (A + A.transpose()).eval();
-    VectorXd b = VectorXd::Random(n);
+    Vector b = Vector::Random(n);
     const double shift = 1.0;
 
     run_test(A, b, shift);
@@ -57,9 +60,9 @@ TEST_CASE("BKLDLT decomposition of symmetric real matrix [1000x1000]", "[BKLDLT]
 {
     std::srand(123);
     const int n = 1000;
-    MatrixXd A = MatrixXd::Random(n, n);
+    Matrix A = Matrix::Random(n, n);
     A = (A + A.transpose()).eval();
-    VectorXd b = VectorXd::Random(n);
+    Vector b = Vector::Random(n);
     const double shift = 1.0;
 
     run_test(A, b, shift);

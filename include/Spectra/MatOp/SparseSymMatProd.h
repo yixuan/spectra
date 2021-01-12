@@ -1,11 +1,11 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef SPARSE_SYM_MAT_PROD_H
-#define SPARSE_SYM_MAT_PROD_H
+#ifndef SPECTRA_SPARSE_SYM_MAT_PROD_H
+#define SPECTRA_SPARSE_SYM_MAT_PROD_H
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
@@ -19,16 +19,23 @@ namespace Spectra {
 /// sparse real symmetric matrix \f$A\f$, i.e., calculating \f$y=Ax\f$ for any vector
 /// \f$x\f$. It is mainly used in the SymEigsSolver eigen solver.
 ///
-template <typename Scalar, int Uplo = Eigen::Lower, int Flags = 0, typename StorageIndex = int>
+template <typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor, typename StorageIndex = int>
 class SparseSymMatProd
 {
+public:
+    ///
+    /// Element type of the matrix.
+    ///
+    using Scalar = Scalar_;
+
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Map<const Vector> MapConstVec;
-    typedef Eigen::Map<Vector> MapVec;
-    typedef Eigen::SparseMatrix<Scalar, Flags, StorageIndex> SparseMatrix;
-    typedef const Eigen::Ref<const SparseMatrix> ConstGenericSparseMatrix;
+    using Index = Eigen::Index;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using MapConstVec = Eigen::Map<const Vector>;
+    using MapVec = Eigen::Map<Vector>;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using SparseMatrix = Eigen::SparseMatrix<Scalar, Flags, StorageIndex>;
+    using ConstGenericSparseMatrix = const Eigen::Ref<const SparseMatrix>;
 
     ConstGenericSparseMatrix m_mat;
 
@@ -66,8 +73,23 @@ public:
         MapVec y(y_out, m_mat.rows());
         y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
     }
-};
 
+    ///
+    /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
+    ///
+    Matrix operator*(const Eigen::Ref<const Matrix>& mat_in) const
+    {
+        return m_mat.template selfadjointView<Uplo>() * mat_in;
+    }
+
+    ///
+    /// Extract (i,j) element of the underlying matrix.
+    ///
+    Scalar operator()(Index i, Index j) const
+    {
+        return m_mat.coeff(i, j);
+    }
+};
 }  // namespace Spectra
 
-#endif  // SPARSE_SYM_MAT_PROD_H
+#endif  // SPECTRA_SPARSE_SYM_MAT_PROD_H

@@ -15,6 +15,9 @@ and Jitse Niesen <jitse@maths.leeds.ac.uk>.
 
 The file `include/contrib/LOBPCGSolver.h` was originally contributed by Anna Araslanova.
 
+The Jacobi-Davidson solvers were written by Felipe Zapata, Nicolas Renaud, Victor Azizi, Pablo Lopez-Tarifa
+and Jens Wehner from the Netherlands eScience Center <J.Wehner@esciencecenter.nl>.
+
 The [Catch](https://github.com/philsquared/Catch) library included for unit testing
 was written by Phil Nash <github@philnash.me>.
 

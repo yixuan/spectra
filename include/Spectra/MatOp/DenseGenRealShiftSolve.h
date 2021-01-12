@@ -1,11 +1,11 @@
-// Copyright (C) 2016-2019 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2021 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
 // with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef DENSE_GEN_REAL_SHIFT_SOLVE_H
-#define DENSE_GEN_REAL_SHIFT_SOLVE_H
+#ifndef SPECTRA_DENSE_GEN_REAL_SHIFT_SOLVE_H
+#define SPECTRA_DENSE_GEN_REAL_SHIFT_SOLVE_H
 
 #include <Eigen/Core>
 #include <Eigen/LU>
@@ -20,16 +20,22 @@ namespace Spectra {
 /// i.e., calculating \f$y=(A-\sigma I)^{-1}x\f$ for any real \f$\sigma\f$ and
 /// vector \f$x\f$. It is mainly used in the GenEigsRealShiftSolver eigen solver.
 ///
-template <typename Scalar>
+template <typename Scalar_, int Flags = Eigen::ColMajor>
 class DenseGenRealShiftSolve
 {
+public:
+    ///
+    /// Element type of the matrix.
+    ///
+    using Scalar = Scalar_;
+
 private:
-    typedef Eigen::Index Index;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<Scalar, Eigen::Dynamic, 1> Vector;
-    typedef Eigen::Map<const Vector> MapConstVec;
-    typedef Eigen::Map<Vector> MapVec;
-    typedef const Eigen::Ref<const Matrix> ConstGenericMatrix;
+    using Index = Eigen::Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using MapConstVec = Eigen::Map<const Vector>;
+    using MapVec = Eigen::Map<Vector>;
+    using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
     ConstGenericMatrix m_mat;
     const Index m_n;
@@ -63,7 +69,7 @@ public:
     ///
     /// Set the real shift \f$\sigma\f$.
     ///
-    void set_shift(Scalar sigma)
+    void set_shift(const Scalar& sigma)
     {
         m_solver.compute(m_mat - sigma * Matrix::Identity(m_n, m_n));
     }
@@ -85,4 +91,4 @@ public:
 
 }  // namespace Spectra
 
-#endif  // DENSE_GEN_REAL_SHIFT_SOLVE_H
+#endif  // SPECTRA_DENSE_GEN_REAL_SHIFT_SOLVE_H

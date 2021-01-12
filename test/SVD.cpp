@@ -8,12 +8,11 @@
 
 using namespace Spectra;
 
-#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-typedef Eigen::MatrixXd Matrix;
-typedef Eigen::VectorXd Vector;
-typedef Eigen::SparseMatrix<double> SpMatrix;
+using Matrix = Eigen::MatrixXd;
+using Vector = Eigen::VectorXd;
+using SpMatrix = Eigen::SparseMatrix<double>;
 
 // Generate random sparse matrix
 SpMatrix gen_sparse_data(int m, int n, double prob = 0.5)
@@ -36,7 +35,7 @@ SpMatrix gen_sparse_data(int m, int n, double prob = 0.5)
 template <typename MatType>
 void run_test(const MatType& mat, int k, int m)
 {
-    PartialSVDSolver<double, MatType> svds(mat, k, m);
+    PartialSVDSolver<MatType> svds(mat, k, m);
     int nconv = svds.compute();
 
     INFO("nconv = " << nconv);

@@ -3,29 +3,29 @@ language: cpp
 matrix:
   include:
     - os: linux
-      dist: xenial
-      name: Linux, gcc-8
-      env: CC=gcc-8 CXX=g++-8
+      dist: focal
+      name: Linux, GCC 9
+      env: CC=gcc-9 CXX=g++-9
       sudo: true
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - gcc-8
-            - g++-8
+            - gcc-9
+            - g++-9
     - os: linux
-      dist: xenial
-      name: Linux, Clang 7.0
-      env: CC=clang-7 CXX=clang++-7
+      dist: focal
+      name: Linux, Clang 9
+      env: CC=clang-9 CXX=clang++-9
       sudo: true
       addons:
         apt:
           packages:
-            - clang-7
+            - clang-9
           sources:
             - ubuntu-toolchain-r-test
-            - llvm-toolchain-xenial-7
+            - llvm-toolchain-focal-9
 
 before_cache:
   - rm -rf $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var $HOME/miniconda/conda-meta/history
@@ -60,7 +60,7 @@ install:
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
 
-  # Install a recent version of CMake, Boost and eigen if they are not yet already installed.
+  # Install a recent version of CMake and Eigen if they are not yet installed
   - if [ ! -f $HOME/miniconda/bin/cmake ]; then
       conda install -c conda-forge cmake=3.13 eigen;
     else
@@ -72,5 +72,6 @@ install:
 script:
   - cd ${TRAVIS_BUILD_DIR}
   - mkdir build && cd build
-  - cmake .. -DCMAKE_PREFIX_PATH=${HOME}/miniconda -DBUILD_TESTS=TRUE
-  - make -j3 VERBOSE=1 && make test ARGS=-j3 && sudo make install
+  - cmake .. -DCMAKE_PREFIX_PATH=${HOME}/miniconda -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Release
+  - make -j2 VERBOSE=1 && make test ARGS=-j2 && sudo make install
+

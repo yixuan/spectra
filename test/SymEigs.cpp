@@ -1,6 +1,7 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <iostream>
+#include <type_traits>
 #include <random>  // Requires C++ 11
 
 #include <Spectra/SymEigsSolver.h>
@@ -9,25 +10,11 @@
 
 using namespace Spectra;
 
-#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
-typedef Eigen::MatrixXd Matrix;
-typedef Eigen::VectorXd Vector;
-typedef Eigen::SparseMatrix<double> SpMatrix;
-
-// Traits to obtain operation type from matrix type
-template <typename MatType>
-struct OpTypeTrait
-{
-    typedef DenseSymMatProd<double> OpType;
-};
-
-template <>
-struct OpTypeTrait<SpMatrix>
-{
-    typedef SparseSymMatProd<double> OpType;
-};
+using Matrix = Eigen::MatrixXd;
+using Vector = Eigen::VectorXd;
+using SpMatrix = Eigen::SparseMatrix<double>;
 
 // Generate data for testing
 Matrix gen_dense_data(int n)
@@ -55,21 +42,18 @@ SpMatrix gen_sparse_data(int n, double prob = 0.5)
     return mat;
 }
 
-template <typename MatType, int SelectionRule>
-void run_test(const MatType& mat, int k, int m)
+template <typename MatType, typename Solver>
+void run_test(const MatType& mat, Solver& eigs, SortRule selection)
 {
-    typename OpTypeTrait<MatType>::OpType op(mat);
-    SymEigsSolver<double, SelectionRule, typename OpTypeTrait<MatType>::OpType>
-        eigs(&op, k, m);
     eigs.init();
-    int nconv = eigs.compute();
+    int nconv = eigs.compute(selection);
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
     INFO("nconv = " << nconv);
     INFO("niter = " << niter);
     INFO("nops  = " << nops);
-    REQUIRE(eigs.info() == SUCCESSFUL);
+    REQUIRE(eigs.info() == CompInfo::Successful);
 
     Vector evals = eigs.eigenvalues();
     Matrix evecs = eigs.eigenvectors();
@@ -84,25 +68,33 @@ void run_test(const MatType& mat, int k, int m)
 template <typename MatType>
 void run_test_sets(const MatType& mat, int k, int m)
 {
+    constexpr bool is_dense = std::is_same<MatType, Matrix>::value;
+    using DenseOp = DenseSymMatProd<double>;
+    using SparseOp = SparseSymMatProd<double>;
+    using OpType = typename std::conditional<is_dense, DenseOp, SparseOp>::type;
+
+    OpType op(mat);
+    SymEigsSolver<OpType> eigs(op, k, m);
+
     SECTION("Largest Magnitude")
     {
-        run_test<MatType, LARGEST_MAGN>(mat, k, m);
+        run_test(mat, eigs, SortRule::LargestMagn);
     }
     SECTION("Largest Value")
     {
-        run_test<MatType, LARGEST_ALGE>(mat, k, m);
+        run_test(mat, eigs, SortRule::LargestAlge);
     }
     SECTION("Smallest Magnitude")
     {
-        run_test<MatType, SMALLEST_MAGN>(mat, k, m);
+        run_test(mat, eigs, SortRule::SmallestMagn);
     }
     SECTION("Smallest Value")
     {
-        run_test<MatType, SMALLEST_ALGE>(mat, k, m);
+        run_test(mat, eigs, SortRule::SmallestAlge);
     }
     SECTION("Both Ends")
     {
-        run_test<MatType, BOTH_ENDS>(mat, k, m);
+        run_test(mat, eigs, SortRule::BothEnds);
     }
 }
 
@@ -156,7 +148,7 @@ TEST_CASE("Eigensolver of sparse symmetric real matrix [100x100]", "[eigs_sym]")
     std::srand(123);
 
     // Eigen solver only uses the lower triangle
-    const SpMatrix A = gen_sparse_data(100, 0.5);
+    const SpMatrix A = gen_sparse_data(100, 0.1);
     int k = 10;
     int m = 20;
 
@@ -168,7 +160,7 @@ TEST_CASE("Eigensolver of sparse symmetric real matrix [1000x1000]", "[eigs_sym]
     std::srand(123);
 
     // Eigen solver only uses the lower triangle
-    const SpMatrix A = gen_sparse_data(1000, 0.5);
+    const SpMatrix A = gen_sparse_data(1000, 0.01);
     int k = 20;
     int m = 50;
 

@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2 
     - name: dependencies
-      run: sudo apt install libeigen3-dev clang-format-8
+      run: sudo apt install libeigen3-dev clang-format-9
     - name: cmake
       run: cmake -B builddir
     - name: Format
