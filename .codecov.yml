@@ -5,3 +5,4 @@ coverage:
 ignore:
   - /usr/include/
   - test
+  - examples
