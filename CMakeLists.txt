@@ -16,6 +16,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 # -----------------
 option(ENABLE_COVERAGE_BUILD "Do a coverage build" OFF)
 option(BUILD_TESTS "Build tests" OFF)
+option(BUILD_EXAMPLES "Build examples" OFF)
 include(FeatureSummary) # More verbose Output for libraries using set_package_properties
 
 # Look for supporting libraries
@@ -45,7 +46,9 @@ if(ENABLE_COVERAGE_BUILD)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
 endif()
 
-add_subdirectory(examples)
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
 
 if(BUILD_TESTS)
     enable_testing()
