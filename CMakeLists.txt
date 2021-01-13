@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 project (Spectra VERSION 1.0.0 LANGUAGES CXX)
 
 # Make CMake look into the ./cmake/ folder for configuration files
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 include(FeatureSummary)
 include(CheckCXXCompilerFlag)
@@ -31,7 +31,7 @@ target_include_directories(
     Spectra
     INTERFACE
     $<INSTALL_INTERFACE:include>
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
 target_link_libraries(Spectra INTERFACE Eigen3::Eigen)
 
@@ -62,7 +62,7 @@ install(
     INCLUDES DESTINATION include
 )
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)
 
 install(
     EXPORT Spectra-targets
@@ -76,7 +76,7 @@ install(
 include(CMakePackageConfigHelpers)
 
 configure_package_config_file(
-    ${CMAKE_SOURCE_DIR}/cmake/spectra-config.cmake.in
+    ${PROJECT_SOURCE_DIR}/cmake/spectra-config.cmake.in
     ${CMAKE_BINARY_DIR}/cmake/spectra-config.cmake
     INSTALL_DESTINATION share/spectra/cmake
 )
