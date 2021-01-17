@@ -67,7 +67,7 @@ protected:
             // Randomly generate a new vector and orthogonalize it against V
             SimpleRandom<Scalar> rng(seed + 123 * iter);
             rng.random_vec(v);
-            m_op.perform_op(v.data(), m_fac_f.data());
+            m_op.perform_op(v.data(), f.data());
             op_counter++;
             // f <- f - V * V'Bf, so that f is orthogonal to V in B-norm
             m_op.trans_product(V, f, Vf);
