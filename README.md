@@ -82,7 +82,9 @@ with a real-valued shift
 For general real matrices using the shift-and-invert mode,
 with a complex-valued shift
 - [SymGEigsSolver](https://spectralib.org/doc/classSpectra_1_1SymGEigsSolver.html):
-For generalized eigen solver for real symmetric matrices
+For generalized eigen solver with real symmetric matrices
+- [SymGEigsShiftSolver](https://spectralib.org/doc/classSpectra_1_1SymGEigsShiftSolver.html):
+For generalized eigen solver with real symmetric matrices, using the shift-and-invert mode
 - [DavidsonSymEigsSolver](https://spectralib.org/doc/classSpectra_1_1DavidsonSymEigsSolver.html):
 Jacobi-Davidson eigen solver for real symmetric matrices, with the DPR correction method
 
