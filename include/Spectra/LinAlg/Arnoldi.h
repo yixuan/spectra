@@ -54,7 +54,8 @@ protected:
     Vector m_fac_f;      // residual in the Arnoldi factorization
     Scalar m_beta;       // ||f||, B-norm of f
 
-    // Given orthonormal basis functions V, find a nonzero vector f such that V'Bf = 0
+    // Given orthonormal basis V (w.r.t. B), find a nonzero vector f such that V'Bf = 0
+    // With rounding errors, we hope V'B(f/||f||) < eps
     // Assume that f has been properly allocated
     void expand_basis(MapConstMat& V, const Index seed, Vector& f, Scalar& fnorm, Index& op_counter)
     {
@@ -83,9 +84,27 @@ protected:
             // fnorm <- ||f||
             fnorm = m_op.norm(f);
 
-            // If fnorm is too close to zero, we try a new random vector,
-            // otherwise return the result
-            if (fnorm >= thresh)
+            // Compute V'Bf again
+            m_op.trans_product(V, f, Vf);
+            // Test whether V'B(f/||f||) < eps
+            Scalar ortho_err = Vf.cwiseAbs().maxCoeff();
+            // If not, iteratively correct the residual
+            int count = 0;
+            while (count < 3 && ortho_err >= m_eps * fnorm)
+            {
+                // f <- f - V * Vf
+                f.noalias() -= V * Vf;
+                // beta <- ||f||
+                fnorm = m_op.norm(f);
+
+                m_op.trans_product(V, f, Vf);
+                ortho_err = Vf.cwiseAbs().maxCoeff();
+                count++;
+            }
+
+            // If the condition is satisfied, simply return
+            // Otherwise, go to the next iteration and try a new random vector
+            if (ortho_err < m_eps * fnorm)
                 return;
         }
     }
