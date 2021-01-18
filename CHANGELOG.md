@@ -45,6 +45,8 @@
 - More careful computation of residual vectors in the `Lanczos` process
 - Initial vectors in the `Lanczos` and `Arnoldi` processes are now forced to be in the
   range of the `A` matrix
+- More sensible test for orthogonality in generating new random vectors in the
+  `Lanczos` and `Arnoldi` processes
 - In symmetric eigen solvers large shifts are applied first to increase precision
 - Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.13.4
 
