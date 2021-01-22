@@ -61,7 +61,6 @@ protected:
     {
         using std::sqrt;
 
-        const Scalar thresh = m_eps * sqrt(Scalar(m_n));
         Vector v(m_n), Vf(V.cols());
         for (Index iter = 0; iter < 5; iter++)
         {
