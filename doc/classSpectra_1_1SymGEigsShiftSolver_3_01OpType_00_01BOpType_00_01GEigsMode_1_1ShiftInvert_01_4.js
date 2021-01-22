@@ -1,0 +1,4 @@
+var classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1ShiftInvert_01_4 =
+[
+    [ "SymGEigsShiftSolver", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1ShiftInvert_01_4.html#a78ac0089ef4c061651bd1eaffabbc2b8", null ]
+];

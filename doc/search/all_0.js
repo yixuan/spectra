@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['both_5fends',['BOTH_ENDS',['../group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a8dc5361f8fab0102f7ae56d0c7b86e23',1,'Spectra']]]
+  ['bothends_0',['BothEnds',['../group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fda1b00b73870f45ed503a1c5b8cb186ba6',1,'Spectra']]],
+  ['buckling_1',['Buckling',['../group__Enumerations.html#gga75ea36bdff79a3d4f1cbb21ee95b56cea775e3111f7ad292b35a1323bce556f39',1,'Spectra']]]
 ];

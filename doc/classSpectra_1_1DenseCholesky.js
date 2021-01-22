@@ -1,9 +1,10 @@
 var classSpectra_1_1DenseCholesky =
 [
-    [ "DenseCholesky", "classSpectra_1_1DenseCholesky.html#a0f8794be15f45c1cc2f4c200e57f820d", null ],
-    [ "rows", "classSpectra_1_1DenseCholesky.html#a36a6b9f2a5a3e3def92199d9311cb27c", null ],
-    [ "cols", "classSpectra_1_1DenseCholesky.html#ae141d2f935d4b0fff3a903f3e7d7392f", null ],
-    [ "info", "classSpectra_1_1DenseCholesky.html#a9027f39715516a9c18986ac8c750f35f", null ],
-    [ "lower_triangular_solve", "classSpectra_1_1DenseCholesky.html#af4bbeacb485268a9f758d0d755faca88", null ],
-    [ "upper_triangular_solve", "classSpectra_1_1DenseCholesky.html#a7852fa8b61099c8e85f134c624b10833", null ]
+    [ "Scalar", "classSpectra_1_1DenseCholesky.html#a95174a7f18a4e915e4dbe9eb680014e0", null ],
+    [ "DenseCholesky", "classSpectra_1_1DenseCholesky.html#a0ff5d6241d1a853fab3ea595b8395c5a", null ],
+    [ "rows", "classSpectra_1_1DenseCholesky.html#a2aa0f9e4c4669084f2216f52792aaa70", null ],
+    [ "cols", "classSpectra_1_1DenseCholesky.html#a39105f30e561707eb6107aab1d1f99fa", null ],
+    [ "info", "classSpectra_1_1DenseCholesky.html#a7e9b08a19a51814be65482a8f98f9342", null ],
+    [ "lower_triangular_solve", "classSpectra_1_1DenseCholesky.html#af22b7b80db79a7f84d9f7a8560efa639", null ],
+    [ "upper_triangular_solve", "classSpectra_1_1DenseCholesky.html#a8deeb2bdb056d08b21ac28b98953ea0d", null ]
 ];

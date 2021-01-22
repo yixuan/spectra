@@ -1,8 +1,9 @@
 var classSpectra_1_1SparseSymShiftSolve =
 [
-    [ "SparseSymShiftSolve", "classSpectra_1_1SparseSymShiftSolve.html#a9a971efb2cfc8717077d361932071533", null ],
-    [ "rows", "classSpectra_1_1SparseSymShiftSolve.html#a4594f5cf77a298abc0c6fec0616d4a6d", null ],
-    [ "cols", "classSpectra_1_1SparseSymShiftSolve.html#a2af97457b458deb50983c1ad19dfb9b1", null ],
-    [ "set_shift", "classSpectra_1_1SparseSymShiftSolve.html#adcda64d6e12a1392e014e6f1ceb10715", null ],
-    [ "perform_op", "classSpectra_1_1SparseSymShiftSolve.html#a89c63ca6ec31aeb82a524775796dd4eb", null ]
+    [ "Scalar", "classSpectra_1_1SparseSymShiftSolve.html#ac84c985e360b8044c2795fa27edacc9c", null ],
+    [ "SparseSymShiftSolve", "classSpectra_1_1SparseSymShiftSolve.html#a91b8bdc2abc386c78f93c078797a0220", null ],
+    [ "rows", "classSpectra_1_1SparseSymShiftSolve.html#ab3887025b5a3cc309acf809f38010e3b", null ],
+    [ "cols", "classSpectra_1_1SparseSymShiftSolve.html#a10d6754286674ed8679be7cef3aa0548", null ],
+    [ "set_shift", "classSpectra_1_1SparseSymShiftSolve.html#a466dff86ec0ffe861e8a2b7982cc3e18", null ],
+    [ "perform_op", "classSpectra_1_1SparseSymShiftSolve.html#a2f56afa026a20ad22c4f19697a046aa6", null ]
 ];

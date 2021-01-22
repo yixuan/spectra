@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['computation_5finfo',['COMPUTATION_INFO',['../group__Enumerations.html#ga6096571d2f7e1f0b62336e39d512ae4b',1,'Spectra']]]
+  ['compinfo_184',['CompInfo',['../group__Enumerations.html#gae1a6cf904d752db2f5641ec79a1bbbf0',1,'Spectra']]]
 ];

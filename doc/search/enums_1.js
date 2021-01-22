@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['geigs_5fmode',['GEIGS_MODE',['../group__Enumerations.html#ga982c36b6b5b322cdb18ce05adb9106e0',1,'Spectra']]]
+  ['geigsmode_185',['GEigsMode',['../group__Enumerations.html#ga75ea36bdff79a3d4f1cbb21ee95b56ce',1,'Spectra']]]
 ];

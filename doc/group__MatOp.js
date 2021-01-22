@@ -1,85 +1,122 @@
 var group__MatOp =
 [
     [ "DenseCholesky", "classSpectra_1_1DenseCholesky.html", [
-      [ "DenseCholesky", "classSpectra_1_1DenseCholesky.html#a0f8794be15f45c1cc2f4c200e57f820d", null ],
-      [ "rows", "classSpectra_1_1DenseCholesky.html#a36a6b9f2a5a3e3def92199d9311cb27c", null ],
-      [ "cols", "classSpectra_1_1DenseCholesky.html#ae141d2f935d4b0fff3a903f3e7d7392f", null ],
-      [ "info", "classSpectra_1_1DenseCholesky.html#a9027f39715516a9c18986ac8c750f35f", null ],
-      [ "lower_triangular_solve", "classSpectra_1_1DenseCholesky.html#af4bbeacb485268a9f758d0d755faca88", null ],
-      [ "upper_triangular_solve", "classSpectra_1_1DenseCholesky.html#a7852fa8b61099c8e85f134c624b10833", null ]
+      [ "Scalar", "classSpectra_1_1DenseCholesky.html#a95174a7f18a4e915e4dbe9eb680014e0", null ],
+      [ "DenseCholesky", "classSpectra_1_1DenseCholesky.html#a0ff5d6241d1a853fab3ea595b8395c5a", null ],
+      [ "rows", "classSpectra_1_1DenseCholesky.html#a2aa0f9e4c4669084f2216f52792aaa70", null ],
+      [ "cols", "classSpectra_1_1DenseCholesky.html#a39105f30e561707eb6107aab1d1f99fa", null ],
+      [ "info", "classSpectra_1_1DenseCholesky.html#a7e9b08a19a51814be65482a8f98f9342", null ],
+      [ "lower_triangular_solve", "classSpectra_1_1DenseCholesky.html#af22b7b80db79a7f84d9f7a8560efa639", null ],
+      [ "upper_triangular_solve", "classSpectra_1_1DenseCholesky.html#a8deeb2bdb056d08b21ac28b98953ea0d", null ]
     ] ],
     [ "DenseGenComplexShiftSolve", "classSpectra_1_1DenseGenComplexShiftSolve.html", [
-      [ "DenseGenComplexShiftSolve", "classSpectra_1_1DenseGenComplexShiftSolve.html#abea1a21b0ee6bc611e70c67c678b328d", null ],
-      [ "rows", "classSpectra_1_1DenseGenComplexShiftSolve.html#a9f97f0170058aa6700650b6e0abb5d16", null ],
-      [ "cols", "classSpectra_1_1DenseGenComplexShiftSolve.html#ae118b773a032924d5e9ba4850ea04ea8", null ],
-      [ "set_shift", "classSpectra_1_1DenseGenComplexShiftSolve.html#a57be6786123b23fcc63c1cffd3045c56", null ],
-      [ "perform_op", "classSpectra_1_1DenseGenComplexShiftSolve.html#ad8b000a37de67b7e2cd01bbff9c4ba89", null ]
+      [ "Scalar", "classSpectra_1_1DenseGenComplexShiftSolve.html#ae359c04948fe3948393873348b693f10", null ],
+      [ "DenseGenComplexShiftSolve", "classSpectra_1_1DenseGenComplexShiftSolve.html#ab262fd883141600cb3418cc4f5436f54", null ],
+      [ "rows", "classSpectra_1_1DenseGenComplexShiftSolve.html#a5be32032940e7bc309c4d1acfb99cde4", null ],
+      [ "cols", "classSpectra_1_1DenseGenComplexShiftSolve.html#af69569f0a67a26579c84c3a97dc07d48", null ],
+      [ "set_shift", "classSpectra_1_1DenseGenComplexShiftSolve.html#ae54da43bbdaed24e5c9e88cea33f14e9", null ],
+      [ "perform_op", "classSpectra_1_1DenseGenComplexShiftSolve.html#adb7834d27ec92674c65ae1a3694c13b0", null ]
     ] ],
     [ "DenseGenMatProd", "classSpectra_1_1DenseGenMatProd.html", [
-      [ "DenseGenMatProd", "classSpectra_1_1DenseGenMatProd.html#a10347b20b5de9535c8f08c64ed610ec2", null ],
-      [ "rows", "classSpectra_1_1DenseGenMatProd.html#a6a08caf4ed0cb9315ad4967eda7d0457", null ],
-      [ "cols", "classSpectra_1_1DenseGenMatProd.html#ad9ea8b19edcb9f155c27bcfeac97aa49", null ],
-      [ "perform_op", "classSpectra_1_1DenseGenMatProd.html#a2a61f1ce1809dd3a384a255367615c56", null ]
+      [ "Scalar", "classSpectra_1_1DenseGenMatProd.html#a7a107b9bf715027e4df6053e71772a11", null ],
+      [ "DenseGenMatProd", "classSpectra_1_1DenseGenMatProd.html#a06785471b91661c815d8ce42c668a7d4", null ],
+      [ "rows", "classSpectra_1_1DenseGenMatProd.html#afc89c70afef2cde8277fae2c221fbbbf", null ],
+      [ "cols", "classSpectra_1_1DenseGenMatProd.html#a08f79924e8e793def51e51e3326fc374", null ],
+      [ "perform_op", "classSpectra_1_1DenseGenMatProd.html#abefbd862706667fe19baba64aaea010a", null ],
+      [ "operator*", "classSpectra_1_1DenseGenMatProd.html#a7f4de116bfc48380d130c1d45a447979", null ],
+      [ "operator()", "classSpectra_1_1DenseGenMatProd.html#ac9427a8518def617f08ba1de3af057fd", null ]
     ] ],
     [ "DenseGenRealShiftSolve", "classSpectra_1_1DenseGenRealShiftSolve.html", [
-      [ "DenseGenRealShiftSolve", "classSpectra_1_1DenseGenRealShiftSolve.html#adbe50f322ae1f70e1d83b645cf0a1735", null ],
-      [ "rows", "classSpectra_1_1DenseGenRealShiftSolve.html#a18fb76652a2222a42a2f81d0d5ad7164", null ],
-      [ "cols", "classSpectra_1_1DenseGenRealShiftSolve.html#a45dc6237a62506d2af3afcced1c74984", null ],
-      [ "set_shift", "classSpectra_1_1DenseGenRealShiftSolve.html#ac663090ebc5d0ca8653fcec8dbb24950", null ],
-      [ "perform_op", "classSpectra_1_1DenseGenRealShiftSolve.html#a4297ba7a82a59ce2feae65bdadc3d99c", null ]
+      [ "Scalar", "classSpectra_1_1DenseGenRealShiftSolve.html#a0012af1b5473f2cecb104eb3a9a4a40e", null ],
+      [ "DenseGenRealShiftSolve", "classSpectra_1_1DenseGenRealShiftSolve.html#a1ae28485f903644c1ccdd4267db9b7c9", null ],
+      [ "rows", "classSpectra_1_1DenseGenRealShiftSolve.html#a37c53366d7462e6930b175072cd9f055", null ],
+      [ "cols", "classSpectra_1_1DenseGenRealShiftSolve.html#afdcb4c5f0c41c44f849339f6b97598cf", null ],
+      [ "set_shift", "classSpectra_1_1DenseGenRealShiftSolve.html#aac452a7b5d3b51b14721b6966a78b8b5", null ],
+      [ "perform_op", "classSpectra_1_1DenseGenRealShiftSolve.html#ac0ef0cc12017e4d9dc5a394791581fc9", null ]
     ] ],
     [ "DenseSymMatProd", "classSpectra_1_1DenseSymMatProd.html", [
-      [ "DenseSymMatProd", "classSpectra_1_1DenseSymMatProd.html#a8b27ead9c9a1a02614dd5de32b7586de", null ],
-      [ "rows", "classSpectra_1_1DenseSymMatProd.html#a79c41824b17b401698dd208817957704", null ],
-      [ "cols", "classSpectra_1_1DenseSymMatProd.html#aae05d29b9ff8e6162d897ea2ea668d2d", null ],
-      [ "perform_op", "classSpectra_1_1DenseSymMatProd.html#ac36cc60a6364099287d7f240a444feea", null ]
+      [ "Scalar", "classSpectra_1_1DenseSymMatProd.html#ab9a854de8bc6f0d62da2362b08e38607", null ],
+      [ "DenseSymMatProd", "classSpectra_1_1DenseSymMatProd.html#af53882688093b0acd772ae66545113d4", null ],
+      [ "rows", "classSpectra_1_1DenseSymMatProd.html#a2c7291daf9f14c06718977677a926fb4", null ],
+      [ "cols", "classSpectra_1_1DenseSymMatProd.html#a99338da4a5a26daae6b740fc1425a975", null ],
+      [ "perform_op", "classSpectra_1_1DenseSymMatProd.html#a92735cee8a9b57ca0626bc7d2c6c82ec", null ],
+      [ "operator*", "classSpectra_1_1DenseSymMatProd.html#a20efe97ecabc4d809ac10bfd1c1b0d53", null ],
+      [ "operator()", "classSpectra_1_1DenseSymMatProd.html#a579d6c93d713ebd7a132a470b2842ffe", null ]
     ] ],
     [ "DenseSymShiftSolve", "classSpectra_1_1DenseSymShiftSolve.html", [
-      [ "DenseSymShiftSolve", "classSpectra_1_1DenseSymShiftSolve.html#afbdf1e346c37f1270f0029bbbd2e2d7b", null ],
-      [ "rows", "classSpectra_1_1DenseSymShiftSolve.html#ac95b845dc97ffbf1c253890042569c3a", null ],
-      [ "cols", "classSpectra_1_1DenseSymShiftSolve.html#a916649b3eb4c77e7f860a12444b26f46", null ],
-      [ "set_shift", "classSpectra_1_1DenseSymShiftSolve.html#a3d730c57fb462a8a4258f7d1f6cbede9", null ],
-      [ "perform_op", "classSpectra_1_1DenseSymShiftSolve.html#a865a4d04e8582a36121fde89f6ae19d6", null ]
+      [ "Scalar", "classSpectra_1_1DenseSymShiftSolve.html#a502cd373a1353f2ef2fd51b247694b74", null ],
+      [ "DenseSymShiftSolve", "classSpectra_1_1DenseSymShiftSolve.html#ad2fc702c02ca058b291acbe74aecdc09", null ],
+      [ "rows", "classSpectra_1_1DenseSymShiftSolve.html#ad6d77fa2fa3018e8d8d8daf77d32ed16", null ],
+      [ "cols", "classSpectra_1_1DenseSymShiftSolve.html#a6b3b488cefd9f6ab2871268a8791a692", null ],
+      [ "set_shift", "classSpectra_1_1DenseSymShiftSolve.html#af6b798d87d5cddc2d2b88d3d074df4ad", null ],
+      [ "perform_op", "classSpectra_1_1DenseSymShiftSolve.html#a522ecae957e796f49c1109dbd377fca8", null ]
     ] ],
     [ "SparseCholesky", "classSpectra_1_1SparseCholesky.html", [
-      [ "SparseCholesky", "classSpectra_1_1SparseCholesky.html#ae69cdce1f0c667228f5d7af7b4c90296", null ],
-      [ "rows", "classSpectra_1_1SparseCholesky.html#a55050635322db4e7f1317c3953c1a600", null ],
-      [ "cols", "classSpectra_1_1SparseCholesky.html#aa328008149939eb27d3a2655891b9a68", null ],
-      [ "info", "classSpectra_1_1SparseCholesky.html#a363f36cc39520bc34bf092030a43da49", null ],
-      [ "lower_triangular_solve", "classSpectra_1_1SparseCholesky.html#a942cf621ca4f3906850bb2b4cfb86fd7", null ],
-      [ "upper_triangular_solve", "classSpectra_1_1SparseCholesky.html#a1034a3dec4b44405001b49436ba9d237", null ]
+      [ "Scalar", "classSpectra_1_1SparseCholesky.html#aa7b43e90f1a1f35624a74e035c34fcf7", null ],
+      [ "SparseCholesky", "classSpectra_1_1SparseCholesky.html#a6f88f7ad53e376540b54de0d7309b59e", null ],
+      [ "rows", "classSpectra_1_1SparseCholesky.html#acabddd95dd4ca0584a3b9ec1e0a0198a", null ],
+      [ "cols", "classSpectra_1_1SparseCholesky.html#aa62151f9637c57bb299aa285d61510d8", null ],
+      [ "info", "classSpectra_1_1SparseCholesky.html#a87e8318e6c80cb74a6b856163abb7e92", null ],
+      [ "lower_triangular_solve", "classSpectra_1_1SparseCholesky.html#ad99337d4245c2b55bf1c2729d4ea347c", null ],
+      [ "upper_triangular_solve", "classSpectra_1_1SparseCholesky.html#ad0b72710cee5dfeabccfdf6c36832481", null ]
+    ] ],
+    [ "SparseGenComplexShiftSolve", "classSpectra_1_1SparseGenComplexShiftSolve.html", [
+      [ "Scalar", "classSpectra_1_1SparseGenComplexShiftSolve.html#a3f1cfcf06d1d43700b9c3d4664540257", null ],
+      [ "SparseGenComplexShiftSolve", "classSpectra_1_1SparseGenComplexShiftSolve.html#a92c29da33a15fb08c598c8046e48abcf", null ],
+      [ "rows", "classSpectra_1_1SparseGenComplexShiftSolve.html#a788a481080cfa44f9bd22a47b5a7a636", null ],
+      [ "cols", "classSpectra_1_1SparseGenComplexShiftSolve.html#a277a988ebcc0a30f87bbc51aa7e419a0", null ],
+      [ "set_shift", "classSpectra_1_1SparseGenComplexShiftSolve.html#a82936f2a916a59337fcc15d87bf70f23", null ],
+      [ "perform_op", "classSpectra_1_1SparseGenComplexShiftSolve.html#ab6288e3b0bef629ab62abecef302c505", null ]
     ] ],
     [ "SparseGenMatProd", "classSpectra_1_1SparseGenMatProd.html", [
-      [ "SparseGenMatProd", "classSpectra_1_1SparseGenMatProd.html#a9b58daa5652fb13469082f686da731c2", null ],
-      [ "rows", "classSpectra_1_1SparseGenMatProd.html#a098e4d22768d771575101ef89e6b6342", null ],
-      [ "cols", "classSpectra_1_1SparseGenMatProd.html#acff4904875c8777c2db0a7da7959bb0d", null ],
-      [ "perform_op", "classSpectra_1_1SparseGenMatProd.html#a514fbc94f2ef91b4eb526536da3d4ecc", null ]
+      [ "Scalar", "classSpectra_1_1SparseGenMatProd.html#a2b50d2d48eb22b2367904aad17d51aaf", null ],
+      [ "SparseGenMatProd", "classSpectra_1_1SparseGenMatProd.html#a93ea5e0ba1eb204d0f0b4972aab5d505", null ],
+      [ "rows", "classSpectra_1_1SparseGenMatProd.html#a5c3eeed904885dea0e3fe7b8789840b4", null ],
+      [ "cols", "classSpectra_1_1SparseGenMatProd.html#ab588b8b363eb3f80f10084e637b7f45f", null ],
+      [ "perform_op", "classSpectra_1_1SparseGenMatProd.html#a14ec7d92b635e48eeb7d3a7cdfbdc27b", null ],
+      [ "operator*", "classSpectra_1_1SparseGenMatProd.html#a45771277bd9e79c4bc39af738959799f", null ],
+      [ "operator()", "classSpectra_1_1SparseGenMatProd.html#a1a2855e9a46b0d67a9d0f1d0dafd4109", null ]
     ] ],
     [ "SparseGenRealShiftSolve", "classSpectra_1_1SparseGenRealShiftSolve.html", [
-      [ "SparseGenRealShiftSolve", "classSpectra_1_1SparseGenRealShiftSolve.html#aa08e043f151c5ef225aeeaded4542d4e", null ],
-      [ "rows", "classSpectra_1_1SparseGenRealShiftSolve.html#adc4d106e05172202ad288b0f166572e3", null ],
-      [ "cols", "classSpectra_1_1SparseGenRealShiftSolve.html#a1c273ac439e35f5b9dd6d9ebb26342d3", null ],
-      [ "set_shift", "classSpectra_1_1SparseGenRealShiftSolve.html#ab20c8684a8ef100b60d8d435080f7e54", null ],
-      [ "perform_op", "classSpectra_1_1SparseGenRealShiftSolve.html#a1a4430eba1f60fd5b51e318db2a6cf69", null ]
+      [ "Scalar", "classSpectra_1_1SparseGenRealShiftSolve.html#a6c16a3fb9fbdb739543482fe040172ea", null ],
+      [ "SparseGenRealShiftSolve", "classSpectra_1_1SparseGenRealShiftSolve.html#a9245d66b671cca589b2c36efd240748f", null ],
+      [ "rows", "classSpectra_1_1SparseGenRealShiftSolve.html#a1fa4e93c5be5119209ee0a730a1352cb", null ],
+      [ "cols", "classSpectra_1_1SparseGenRealShiftSolve.html#a97b5dfaa186fd0c148d6c08547804f15", null ],
+      [ "set_shift", "classSpectra_1_1SparseGenRealShiftSolve.html#abdab8ee0ed6b95e3b9e35eb4416f008f", null ],
+      [ "perform_op", "classSpectra_1_1SparseGenRealShiftSolve.html#a80d8058b18a655923d43c180077ada56", null ]
     ] ],
     [ "SparseRegularInverse", "classSpectra_1_1SparseRegularInverse.html", [
-      [ "SparseRegularInverse", "classSpectra_1_1SparseRegularInverse.html#ab09860dbdf2d364faa0510cd79531005", null ],
-      [ "rows", "classSpectra_1_1SparseRegularInverse.html#a8dd57b1f22f8d301b01fa0fb75f98a53", null ],
-      [ "cols", "classSpectra_1_1SparseRegularInverse.html#a02e142888b106432360ecfd4470def4c", null ],
-      [ "solve", "classSpectra_1_1SparseRegularInverse.html#a46eeae36c081eae218d72908192462d5", null ],
-      [ "mat_prod", "classSpectra_1_1SparseRegularInverse.html#afe594e3a9792f5b502d580fa689be41c", null ]
+      [ "Scalar", "classSpectra_1_1SparseRegularInverse.html#a939fd3fa65bc85f18ce5360897c0790f", null ],
+      [ "SparseRegularInverse", "classSpectra_1_1SparseRegularInverse.html#a6dcfc48248913a9194eb3b558249837c", null ],
+      [ "rows", "classSpectra_1_1SparseRegularInverse.html#ad8155bb8f5cb278d4b3afd00fca3fc28", null ],
+      [ "cols", "classSpectra_1_1SparseRegularInverse.html#a10c172e345d8ab33e3c7a663a41c448d", null ],
+      [ "info", "classSpectra_1_1SparseRegularInverse.html#a0b80cfd0995d862611841a2320651c82", null ],
+      [ "solve", "classSpectra_1_1SparseRegularInverse.html#a2b31f3b0e07a70ced090dfab63167cb9", null ],
+      [ "perform_op", "classSpectra_1_1SparseRegularInverse.html#aa13588134315601c0e404c8a268482d3", null ]
     ] ],
     [ "SparseSymMatProd", "classSpectra_1_1SparseSymMatProd.html", [
-      [ "SparseSymMatProd", "classSpectra_1_1SparseSymMatProd.html#a061e0533151e17791d66969465e50b58", null ],
-      [ "rows", "classSpectra_1_1SparseSymMatProd.html#a3b42e2f96f39608e137cda7f36ff1b00", null ],
-      [ "cols", "classSpectra_1_1SparseSymMatProd.html#a1584f60d24a2ea0f519f78900bccfab8", null ],
-      [ "perform_op", "classSpectra_1_1SparseSymMatProd.html#afa0b4f81014762318bb2ba5f13683849", null ]
+      [ "Scalar", "classSpectra_1_1SparseSymMatProd.html#a34fabeff7752a596b0995627fd26c139", null ],
+      [ "SparseSymMatProd", "classSpectra_1_1SparseSymMatProd.html#ab58928a21594b547750a93b8329a19cd", null ],
+      [ "rows", "classSpectra_1_1SparseSymMatProd.html#a7f8bd6909271f7bd17d2fd973ad21348", null ],
+      [ "cols", "classSpectra_1_1SparseSymMatProd.html#a334dcd2f708def663a0b2679dc281ac3", null ],
+      [ "perform_op", "classSpectra_1_1SparseSymMatProd.html#a59fb453308c870073cbc5fdcb2391f91", null ],
+      [ "operator*", "classSpectra_1_1SparseSymMatProd.html#ac0776b737461b53577835588400ea6d6", null ],
+      [ "operator()", "classSpectra_1_1SparseSymMatProd.html#ad71e75d9b0d2b79b142ce4e24e56e4fb", null ]
     ] ],
     [ "SparseSymShiftSolve", "classSpectra_1_1SparseSymShiftSolve.html", [
-      [ "SparseSymShiftSolve", "classSpectra_1_1SparseSymShiftSolve.html#a9a971efb2cfc8717077d361932071533", null ],
-      [ "rows", "classSpectra_1_1SparseSymShiftSolve.html#a4594f5cf77a298abc0c6fec0616d4a6d", null ],
-      [ "cols", "classSpectra_1_1SparseSymShiftSolve.html#a2af97457b458deb50983c1ad19dfb9b1", null ],
-      [ "set_shift", "classSpectra_1_1SparseSymShiftSolve.html#adcda64d6e12a1392e014e6f1ceb10715", null ],
-      [ "perform_op", "classSpectra_1_1SparseSymShiftSolve.html#a89c63ca6ec31aeb82a524775796dd4eb", null ]
+      [ "Scalar", "classSpectra_1_1SparseSymShiftSolve.html#ac84c985e360b8044c2795fa27edacc9c", null ],
+      [ "SparseSymShiftSolve", "classSpectra_1_1SparseSymShiftSolve.html#a91b8bdc2abc386c78f93c078797a0220", null ],
+      [ "rows", "classSpectra_1_1SparseSymShiftSolve.html#ab3887025b5a3cc309acf809f38010e3b", null ],
+      [ "cols", "classSpectra_1_1SparseSymShiftSolve.html#a10d6754286674ed8679be7cef3aa0548", null ],
+      [ "set_shift", "classSpectra_1_1SparseSymShiftSolve.html#a466dff86ec0ffe861e8a2b7982cc3e18", null ],
+      [ "perform_op", "classSpectra_1_1SparseSymShiftSolve.html#a2f56afa026a20ad22c4f19697a046aa6", null ]
+    ] ],
+    [ "SymShiftInvert", "classSpectra_1_1SymShiftInvert.html", [
+      [ "Scalar", "classSpectra_1_1SymShiftInvert.html#a717c3e2cab3e6458d374fac92af84972", null ],
+      [ "SymShiftInvert", "classSpectra_1_1SymShiftInvert.html#a09b671d9a3de74ae149588c6ce3f067b", null ],
+      [ "rows", "classSpectra_1_1SymShiftInvert.html#aca3dbcd65b3d6b2057a2154c93ecec78", null ],
+      [ "cols", "classSpectra_1_1SymShiftInvert.html#a100885e7746b4cb193b40f284f9c1611", null ],
+      [ "set_shift", "classSpectra_1_1SymShiftInvert.html#aab528a6ab2ed41439a34a07aecbd121a", null ],
+      [ "perform_op", "classSpectra_1_1SymShiftInvert.html#adfe20b44660275384ab23bc136baeb1a", null ]
     ] ]
 ];

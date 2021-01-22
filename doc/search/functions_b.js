@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['upper_5ftriangular_5fsolve',['upper_triangular_solve',['../classSpectra_1_1DenseCholesky.html#a7852fa8b61099c8e85f134c624b10833',1,'Spectra::DenseCholesky::upper_triangular_solve()'],['../classSpectra_1_1SparseCholesky.html#a1034a3dec4b44405001b49436ba9d237',1,'Spectra::SparseCholesky::upper_triangular_solve()']]]
+  ['upper_5ftriangular_5fsolve_181',['upper_triangular_solve',['../classSpectra_1_1DenseCholesky.html#a8deeb2bdb056d08b21ac28b98953ea0d',1,'Spectra::DenseCholesky::upper_triangular_solve()'],['../classSpectra_1_1SparseCholesky.html#ad0b72710cee5dfeabccfdf6c36832481',1,'Spectra::SparseCholesky::upper_triangular_solve()']]]
 ];

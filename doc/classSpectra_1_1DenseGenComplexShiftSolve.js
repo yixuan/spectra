@@ -1,8 +1,9 @@
 var classSpectra_1_1DenseGenComplexShiftSolve =
 [
-    [ "DenseGenComplexShiftSolve", "classSpectra_1_1DenseGenComplexShiftSolve.html#abea1a21b0ee6bc611e70c67c678b328d", null ],
-    [ "rows", "classSpectra_1_1DenseGenComplexShiftSolve.html#a9f97f0170058aa6700650b6e0abb5d16", null ],
-    [ "cols", "classSpectra_1_1DenseGenComplexShiftSolve.html#ae118b773a032924d5e9ba4850ea04ea8", null ],
-    [ "set_shift", "classSpectra_1_1DenseGenComplexShiftSolve.html#a57be6786123b23fcc63c1cffd3045c56", null ],
-    [ "perform_op", "classSpectra_1_1DenseGenComplexShiftSolve.html#ad8b000a37de67b7e2cd01bbff9c4ba89", null ]
+    [ "Scalar", "classSpectra_1_1DenseGenComplexShiftSolve.html#ae359c04948fe3948393873348b693f10", null ],
+    [ "DenseGenComplexShiftSolve", "classSpectra_1_1DenseGenComplexShiftSolve.html#ab262fd883141600cb3418cc4f5436f54", null ],
+    [ "rows", "classSpectra_1_1DenseGenComplexShiftSolve.html#a5be32032940e7bc309c4d1acfb99cde4", null ],
+    [ "cols", "classSpectra_1_1DenseGenComplexShiftSolve.html#af69569f0a67a26579c84c3a97dc07d48", null ],
+    [ "set_shift", "classSpectra_1_1DenseGenComplexShiftSolve.html#ae54da43bbdaed24e5c9e88cea33f14e9", null ],
+    [ "perform_op", "classSpectra_1_1DenseGenComplexShiftSolve.html#adb7834d27ec92674c65ae1a3694c13b0", null ]
 ];

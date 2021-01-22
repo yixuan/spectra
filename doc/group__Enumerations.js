@@ -1,38 +1,27 @@
 var group__Enumerations =
 [
-    [ "COMPUTATION_INFO", "group__Enumerations.html#ga6096571d2f7e1f0b62336e39d512ae4b", [
-      [ "SUCCESSFUL", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba79882c7474aed8cd8ebddc8cd4aa5185", null ],
-      [ "NOT_COMPUTED", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba535bfda50eb1bc734ca18b5ac7d36af6", null ],
-      [ "NOT_CONVERGING", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4baa9ea091773f727ee4c3bf16dda648d2f", null ],
-      [ "NUMERICAL_ISSUE", "group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba140ca2895b78125a92aded319bb5849c", null ]
+    [ "CompInfo", "group__Enumerations.html#gae1a6cf904d752db2f5641ec79a1bbbf0", [
+      [ "Successful", "group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a30ae8fff8898dc197acd49d9c0797d20", null ],
+      [ "NotComputed", "group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a18232f2a558f7bea8cae84829c1f5753", null ],
+      [ "NotConverging", "group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a9d43178ff551e8de813111063a34ae8d", null ],
+      [ "NumericalIssue", "group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a71a8cace395f4677b2a983f2f64d6f51", null ]
     ] ],
-    [ "GEIGS_MODE", "group__Enumerations.html#ga982c36b6b5b322cdb18ce05adb9106e0", [
-      [ "GEIGS_CHOLESKY", "group__Enumerations.html#gga982c36b6b5b322cdb18ce05adb9106e0aeea529bb6b9cdd997ed57f63fa3aae94", null ],
-      [ "GEIGS_REGULAR_INVERSE", "group__Enumerations.html#gga982c36b6b5b322cdb18ce05adb9106e0a8b658d5f958a4359743eb348d885fec4", null ],
-      [ "GEIGS_SHIFT_INVERT", "group__Enumerations.html#gga982c36b6b5b322cdb18ce05adb9106e0a69cf8aeece7ccf628e1e25d2dccaebc3", null ],
-      [ "GEIGS_BUCKLING", "group__Enumerations.html#gga982c36b6b5b322cdb18ce05adb9106e0ae4fd268a433173738f80a40833523425", null ],
-      [ "GEIGS_CAYLEY", "group__Enumerations.html#gga982c36b6b5b322cdb18ce05adb9106e0aacc29e7cf08f1219697c10d51a010565", null ]
+    [ "GEigsMode", "group__Enumerations.html#ga75ea36bdff79a3d4f1cbb21ee95b56ce", [
+      [ "Cholesky", "group__Enumerations.html#gga75ea36bdff79a3d4f1cbb21ee95b56ceac84ce85b6bfbfa4ad1983fe305494ab0", null ],
+      [ "RegularInverse", "group__Enumerations.html#gga75ea36bdff79a3d4f1cbb21ee95b56ceaab12d557d4d7de8eed7725a48cb2aecf", null ],
+      [ "ShiftInvert", "group__Enumerations.html#gga75ea36bdff79a3d4f1cbb21ee95b56cead7862e2fe69197aedcdd8434fac4b4e8", null ],
+      [ "Buckling", "group__Enumerations.html#gga75ea36bdff79a3d4f1cbb21ee95b56cea775e3111f7ad292b35a1323bce556f39", null ],
+      [ "Cayley", "group__Enumerations.html#gga75ea36bdff79a3d4f1cbb21ee95b56ceab4b169636ad3f1b110224f7f837aed1a", null ]
     ] ],
-    [ "SELECT_EIGENVALUE", "group__Enumerations.html#ga455238b33ba7ae7498e873f1074790d5", [
-      [ "LARGEST_MAGN", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a337b865327555ae670efc43ebdfc8c2d", null ],
-      [ "LARGEST_REAL", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a2632c6262ba0916aa2ec693c17cf4cdf", null ],
-      [ "LARGEST_IMAG", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a07c1e302ed140ef7100754e96723c9ec", null ],
-      [ "LARGEST_ALGE", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a302d250fee292f27b026a5cc669ff0ec", null ],
-      [ "SMALLEST_MAGN", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a38151b6b373c9638e081db6007c9f3b3", null ],
-      [ "SMALLEST_REAL", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a17731e66cfc0e09aec55f1d02605ffbb", null ],
-      [ "SMALLEST_IMAG", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a40b031bc70b61f2b32eba8a95765cde4", null ],
-      [ "SMALLEST_ALGE", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a4c57d31706f23ded5db0da3645416430", null ],
-      [ "BOTH_ENDS", "group__Enumerations.html#gga455238b33ba7ae7498e873f1074790d5a8dc5361f8fab0102f7ae56d0c7b86e23", null ]
-    ] ],
-    [ "SELECT_EIGENVALUE_ALIAS", "group__Enumerations.html#ga35581e537791b60a73fc550445a9804c", [
-      [ "WHICH_LM", "group__Enumerations.html#gga35581e537791b60a73fc550445a9804ca41f4f0577c297e1d9474f9ec1054b31e", null ],
-      [ "WHICH_LR", "group__Enumerations.html#gga35581e537791b60a73fc550445a9804ca42097679aca603324917134809241740", null ],
-      [ "WHICH_LI", "group__Enumerations.html#gga35581e537791b60a73fc550445a9804ca9d37ca5928eef9d6fed195f432a3c617", null ],
-      [ "WHICH_LA", "group__Enumerations.html#gga35581e537791b60a73fc550445a9804ca97418ed09a6a792461601f9918483b36", null ],
-      [ "WHICH_SM", "group__Enumerations.html#gga35581e537791b60a73fc550445a9804ca174dd4ed759d1386d52e1a7febf19186", null ],
-      [ "WHICH_SR", "group__Enumerations.html#gga35581e537791b60a73fc550445a9804ca08049216591447d1c6df0e76e5a22d50", null ],
-      [ "WHICH_SI", "group__Enumerations.html#gga35581e537791b60a73fc550445a9804ca54e4413478d464c3970295a851ca7b6c", null ],
-      [ "WHICH_SA", "group__Enumerations.html#gga35581e537791b60a73fc550445a9804ca18c28fa4c666eea43055d117e12406a8", null ],
-      [ "WHICH_BE", "group__Enumerations.html#gga35581e537791b60a73fc550445a9804ca442620d50e9ec0d6b76b5139695496c8", null ]
+    [ "SortRule", "group__Enumerations.html#ga699aae652eac3e9c714957fce4b395fd", [
+      [ "LargestMagn", "group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fdaf58c1705d219c9465cc4a339081622b5", null ],
+      [ "LargestReal", "group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fdab91a9ec6f8cdeffdb0edb1ee2db2e8a0", null ],
+      [ "LargestImag", "group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fdaa49c82b8f86a0dbbcd4128882c409110", null ],
+      [ "LargestAlge", "group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fda1b41c4b719d458f621ae11861ac637c1", null ],
+      [ "SmallestMagn", "group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fdab18bcbdc7fd373bcad99654caecf3180", null ],
+      [ "SmallestReal", "group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fda6fb3358fff070f74fb8c593a7815c248", null ],
+      [ "SmallestImag", "group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fda0df9caf279b2e14708d0488781aa957c", null ],
+      [ "SmallestAlge", "group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fda47bde20850b4c1cc8e7ec69298c92fcd", null ],
+      [ "BothEnds", "group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fda1b00b73870f45ed503a1c5b8cb186ba6", null ]
     ] ]
 ];

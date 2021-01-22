@@ -1,0 +1,4 @@
+var classSpectra_1_1SymGEigsSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1RegularInverse_01_4 =
+[
+    [ "SymGEigsSolver", "classSpectra_1_1SymGEigsSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1RegularInverse_01_4.html#a7677ddad0002cf64d6227c97557be322", null ]
+];

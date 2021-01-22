@@ -1,7 +1,10 @@
 var classSpectra_1_1DenseSymMatProd =
 [
-    [ "DenseSymMatProd", "classSpectra_1_1DenseSymMatProd.html#a8b27ead9c9a1a02614dd5de32b7586de", null ],
-    [ "rows", "classSpectra_1_1DenseSymMatProd.html#a79c41824b17b401698dd208817957704", null ],
-    [ "cols", "classSpectra_1_1DenseSymMatProd.html#aae05d29b9ff8e6162d897ea2ea668d2d", null ],
-    [ "perform_op", "classSpectra_1_1DenseSymMatProd.html#ac36cc60a6364099287d7f240a444feea", null ]
+    [ "Scalar", "classSpectra_1_1DenseSymMatProd.html#ab9a854de8bc6f0d62da2362b08e38607", null ],
+    [ "DenseSymMatProd", "classSpectra_1_1DenseSymMatProd.html#af53882688093b0acd772ae66545113d4", null ],
+    [ "rows", "classSpectra_1_1DenseSymMatProd.html#a2c7291daf9f14c06718977677a926fb4", null ],
+    [ "cols", "classSpectra_1_1DenseSymMatProd.html#a99338da4a5a26daae6b740fc1425a975", null ],
+    [ "perform_op", "classSpectra_1_1DenseSymMatProd.html#a92735cee8a9b57ca0626bc7d2c6c82ec", null ],
+    [ "operator*", "classSpectra_1_1DenseSymMatProd.html#a20efe97ecabc4d809ac10bfd1c1b0d53", null ],
+    [ "operator()", "classSpectra_1_1DenseSymMatProd.html#a579d6c93d713ebd7a132a470b2842ffe", null ]
 ];

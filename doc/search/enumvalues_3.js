@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['not_5fcomputed',['NOT_COMPUTED',['../group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba535bfda50eb1bc734ca18b5ac7d36af6',1,'Spectra']]],
-  ['not_5fconverging',['NOT_CONVERGING',['../group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4baa9ea091773f727ee4c3bf16dda648d2f',1,'Spectra']]],
-  ['numerical_5fissue',['NUMERICAL_ISSUE',['../group__Enumerations.html#gga6096571d2f7e1f0b62336e39d512ae4ba140ca2895b78125a92aded319bb5849c',1,'Spectra']]]
+  ['notcomputed_195',['NotComputed',['../group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a18232f2a558f7bea8cae84829c1f5753',1,'Spectra']]],
+  ['notconverging_196',['NotConverging',['../group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a9d43178ff551e8de813111063a34ae8d',1,'Spectra']]],
+  ['numericalissue_197',['NumericalIssue',['../group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a71a8cace395f4677b2a983f2f64d6f51',1,'Spectra']]]
 ];

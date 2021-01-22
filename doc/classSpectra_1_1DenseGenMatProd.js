@@ -1,7 +1,10 @@
 var classSpectra_1_1DenseGenMatProd =
 [
-    [ "DenseGenMatProd", "classSpectra_1_1DenseGenMatProd.html#a10347b20b5de9535c8f08c64ed610ec2", null ],
-    [ "rows", "classSpectra_1_1DenseGenMatProd.html#a6a08caf4ed0cb9315ad4967eda7d0457", null ],
-    [ "cols", "classSpectra_1_1DenseGenMatProd.html#ad9ea8b19edcb9f155c27bcfeac97aa49", null ],
-    [ "perform_op", "classSpectra_1_1DenseGenMatProd.html#a2a61f1ce1809dd3a384a255367615c56", null ]
+    [ "Scalar", "classSpectra_1_1DenseGenMatProd.html#a7a107b9bf715027e4df6053e71772a11", null ],
+    [ "DenseGenMatProd", "classSpectra_1_1DenseGenMatProd.html#a06785471b91661c815d8ce42c668a7d4", null ],
+    [ "rows", "classSpectra_1_1DenseGenMatProd.html#afc89c70afef2cde8277fae2c221fbbbf", null ],
+    [ "cols", "classSpectra_1_1DenseGenMatProd.html#a08f79924e8e793def51e51e3326fc374", null ],
+    [ "perform_op", "classSpectra_1_1DenseGenMatProd.html#abefbd862706667fe19baba64aaea010a", null ],
+    [ "operator*", "classSpectra_1_1DenseGenMatProd.html#a7f4de116bfc48380d130c1d45a447979", null ],
+    [ "operator()", "classSpectra_1_1DenseGenMatProd.html#ac9427a8518def617f08ba1de3af057fd", null ]
 ];
