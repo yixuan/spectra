@@ -58,7 +58,11 @@ with a real-valued shift
 For general real matrices using the shift-and-invert mode,
 with a complex-valued shift
 - [SymGEigsSolver](https://spectralib.org/doc/classSpectra_1_1SymGEigsSolver.html):
-For generalized eigen solver for real symmetric matrices
+For generalized eigen solver with real symmetric matrices
+- [SymGEigsShiftSolver](https://spectralib.org/doc/classSpectra_1_1SymGEigsShiftSolver.html):
+For generalized eigen solver with real symmetric matrices, using the shift-and-invert mode
+- [DavidsonSymEigsSolver](https://spectralib.org/doc/classSpectra_1_1DavidsonSymEigsSolver.html):
+Jacobi-Davidson eigen solver for real symmetric matrices, with the DPR correction method
 
 ### Examples
 
@@ -83,15 +87,15 @@ int main()
     DenseSymMatProd<double> op(M);
 
     // Construct eigen solver object, requesting the largest three eigenvalues
-    SymEigsSolver< double, LARGEST_ALGE, DenseSymMatProd<double> > eigs(&op, 3, 6);
+    SymEigsSolver<DenseSymMatProd<double>> eigs(op, 3, 6);
 
     // Initialize and compute
     eigs.init();
-    int nconv = eigs.compute();
+    int nconv = eigs.compute(SortRule::LargestAlge);
 
     // Retrieve results
     Eigen::VectorXd evalues;
-    if(eigs.info() == SUCCESSFUL)
+    if(eigs.info() == CompInfo::Successful)
         evalues = eigs.eigenvalues();
 
     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
@@ -100,7 +104,8 @@ int main()
 }
 ~~~
 
-Sparse matrix is supported via the `SparseGenMatProd` class.
+Sparse matrix is supported via classes such as `SparseGenMatProd`
+and `SparseSymMatProd`.
 
 ~~~
 #include <Eigen/Core>
@@ -131,15 +136,15 @@ int main()
     SparseGenMatProd<double> op(M);
 
     // Construct eigen solver object, requesting the largest three eigenvalues
-    GenEigsSolver< double, LARGEST_MAGN, SparseGenMatProd<double> > eigs(&op, 3, 6);
+    GenEigsSolver<SparseGenMatProd<double>> eigs(op, 3, 6);
 
     // Initialize and compute
     eigs.init();
-    int nconv = eigs.compute();
+    int nconv = eigs.compute(SortRule::LargestMagn);
 
     // Retrieve results
     Eigen::VectorXcd evalues;
-    if(eigs.info() == SUCCESSFUL)
+    if(eigs.info() == CompInfo::Successful)
         evalues = eigs.eigenvalues();
 
     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
@@ -161,10 +166,11 @@ using namespace Spectra;
 class MyDiagonalTen
 {
 public:
+    using Scalar = double;  // A typedef named "Scalar" is required
     int rows() { return 10; }
     int cols() { return 10; }
     // y_out = M * x_in
-    void perform_op(const double *x_in, double *y_out)
+    void perform_op(const double *x_in, double *y_out) const
     {
         for(int i = 0; i < rows(); i++)
         {
@@ -176,10 +182,10 @@ public:
 int main()
 {
     MyDiagonalTen op;
-    SymEigsSolver<double, LARGEST_ALGE, MyDiagonalTen> eigs(&op, 3, 6);
+    SymEigsSolver<MyDiagonalTen> eigs(op, 3, 6);
     eigs.init();
-    eigs.compute();
-    if(eigs.info() == SUCCESSFUL)
+    eigs.compute(SortRule::LargestAlge);
+    if(eigs.info() == CompInfo::Successful)
     {
         Eigen::VectorXd evalues = eigs.eigenvalues();
         std::cout << "Eigenvalues found:\n" << evalues << std::endl;

@@ -12,15 +12,15 @@ To use Spectra, since it is a header-only library, all you need are the
 header files contained in the source package. You also need the header files
 of Eigen as dependency.
 
-<a href="https://github.com/yixuan/spectra/archive/v0.8.1.tar.gz">
+<a href="https://github.com/yixuan/spectra/archive/v1.0.0.tar.gz">
 <button type="button" class="btn btn-success btn-sm">
-<span class="glyphicon glyphicon-download"></span> Download Spectra 0.8.1
+<span class="glyphicon glyphicon-download"></span> Download Spectra 1.0.0
 </button>
 </a>
 
-<a href="https://bitbucket.org/eigen/eigen/get/3.3.7.tar.gz">
+<a href="https://gitlab.com/libeigen/eigen/-/archive/3.3.9/eigen-3.3.9.tar.gz">
 <button type="button" class="btn btn-success btn-sm">
-<span class="glyphicon glyphicon-download"></span> Download Eigen 3.3.7
+<span class="glyphicon glyphicon-download"></span> Download Eigen 3.3.9
 </button>
 </a>
 
