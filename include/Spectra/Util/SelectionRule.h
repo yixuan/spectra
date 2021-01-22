@@ -20,7 +20,7 @@
 namespace Spectra {
 
 ///
-/// \defgroup Enumerations
+/// \defgroup Enumerations Enumerations
 ///
 /// Enumeration types for the selection rule of eigenvalues.
 ///

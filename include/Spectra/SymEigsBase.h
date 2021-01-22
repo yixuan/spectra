@@ -326,8 +326,8 @@ public:
     /// \param sorting    Rule to sort the eigenvalues and eigenvectors.
     ///                   Supported values are
     ///                   `SortRule::LargestAlge`, `SortRule::LargestMagn`,
-    ///                   `SortRule::SmallestAlge` and `SortRule::SmallestMagn`,
-    ///                   for example `SortRule::LargestAlge` indicates that largest eigenvalues
+    ///                   `SortRule::SmallestAlge`, and `SortRule::SmallestMagn`.
+    ///                   For example, `SortRule::LargestAlge` indicates that largest eigenvalues
     ///                   come first. Note that this argument is only used to
     ///                   **sort** the final result, and the **selection** rule
     ///                   (e.g. selecting the largest or smallest eigenvalues in the

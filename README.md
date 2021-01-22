@@ -38,7 +38,7 @@ depend on ARPACK.
 ## Common Usage
 
 **Spectra** is designed to calculate a specified number (`k`) of eigenvalues
-of a large square matrix (`A`). Usually `k` is much less than the size of the matrix
+of a large square matrix (`A`). Usually `k` is much smaller than the size of the matrix
 (`n`), so that only a few eigenvalues and eigenvectors are computed, which
 in general is more efficient than calculating the whole spectral decomposition.
 Users can choose eigenvalue selection rules to pick the eigenvalues of interest,
@@ -128,7 +128,8 @@ int main()
 }
 ```
 
-Sparse matrix is supported via the `SparseGenMatProd` class.
+Sparse matrix is supported via classes such as `SparseGenMatProd`
+and `SparseSymMatProd`.
 
 ```cpp
 #include <Eigen/Core>
@@ -220,7 +221,7 @@ int main()
 
 ## Shift-and-invert Mode
 
-When we want to find eigenvalues that are closest to a number `σ`,
+When it is needed to find eigenvalues that are closest to a number `σ`,
 for example to find the smallest eigenvalues of a positive definite matrix
 (in which case `σ = 0`), it is advised to use the shift-and-invert mode
 of eigen solvers.
