@@ -40,6 +40,11 @@ In short, Spectra implements the major algorithms in ARPACK,
 but Spectra provides a completely different interface, and it does not
 depend on ARPACK.
 
+### Upgrade to 1.0.0
+
+Spectra 1.0.0 introduces a lot of API-breaking changes, but the code migration
+should be easy and straightforward. See this [guide](upgrade.html) for details.
+
 ### Documentation
 
 See the [Quick Start](quick-start.html) page for some minimal examples that demonstrate the
