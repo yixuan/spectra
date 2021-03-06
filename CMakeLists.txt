@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
 project (Spectra VERSION 1.0.0 LANGUAGES CXX)
 
 # Make CMake look into the ./cmake/ folder for configuration files
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 include(FeatureSummary)
 include(CheckCXXCompilerFlag)
@@ -16,6 +16,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 # -----------------
 option(ENABLE_COVERAGE_BUILD "Do a coverage build" OFF)
 option(BUILD_TESTS "Build tests" OFF)
+option(BUILD_EXAMPLES "Build examples" OFF)
 include(FeatureSummary) # More verbose Output for libraries using set_package_properties
 
 # Look for supporting libraries
@@ -31,7 +32,7 @@ target_include_directories(
     Spectra
     INTERFACE
     $<INSTALL_INTERFACE:include>
-    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
 target_link_libraries(Spectra INTERFACE Eigen3::Eigen)
 
@@ -45,7 +46,9 @@ if(ENABLE_COVERAGE_BUILD)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
 endif()
 
-add_subdirectory(examples)
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
 
 if(BUILD_TESTS)
     enable_testing()
@@ -62,7 +65,7 @@ install(
     INCLUDES DESTINATION include
 )
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)
 
 install(
     EXPORT Spectra-targets
@@ -76,7 +79,7 @@ install(
 include(CMakePackageConfigHelpers)
 
 configure_package_config_file(
-    ${CMAKE_SOURCE_DIR}/cmake/spectra-config.cmake.in
+    ${PROJECT_SOURCE_DIR}/cmake/spectra-config.cmake.in
     ${CMAKE_BINARY_DIR}/cmake/spectra-config.cmake
     INSTALL_DESTINATION share/spectra/cmake
 )
