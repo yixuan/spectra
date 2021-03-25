@@ -59,7 +59,7 @@ private:
     }
 
 public:
-    JDSymEigsBase(OpType& op, Index nev, Index nvec_i, Index nvec_max) :
+    JDSymEigsBase(OpType& op, Index nev, Index nvec_init, Index nvec_max) :
         m_matrix_operator(op),
         m_number_eigenvalues(nev),
         m_max_search_space_size(nvec_max < op.rows() ? nvec_max : 10 * m_number_eigenvalues),

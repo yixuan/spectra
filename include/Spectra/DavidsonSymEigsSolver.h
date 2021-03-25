@@ -39,14 +39,20 @@ private:
     Vector m_diagonal;
 
 public:
-    DavidsonSymEigsSolver(OpType& op, Index nev) :
-        JDSymEigsBase<DavidsonSymEigsSolver<OpType>, OpType>(op, nev)
+    DavidsonSymEigsSolver(OpType& op, Index nev, Index nvec_init, Index nvec_max) :
+        JDSymEigsBase<DavidsonSymEigsSolver<OpType>, OpType>(op, nev, nvec_init, nvec_max)
     {
         m_diagonal.resize(this->m_matrix_operator.rows());
         for (Index i = 0; i < op.rows(); i++)
         {
             m_diagonal(i) = op(i, i);
         }
+    }
+
+    DavidsonSymEigsSolver(OpType& op, Index nev){ 
+        Index nvec_max = 10 * nev;
+        Index nvec_init = 2 * nev;
+        DavidsonSymEigsSolver(op, nev, nvec_init, nvec_max);
     }
 
     /// Create initial search space based on the diagonal
