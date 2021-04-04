@@ -6,9 +6,11 @@
 - Added the `SymGEigsShiftSolver` class for symmetric generalized eigen solver with real shifts
 - Added the wrapper class `SymShiftInvert` that can be used with `SymGEigsShiftSolver`
 - Added test code for symmetric generalized eigen solver with real shifts
-- Added a `Flags` template parameter to every dense matrix operation class
+- Added a `Flags` template parameter to every matrix operation class
   (e.g. `DenseCholesky` and `DenseSymMatProd`), whose possible values are `Eigen::ColMajor`
-  and `Eigen::RowMajor`. This parameter allows these wrapper classes to handle row-major matrices
+  and `Eigen::RowMajor`. This parameter allows these wrapper classes to handle row-major matrices.
+  If the input matrix is inconsistent with the `Flags` parameter (e.g., if `Flags` is
+  `Eigen::ColMajor` but the input matrix is row-major), a compiler error will occur
 - Added the member function `info()` and convergence tests to `SparseRegularInverse`,
   suggested by [@Spammed](https://github.com/Spammed) ([#111](https://github.com/yixuan/spectra/issues/111))
 - Added symmetric Davidson eigen solver `DavidsonSymEigsSolver`, written by Felipe Zapata,
