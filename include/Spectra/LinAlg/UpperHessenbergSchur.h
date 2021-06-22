@@ -35,7 +35,6 @@ private:
     Index m_n;       // Size of the matrix
     Matrix m_T;      // T matrix, A = UTU'
     Matrix m_U;      // U matrix, A = UTU'
-    Vector m_work;   // Working space
     bool m_computed;
 
     // L1 norm of an upper Hessenberg matrix
@@ -192,7 +191,7 @@ private:
     }
 
     // Perform a Francis QR step involving rows il:iu and columns im:iu
-    void perform_francis_qr_step(Index il, Index im, Index iu, const Vector3s& first_householder_vec, Scalar* workspace)
+    void perform_francis_qr_step(Index il, Index im, Index iu, const Vector3s& first_householder_vec)
     {
         for (Index k = im; k <= iu - 2; ++k)
         {
@@ -270,7 +269,6 @@ public:
         m_n = mat.rows();
         m_T.resize(m_n, m_n);
         m_U.resize(m_n, m_n);
-        m_work.resize(m_n);
         constexpr Index max_iter_per_row = 40;
         const Index max_iter = m_n * max_iter_per_row;
 
@@ -322,7 +320,7 @@ public:
                         break;
                     Index im;
                     init_francis_qr_step(il, iu, shift_info, im, first_householder_vec);
-                    perform_francis_qr_step(il, im, iu, first_householder_vec, m_work.data());
+                    perform_francis_qr_step(il, im, iu, first_householder_vec);
                 }
             }
         }
