@@ -13,6 +13,7 @@
 
 #include <Eigen/Core>
 #include <Eigen/Jacobi>
+#include <Eigen/Householder>
 #include <stdexcept>
 
 #include "../Util/TypeTraits.h"
@@ -159,6 +160,37 @@ private:
         }
     }
 
+    // P = I - tau * v * v' = P'
+    // PX = X - tau * v * (v'X), X [3 x c]
+    static void apply_householder_left(const Vector2s& ess, const Scalar& tau, Scalar* x, Index ncol, Index stride)
+    {
+        const Scalar v1 = ess.coeff(0), v2 = ess.coeff(1);
+        for (Index j = 0; j < ncol; j++, x += stride)
+        {
+            const Scalar tvx = tau * (x[0] + v1 * x[1] + v2 * x[2]);
+            x[0] -= tvx;
+            x[1] -= tvx * v1;
+            x[2] -= tvx * v2;
+        }
+    }
+
+    // P = I - tau * v * v' = P'
+    // XP = X - tau * (X * v) * v', X [r x 3]
+    static void apply_householder_right(const Vector2s& ess, const Scalar& tau, Scalar* x, Index nrow, Index stride)
+    {
+        const Scalar v1 = ess.coeff(0), v2 = ess.coeff(1);
+        Scalar* x0 = x;
+        Scalar* x1 = x + stride;
+        Scalar* x2 = x1 + stride;
+        for (Index i = 0; i < nrow; i++)
+        {
+            const Scalar txv = tau * (x0[i] + v1 * x1[i] + v2 * x2[i]);
+            x0[i] -= txv;
+            x1[i] -= txv * v1;
+            x2[i] -= txv * v2;
+        }
+    }
+
     // Perform a Francis QR step involving rows il:iu and columns im:iu
     void perform_francis_qr_step(Index il, Index im, Index iu, const Vector3s& first_householder_vec, Scalar* workspace)
     {
@@ -184,12 +216,16 @@ private:
                     m_T.coeffRef(k, k - 1) = beta;
 
                 // These Householder transformations form the O(n^3) part of the algorithm
-                m_T.block(k, k, 3, m_n - k).applyHouseholderOnTheLeft(ess, tau, workspace);
-                m_T.block(0, k, (std::min)(iu, k + 3) + 1, 3).applyHouseholderOnTheRight(ess, tau, workspace);
-                m_U.block(0, k, m_n, 3).applyHouseholderOnTheRight(ess, tau, workspace);
+                // m_T.block(k, k, 3, m_n - k).applyHouseholderOnTheLeft(ess, tau, workspace);
+                // m_T.block(0, k, (std::min)(iu, k + 3) + 1, 3).applyHouseholderOnTheRight(ess, tau, workspace);
+                // m_U.block(0, k, m_n, 3).applyHouseholderOnTheRight(ess, tau, workspace);
+                apply_householder_left(ess, tau, &m_T.coeffRef(k, k), m_n - k, m_n);
+                apply_householder_right(ess, tau, &m_T.coeffRef(0, k), (std::min)(iu, k + 3) + 1, m_n);
+                apply_householder_right(ess, tau, &m_U.coeffRef(0, k), m_n, m_n);
             }
         }
 
+        // The last 2-row block
         Eigen::JacobiRotation<Scalar> rot;
         Scalar beta;
         rot.makeGivens(m_T.coeff(iu - 1, iu - 2), m_T.coeff(iu, iu - 2), &beta);
