@@ -26,20 +26,19 @@ private:
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    using Vector1s = Eigen::Matrix<Scalar, 1, 1>;
     using Vector2s = Eigen::Matrix<Scalar, 2, 1>;
     using Vector3s = Eigen::Matrix<Scalar, 3, 1>;
     using GenericMatrix = Eigen::Ref<Matrix>;
     using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
-    Index m_n;                             // Size of the matrix
-    Matrix m_T;                         // T matrix, A = UTU'
-    Matrix m_U;                         // U matrix, A = UTU'
-    Vector m_work;                         // Working space
+    Index m_n;       // Size of the matrix
+    Matrix m_T;      // T matrix, A = UTU'
+    Matrix m_U;      // U matrix, A = UTU'
+    Vector m_work;   // Working space
     bool m_computed;
 
     // L1 norm of an upper Hessenberg matrix
-    static const Scalar upper_hessenberg_l1_norm(ConstGenericMatrix& x)
+    static Scalar upper_hessenberg_l1_norm(ConstGenericMatrix& x)
     {
         const Index n = x.cols();
         Scalar norm(0);
@@ -70,28 +69,28 @@ private:
     // Update T given that rows iu-1 and iu decouple from the rest
     void split_off_two_rows(Index iu, const Scalar& ex_shift)
     {
-      using std::sqrt;
-      using std::abs;
+        using std::sqrt;
+        using std::abs;
 
-      // The eigenvalues of the 2x2 matrix [a b; c d] are
-      // trace +/- sqrt(discr/4) where discr = tr^2 - 4*det, tr = a + d, det = ad - bc
-      Scalar p = Scalar(0.5) * (m_T.coeff(iu - 1, iu - 1) - m_T.coeff(iu, iu));
-      Scalar q = p * p + m_T.coeff(iu, iu - 1) * m_T.coeff(iu - 1, iu);  // q = tr^2 / 4 - det = discr/4
-      m_T.coeffRef(iu, iu) += ex_shift;
-      m_T.coeffRef(iu - 1, iu - 1) += ex_shift;
+        // The eigenvalues of the 2x2 matrix [a b; c d] are
+        // trace +/- sqrt(discr/4) where discr = tr^2 - 4*det, tr = a + d, det = ad - bc
+        Scalar p = Scalar(0.5) * (m_T.coeff(iu - 1, iu - 1) - m_T.coeff(iu, iu));
+        Scalar q = p * p + m_T.coeff(iu, iu - 1) * m_T.coeff(iu - 1, iu);  // q = tr^2 / 4 - det = discr/4
+        m_T.coeffRef(iu, iu) += ex_shift;
+        m_T.coeffRef(iu - 1, iu - 1) += ex_shift;
 
-      if (q >= Scalar(0)) // Two real eigenvalues
-      {
-          Scalar z = sqrt(abs(q));
-          Eigen::JacobiRotation<Scalar> rot;
-          rot.makeGivens((p >= Scalar(0)) ? (p + z) : (p - z), m_T.coeff(iu, iu - 1));
-          m_T.rightCols(m_n - iu + 1).applyOnTheLeft(iu - 1, iu, rot.adjoint());
-          m_T.topRows(iu + 1).applyOnTheRight(iu - 1, iu, rot);
-          m_T.coeffRef(iu, iu - 1) = Scalar(0);
-          m_U.applyOnTheRight(iu - 1, iu, rot);
-      }
-      if (iu > 1)
-          m_T.coeffRef(iu - 1, iu - 2) = Scalar(0);
+        if (q >= Scalar(0)) // Two real eigenvalues
+        {
+            Scalar z = sqrt(abs(q));
+            Eigen::JacobiRotation<Scalar> rot;
+            rot.makeGivens((p >= Scalar(0)) ? (p + z) : (p - z), m_T.coeff(iu, iu - 1));
+            m_T.rightCols(m_n - iu + 1).applyOnTheLeft(iu - 1, iu, rot.adjoint());
+            m_T.topRows(iu + 1).applyOnTheRight(iu - 1, iu, rot);
+            m_T.coeffRef(iu, iu - 1) = Scalar(0);
+            m_U.applyOnTheRight(iu - 1, iu, rot);
+        }
+        if (iu > 1)
+            m_T.coeffRef(iu - 1, iu - 2) = Scalar(0);
     }
 
     // Form shift in shift_info, and update ex_shift if an exceptional shift is performed
@@ -137,7 +136,7 @@ private:
     }
 
     // Compute index im at which Francis QR step starts and the first Householder vector
-    void init_francis_qr_step(Index il, Index iu, const Vector3s& shift_info, Index& im, Vector3s& first_householder_vec)
+    void init_francis_qr_step(Index il, Index iu, const Vector3s& shift_info, Index& im, Vector3s& first_householder_vec) const
     {
         using std::abs;
 
@@ -171,7 +170,7 @@ private:
             if (first_iter)
                 v = first_householder_vec;
             else
-                v = m_T.template block<3,1>(k,k-1);
+                v = m_T.template block<3, 1>(k, k - 1);
 
             Scalar tau, beta;
             Vector2s ess;
@@ -184,31 +183,31 @@ private:
                 else if (!first_iter)
                     m_T.coeffRef(k, k - 1) = beta;
 
-              // These Householder transformations form the O(n^3) part of the algorithm
-              m_T.block(k, k, 3, m_n - k).applyHouseholderOnTheLeft(ess, tau, workspace);
-              m_T.block(0, k, (std::min)(iu,k + 3) + 1, 3).applyHouseholderOnTheRight(ess, tau, workspace);
-              m_U.block(0, k, m_n, 3).applyHouseholderOnTheRight(ess, tau, workspace);
+                // These Householder transformations form the O(n^3) part of the algorithm
+                m_T.block(k, k, 3, m_n - k).applyHouseholderOnTheLeft(ess, tau, workspace);
+                m_T.block(0, k, (std::min)(iu, k + 3) + 1, 3).applyHouseholderOnTheRight(ess, tau, workspace);
+                m_U.block(0, k, m_n, 3).applyHouseholderOnTheRight(ess, tau, workspace);
             }
         }
 
-        Vector2s v = m_T.template block<2, 1>(iu - 1, iu - 2);
-        Scalar tau, beta;
-        Vector1s ess;
-        v.makeHouseholder(ess, tau, beta);
+        Eigen::JacobiRotation<Scalar> rot;
+        Scalar beta;
+        rot.makeGivens(m_T.coeff(iu - 1, iu - 2), m_T.coeff(iu, iu - 2), &beta);
 
         if (beta != Scalar(0)) // if v is not zero
         {
             m_T.coeffRef(iu - 1, iu - 2) = beta;
-            m_T.block(iu - 1, iu - 1, 2, m_n - iu + 1).applyHouseholderOnTheLeft(ess, tau, workspace);
-            m_T.block(0, iu - 1, iu + 1, 2).applyHouseholderOnTheRight(ess, tau, workspace);
-            m_U.block(0, iu - 1, m_n, 2).applyHouseholderOnTheRight(ess, tau, workspace);
+            m_T.coeffRef(iu, iu - 2) = Scalar(0);
+            m_T.rightCols(m_n - iu + 1).applyOnTheLeft(iu - 1, iu, rot.adjoint());
+            m_T.topRows(iu + 1).applyOnTheRight(iu - 1, iu, rot);
+            m_U.applyOnTheRight(iu - 1, iu, rot);
         }
 
         // clean up pollution due to round-off errors
         for (Index i = im + 2; i <= iu; ++i)
         {
             m_T.coeffRef(i, i - 2) = Scalar(0);
-            if (i > im+2)
+            if (i > im + 2)
                 m_T.coeffRef(i, i - 3) = Scalar(0);
         }
     }

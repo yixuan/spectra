@@ -12,7 +12,6 @@
 #define SPECTRA_UPPER_HESSENBERG_EIGEN_H
 
 #include <Eigen/Core>
-#include <Eigen/Eigenvalues>
 #include <stdexcept>
 
 #include "UpperHessenbergSchur.h"
