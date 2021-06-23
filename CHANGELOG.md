@@ -6,6 +6,8 @@
 - Added the `SymGEigsShiftSolver` class for symmetric generalized eigen solver with real shifts
 - Added the wrapper class `SymShiftInvert` that can be used with `SymGEigsShiftSolver`
 - Added test code for symmetric generalized eigen solver with real shifts
+- Added an internal class `UpperHessenbergSchur` to compute the Schur decomposition of
+  upper Hessenberg matrices more efficiently
 - Added a `Flags` template parameter to every matrix operation class
   (e.g. `DenseCholesky` and `DenseSymMatProd`), whose possible values are `Eigen::ColMajor`
   and `Eigen::RowMajor`. This parameter allows these wrapper classes to handle row-major matrices.
