@@ -30,11 +30,12 @@ if(CLANG_FORMAT_EXECUTABLE)
                   OUTPUT_VARIABLE clang_format_version
                   ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  if(clang_format_version MATCHES "^clang-format version .*")
+  if(clang_format_version MATCHES "clang-format version .*")
+    # clang_format_version sample: "Ubuntu clang-format version 11.0.0-2~ubuntu20.04.1"
     # clang_format_version sample: "clang-format version 3.9.1-4ubuntu3~16.04.1
     # (tags/RELEASE_391/rc2)"
     string(REGEX
-           REPLACE "clang-format version ([.0-9]+).*"
+           REPLACE ".*clang-format version ([.0-9]+).*"
                    "\\1"
                    CLANG_FORMAT_VERSION
                    "${clang_format_version}")
