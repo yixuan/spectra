@@ -192,8 +192,10 @@ private:
     }
 
     // Perform a Francis QR step involving rows il:iu and columns im:iu
-    void perform_francis_qr_step(Index il, Index im, Index iu, const Vector3s& first_householder_vec)
+    void perform_francis_qr_step(Index il, Index im, Index iu, const Vector3s& first_householder_vec, const Scalar& near_0)
     {
+        using std::abs;
+
         for (Index k = im; k <= iu - 2; ++k)
         {
             const bool first_iter = (k == im);
@@ -207,7 +209,7 @@ private:
             Vector2s ess;
             v.makeHouseholder(ess, tau, beta);
 
-            if (beta != Scalar(0))  // if v is not zero
+            if (abs(beta) > near_0)  // if v is not zero
             {
                 if (first_iter && k > il)
                     m_T.coeffRef(k, k - 1) = -m_T.coeff(k, k - 1);
@@ -229,10 +231,9 @@ private:
         Scalar beta;
         rot.makeGivens(m_T.coeff(iu - 1, iu - 2), m_T.coeff(iu, iu - 2), &beta);
 
-        if (beta != Scalar(0))  // if v is not zero
+        if (abs(beta) > near_0)  // if v is not zero
         {
             m_T.coeffRef(iu - 1, iu - 2) = beta;
-            m_T.coeffRef(iu, iu - 2) = Scalar(0);
             m_T.rightCols(m_n - iu + 1).applyOnTheLeft(iu - 1, iu, rot.adjoint());
             m_T.topRows(iu + 1).applyOnTheRight(iu - 1, iu, rot);
             m_U.applyOnTheRight(iu - 1, iu, rot);
@@ -320,7 +321,7 @@ public:
                         break;
                     Index im;
                     init_francis_qr_step(il, iu, shift_info, im, first_householder_vec);
-                    perform_francis_qr_step(il, im, iu, first_householder_vec);
+                    perform_francis_qr_step(il, im, iu, first_householder_vec, near_0);
                 }
             }
         }
