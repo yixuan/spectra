@@ -221,8 +221,8 @@ public:
 
         // Reduce to real Schur form
         m_schur.compute(mat / scale);
-        m_matT = m_schur.matrix_T();
-        m_eivec = m_schur.matrix_U();
+        m_schur.swap_T(m_matT);
+        m_schur.swap_U(m_eivec);
 
         // Compute eigenvalues from matT
         m_eivalues.resize(m_n);

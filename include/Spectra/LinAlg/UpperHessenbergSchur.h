@@ -164,7 +164,8 @@ private:
     static void apply_householder_left(const Vector2s& ess, const Scalar& tau, Scalar* x, Index ncol, Index stride)
     {
         const Scalar v1 = ess.coeff(0), v2 = ess.coeff(1);
-        for (Index j = 0; j < ncol; j++, x += stride)
+        const Scalar* const x_end = x + ncol * stride;
+        for (; x < x_end; x += stride)
         {
             const Scalar tvx = tau * (x[0] + v1 * x[1] + v2 * x[2]);
             x[0] -= tvx;
@@ -195,8 +196,7 @@ private:
     {
         for (Index k = im; k <= iu - 2; ++k)
         {
-            bool first_iter = (k == im);
-
+            const bool first_iter = (k == im);
             Vector3s v;
             if (first_iter)
                 v = first_householder_vec;
@@ -345,6 +345,16 @@ public:
             throw std::logic_error("UpperHessenbergSchur: need to call compute() first");
 
         return m_U;
+    }
+
+    void swap_T(Matrix& other)
+    {
+        m_T.swap(other);
+    }
+
+    void swap_U(Matrix& other)
+    {
+        m_U.swap(other);
     }
 };
 
