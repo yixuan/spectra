@@ -32,9 +32,9 @@ private:
     using GenericMatrix = Eigen::Ref<Matrix>;
     using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
 
-    Index m_n;       // Size of the matrix
-    Matrix m_T;      // T matrix, A = UTU'
-    Matrix m_U;      // U matrix, A = UTU'
+    Index m_n;   // Size of the matrix
+    Matrix m_T;  // T matrix, A = UTU'
+    Matrix m_U;  // U matrix, A = UTU'
     bool m_computed;
 
     // L1 norm of an upper Hessenberg matrix
@@ -79,7 +79,7 @@ private:
         m_T.coeffRef(iu, iu) += ex_shift;
         m_T.coeffRef(iu - 1, iu - 1) += ex_shift;
 
-        if (q >= Scalar(0)) // Two real eigenvalues
+        if (q >= Scalar(0))  // Two real eigenvalues
         {
             Scalar z = sqrt(abs(q));
             Eigen::JacobiRotation<Scalar> rot;
@@ -141,10 +141,10 @@ private:
         using std::abs;
 
         const Scalar eps = Eigen::NumTraits<Scalar>::epsilon();
-        Vector3s& v = first_householder_vec; // alias to save typing
+        Vector3s& v = first_householder_vec;  // alias to save typing
         for (im = iu - 2; im >= il; --im)
         {
-            const Scalar Tmm = m_T.coeff(im,im);
+            const Scalar Tmm = m_T.coeff(im, im);
             const Scalar r = shift_info.coeff(0) - Tmm;
             const Scalar s = shift_info.coeff(1) - Tmm;
             v.coeffRef(0) = (r * s - shift_info.coeff(2)) / m_T.coeff(im + 1, im) + m_T.coeff(im, im + 1);
@@ -207,7 +207,7 @@ private:
             Vector2s ess;
             v.makeHouseholder(ess, tau, beta);
 
-            if (beta != Scalar(0)) // if v is not zero
+            if (beta != Scalar(0))  // if v is not zero
             {
                 if (first_iter && k > il)
                     m_T.coeffRef(k, k - 1) = -m_T.coeff(k, k - 1);
@@ -229,7 +229,7 @@ private:
         Scalar beta;
         rot.makeGivens(m_T.coeff(iu - 1, iu - 2), m_T.coeff(iu, iu - 2), &beta);
 
-        if (beta != Scalar(0)) // if v is not zero
+        if (beta != Scalar(0))  // if v is not zero
         {
             m_T.coeffRef(iu - 1, iu - 2) = beta;
             m_T.coeffRef(iu, iu - 2) = Scalar(0);
@@ -280,9 +280,9 @@ public:
         // Rows il,...,iu is the part we are working on (the active window).
         // Rows iu+1,...,end are already brought in triangular form.
         Index iu = m_n - 1;
-        Index iter = 0;       // iteration count for current eigenvalue
-        Index total_iter = 0; // iteration count for whole matrix
-        Scalar ex_shift(0);   // sum of exceptional shifts
+        Index iter = 0;        // iteration count for current eigenvalue
+        Index total_iter = 0;  // iteration count for whole matrix
+        Scalar ex_shift(0);    // sum of exceptional shifts
         const Scalar norm = upper_hessenberg_l1_norm(m_T);
         // sub-diagonal entries smaller than near_0 will be treated as zero.
         // We use eps^2 to enable more precision in small eigenvalues.
@@ -296,7 +296,7 @@ public:
                 Index il = find_small_subdiag(iu, near_0);
 
                 // Check for convergence
-                if (il == iu) // One root found
+                if (il == iu)  // One root found
                 {
                     m_T.coeffRef(iu, iu) += ex_shift;
                     if (iu > 0)
@@ -304,13 +304,13 @@ public:
                     iu--;
                     iter = 0;
                 }
-                else if (il == iu - 1) // Two roots found
+                else if (il == iu - 1)  // Two roots found
                 {
                     split_off_two_rows(iu, ex_shift);
                     iu -= 2;
                     iter = 0;
                 }
-                else // No convergence yet
+                else  // No convergence yet
                 {
                     Vector3s first_householder_vec = Vector3s::Zero(), shift_info;
                     compute_shift(iu, iter, ex_shift, shift_info);
