@@ -40,7 +40,7 @@ if(CLANG_FORMAT_EXECUTABLE)
                    "${clang_format_version}")
     # CLANG_FORMAT_VERSION sample: "3.9.1"
   else()
-    set(CLANG_FORMAT_VERSION 0.0)
+    set(CLANG_FORMAT_VERSION "${clang_format_version}")
   endif()
 else()
   set(CLANG_FORMAT_VERSION 0.0)
