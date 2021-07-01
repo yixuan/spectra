@@ -10,22 +10,22 @@ libraries, based on the following environment setting:
 
 <h4><span class="label label-success">Hardware</span></h4>
 
-- CPU: Intel Core i7-4700HQ 2.40GHz x 8
-- Memory: 8GB
+- CPU: Intel Core i7-11800H 2.30GHz x 16
+- Memory: 32GB
 
 <h4><span class="label label-success">Software</span></h4>
 
-- OS: Fedora 24 64-bit
-- Compiler: GCC 6.3.1 with flag `g++ -Wall -O2 -mtune=native -mavx`
-- Spectra: version 0.5.0
-- BLAS: OpenBLAS 0.2.19, single threaded
-- ARPACK: ARPACK-NG 3.3.0
-- R: version 3.3.2
+- OS: Solus 4.2 64-bit
+- Compiler: Clang 11.1.0 with flag `clang++ -Wall -O2 -march=native`
+- Spectra: v1.0.0
+- BLAS: OpenBLAS 0.3.15, single threaded
+- ARPACK: ARPACK-NG 3.7.0
+- R: version 4.1.0
 - R packages
-  - RSpectra 0.12-0
-  - svd 0.4
-  - irlba 2.1.2
-  - microbenchmark 1.4.2.1
+  - RSpectra 0.16-0
+  - svd 0.5
+  - irlba 2.3.3
+  - microbenchmark 1.4.7
 
 ### Comparison with ARPACK
 
@@ -96,7 +96,7 @@ dat$type = ifelse(grepl("sparse", dat$expr), "Matrix type: Sparse",
 dat$expr = factor(gsub("\\[sparse\\]", "", dat$expr),
                   levels = c("svd", "irlba", "propack", "trlan", "svds"))
 dat = dat %>% group_by(expr, type) %>% summarize(medtime = median(time) / 1e6)
-dat$Package = ifelse(grepl("svds", dat$expr), "Spectra", "Other")
+dat$Package = ifelse(grepl("svds", dat$expr), "RSpectra", "Other")
 
 ggplot(dat, aes(x = expr, y = medtime)) +
     facet_wrap(~ type, scales = "free", ncol = 2) +
