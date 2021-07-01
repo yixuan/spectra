@@ -110,7 +110,7 @@ void run_eigs_gen(int n_experiment, int n_replicate, int n, int k, int m)
 int main()
 {
     std::srand(123);
-    int n_experiment = 5;
+    int n_experiment = 10;
     int n_replicate = 10;
 
     print_header("eigs_sym");

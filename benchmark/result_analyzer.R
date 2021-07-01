@@ -24,7 +24,7 @@ sym_medtime = sym_dat %>%
 sym_medtime$Size = paste("Matrix size:", sym_medtime$Size)
 
 ggplot(sym_medtime, aes(x = factor(Dataset), y = Medtime)) +
-    geom_bar(aes(fill = Package), position = "dodge", stat = "identity") +
+    geom_bar(aes(fill = Package), width = 0.75, position = "dodge", stat = "identity") +
     facet_wrap(~ Size, scales = "free", ncol = 2) +
     xlab("Matrix ID") + ylab("Median Elapsed Time (ms)") +
     ggtitle("Symmetric Eigen Solver") +
@@ -50,7 +50,7 @@ gen_medtime = gen_dat %>%
 gen_medtime$Size = paste("Matrix size:", gen_medtime$Size)
 
 ggplot(gen_medtime, aes(x = factor(Dataset), y = Medtime)) +
-    geom_bar(aes(fill = Package), position = "dodge", stat = "identity") +
+    geom_bar(aes(fill = Package), width = 0.75, position = "dodge", stat = "identity") +
     facet_wrap(~ Size, scales = "free", ncol = 2) +
     xlab("Matrix ID") + ylab("Median Elapsed Time (ms)") +
     ggtitle("General Eigen Solver") +
