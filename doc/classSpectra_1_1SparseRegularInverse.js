@@ -1,7 +1,7 @@
 var classSpectra_1_1SparseRegularInverse =
 [
     [ "Scalar", "classSpectra_1_1SparseRegularInverse.html#a939fd3fa65bc85f18ce5360897c0790f", null ],
-    [ "SparseRegularInverse", "classSpectra_1_1SparseRegularInverse.html#a6dcfc48248913a9194eb3b558249837c", null ],
+    [ "SparseRegularInverse", "classSpectra_1_1SparseRegularInverse.html#a4214922ec516233aae01da7c95468af2", null ],
     [ "rows", "classSpectra_1_1SparseRegularInverse.html#ad8155bb8f5cb278d4b3afd00fca3fc28", null ],
     [ "cols", "classSpectra_1_1SparseRegularInverse.html#a10c172e345d8ab33e3c7a663a41c448d", null ],
     [ "info", "classSpectra_1_1SparseRegularInverse.html#a0b80cfd0995d862611841a2320651c82", null ],

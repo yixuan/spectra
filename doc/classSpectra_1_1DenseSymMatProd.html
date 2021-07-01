@@ -108,8 +108,9 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af53882688093b0acd772ae66545113d4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseSymMatProd.html#af53882688093b0acd772ae66545113d4">DenseSymMatProd</a> (ConstGenericMatrix &amp;mat)</td></tr>
-<tr class="separator:af53882688093b0acd772ae66545113d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af466962805e047302cca22c8971bc122"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:af466962805e047302cca22c8971bc122"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseSymMatProd.html#af466962805e047302cca22c8971bc122">DenseSymMatProd</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;mat)</td></tr>
+<tr class="separator:af466962805e047302cca22c8971bc122"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c7291daf9f14c06718977677a926fb4"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseSymMatProd.html#a2c7291daf9f14c06718977677a926fb4">rows</a> () const</td></tr>
 <tr class="separator:a2c7291daf9f14c06718977677a926fb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a99338da4a5a26daae6b740fc1425a975"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseSymMatProd.html#a99338da4a5a26daae6b740fc1425a975">cols</a> () const</td></tr>
@@ -125,9 +126,17 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor&gt;<br />
 class Spectra::DenseSymMatProd&lt; Scalar_, Uplo, Flags &gt;</h3>
 
-<p>This class defines the matrix-vector multiplication operation on a symmetric real matrix \(A\), i.e., calculating \(y=Ax\) for any vector \(x\). It is mainly used in the <a class="el" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver</a> eigen solver. </p>
+<p>This class defines the matrix-vector multiplication operation on a symmetric real matrix \(A\), i.e., calculating \(y=Ax\) for any vector \(x\). It is mainly used in the <a class="el" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver</a> eigen solver.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Scalar_</td><td>The element type of the matrix, for example, <code>float</code>, <code>double</code>, and <code>long double</code>. </td></tr>
+    <tr><td class="paramname">Uplo</td><td>Either <code>Eigen::Lower</code> or <code>Eigen::Upper</code>, indicating which triangular part of the matrix is used. </td></tr>
+    <tr><td class="paramname">Flags</td><td>Either <code>Eigen::ColMajor</code> or <code>Eigen::RowMajor</code>, indicating the storage format of the input matrix. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00022">22</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00029">29</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="ab9a854de8bc6f0d62da2362b08e38607"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab9a854de8bc6f0d62da2362b08e38607">&#9670;&nbsp;</a></span>Scalar</h2>
@@ -144,18 +153,20 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
 </div><div class="memdoc">
 <p>Element type of the matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00028">28</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00035">35</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="af53882688093b0acd772ae66545113d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af53882688093b0acd772ae66545113d4">&#9670;&nbsp;</a></span>DenseSymMatProd()</h2>
+<a id="af466962805e047302cca22c8971bc122"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af466962805e047302cca22c8971bc122">&#9670;&nbsp;</a></span>DenseSymMatProd()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor&gt; </div>
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -163,7 +174,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
         <tr>
           <td class="memname"><a class="el" href="classSpectra_1_1DenseSymMatProd.html">Spectra::DenseSymMatProd</a>&lt; Scalar_, Uplo, Flags &gt;::<a class="el" href="classSpectra_1_1DenseSymMatProd.html">DenseSymMatProd</a> </td>
           <td>(</td>
-          <td class="paramtype">ConstGenericMatrix &amp;&#160;</td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;&#160;</td>
           <td class="paramname"><em>mat</em></td><td>)</td>
           <td></td>
         </tr>
@@ -182,7 +193,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00049">49</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00057">57</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
 
 </div>
 </div>
@@ -213,7 +224,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
 </div><div class="memdoc">
 <p>Return the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00056">56</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00068">68</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
 
 </div>
 </div>
@@ -243,7 +254,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
 </div><div class="memdoc">
 <p>Return the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00060">60</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00072">72</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
 
 </div>
 </div>
@@ -291,7 +302,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00069">69</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00081">81</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
 
 </div>
 </div>
@@ -322,7 +333,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
 </div><div class="memdoc">
 <p>Perform the matrix-matrix multiplication operation \(y=Ax\). </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00079">79</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00091">91</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
 
 </div>
 </div>
@@ -363,7 +374,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
 </div><div class="memdoc">
 <p>Extract (i,j) element of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00087">87</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseSymMatProd_8h_source.html#l00099">99</a> of file <a class="el" href="DenseSymMatProd_8h_source.html">DenseSymMatProd.h</a>.</p>
 
 </div>
 </div>

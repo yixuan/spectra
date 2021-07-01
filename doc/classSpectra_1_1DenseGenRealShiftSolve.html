@@ -108,8 +108,9 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1ae28485f903644c1ccdd4267db9b7c9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseGenRealShiftSolve.html#a1ae28485f903644c1ccdd4267db9b7c9">DenseGenRealShiftSolve</a> (ConstGenericMatrix &amp;mat)</td></tr>
-<tr class="separator:a1ae28485f903644c1ccdd4267db9b7c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b7ad72e056d661503b6832eafa73466"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:a9b7ad72e056d661503b6832eafa73466"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseGenRealShiftSolve.html#a9b7ad72e056d661503b6832eafa73466">DenseGenRealShiftSolve</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;mat)</td></tr>
+<tr class="separator:a9b7ad72e056d661503b6832eafa73466"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37c53366d7462e6930b175072cd9f055"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseGenRealShiftSolve.html#a37c53366d7462e6930b175072cd9f055">rows</a> () const</td></tr>
 <tr class="separator:a37c53366d7462e6930b175072cd9f055"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afdcb4c5f0c41c44f849339f6b97598cf"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseGenRealShiftSolve.html#afdcb4c5f0c41c44f849339f6b97598cf">cols</a> () const</td></tr>
@@ -123,9 +124,16 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;typename Scalar_, int Flags = Eigen::ColMajor&gt;<br />
 class Spectra::DenseGenRealShiftSolve&lt; Scalar_, Flags &gt;</h3>
 
-<p>This class defines the shift-solve operation on a general real matrix \(A\), i.e., calculating \(y=(A-\sigma I)^{-1}x\) for any real \(\sigma\) and vector \(x\). It is mainly used in the <a class="el" href="classSpectra_1_1GenEigsRealShiftSolver.html">GenEigsRealShiftSolver</a> eigen solver. </p>
+<p>This class defines the shift-solve operation on a general real matrix \(A\), i.e., calculating \(y=(A-\sigma I)^{-1}x\) for any real \(\sigma\) and vector \(x\). It is mainly used in the <a class="el" href="classSpectra_1_1GenEigsRealShiftSolver.html">GenEigsRealShiftSolver</a> eigen solver.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Scalar_</td><td>The element type of the matrix, for example, <code>float</code>, <code>double</code>, and <code>long double</code>. </td></tr>
+    <tr><td class="paramname">Flags</td><td>Either <code>Eigen::ColMajor</code> or <code>Eigen::RowMajor</code>, indicating the storage format of the input matrix. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00024">24</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00029">29</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a0012af1b5473f2cecb104eb3a9a4a40e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0012af1b5473f2cecb104eb3a9a4a40e">&#9670;&nbsp;</a></span>Scalar</h2>
@@ -142,18 +150,20 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
 </div><div class="memdoc">
 <p>Element type of the matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00030">30</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00035">35</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a1ae28485f903644c1ccdd4267db9b7c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ae28485f903644c1ccdd4267db9b7c9">&#9670;&nbsp;</a></span>DenseGenRealShiftSolve()</h2>
+<a id="a9b7ad72e056d661503b6832eafa73466"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b7ad72e056d661503b6832eafa73466">&#9670;&nbsp;</a></span>DenseGenRealShiftSolve()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -161,7 +171,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classSpectra_1_1DenseGenRealShiftSolve.html">Spectra::DenseGenRealShiftSolve</a>&lt; Scalar_, Flags &gt;::<a class="el" href="classSpectra_1_1DenseGenRealShiftSolve.html">DenseGenRealShiftSolve</a> </td>
           <td>(</td>
-          <td class="paramtype">ConstGenericMatrix &amp;&#160;</td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;&#160;</td>
           <td class="paramname"><em>mat</em></td><td>)</td>
           <td></td>
         </tr>
@@ -180,7 +190,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00053">53</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00059">59</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -211,7 +221,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
 </div><div class="memdoc">
 <p>Return the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00063">63</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00073">73</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -241,7 +251,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
 </div><div class="memdoc">
 <p>Return the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00067">67</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00077">77</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -272,7 +282,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
 </div><div class="memdoc">
 <p>Set the real shift \(\sigma\). </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00072">72</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00082">82</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -320,7 +330,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00084">84</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenRealShiftSolve_8h_source.html#l00094">94</a> of file <a class="el" href="DenseGenRealShiftSolve_8h_source.html">DenseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>

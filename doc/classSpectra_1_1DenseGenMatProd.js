@@ -1,7 +1,7 @@
 var classSpectra_1_1DenseGenMatProd =
 [
     [ "Scalar", "classSpectra_1_1DenseGenMatProd.html#a7a107b9bf715027e4df6053e71772a11", null ],
-    [ "DenseGenMatProd", "classSpectra_1_1DenseGenMatProd.html#a06785471b91661c815d8ce42c668a7d4", null ],
+    [ "DenseGenMatProd", "classSpectra_1_1DenseGenMatProd.html#a0332aecfb2d7c8a2377cae511e753728", null ],
     [ "rows", "classSpectra_1_1DenseGenMatProd.html#afc89c70afef2cde8277fae2c221fbbbf", null ],
     [ "cols", "classSpectra_1_1DenseGenMatProd.html#a08f79924e8e793def51e51e3326fc374", null ],
     [ "perform_op", "classSpectra_1_1DenseGenMatProd.html#abefbd862706667fe19baba64aaea010a", null ],

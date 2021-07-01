@@ -108,8 +108,9 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9245d66b671cca589b2c36efd240748f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html#a9245d66b671cca589b2c36efd240748f">SparseGenRealShiftSolve</a> (ConstGenericSparseMatrix &amp;mat)</td></tr>
-<tr class="separator:a9245d66b671cca589b2c36efd240748f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6e4b7bacd4206980dfb15d3cdcab4d9"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:ab6e4b7bacd4206980dfb15d3cdcab4d9"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html#ab6e4b7bacd4206980dfb15d3cdcab4d9">SparseGenRealShiftSolve</a> (const Eigen::SparseMatrixBase&lt; Derived &gt; &amp;mat)</td></tr>
+<tr class="separator:ab6e4b7bacd4206980dfb15d3cdcab4d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1fa4e93c5be5119209ee0a730a1352cb"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html#a1fa4e93c5be5119209ee0a730a1352cb">rows</a> () const</td></tr>
 <tr class="separator:a1fa4e93c5be5119209ee0a730a1352cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97b5dfaa186fd0c148d6c08547804f15"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html#a97b5dfaa186fd0c148d6c08547804f15">cols</a> () const</td></tr>
@@ -123,9 +124,17 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;typename Scalar_, int Flags = Eigen::ColMajor, typename StorageIndex = int&gt;<br />
 class Spectra::SparseGenRealShiftSolve&lt; Scalar_, Flags, StorageIndex &gt;</h3>
 
-<p>This class defines the shift-solve operation on a sparse real matrix \(A\), i.e., calculating \(y=(A-\sigma I)^{-1}x\) for any real \(\sigma\) and vector \(x\). It is mainly used in the <a class="el" href="classSpectra_1_1GenEigsRealShiftSolver.html">GenEigsRealShiftSolver</a> eigen solver. </p>
+<p>This class defines the shift-solve operation on a sparse real matrix \(A\), i.e., calculating \(y=(A-\sigma I)^{-1}x\) for any real \(\sigma\) and vector \(x\). It is mainly used in the <a class="el" href="classSpectra_1_1GenEigsRealShiftSolver.html">GenEigsRealShiftSolver</a> eigen solver.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Scalar_</td><td>The element type of the matrix, for example, <code>float</code>, <code>double</code>, and <code>long double</code>. </td></tr>
+    <tr><td class="paramname">Flags</td><td>Either <code>Eigen::ColMajor</code> or <code>Eigen::RowMajor</code>, indicating the storage format of the input matrix. </td></tr>
+    <tr><td class="paramname">StorageIndex</td><td>The type of the indices for the sparse matrix. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00025">25</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00031">31</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a6c16a3fb9fbdb739543482fe040172ea"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6c16a3fb9fbdb739543482fe040172ea">&#9670;&nbsp;</a></span>Scalar</h2>
@@ -142,18 +151,20 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor, typename StorageInde
 </div><div class="memdoc">
 <p>Element type of the matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00031">31</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00037">37</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a9245d66b671cca589b2c36efd240748f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9245d66b671cca589b2c36efd240748f">&#9670;&nbsp;</a></span>SparseGenRealShiftSolve()</h2>
+<a id="ab6e4b7bacd4206980dfb15d3cdcab4d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6e4b7bacd4206980dfb15d3cdcab4d9">&#9670;&nbsp;</a></span>SparseGenRealShiftSolve()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Scalar_ , int Flags = Eigen::ColMajor, typename StorageIndex  = int&gt; </div>
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -161,7 +172,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor, typename StorageInde
         <tr>
           <td class="memname"><a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html">Spectra::SparseGenRealShiftSolve</a>&lt; Scalar_, Flags, StorageIndex &gt;::<a class="el" href="classSpectra_1_1SparseGenRealShiftSolve.html">SparseGenRealShiftSolve</a> </td>
           <td>(</td>
-          <td class="paramtype">ConstGenericSparseMatrix &amp;&#160;</td>
+          <td class="paramtype">const Eigen::SparseMatrixBase&lt; Derived &gt; &amp;&#160;</td>
           <td class="paramname"><em>mat</em></td><td>)</td>
           <td></td>
         </tr>
@@ -180,7 +191,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor, typename StorageInde
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00053">53</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00060">60</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -211,7 +222,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor, typename StorageInde
 </div><div class="memdoc">
 <p>Return the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00063">63</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00074">74</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -241,7 +252,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor, typename StorageInde
 </div><div class="memdoc">
 <p>Return the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00067">67</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00078">78</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -272,7 +283,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor, typename StorageInde
 </div><div class="memdoc">
 <p>Set the real shift \(\sigma\). </p>
 
-<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00072">72</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00083">83</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>
@@ -320,7 +331,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor, typename StorageInde
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00089">89</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SparseGenRealShiftSolve_8h_source.html#l00100">100</a> of file <a class="el" href="SparseGenRealShiftSolve_8h_source.html">SparseGenRealShiftSolve.h</a>.</p>
 
 </div>
 </div>

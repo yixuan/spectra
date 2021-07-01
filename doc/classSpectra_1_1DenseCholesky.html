@@ -108,8 +108,9 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0ff5d6241d1a853fab3ea595b8395c5a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#a0ff5d6241d1a853fab3ea595b8395c5a">DenseCholesky</a> (ConstGenericMatrix &amp;mat)</td></tr>
-<tr class="separator:a0ff5d6241d1a853fab3ea595b8395c5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada6568b1151b98a4cd86410df3c76df4"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:ada6568b1151b98a4cd86410df3c76df4"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#ada6568b1151b98a4cd86410df3c76df4">DenseCholesky</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;mat)</td></tr>
+<tr class="separator:ada6568b1151b98a4cd86410df3c76df4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2aa0f9e4c4669084f2216f52792aaa70"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#a2aa0f9e4c4669084f2216f52792aaa70">rows</a> () const</td></tr>
 <tr class="separator:a2aa0f9e4c4669084f2216f52792aaa70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39105f30e561707eb6107aab1d1f99fa"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseCholesky.html#a39105f30e561707eb6107aab1d1f99fa">cols</a> () const</td></tr>
@@ -125,9 +126,17 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;typename Scalar_, int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor&gt;<br />
 class Spectra::DenseCholesky&lt; Scalar_, Uplo, Flags &gt;</h3>
 
-<p>This class defines the operations related to Cholesky decomposition on a positive definite matrix, \(B=LL&#39;\), where \(L\) is a lower triangular matrix. It is mainly used in the <a class="el" href="classSpectra_1_1SymGEigsSolver.html">SymGEigsSolver</a> generalized eigen solver in the Cholesky decomposition mode. </p>
+<p>This class defines the operations related to Cholesky decomposition on a positive definite matrix, \(B=LL&#39;\), where \(L\) is a lower triangular matrix. It is mainly used in the <a class="el" href="classSpectra_1_1SymGEigsSolver.html">SymGEigsSolver</a> generalized eigen solver in the Cholesky decomposition mode.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Scalar_</td><td>The element type of the matrix, for example, <code>float</code>, <code>double</code>, and <code>long double</code>. </td></tr>
+    <tr><td class="paramname">Uplo</td><td>Either <code>Eigen::Lower</code> or <code>Eigen::Upper</code>, indicating which triangular part of the matrix is used. </td></tr>
+    <tr><td class="paramname">Flags</td><td>Either <code>Eigen::ColMajor</code> or <code>Eigen::RowMajor</code>, indicating the storage format of the input matrix. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00027">27</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00034">34</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a95174a7f18a4e915e4dbe9eb680014e0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a95174a7f18a4e915e4dbe9eb680014e0">&#9670;&nbsp;</a></span>Scalar</h2>
@@ -144,18 +153,20 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
 </div><div class="memdoc">
 <p>Element type of the matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00033">33</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00040">40</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a0ff5d6241d1a853fab3ea595b8395c5a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ff5d6241d1a853fab3ea595b8395c5a">&#9670;&nbsp;</a></span>DenseCholesky()</h2>
+<a id="ada6568b1151b98a4cd86410df3c76df4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada6568b1151b98a4cd86410df3c76df4">&#9670;&nbsp;</a></span>DenseCholesky()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMajor&gt; </div>
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -163,7 +174,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
         <tr>
           <td class="memname"><a class="el" href="classSpectra_1_1DenseCholesky.html">Spectra::DenseCholesky</a>&lt; Scalar_, Uplo, Flags &gt;::<a class="el" href="classSpectra_1_1DenseCholesky.html">DenseCholesky</a> </td>
           <td>(</td>
-          <td class="paramtype">ConstGenericMatrix &amp;&#160;</td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;&#160;</td>
           <td class="paramname"><em>mat</em></td><td>)</td>
           <td></td>
         </tr>
@@ -182,7 +193,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00056">56</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00063">63</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -213,7 +224,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
 </div><div class="memdoc">
 <p>Returns the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00071">71</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00082">82</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -243,7 +254,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
 </div><div class="memdoc">
 <p>Returns the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00075">75</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00086">86</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -273,7 +284,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
 </div><div class="memdoc">
 <p>Returns the status of the computation. The full list of enumeration values can be found in <a class="el" href="group__Enumerations.html">Enumerations</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00081">81</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00092">92</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -321,7 +332,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00090">90</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00101">101</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>
@@ -369,7 +380,7 @@ template&lt;typename Scalar_ , int Uplo = Eigen::Lower, int Flags = Eigen::ColMa
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00104">104</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseCholesky_8h_source.html#l00115">115</a> of file <a class="el" href="DenseCholesky_8h_source.html">DenseCholesky.h</a>.</p>
 
 </div>
 </div>

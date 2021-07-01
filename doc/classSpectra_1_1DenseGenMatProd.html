@@ -108,8 +108,9 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a06785471b91661c815d8ce42c668a7d4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseGenMatProd.html#a06785471b91661c815d8ce42c668a7d4">DenseGenMatProd</a> (ConstGenericMatrix &amp;mat)</td></tr>
-<tr class="separator:a06785471b91661c815d8ce42c668a7d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0332aecfb2d7c8a2377cae511e753728"><td class="memTemplParams" colspan="2">template&lt;typename Derived &gt; </td></tr>
+<tr class="memitem:a0332aecfb2d7c8a2377cae511e753728"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseGenMatProd.html#a0332aecfb2d7c8a2377cae511e753728">DenseGenMatProd</a> (const Eigen::MatrixBase&lt; Derived &gt; &amp;mat)</td></tr>
+<tr class="separator:a0332aecfb2d7c8a2377cae511e753728"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afc89c70afef2cde8277fae2c221fbbbf"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseGenMatProd.html#afc89c70afef2cde8277fae2c221fbbbf">rows</a> () const</td></tr>
 <tr class="separator:afc89c70afef2cde8277fae2c221fbbbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08f79924e8e793def51e51e3326fc374"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSpectra_1_1DenseGenMatProd.html#a08f79924e8e793def51e51e3326fc374">cols</a> () const</td></tr>
@@ -125,9 +126,16 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><h3>template&lt;typename Scalar_, int Flags = Eigen::ColMajor&gt;<br />
 class Spectra::DenseGenMatProd&lt; Scalar_, Flags &gt;</h3>
 
-<p>This class defines the matrix-vector multiplication operation on a general real matrix \(A\), i.e., calculating \(y=Ax\) for any vector \(x\). It is mainly used in the <a class="el" href="classSpectra_1_1GenEigsSolver.html">GenEigsSolver</a> and <a class="el" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver</a> eigen solvers. </p>
+<p>This class defines the matrix-vector multiplication operation on a general real matrix \(A\), i.e., calculating \(y=Ax\) for any vector \(x\). It is mainly used in the <a class="el" href="classSpectra_1_1GenEigsSolver.html">GenEigsSolver</a> and <a class="el" href="classSpectra_1_1SymEigsSolver.html">SymEigsSolver</a> eigen solvers.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Scalar_</td><td>The element type of the matrix, for example, <code>float</code>, <code>double</code>, and <code>long double</code>. </td></tr>
+    <tr><td class="paramname">Flags</td><td>Either <code>Eigen::ColMajor</code> or <code>Eigen::RowMajor</code>, indicating the storage format of the input matrix. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00029">29</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00034">34</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a7a107b9bf715027e4df6053e71772a11"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7a107b9bf715027e4df6053e71772a11">&#9670;&nbsp;</a></span>Scalar</h2>
@@ -144,18 +152,20 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
 </div><div class="memdoc">
 <p>Element type of the matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00035">35</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00040">40</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a06785471b91661c815d8ce42c668a7d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06785471b91661c815d8ce42c668a7d4">&#9670;&nbsp;</a></span>DenseGenMatProd()</h2>
+<a id="a0332aecfb2d7c8a2377cae511e753728"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0332aecfb2d7c8a2377cae511e753728">&#9670;&nbsp;</a></span>DenseGenMatProd()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
+<div class="memtemplate">
+template&lt;typename Derived &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -163,7 +173,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classSpectra_1_1DenseGenMatProd.html">Spectra::DenseGenMatProd</a>&lt; Scalar_, Flags &gt;::<a class="el" href="classSpectra_1_1DenseGenMatProd.html">DenseGenMatProd</a> </td>
           <td>(</td>
-          <td class="paramtype">ConstGenericMatrix &amp;&#160;</td>
+          <td class="paramtype">const Eigen::MatrixBase&lt; Derived &gt; &amp;&#160;</td>
           <td class="paramname"><em>mat</em></td><td>)</td>
           <td></td>
         </tr>
@@ -182,7 +192,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00056">56</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00062">62</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
 
 </div>
 </div>
@@ -213,7 +223,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
 </div><div class="memdoc">
 <p>Return the number of rows of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00063">63</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00073">73</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
 
 </div>
 </div>
@@ -243,7 +253,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
 </div><div class="memdoc">
 <p>Return the number of columns of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00067">67</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00077">77</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
 
 </div>
 </div>
@@ -291,7 +301,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00076">76</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00086">86</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
 
 </div>
 </div>
@@ -322,7 +332,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
 </div><div class="memdoc">
 <p>Perform the matrix-matrix multiplication operation \(y=Ax\). </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00086">86</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00096">96</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
 
 </div>
 </div>
@@ -363,7 +373,7 @@ template&lt;typename Scalar_ , int Flags = Eigen::ColMajor&gt; </div>
 </div><div class="memdoc">
 <p>Extract (i,j) element of the underlying matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00094">94</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="DenseGenMatProd_8h_source.html#l00104">104</a> of file <a class="el" href="DenseGenMatProd_8h_source.html">DenseGenMatProd.h</a>.</p>
 
 </div>
 </div>
