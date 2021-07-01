@@ -49,11 +49,8 @@ public:
         }
     }
 
-    DavidsonSymEigsSolver(OpType& op, Index nev){ 
-        Index nvec_max = 10 * nev;
-        Index nvec_init = 2 * nev;
-        DavidsonSymEigsSolver(op, nev, nvec_init, nvec_max);
-    }
+    DavidsonSymEigsSolver(OpType& op, Index nev) :
+        DavidsonSymEigsSolver(op, nev, 2 * nev, 10 * nev) {}
 
     /// Create initial search space based on the diagonal
     /// and the spectrum'target (highest or lowest)

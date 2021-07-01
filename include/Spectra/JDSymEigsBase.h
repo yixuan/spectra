@@ -58,6 +58,20 @@ private:
             throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
     }
 
+    void initialize()
+    {
+        //TODO better input validation and checks
+        if (m_matrix_operator.cols() < m_max_search_space_size)
+        {
+            m_max_search_space_size = m_matrix_operator.cols();
+        }
+        if (m_matrix_operator.cols() < m_initial_search_space_size + m_correction_size)
+        {
+            m_initial_search_space_size = m_matrix_operator.cols() / 3;
+            m_correction_size = m_matrix_operator.cols() / 3;
+        }
+    }
+
 public:
     JDSymEigsBase(OpType& op, Index nev, Index nvec_init, Index nvec_max) :
         m_matrix_operator(op),
@@ -67,18 +81,11 @@ public:
         m_correction_size(m_number_eigenvalues)
     {
         check_argument();
-        //TODO better input validation and checks
-        if (op.cols() < m_max_search_space_size)
-        {
-            m_max_search_space_size = op.cols();
-        }
-
-        if (op.cols() < m_initial_search_space_size + m_correction_size)
-        {
-            m_initial_search_space_size = op.cols() / 3;
-            m_correction_size = op.cols() / 3;
-        }
+        initialize();
     }
+
+    JDSymEigsBase(OpType& op, Index nev) :
+        JDSymEigsBase(op, nev, 2 * nev, 10 * nev) {}
 
     ///
     /// Sets the Maxmium SearchspaceSize after which is deflated
