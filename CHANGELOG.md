@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.0.0] - 2021-07-01
 ### Added
 - Added version macros `SPECTRA_MAJOR_VERSION`, `SPECTRA_MINOR_VERSION`,
   `SPECTRA_PATCH_VERSION`, and `SPECTRA_VERSION` that are included by all eigen solvers
@@ -52,7 +52,7 @@
 - More sensible test for orthogonality in generating new random vectors in the
   `Lanczos` and `Arnoldi` processes
 - In symmetric eigen solvers large shifts are applied first to increase precision
-- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.13.4
+- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.13.6
 
 
 ## [0.9.0] - 2020-05-19
