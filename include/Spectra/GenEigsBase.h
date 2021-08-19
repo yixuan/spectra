@@ -13,6 +13,7 @@
 #include <algorithm>  // std::min, std::copy
 #include <complex>    // std::complex, std::conj, std::norm, std::abs
 #include <stdexcept>  // std::invalid_argument
+#include <memory>     // std::unique_ptr
 
 #include "Util/Version.h"
 #include "Util/TypeTraits.h"
@@ -24,6 +25,7 @@
 #include "LinAlg/DoubleShiftQR.h"
 #include "LinAlg/UpperHessenbergEigen.h"
 #include "LinAlg/Arnoldi.h"
+#include "LoggerBase.h"
 
 namespace Spectra {
 
@@ -70,10 +72,12 @@ protected:
     ComplexVector m_ritz_val;  // Ritz values
     ComplexMatrix m_ritz_vec;  // Ritz vectors
     ComplexVector m_ritz_est;  // last row of m_ritz_vec, also called the Ritz estimates
+    ComplexVector m_resid;
 
 private:
     BoolArray     m_ritz_conv; // indicator of the convergence of Ritz values
     CompInfo      m_info;      // status of the computation
+    std::unique_ptr<LoggerBase<Scalar, ComplexVector>> m_logger;
     // clang-format on
 
     // Real Ritz values calculated from UpperHessenbergEigen have exact zero imaginary part
@@ -150,9 +154,9 @@ private:
 
         // thresh = tol * max(eps23, abs(theta)), theta for Ritz value
         Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(eps23);
-        Array resid = m_ritz_est.head(m_nev).array().abs() * m_fac.f_norm();
+        m_resid = m_ritz_est.head(m_nev).array().abs().matrix() * m_fac.f_norm();
         // Converged "wanted" Ritz values
-        m_ritz_conv = (resid < thresh);
+        m_ritz_conv = (m_resid.real().array() < thresh);
 
         return m_ritz_conv.count();
     }
@@ -322,7 +326,7 @@ protected:
 public:
     /// \cond
 
-    GenEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv) :
+    GenEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, std::unique_ptr<LoggerBase<Scalar, ComplexVector>> logger = nullptr) :
         m_op(op),
         m_n(m_op.rows()),
         m_nev(nev),
@@ -337,8 +341,18 @@ public:
 
         if (ncv < nev + 2 || ncv > m_n)
             throw std::invalid_argument("ncv must satisfy nev + 2 <= ncv <= n, n is the size of matrix");
+
+        set_logger(logger);
     }
 
+    ///
+    /// Sets the logger unique_ptr with a user constructed logger object.
+    ///
+    void set_logger(std::unique_ptr<LoggerBase<Scalar, ComplexVector>>& logger)
+    {
+        if (logger)
+            m_logger = std::move(logger);
+    }
     ///
     /// Virtual destructor
     ///
@@ -362,11 +376,13 @@ public:
         m_ritz_vec.resize(m_ncv, m_nev);
         m_ritz_est.resize(m_ncv);
         m_ritz_conv.resize(m_nev);
+        m_resid.resize(m_nev);
 
         m_ritz_val.setZero();
         m_ritz_vec.setZero();
         m_ritz_est.setZero();
         m_ritz_conv.setZero();
+        m_resid.setZero();
 
         m_nmatop = 0;
         m_niter = 0;
@@ -425,6 +441,8 @@ public:
         for (i = 0; i < maxit; i++)
         {
             nconv = num_converged(tol);
+            if (m_logger)
+                m_logger->iteration_log(i, nconv, m_ncv, m_ritz_val.head(m_nev), m_resid, m_ritz_conv);
             if (nconv >= m_nev)
                 break;
 
