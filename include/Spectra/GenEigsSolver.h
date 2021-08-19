@@ -120,10 +120,13 @@ class GenEigsSolver : public GenEigsBase<OpType, IdentityBOp>
 {
 private:
     using Index = Eigen::Index;
+    using Scalar = typename OpType::Scalar;
+    using Complex = std::complex<Scalar>;
+    using ComplexVector = Eigen::Matrix<Complex, Eigen::Dynamic, 1>;
 
 public:
     ///
-    /// Constructor to create a solver object.
+    /// Constructor to create a solver object with logging.
     ///
     /// \param op   The matrix operation object that implements
     ///             the matrix-vector multiplication operation of \f$A\f$:
@@ -138,9 +141,10 @@ public:
     ///             also result in greater memory use and more matrix operations
     ///             in each iteration. This parameter must satisfy \f$nev+2 \le ncv \le n\f$,
     ///             and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
+    /// \param logger A logging object that inherits from the base class in LoggerBase.h
     ///
-    GenEigsSolver(OpType& op, Index nev, Index ncv) :
-        GenEigsBase<OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv)
+    GenEigsSolver(OpType& op, Index nev, Index ncv, std::unique_ptr<LoggerBase<Scalar, ComplexVector>> logger = nullptr) :
+        GenEigsBase<OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv, std::move(logger))
     {}
 };
 

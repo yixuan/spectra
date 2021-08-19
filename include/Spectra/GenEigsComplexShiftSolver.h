@@ -37,6 +37,7 @@ private:
     using Index = Eigen::Index;
     using Complex = std::complex<Scalar>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using ComplexVector = Eigen::Matrix<Complex, Eigen::Dynamic, 1>;
     using ComplexArray = Eigen::Array<Complex, Eigen::Dynamic, 1>;
 
     using Base = GenEigsBase<OpType, IdentityBOp>;
@@ -128,7 +129,7 @@ private:
 
 public:
     ///
-    /// Constructor to create a eigen solver object using the shift-and-invert mode.
+    /// Constructor to create a eigen solver object using the shift-and-invert mode with logging.
     ///
     /// \param op      The matrix operation object that implements
     ///                the complex shift-solve operation of \f$A\f$: calculating
@@ -145,9 +146,10 @@ public:
     ///                and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
     /// \param sigmar  The real part of the shift.
     /// \param sigmai  The imaginary part of the shift.
+    /// \param logger  A logging object that inherits from the base class in LoggerBase.h
     ///
-    GenEigsComplexShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigmar, const Scalar& sigmai) :
-        Base(op, IdentityBOp(), nev, ncv),
+    GenEigsComplexShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigmar, const Scalar& sigmai, std::unique_ptr<LoggerBase<Scalar, ComplexVector>> logger = nullptr) :
+        Base(op, IdentityBOp(), nev, ncv, std::move(logger)),
         m_sigmar(sigmar), m_sigmai(sigmai)
     {
         op.set_shift(m_sigmar, m_sigmai);

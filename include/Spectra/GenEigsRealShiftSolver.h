@@ -36,6 +36,7 @@ private:
     using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Complex = std::complex<Scalar>;
+    using ComplexVector = Eigen::Matrix<Complex, Eigen::Dynamic, 1>;
     using ComplexArray = Eigen::Array<Complex, Eigen::Dynamic, 1>;
 
     using Base = GenEigsBase<OpType, IdentityBOp>;
@@ -55,7 +56,7 @@ private:
 
 public:
     ///
-    /// Constructor to create a eigen solver object using the shift-and-invert mode.
+    /// Constructor to create a eigen solver object using the shift-and-invert mode with logging.
     ///
     /// \param op     The matrix operation object that implements
     ///               the shift-solve operation of \f$A\f$: calculating
@@ -71,9 +72,10 @@ public:
     ///               in each iteration. This parameter must satisfy \f$nev+2 \le ncv \le n\f$,
     ///               and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
     /// \param sigma  The real-valued shift.
+    /// \param logger A logging object that inherits from the base class in LoggerBase.h
     ///
-    GenEigsRealShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma) :
-        Base(op, IdentityBOp(), nev, ncv),
+    GenEigsRealShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma, std::unique_ptr<LoggerBase<Scalar, ComplexVector>> logger = nullptr) :
+        Base(op, IdentityBOp(), nev, ncv, std::move(logger)),
         m_sigma(sigma)
     {
         op.set_shift(m_sigma);
