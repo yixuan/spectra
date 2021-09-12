@@ -21,9 +21,22 @@ include(FeatureSummary) # More verbose Output for libraries using set_package_pr
 
 # Look for supporting libraries
 # -----------------------------
-find_package(Eigen3 NO_MODULE REQUIRED)
-set_package_properties(Eigen3 PROPERTIES TYPE REQUIRED PURPOSE "C++ vector data structures")
-message(STATUS "Found Eigen3 Version: ${Eigen3_VERSION} Path: ${Eigen3_DIR}")
+if (NOT TARGET Eigen3::Eigen)
+    option(USE_SYSTEM_EIGEN "Use the system Eigen" ON)
+    find_package(Eigen3 NO_MODULE)
+    if(USE_SYSTEM_EIGEN AND ${Eigen3_FOUND})
+        set_package_properties(Eigen3 PROPERTIES TYPE REQUIRED PURPOSE "C++ vector data structures")
+        message(STATUS "Found Eigen3 Version: ${Eigen3_VERSION} Path: ${Eigen3_DIR}")
+    else()
+        include(FetchContent)
+        FetchContent_Declare(
+          eigen3 
+          GIT_REPOSITORY https://gitlab.com/libeigen/eigen
+          GIT_TAG 3.4.0
+        )
+        FetchContent_MakeAvailable(eigen3)
+    endif()
+endif()
 
 # Setup library
 # -------------
