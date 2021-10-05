@@ -185,8 +185,8 @@ public:
     ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
-    SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv) :
-        Base(ModeMatOp(op, Bop), IdentityBOp(), nev, ncv),
+    SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, std::unique_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+        Base(ModeMatOp(op, Bop), IdentityBOp(), nev, ncv, std::move(logger)),
         m_Bop(Bop)
     {}
 
@@ -253,7 +253,8 @@ class SymGEigsSolver<OpType, BOpType, GEigsMode::RegularInverse> :
 {
 private:
     using Index = Eigen::Index;
-
+    using Scalar = typename OpType::Scalar;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using ModeMatOp = SymGEigsRegInvOp<OpType, BOpType>;
     using Base = SymEigsBase<ModeMatOp, BOpType>;
 
@@ -280,8 +281,8 @@ public:
     ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
-    SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv) :
-        Base(ModeMatOp(op, Bop), Bop, nev, ncv)
+    SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, std::unique_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+        Base(ModeMatOp(op, Bop), Bop, nev, ncv, std::move(logger))
     {}
 };
 

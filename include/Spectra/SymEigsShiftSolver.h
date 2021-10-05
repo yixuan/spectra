@@ -152,6 +152,7 @@ private:
     using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
     using Base = SymEigsBase<OpType, IdentityBOp>;
     using Base::m_nev;
@@ -187,8 +188,8 @@ public:
     ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
     /// \param sigma  The value of the shift.
     ///
-    SymEigsShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma) :
-        Base(op, IdentityBOp(), nev, ncv),
+    SymEigsShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma, std::unique_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+        Base(op, IdentityBOp(), nev, ncv, std::move(logger)),
         m_sigma(sigma)
     {
         op.set_shift(m_sigma);
