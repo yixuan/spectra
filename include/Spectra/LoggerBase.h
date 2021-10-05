@@ -16,11 +16,10 @@
 
 namespace Spectra {
 
-template <typename OpType, typename Vector>
+template <typename Scalar, typename Vector>
 class LoggerBase
 {
 private:
-    using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
