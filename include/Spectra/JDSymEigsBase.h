@@ -12,12 +12,15 @@
 #include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min
 #include <stdexcept>  // std::invalid_argument
+#include <memory>     // std::unique_ptr
+#include <utility>    // std::move
 #include <iostream>
 
 #include "Util/SelectionRule.h"
 #include "Util/CompInfo.h"
 #include "LinAlg/SearchSpace.h"
 #include "LinAlg/RitzPairs.h"
+#include "LoggerBase.h"
 
 namespace Spectra {
 
@@ -51,6 +54,7 @@ protected:
 
 private:
     CompInfo m_info = CompInfo::NotComputed;  // status of the computation
+    std::unique_ptr<LoggerBase<Scalar, Vector>> m_logger;
 
     void check_argument() const
     {
@@ -73,7 +77,7 @@ private:
     }
 
 public:
-    JDSymEigsBase(OpType& op, Index nev, Index nvec_init, Index nvec_max) :
+    JDSymEigsBase(OpType& op, Index nev, Index nvec_init, Index nvec_max, std::unique_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
         m_matrix_operator(op),
         m_number_eigenvalues(nev),
         m_max_search_space_size(nvec_max < op.rows() ? nvec_max : 10 * m_number_eigenvalues),
@@ -82,6 +86,15 @@ public:
     {
         check_argument();
         initialize();
+        set_logger(logger);
+    }
+
+    ///
+    /// Sets the logger unique_ptr with a user constructed logger object.
+    ///
+    void set_logger(std::unique_ptr<LoggerBase<Scalar, Vector>>& logger)
+    {
+        m_logger = std::move(logger);
     }
 
     JDSymEigsBase(OpType& op, Index nev) :
@@ -166,6 +179,10 @@ public:
             m_ritz_pairs.sort(selection);
 
             bool converged = m_ritz_pairs.check_convergence(tol, m_number_eigenvalues);
+            if (m_logger)
+            {
+                m_logger->iteration_log(niter_, m_ritz_pairs.converged_eigenvalues().count(), m_search_space.size(), eigenvalues(), m_ritz_pairs.residues().colwise().norm().head(m_number_eigenvalues), m_ritz_pairs.converged_eigenvalues().head(m_number_eigenvalues));
+            }
             if (converged)
             {
                 m_info = CompInfo::Successful;
