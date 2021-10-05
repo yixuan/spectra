@@ -134,7 +134,9 @@ template <typename OpType = DenseSymMatProd<double>>
 class SymEigsSolver : public SymEigsBase<OpType, IdentityBOp>
 {
 private:
+    using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
 public:
     ///
@@ -154,8 +156,8 @@ public:
     ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
-    SymEigsSolver(OpType& op, Index nev, Index ncv) :
-        SymEigsBase<OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv)
+    SymEigsSolver(OpType& op, Index nev, Index ncv, std::unique_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+        SymEigsBase<OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv, std::move(logger))
     {}
 };
 
