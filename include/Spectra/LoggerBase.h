@@ -33,8 +33,6 @@ public:
     ///
     virtual ~LoggerBase() {}
 
-    // I am not sure what should be in the Data, probably iteration count, residues, current eigenvalues, for davidson maybe subspace size, number_of_converged eigenvalues().
-
     ///
     /// Virtual logging function
     ///
