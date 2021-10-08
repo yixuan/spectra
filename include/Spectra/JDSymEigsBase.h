@@ -192,7 +192,10 @@ public:
             bool converged = m_ritz_pairs.check_convergence(tol, m_number_eigenvalues);
             if (m_logger)
             {
-                m_logger->iteration_log(niter_, m_ritz_pairs.converged_eigenvalues().count(), m_search_space.size(), eigenvalues(), m_ritz_pairs.residues().colwise().norm().head(m_number_eigenvalues), m_ritz_pairs.converged_eigenvalues().head(m_number_eigenvalues));
+                const Eigen::Array<bool, Eigen::Dynamic, 1> conv_eig = m_ritz_pairs.converged_eigenvalues().head(m_number_eigenvalues);
+                const Index num_conv = conv_eig.count();
+                const IterationData<Scalar, Vector> data(niter_, num_conv, m_search_space.size(), eigenvalues(), m_ritz_pairs.residues().colwise().norm().head(m_number_eigenvalues), conv_eig);
+                m_logger->iteration_log(data);
             }
             if (converged)
             {

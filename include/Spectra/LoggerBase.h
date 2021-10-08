@@ -17,7 +17,7 @@
 namespace Spectra {
 
 template <typename Scalar, typename Vector>
-class LoggerBase
+class IterationData
 {
 private:
     using Index = Eigen::Index;
@@ -25,6 +25,26 @@ private:
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
     using BoolArray = Eigen::Array<bool, Eigen::Dynamic, 1>;
 
+public:
+    const Index& iteration;
+    const Index& number_of_converged;
+    const Index& subspace_size;
+    const Vector& current_eigenvalues;
+    const Vector& residues;
+    const BoolArray& current_eig_converged;
+    IterationData(const Index& it, const Index& num_conv, const Index& sub_size, const Vector& cur_eigv, const Vector& res, const BoolArray& cur_eig_conv) :
+        iteration(it),
+        number_of_converged(num_conv),
+        subspace_size(sub_size),
+        current_eigenvalues(cur_eigv),
+        residues(res),
+        current_eig_converged(cur_eig_conv)
+    {}
+};
+
+template <typename Scalar, typename Vector>
+class LoggerBase
+{
 public:
     LoggerBase() {}
 
@@ -36,7 +56,7 @@ public:
     ///
     /// Virtual logging function
     ///
-    virtual void iteration_log(const Index& iteration, const Index& number_of_converged, const Index& subspace_size, const Vector& current_eigenvalues, const Vector& residues, const BoolArray& current_eig_converged);
+    virtual void iteration_log(const IterationData<Scalar, Vector>& data);
 };
 
 }  // namespace Spectra
