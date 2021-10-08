@@ -12,7 +12,7 @@
 #include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min
 #include <stdexcept>  // std::invalid_argument
-#include <memory>     // std::unique_ptr
+#include <memory>     // std::shared_ptr
 #include <utility>    // std::move
 #include <iostream>
 
@@ -54,7 +54,7 @@ protected:
 
 private:
     CompInfo m_info = CompInfo::NotComputed;  // status of the computation
-    std::unique_ptr<LoggerBase<Scalar, Vector>> m_logger;
+    std::shared_ptr<LoggerBase<Scalar, Vector>> m_logger;
 
     void check_argument() const
     {
@@ -77,7 +77,7 @@ private:
     }
 
 public:
-    JDSymEigsBase(OpType& op, Index nev, Index nvec_init, Index nvec_max, std::unique_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+    JDSymEigsBase(OpType& op, Index nev, Index nvec_init, Index nvec_max, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
         m_matrix_operator(op),
         m_number_eigenvalues(nev),
         m_max_search_space_size(nvec_max < op.rows() ? nvec_max : 10 * m_number_eigenvalues),
@@ -90,9 +90,9 @@ public:
     }
 
     ///
-    /// Sets the logger unique_ptr with a user constructed logger object.
+    /// Sets the logger shared_ptr with a user constructed logger object.
     ///
-    void set_logger(std::unique_ptr<LoggerBase<Scalar, Vector>>& logger)
+    void set_logger(std::shared_ptr<LoggerBase<Scalar, Vector>>& logger)
     {
         m_logger = std::move(logger);
     }

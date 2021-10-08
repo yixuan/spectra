@@ -39,7 +39,7 @@ private:
     Vector m_diagonal;
 
 public:
-    DavidsonSymEigsSolver(OpType& op, Index nev, Index nvec_init, Index nvec_max, std::unique_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+    DavidsonSymEigsSolver(OpType& op, Index nev, Index nvec_init, Index nvec_max, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
         JDSymEigsBase<DavidsonSymEigsSolver<OpType>, OpType>(op, nev, nvec_init, nvec_max, std::move(logger))
     {
         m_diagonal.resize(this->m_matrix_operator.rows());
@@ -49,7 +49,7 @@ public:
         }
     }
 
-    DavidsonSymEigsSolver(OpType& op, Index nev, std::unique_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+    DavidsonSymEigsSolver(OpType& op, Index nev, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
         DavidsonSymEigsSolver(op, nev, 2 * nev, 10 * nev, std::move(logger)) {}
 
     /// Create initial search space based on the diagonal
