@@ -26,21 +26,21 @@ class DerivedLogger : public LoggerBase<Scalar, Vector>
     // This derived logging class could have some reference to an ostream or call to another class that wraps ostreams etc.
 public:
     DerivedLogger(){};
-    void iteration_log(const Index& iteration, const Index& number_of_converged, const Index& subspace_size, const Vector& current_eigenvalues, const Vector& residues, const BoolArray& current_eig_converged) override
+    void iteration_log(const IterationData<Scalar, Vector>& data) override
     {
         std::cout << "--------------------------------------------------------------------------------------------" << std::endl;
-        std::cout << "    Iteration                       :   " << iteration << std::endl;
-        std::cout << "    Number of converged eigenvalues :   " << number_of_converged << std::endl;
-        std::cout << "    Size of subspace                :   " << subspace_size << std::endl;
+        std::cout << "    Iteration                       :   " << data.iteration << std::endl;
+        std::cout << "    Number of converged eigenvalues :   " << data.number_of_converged << std::endl;
+        std::cout << "    Size of subspace                :   " << data.subspace_size << std::endl;
         std::cout << "    ------------------------------------------------------------------------              " << std::endl;
-        REQUIRE(residues.size() == current_eigenvalues.size());
-        REQUIRE(residues.size() == current_eig_converged.size());
+        REQUIRE(data.residues.size() == data.current_eigenvalues.size());
+        REQUIRE(data.residues.size() == data.current_eig_converged.size());
 
         std::cout << "       " << std::setw(20) << "Current Eigenvalue" << std::setw(20) << "Converged?" << std::setw(20) << "Residue" << std::endl;
         std::cout << "    ------------------------------------------------------------------------              " << std::endl;
-        for (int i = 0; i < current_eigenvalues.size(); i++)
+        for (int i = 0; i < data.current_eigenvalues.size(); i++)
         {
-            std::cout << "       " << std::setw(20) << current_eigenvalues[i] << std::setw(20) << current_eig_converged[i] << std::setw(20) << residues[i] << std::endl;
+            std::cout << "       " << std::setw(20) << data.current_eigenvalues[i] << std::setw(20) << data.current_eig_converged[i] << std::setw(20) << data.residues[i] << std::endl;
         }
         std::cout << "--------------------------------------------------------------------------------------------" << std::endl;
     }
