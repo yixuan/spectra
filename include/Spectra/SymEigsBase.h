@@ -241,7 +241,7 @@ public:
     /// \cond
 
     // If op is an lvalue
-    SymEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+    SymEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv) :
         m_op(op),
         m_n(op.rows()),
         m_nev(nev),
@@ -256,12 +256,15 @@ public:
 
         if (ncv <= nev || ncv > m_n)
             throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
-
+    }
+    SymEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+        SymEigsBase(op, Bop, nev, ncv)
+    {
         set_logger(logger);
     }
 
     // If op is an rvalue
-    SymEigsBase(OpType&& op, const BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+    SymEigsBase(OpType&& op, const BOpType& Bop, Index nev, Index ncv) :
         m_op_container(create_op_container(std::move(op))),
         m_op(m_op_container.front()),
         m_n(m_op.rows()),
@@ -277,7 +280,10 @@ public:
 
         if (ncv <= nev || ncv > m_n)
             throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
-
+    }
+    SymEigsBase(OpType&& op, const BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+        SymEigsBase(op, Bop, nev, ncv)
+    {
         set_logger(logger);
     }
 
@@ -286,8 +292,7 @@ public:
     ///
     void set_logger(std::shared_ptr<LoggerBase<Scalar, Vector>>& logger)
     {
-        if (logger)
-            m_logger = std::move(logger);
+        m_logger = logger;
     }
     ///
     /// Virtual destructor

@@ -77,7 +77,18 @@ private:
     }
 
 public:
-    JDSymEigsBase(OpType& op, Index nev, Index nvec_init, Index nvec_max, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+    JDSymEigsBase(OpType& op, Index nev, Index nvec_init, Index nvec_max) :
+        m_matrix_operator(op),
+        m_number_eigenvalues(nev),
+        m_max_search_space_size(nvec_max < op.rows() ? nvec_max : 10 * m_number_eigenvalues),
+        m_initial_search_space_size(nvec_init < op.rows() ? nvec_init : 2 * m_number_eigenvalues),
+        m_correction_size(m_number_eigenvalues)
+    {
+        check_argument();
+        initialize();
+    }
+
+    JDSymEigsBase(OpType& op, Index nev, Index nvec_init, Index nvec_max, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
         m_matrix_operator(op),
         m_number_eigenvalues(nev),
         m_max_search_space_size(nvec_max < op.rows() ? nvec_max : 10 * m_number_eigenvalues),
@@ -94,7 +105,7 @@ public:
     ///
     void set_logger(std::shared_ptr<LoggerBase<Scalar, Vector>>& logger)
     {
-        m_logger = std::move(logger);
+        m_logger = logger;
     }
 
     JDSymEigsBase(OpType& op, Index nev) :

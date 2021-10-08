@@ -129,6 +129,31 @@ private:
 
 public:
     ///
+    /// Constructor to create a eigen solver object using the shift-and-invert mode.
+    ///
+    /// \param op      The matrix operation object that implements
+    ///                the complex shift-solve operation of \f$A\f$: calculating
+    ///                \f$\mathrm{Re}\{(A-\sigma I)^{-1}v\}\f$ for any vector \f$v\f$. Users could either
+    ///                create the object from the wrapper class such as DenseGenComplexShiftSolve, or
+    ///                define their own that implements all the public members
+    ///                as in DenseGenComplexShiftSolve.
+    /// \param nev     Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-2\f$,
+    ///                where \f$n\f$ is the size of matrix.
+    /// \param ncv     Parameter that controls the convergence speed of the algorithm.
+    ///                Typically a larger `ncv` means faster convergence, but it may
+    ///                also result in greater memory use and more matrix operations
+    ///                in each iteration. This parameter must satisfy \f$nev+2 \le ncv \le n\f$,
+    ///                and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
+    /// \param sigmar  The real part of the shift.
+    /// \param sigmai  The imaginary part of the shift.
+    ///
+    GenEigsComplexShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigmar, const Scalar& sigmai) :
+        Base(op, IdentityBOp(), nev, ncv),
+        m_sigmar(sigmar), m_sigmai(sigmai)
+    {
+        op.set_shift(m_sigmar, m_sigmai);
+    }
+    ///
     /// Constructor to create a eigen solver object using the shift-and-invert mode with logging.
     ///
     /// \param op      The matrix operation object that implements
@@ -148,8 +173,8 @@ public:
     /// \param sigmai  The imaginary part of the shift.
     /// \param logger  A logging object that inherits from the base class in LoggerBase.h
     ///
-    GenEigsComplexShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigmar, const Scalar& sigmai, std::shared_ptr<LoggerBase<Scalar, ComplexVector>> logger = nullptr) :
-        Base(op, IdentityBOp(), nev, ncv, std::move(logger)),
+    GenEigsComplexShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigmar, const Scalar& sigmai, std::shared_ptr<LoggerBase<Scalar, ComplexVector>> logger) :
+        Base(op, IdentityBOp(), nev, ncv, logger),
         m_sigmar(sigmar), m_sigmai(sigmai)
     {
         op.set_shift(m_sigmar, m_sigmai);

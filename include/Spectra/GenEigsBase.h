@@ -325,8 +325,7 @@ protected:
 
 public:
     /// \cond
-
-    GenEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, ComplexVector>> logger = nullptr) :
+    GenEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv) :
         m_op(op),
         m_n(m_op.rows()),
         m_nev(nev),
@@ -341,7 +340,11 @@ public:
 
         if (ncv < nev + 2 || ncv > m_n)
             throw std::invalid_argument("ncv must satisfy nev + 2 <= ncv <= n, n is the size of matrix");
+    }
 
+    GenEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, ComplexVector>> logger) :
+        GenEigsBase(op, Bop, nev, ncv)
+    {
         set_logger(logger);
     }
 
@@ -350,8 +353,7 @@ public:
     ///
     void set_logger(std::shared_ptr<LoggerBase<Scalar, ComplexVector>>& logger)
     {
-        if (logger)
-            m_logger = std::move(logger);
+        m_logger = logger;
     }
     ///
     /// Virtual destructor

@@ -126,6 +126,26 @@ private:
 
 public:
     ///
+    /// Constructor to create a solver object.
+    ///
+    /// \param op   The matrix operation object that implements
+    ///             the matrix-vector multiplication operation of \f$A\f$:
+    ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
+    ///             create the object from the wrapper class such as DenseGenMatProd, or
+    ///             define their own that implements all the public members
+    ///             as in DenseGenMatProd.
+    /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-2\f$,
+    ///             where \f$n\f$ is the size of matrix.
+    /// \param ncv  Parameter that controls the convergence speed of the algorithm.
+    ///             Typically a larger `ncv` means faster convergence, but it may
+    ///             also result in greater memory use and more matrix operations
+    ///             in each iteration. This parameter must satisfy \f$nev+2 \le ncv \le n\f$,
+    ///             and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
+    ///
+    GenEigsSolver(OpType& op, Index nev, Index ncv) :
+        GenEigsBase<OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv)
+    {}
+    ///
     /// Constructor to create a solver object with logging.
     ///
     /// \param op   The matrix operation object that implements
@@ -143,8 +163,8 @@ public:
     ///             and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
     /// \param logger A logging object that inherits from the base class in LoggerBase.h
     ///
-    GenEigsSolver(OpType& op, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, ComplexVector>> logger = nullptr) :
-        GenEigsBase<OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv, std::move(logger))
+    GenEigsSolver(OpType& op, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, ComplexVector>> logger) :
+        GenEigsBase<OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv, logger)
     {}
 };
 
