@@ -156,7 +156,7 @@ public:
     ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     ///
-    SymEigsSolver(OpType& op, Index nev, Index ncv, std::unique_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+    SymEigsSolver(OpType& op, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
         SymEigsBase<OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv, std::move(logger))
     {}
 };

@@ -12,7 +12,7 @@
 #include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min
 #include <stdexcept>  // std::invalid_argument
-#include <memory>     // std::unique_ptr
+#include <memory>     // std::shared_ptr
 #include <utility>    // std::move
 
 #include "Util/Version.h"
@@ -84,7 +84,7 @@ private:
     Vector        m_resid;
     BoolArray     m_ritz_conv;  // indicator of the convergence of Ritz values
     CompInfo      m_info;       // status of the computation
-    std::unique_ptr<LoggerBase<Scalar, Vector>> m_logger;
+    std::shared_ptr<LoggerBase<Scalar, Vector>> m_logger;
     // clang-format on
 
     // Move rvalue object to the container
@@ -241,7 +241,7 @@ public:
     /// \cond
 
     // If op is an lvalue
-    SymEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, std::unique_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+    SymEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
         m_op(op),
         m_n(op.rows()),
         m_nev(nev),
@@ -261,7 +261,7 @@ public:
     }
 
     // If op is an rvalue
-    SymEigsBase(OpType&& op, const BOpType& Bop, Index nev, Index ncv, std::unique_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+    SymEigsBase(OpType&& op, const BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
         m_op_container(create_op_container(std::move(op))),
         m_op(m_op_container.front()),
         m_n(m_op.rows()),
@@ -282,9 +282,9 @@ public:
     }
 
     ///
-    /// Sets the logger unique_ptr with a user constructed logger object.
+    /// Sets the logger shared_ptr with a user constructed logger object.
     ///
-    void set_logger(std::unique_ptr<LoggerBase<Scalar, Vector>>& logger)
+    void set_logger(std::shared_ptr<LoggerBase<Scalar, Vector>>& logger)
     {
         if (logger)
             m_logger = std::move(logger);

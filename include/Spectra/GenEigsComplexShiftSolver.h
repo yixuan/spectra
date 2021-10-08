@@ -148,7 +148,7 @@ public:
     /// \param sigmai  The imaginary part of the shift.
     /// \param logger  A logging object that inherits from the base class in LoggerBase.h
     ///
-    GenEigsComplexShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigmar, const Scalar& sigmai, std::unique_ptr<LoggerBase<Scalar, ComplexVector>> logger = nullptr) :
+    GenEigsComplexShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigmar, const Scalar& sigmai, std::shared_ptr<LoggerBase<Scalar, ComplexVector>> logger = nullptr) :
         Base(op, IdentityBOp(), nev, ncv, std::move(logger)),
         m_sigmar(sigmar), m_sigmai(sigmai)
     {

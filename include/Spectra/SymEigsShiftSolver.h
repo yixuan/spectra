@@ -188,7 +188,7 @@ public:
     ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
     /// \param sigma  The value of the shift.
     ///
-    SymEigsShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma, std::unique_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
+    SymEigsShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
         Base(op, IdentityBOp(), nev, ncv, std::move(logger)),
         m_sigma(sigma)
     {

@@ -13,7 +13,7 @@
 #include <algorithm>  // std::min, std::copy
 #include <complex>    // std::complex, std::conj, std::norm, std::abs
 #include <stdexcept>  // std::invalid_argument
-#include <memory>     // std::unique_ptr
+#include <memory>     // std::shared_ptr
 
 #include "Util/Version.h"
 #include "Util/TypeTraits.h"
@@ -77,7 +77,7 @@ protected:
 private:
     BoolArray     m_ritz_conv; // indicator of the convergence of Ritz values
     CompInfo      m_info;      // status of the computation
-    std::unique_ptr<LoggerBase<Scalar, ComplexVector>> m_logger;
+    std::shared_ptr<LoggerBase<Scalar, ComplexVector>> m_logger;
     // clang-format on
 
     // Real Ritz values calculated from UpperHessenbergEigen have exact zero imaginary part
@@ -326,7 +326,7 @@ protected:
 public:
     /// \cond
 
-    GenEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, std::unique_ptr<LoggerBase<Scalar, ComplexVector>> logger = nullptr) :
+    GenEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, ComplexVector>> logger = nullptr) :
         m_op(op),
         m_n(m_op.rows()),
         m_nev(nev),
@@ -346,9 +346,9 @@ public:
     }
 
     ///
-    /// Sets the logger unique_ptr with a user constructed logger object.
+    /// Sets the logger shared_ptr with a user constructed logger object.
     ///
-    void set_logger(std::unique_ptr<LoggerBase<Scalar, ComplexVector>>& logger)
+    void set_logger(std::shared_ptr<LoggerBase<Scalar, ComplexVector>>& logger)
     {
         if (logger)
             m_logger = std::move(logger);
