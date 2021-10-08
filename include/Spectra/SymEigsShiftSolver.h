@@ -188,8 +188,33 @@ public:
     ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
     /// \param sigma  The value of the shift.
     ///
-    SymEigsShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
-        Base(op, IdentityBOp(), nev, ncv, std::move(logger)),
+    SymEigsShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma) :
+        Base(op, IdentityBOp(), nev, ncv),
+        m_sigma(sigma)
+    {
+        op.set_shift(m_sigma);
+    }
+    ///
+    /// Constructor to create a eigen solver object using the shift-and-invert mode with logging.
+    ///
+    /// \param op     The matrix operation object that implements
+    ///               the shift-solve operation of \f$A\f$: calculating
+    ///               \f$(A-\sigma I)^{-1}v\f$ for any vector \f$v\f$. Users could either
+    ///               create the object from the wrapper class such as DenseSymShiftSolve, or
+    ///               define their own that implements all the public members
+    ///               as in DenseSymShiftSolve.
+    /// \param nev    Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///               where \f$n\f$ is the size of matrix.
+    /// \param ncv    Parameter that controls the convergence speed of the algorithm.
+    ///               Typically a larger `ncv_` means faster convergence, but it may
+    ///               also result in greater memory use and more matrix operations
+    ///               in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    /// \param sigma  The value of the shift.
+    /// \param logger A logging object that inherits from the base class in LoggerBase.h
+    ///
+    SymEigsShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+        Base(op, IdentityBOp(), nev, ncv, logger),
         m_sigma(sigma)
     {
         op.set_shift(m_sigma);

@@ -39,8 +39,8 @@ private:
     Vector m_diagonal;
 
 public:
-    DavidsonSymEigsSolver(OpType& op, Index nev, Index nvec_init, Index nvec_max, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
-        JDSymEigsBase<DavidsonSymEigsSolver<OpType>, OpType>(op, nev, nvec_init, nvec_max, std::move(logger))
+    DavidsonSymEigsSolver(OpType& op, Index nev, Index nvec_init, Index nvec_max) :
+        JDSymEigsBase<DavidsonSymEigsSolver<OpType>, OpType>(op, nev, nvec_init, nvec_max)
     {
         m_diagonal.resize(this->m_matrix_operator.rows());
         for (Index i = 0; i < op.rows(); i++)
@@ -49,8 +49,21 @@ public:
         }
     }
 
-    DavidsonSymEigsSolver(OpType& op, Index nev, std::shared_ptr<LoggerBase<Scalar, Vector>> logger = nullptr) :
-        DavidsonSymEigsSolver(op, nev, 2 * nev, 10 * nev, std::move(logger)) {}
+    DavidsonSymEigsSolver(OpType& op, Index nev) :
+        DavidsonSymEigsSolver(op, nev, 2 * nev, 10 * nev) {}
+
+    DavidsonSymEigsSolver(OpType& op, Index nev, Index nvec_init, Index nvec_max, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+        JDSymEigsBase<DavidsonSymEigsSolver<OpType>, OpType>(op, nev, nvec_init, nvec_max, logger)
+    {
+        m_diagonal.resize(this->m_matrix_operator.rows());
+        for (Index i = 0; i < op.rows(); i++)
+        {
+            m_diagonal(i) = op(i, i);
+        }
+    }
+
+    DavidsonSymEigsSolver(OpType& op, Index nev, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+        DavidsonSymEigsSolver(op, nev, 2 * nev, 10 * nev, logger) {}
 
     /// Create initial search space based on the diagonal
     /// and the spectrum'target (highest or lowest)
