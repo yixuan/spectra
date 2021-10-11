@@ -54,13 +54,11 @@ protected:
     bool robust_reorthogonalize(MapConstMat& Vjj, Vector& f, Scalar& fnorm, const Index jj, const Index seed, Vector& wIn)
     {
         Scalar normf0 = f.norm(); // normr0 = sqrt(abs(r'*(applyM(r))));
-        Vector w(jj + 1);         // copy wIn to w
-        w.noalias() = wIn;
+        Vector w=wIn; // copy wIn to w
 
         bool stopAlgorithm = false;
         // Reorthogonalize :
-        Vector dw(jj + 1);
-        dw.noalias() = Vjj.transpose() * f;
+        Vector dw= Vjj.transpose() * f;
         f.noalias() -= Vjj * dw;
         w.noalias() += dw;
         fnorm = f.norm();
@@ -73,7 +71,7 @@ protected:
             w.noalias() += dw;
             normf0 = fnorm;
             fnorm = f.norm();
-            numReorths = numReorths + 1;
+            numReorths++;
         }
         
         if (fnorm <= (1 / sqrt(2)) * normf0)
@@ -92,7 +90,7 @@ protected:
                 rng.random_vec(f);
         
                 // Orthogonalize r
-                f.noalias() -= Vjj * (Vjj.transpose() * f);
+                f -= Vjj * (Vjj.transpose() * f);
                 Scalar fMf = f.norm();
                 f.normalize();
         

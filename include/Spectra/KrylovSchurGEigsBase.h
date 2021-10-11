@@ -140,10 +140,12 @@ namespace Spectra {
         // Permute/Reorder Schur decomposition in U and T according to permutation --> see Reference https://github.com/libigl/eigen/blob/master/unsupported/Eigen/src/MatrixFunctions/MatrixFunction.h
         void ordschur(Matrix& U, Matrix& T, BoolArray& select)
         {
+			using std::swap;
+			
             // build permutation vector
-            Vector permutation(select.rows());
+            Vector permutation(select.size());
             Index ind = 0;
-            for (Index j = 0; j < select.rows(); j++)
+            for (Index j = 0; j < select.size(); j++)
             {
                 if (select(j))
                 {
@@ -151,7 +153,7 @@ namespace Spectra {
                     ind++;
                 }
             }
-            for (Index j = 0; j < select.rows(); j++)
+            for (Index j = 0; j < select.size(); j++)
             {
                 if (!select(j))
                 {
@@ -160,10 +162,10 @@ namespace Spectra {
                 }
             }
 
-            for (Index i = 0; i < permutation.rows() - 1; i++)
+            for (Index i = 0; i < permutation.size() - 1; i++)
             {
                 Index j;
-                for (j = i; j < permutation.rows(); j++)
+                for (j = i; j < permutation.size(); j++)
                 {
                     if (permutation(j) == i)
                         break;
@@ -176,7 +178,7 @@ namespace Spectra {
                     T.applyOnTheLeft(k, k + 1, rotation.adjoint());
                     T.applyOnTheRight(k, k + 1, rotation);
                     U.applyOnTheRight(k, k + 1, rotation);
-                    std::swap(permutation.coeffRef(k), permutation.coeffRef(k + 1));
+                    swap(permutation.coeffRef(k), permutation.coeffRef(k + 1));
                 }
             }
         }
