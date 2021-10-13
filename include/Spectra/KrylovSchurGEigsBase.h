@@ -19,14 +19,7 @@
 #include <utility>    // std::move
 #include <complex>    // std::complex
 
-#include "Util/Version.h"
-#include "Util/TypeTraits.h"
-#include "Util/SelectionRule.h"
-#include "Util/CompInfo.h"
-#include "Util/SimpleRandom.h"
-#include "MatOp/internal/ArnoldiOp.h"
-#include "LinAlg/UpperHessenbergQR.h"
-#include "LinAlg/TridiagEigen.h"
+#include "SymEigsBase.h"
 #include "LinAlg/KrylovSchur.h"
 
 namespace Spectra {
@@ -40,21 +33,22 @@ namespace Spectra {
     ///
     /// \ingroup KrylovSchur
     ///
-    /// This is the base class for symmetric eigen solvers, mainly for internal use.
+    /// This is the base class for eigen solver using a Krylov-Schur algorithm, mainly for internal use.
     /// It is kept here to provide the documentation for member functions of concrete eigen solvers
     /// such as SymEigsSolver and SymEigsShiftSolver.
-	/// 
+	///
 	/// This code is based on MATLAB's "eigs" function which provides a very stable implementation of the Krylov-Schur eigenvalue extraction
 	/// References:
 	/// [1] Stewart, G.W. "A Krylov-Schur Algorithm for Large Eigenproblems." SIAM Journal of Matrix Analysis and Applications. Vol. 23, Issue 3, 2001, pp. 601–614.
 	/// [2] Lehoucq, R.B., D.C. Sorenson, and C. Yang. ARPACK Users' Guide. Philadelphia, PA: SIAM, 1998.
 	/// [3] https://de.mathworks.com/help/matlab/ref/eigs.html
-	/// 
+	///
 	/// Variable names were merged to fit in Spectra formatting.
 	/// The Arnoldi class was modified a little bit according to MATLAB's code and implemented in the KrylovSchur class.
     ///
     template <typename OpType, typename BOpType>
-    class KrylovSchurGEigsBase
+    class KrylovSchurGEigsBase :
+		public SymEigsBase<OpType, BOpType>
     {
     private:
         using Scalar = typename OpType::Scalar;
@@ -74,34 +68,26 @@ namespace Spectra {
 
         using ArnoldiOpType = ArnoldiOp<Scalar, OpType, BOpType>;
         using KrylovFac = KrylovSchur<Scalar, ArnoldiOpType>;
+		using Base = SymEigsBase<OpType, BOpType>;
 
     protected:
         // clang-format off
-		
-        std::vector<OpType> m_op_container;
-        const OpType& m_op;         // matrix operator for A
-        const Index   m_n;          // dimension of matrix A
-        const Index   m_nev;        // number of eigenvalues requested
-        const Index   m_ncv;        // dimension of Krylov subspace in the Lanczos method
-        Index         m_nmatop;     // number of matrix operations called
-        Index         m_niter;      // number of restarting iterations
 
-        KrylovFac     m_fac;        // Lanczos factorization
-        Vector        m_evals;      // Eigen values
+        using Base::m_op;
+        using Base::m_n;
+        using Base::m_nev;
+        using Base::m_ncv;
+        using Base::m_nmatop;
+        using Base::m_niter;
+        using Base::m_ritz_val;
+
+        KrylovFac     m_fac;        // Krylov-Schur specific factorization
 
     private:
-        Matrix        m_evecs;       // Eigen vectors
-        BoolArray     m_evals_conv;  // indicator of the convergence of Ritz values
+        Matrix        m_eigen_vec;   // eigenvectors
+        BoolArray     m_ritz_conv;  // indicator of the convergence of Ritz values
         CompInfo      m_info;       // status of the computation
         // clang-format on
-
-        // Move rvalue object to the container
-        static std::vector<OpType> create_op_container(OpType&& rval)
-        {
-            std::vector<OpType> container;
-            container.emplace_back(std::move(rval));
-            return container;
-        }
 
         // Calculates the number of converged eigenvalues
         Index num_converged(const Scalar& tol, ComplexVector& evals, Vector& res)
@@ -117,9 +103,9 @@ namespace Spectra {
             // thresh = tol * max(eps23, abs(theta)), theta for Ritz value
             Array thresh = tol * evals.head(m_nev).array().abs().max(eps23);
             // Converged "wanted" Ritz values
-            m_evals_conv = (res.head(m_nev).array() < thresh);
+            m_ritz_conv = (res.head(m_nev).array() < thresh);
 
-            return m_evals_conv.count();
+            return m_ritz_conv.count();
         }
 
         // Returns the adjusted nev for restarting
@@ -141,7 +127,7 @@ namespace Spectra {
         void ordschur(Matrix& U, Matrix& T, BoolArray& select)
         {
 			using std::swap;
-			
+
             // build permutation vector
             Vector permutation(select.size());
             Index ind = 0;
@@ -173,7 +159,7 @@ namespace Spectra {
                 eigen_assert(permutation(j) == i);
                 for (Index k = j - 1; k >= i; k--)
                 {
-                    Eigen::JacobiRotation<Matrix::Scalar> rotation;
+                    Eigen::JacobiRotation<Scalar> rotation;
                     rotation.makeGivens(T(k, k + 1), T(k + 1, k + 1) - T(k, k));
                     T.applyOnTheLeft(k, k + 1, rotation.adjoint());
                     T.applyOnTheRight(k, k + 1, rotation);
@@ -237,41 +223,16 @@ namespace Spectra {
         /// \cond
 
         // If op is an lvalue
-        KrylovSchurGEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv) :
-            m_op(op),
-            m_n(op.rows()),
-            m_nev(nev),
-            m_ncv(ncv > m_n ? m_n : ncv),
-            m_nmatop(0),
-            m_niter(0),
-            m_fac(ArnoldiOpType(op, Bop), m_ncv),
-            m_info(CompInfo::NotComputed)
-        {
-            if (nev < 1 || nev > m_n - 1)
-                throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
+        KrylovSchurGEigsBase(OpType& op, BOpType& Bop, Index nev, Index ncv) :
+            SymEigsBase<OpType, BOpType>(op, Bop, nev, ncv),
+            m_fac(ArnoldiOpType(m_op, Bop), m_ncv)
+		{}
 
-            if (ncv <= nev || ncv > m_n)
-                throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
-        }
-
-        // If op is an rvalue
-        KrylovSchurGEigsBase(OpType&& op, const BOpType& Bop, Index nev, Index ncv) :
-            m_op_container(create_op_container(std::move(op))),
-            m_op(m_op_container.front()),
-            m_n(m_op.rows()),
-            m_nev(nev),
-            m_ncv(ncv > m_n ? m_n : ncv),
-            m_nmatop(0),
-            m_niter(0),
-            m_fac(ArnoldiOpType(m_op, Bop), m_ncv),
-            m_info(CompInfo::NotComputed)
-        {
-            if (nev < 1 || nev > m_n - 1)
-                throw std::invalid_argument("nev must satisfy 1 <= nev <= n - 1, n is the size of matrix");
-
-            if (ncv <= nev || ncv > m_n)
-                throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
-        }
+         // If op is an rvalue
+         KrylovSchurGEigsBase(OpType&& op, const BOpType& Bop, Index nev, Index ncv) :
+			 SymEigsBase<OpType, BOpType>(std::forward<OpType>(op), Bop, nev, ncv),
+            m_fac(ArnoldiOpType(m_op, Bop), m_ncv)
+		 {}
 
         ///
         /// Virtual destructor
@@ -280,30 +241,21 @@ namespace Spectra {
 
         /// \endcond
 
-        ///
-        /// Initializes the solver by providing an initial residual vector.
-        ///
-        /// \param init_resid Pointer to the initial residual vector.
-        ///
-        /// **Spectra** (and also **ARPACK**) uses an iterative algorithm
-        /// to find eigenvalues. This function allows the user to provide the initial
-        /// residual vector.
-        ///
+        
+		///
+		/// Initializes the solver by providing an initial residual vector.
+		///
+		/// \param init_resid Pointer to the initial residual vector.
+		///
+		/// **Spectra** (and also **ARPACK**) uses an iterative algorithm
+		/// to find eigenvalues. This function allows the user to provide the initial
+		/// residual vector.
+		///
         void init(const Scalar* init_resid)
         {
-            // Reset all matrices/vectors to zero
-            m_evals.resize(m_ncv);
-            m_evecs.resize(m_ncv, m_nev);
-            m_evals_conv.resize(m_nev);
+            Base::init(init_resid);
 
-            m_evals.setZero();
-            m_evecs.setZero();
-            m_evals_conv.setZero();
-
-            m_nmatop = 0;
-            m_niter = 0;
-
-            // Initialize the Lanczos factorization
+            // Initialize the Krylov-Schur specific factorization
             MapConstVec v0(init_resid, m_n);
             m_fac.init(v0, m_nmatop);
         }
@@ -358,15 +310,15 @@ namespace Spectra {
             for (i = 0; i < maxit; i++)
             {
                 // The m-step Lanczos factorization
-                stopAlgorithm = m_fac.factorize_from(sizeV, m_ncv, m_nmatop);
+                m_fac.factorize_from(sizeV, m_ncv, m_nmatop);
 
-				if (stopAlgorithm)
+				if (m_fac.info() == CompInfo::NotConverging)
 				{
-					m_evals.resize(0);
-					m_evecs.resize(0, 0);
+					m_ritz_val.resize(0);
+					m_eigen_vec.resize(0, 0);
 					return 0;
 				}
-				
+
                 //// Should we expect conjugate pairs ?
                 Matrix H(m_fac.matrix_H());
                 bool isrealprob = true;
@@ -393,10 +345,10 @@ namespace Spectra {
                 d.noalias() = reorder.inverse() * d; // d = d(ind);
                 res.noalias() = reorder.inverse() * res;  // res = res(ind);
 
-                // Number of converged eigenpairs : 
+                // Number of converged eigenpairs :
                 Index nconvold = nconv;
                 nconv = num_converged(tol, d, res);
-                
+
                 if (nconv >= m_nev || i == maxit)
                 {
                     // Stop the algorithm now
@@ -407,10 +359,10 @@ namespace Spectra {
                     // Adjust k to prevent stagnating (see reference 2)
                     nev_new = nev_adjusted(nconv, nconvold);
                 }
-                
+
                 // Get original ordering of eigenvalues back
                 d.noalias() = T.diagonal();
-                
+
                 // Choose desired eigenvalues in d to create a Boolean select vector
                 ind = which_eigenvalues(d, selection);
                 Eigen::Map< Eigen::Vector<Index, Eigen::Dynamic> > ind_sel(ind.data(), ind.size());
@@ -436,7 +388,7 @@ namespace Spectra {
                         }
                     }
                 }
-                
+
                 // Reorder X and T based on select
                 ordschur(X, T, select);  // [X, T] = ordschur(X, T, select);
 
@@ -444,7 +396,7 @@ namespace Spectra {
                 MapMat Xk(X.data(), m_ncv, nev_new);  // X(:, 1:k)
 
                 // H = [T(1:k, 1:k); H(end, :) * Xk];
-                H.topLeftCorner(nev_new, nev_new).noalias() = T.topLeftCorner(nev_new, nev_new); 
+                H.topLeftCorner(nev_new, nev_new).noalias() = T.topLeftCorner(nev_new, nev_new);
                 H.block(nev_new, 0, 1, nev_new).noalias() = H.bottomRows(1) * Xk;
 
                 Matrix V(m_fac.matrix_V());
@@ -455,39 +407,29 @@ namespace Spectra {
 
                 sizeV = nev_new; // sizeV = k + 1;
             }
-            
-            // export eigenvalues and eigenvectors
-            m_evals.resize(m_nev);
-            m_evals.noalias() = d.topRows(m_nev).real();
 
-            m_evecs.resize(m_n, m_nev);
+            // export eigenvalues and eigenvectors
+            m_ritz_val.resize(m_nev);
+            m_ritz_val.noalias() = d.topRows(m_nev).real();
+
+            m_eigen_vec.resize(m_n, m_nev);
             Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic> reorder(ind.size());
             reorder.indices() = Eigen::Map<Eigen::Vector<Index, Eigen::Dynamic>>(ind.data(), ind.size()).cast<int>();
             U.noalias() = U * reorder;  // d = d(ind);
-            m_evecs.noalias() = (m_fac.matrix_V() * U.leftCols(m_nev)).real();
+            m_eigen_vec.noalias() = (m_fac.matrix_V() * U.leftCols(m_nev)).real();
 
             m_niter += i + 1;
             m_info = (nconv >= m_nev) ? CompInfo::Successful : CompInfo::NotConverging;
 
             return (std::min)(m_nev, nconv);
         }
-
-        ///
-        /// Returns the status of the computation.
-        /// The full list of enumeration values can be found in \ref Enumerations.
-        ///
-        CompInfo info() const { return m_info; }
-
-        ///
-        /// Returns the number of iterations used in the computation.
-        ///
-        Index num_iterations() const { return m_niter; }
-
-        ///
-        /// Returns the number of matrix operations used in the computation.
-        ///
-        Index num_operations() const { return m_nmatop; }
-
+		
+		///
+		/// Returns the status of the computation.
+		/// The full list of enumeration values can be found in \ref Enumerations.
+		///
+		CompInfo info() const { return m_info; }
+	
         ///
         /// Returns the converged eigenvalues.
         ///
@@ -497,7 +439,7 @@ namespace Spectra {
         ///
         Vector eigenvalues() const
         {
-            return m_evals;
+            return m_ritz_val;
         }
 
         ///
@@ -509,19 +451,21 @@ namespace Spectra {
         /// Returned matrix type will be `Eigen::Matrix<Scalar, ...>`,
         /// depending on the template parameter `Scalar` defined.
         ///
-        virtual Matrix eigenvectors(Index nvec) const
+        Matrix eigenvectors(Index nvec) const override
         {
-            const Index nconv = m_evals_conv.count();
+            const Index nconv = m_ritz_conv.count();
             nvec = (std::min)(nvec, nconv);
-            Matrix res(m_n, nvec);
-
-            return m_fac.matrix_V().leftCols(nvec);
+			
+			if (!nvec)
+				return Matrix(m_n, nvec);
+			
+            return m_eigen_vec.leftCols(nvec);
         }
 
         ///
         /// Returns all converged eigenvectors.
         ///
-        virtual Matrix eigenvectors() const
+        Matrix eigenvectors() const override
         {
             return eigenvectors(m_nev);
         }

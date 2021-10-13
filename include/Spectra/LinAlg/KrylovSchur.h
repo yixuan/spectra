@@ -11,12 +11,13 @@
 #include "../MatOp/internal/ArnoldiOp.h"
 #include "../Util/TypeTraits.h"
 #include "../Util/SimpleRandom.h"
+#include "../Util/CompInfo.h"
 
 #include <iostream>
 
 namespace Spectra {
 
-// Krylov decompostion A * V = V * H + f * e'
+// (Krylov-Schur specific) modified Arnoldi decompostion A * V = V * H + f * e'
 // A: n x n
 // V: n x k
 // H: k x k
@@ -24,7 +25,7 @@ namespace Spectra {
 // e: [0, ..., 0, 1]
 // V and H are allocated of dimension m, so the maximum value of k is m
 template <typename Scalar, typename ArnoldiOpType>
-class KrylovSchur
+class KrylovSchur : public Arnoldi<Scalar, ArnoldiOpType>
 {
 private:
     using Index = Eigen::Index;
@@ -34,35 +35,42 @@ private:
     using MapConstMat = Eigen::Map<const Matrix>;
     using MapConstVec = Eigen::Map<const Vector>;
 
+	bool m_stop_algorithm = false; // convergence indicator flag
+	
+    using Arnoldi<Scalar, ArnoldiOpType>::m_op;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_n;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_m;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_k;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_beta;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_near_0;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_eps;
+
 protected:
-    // A very small value, but 1.0 / m_near_0 does not overflow
-    // ~= 1e-307 for the "double" type
-    static constexpr Scalar m_near_0 = TypeTraits<Scalar>::min() * Scalar(10);
-    // The machine precision, ~= 1e-16 for the "double" type
-    static constexpr Scalar m_eps = TypeTraits<Scalar>::epsilon();
+	
+    using Arnoldi<Scalar, ArnoldiOpType>::m_fac_V;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_fac_H;
+    using Arnoldi<Scalar, ArnoldiOpType>::m_fac_f;
+	
+    Vector   m_fac_v;      // current v vector (residual)
+	CompInfo m_info;       // status of the computation
 
-    ArnoldiOpType m_op;  // Operators for the Arnoldi factorization
-    const Index m_n;     // dimension of A
-    const Index m_m;     // maximum dimension of subspace V
-    Index m_k;           // current dimension of subspace V
-    Matrix m_fac_V;      // V matrix in the Arnoldi factorization
-    Matrix m_fac_H;      // H matrix in the Arnoldi factorization
-    Vector m_fac_f;      // residual in the Arnoldi factorization
-    Vector m_fac_v;      // current v vector (residual)
-    Scalar m_beta;       // ||f||, B-norm of f
-
-    bool robust_reorthogonalize(MapConstMat& Vjj, Vector& f, Scalar& fnorm, const Index jj, const Index seed, Vector& wIn)
+    virtual bool robust_reorthogonalize(MapConstMat& Vjj, Vector& f, Scalar& fnorm, const Index jj, const Index seed, Vector& wIn)
     {
+		// reorthogonalization to insure that vector f is orthogonal to the coloumn space Vjj (Reference: G. W. Stewart; A Krylov-Schur Algorithm for Large Eigenproblems; 2000)
+		// Classical Gram-Schmidt orthogonalization with reorthogonalization (Reference: G. W. Stewart; Matrix algorithms. Volume 1, Basic decompositions; 1998; page 287, Algorithm 4.1.13)
+		
         Scalar normf0 = f.norm(); // normr0 = sqrt(abs(r'*(applyM(r))));
         Vector w=wIn; // copy wIn to w
 
-        bool stopAlgorithm = false;
+        bool stopAlgorithm = false; // return value which tops the inner iterations
+		
         // Reorthogonalize :
-        Vector dw= Vjj.transpose() * f;
+        Vector dw = Vjj.transpose() * f;
         f.noalias() -= Vjj * dw;
         w.noalias() += dw;
         fnorm = f.norm();
 
+		// Classical Gram-Schmidt Algorithm
         int numReorths = 1;
         while (fnorm <= (1 / sqrt(2)) * normf0 && numReorths < 5)
         {
@@ -74,6 +82,7 @@ protected:
             numReorths++;
         }
         
+		// check for invariant subspace as a protection against loss of orthogonality
         if (fnorm <= (1 / sqrt(2)) * normf0)
         {
             // Cannot Reorthogonalize, invariant subspace found.
@@ -85,33 +94,29 @@ protected:
     
             for(int restart = 1; restart<=3; restart++)
             {
-                // Do a random restart: Will try at most three times
+                // Do a random restart: Will try at most three times before stoppping the algorithm
                 SimpleRandom<Scalar> rng(seed + 123 * restart);
-                rng.random_vec(f);
+                rng.random_vec(f); // get a new random f vector
         
-                // Orthogonalize r
+                // Orthogonalize f
                 f -= Vjj * (Vjj.transpose() * f);
-                Scalar fMf = f.norm();
                 f.normalize();
         
-                // Re-orthogonalize if necessary
+                // Reorthogonalize if necessary
                 stopAlgorithm = true;
                 for (int reorth = 1; reorth <= 5; reorth++)
                 {
                     // Check orthogonality
-                    Vector VMf(jj + 1);
-                    VMf.noalias() = Vjj.transpose() * f;
-                    fMf = f.norm();
+                    Vector Vf = Vjj.transpose() * f;
             
-                    Scalar ortho_err = VMf.cwiseAbs().maxCoeff();
-                    if (abs(fMf - 1) <= 1e-10 && ortho_err <= 1e-10)
+                    if (abs(f.norm() - 1) <= 1e-10 && Vf.cwiseAbs().maxCoeff() <= 1e-10)
                     {
                         stopAlgorithm = false;
                         break;
                     }
             
-                    // Re-orthogonalize
-                    f.noalias() -= Vjj * VMf;
+                    // Reorthogonalize
+                    f.noalias() -= Vjj * Vf;
                     f.normalize();
                 }
         
@@ -124,32 +129,27 @@ protected:
             f.normalize();
         }
 
-        wIn.noalias() = w;
+        wIn.noalias() = w; // assign the new w vector as output
         return stopAlgorithm;
     }
 
 public:
     // Copy an ArnoldiOp
-    KrylovSchur(const ArnoldiOpType& op, Index m) :
-        m_op(op), m_n(op.rows()), m_m(m), m_k(0)
+    template <typename T>
+    KrylovSchur(T& op, Index m) :
+        Arnoldi<Scalar, ArnoldiOpType>(op, m)
     {}
 
     // Move an ArnoldiOp
-    KrylovSchur(ArnoldiOpType&& op, Index m) :
-        m_op(std::move(op)), m_n(op.rows()), m_m(m), m_k(0)
+    template <typename T>
+    KrylovSchur(T&& op, Index m) :
+        Arnoldi<Scalar, ArnoldiOpType>(std::forward<T>(op), m)
     {}
 
     // reference to internal structures
     Matrix& matrix_V() { return m_fac_V; }
     Matrix& matrix_H() { return m_fac_H; }
     Vector& vector_f() { return m_fac_f; }
-
-    // Const-reference to internal structures
-    const Matrix& matrix_V() const { return m_fac_V; }
-    const Matrix& matrix_H() const { return m_fac_H; }
-    const Vector& vector_f() const { return m_fac_f; }
-    Scalar f_norm() const { return m_beta; }
-    Index subspace_dim() const { return m_k; }
 
     // Initialize with an operator and an initial vector
     void init(MapConstVec& v0, Index& op_counter)
@@ -173,12 +173,14 @@ public:
     }
 
     // Krylov factorization starting from step-k
-    virtual bool factorize_from(Index from_k, Index to_m, Index& op_counter)
+    void factorize_from(Index from_k, Index to_m, Index& op_counter)
     {
         using std::sqrt;
 
+        m_stop_algorithm = true;
+
         if (to_m <= from_k)
-            return true;
+            return;
 
         if (from_k > m_k)
         {
@@ -193,7 +195,6 @@ public:
         m_fac_H.rightCols(m_m - from_k).setZero();
         m_fac_H.block(from_k+1, 0, m_m - from_k - 1, from_k).setZero();
 
-        bool stopAlgorithm = false;
         for (Index i = from_k; i <= to_m - 1; i++)
         {
             m_fac_V.col(i).noalias() = m_fac_v;                 // V(:, jj) = v;
@@ -207,14 +208,14 @@ public:
             m_fac_f.noalias() -= Vjj * w;              // r = r - Vjj * w;
 
             // Reorthogonalize
-            stopAlgorithm = robust_reorthogonalize(Vjj, m_fac_f, m_beta, i, 2 * i, w);
+            m_stop_algorithm = robust_reorthogonalize(Vjj, m_fac_f, m_beta, i, 2 * i, w);
 
-            if (stopAlgorithm)
+            if (m_stop_algorithm)
             {
                 //    U = [];
                 //    d = [];
                 //    isNotConverged = false(0, 1);
-                return stopAlgorithm;
+                return;
             }
 
             // Save data
@@ -225,8 +226,6 @@ public:
 
         // Indicate that this is a step-m factorization
         m_k = to_m;
-
-        return stopAlgorithm;
     }
 
     // Updating
@@ -243,6 +242,15 @@ public:
     void swap_f(Vector& other)
     {
         m_fac_f.swap(other);
+    }
+	
+	///
+	/// Returns the status of the computation.
+	/// The full list of enumeration values can be found in \ref Enumerations.
+	///
+    CompInfo info()
+    {
+        return m_stop_algorithm ? CompInfo::NotConverging : CompInfo::Successful;
     }
 };
 

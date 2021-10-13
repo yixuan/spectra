@@ -1,11 +1,16 @@
+
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <iostream>
 #include <random>  // Requires C++ 11
 
 #include <Spectra/KrylovSchurGEigsSolver.h>
+#include <Spectra/SymGEigsSolver.h>
+
 #include <Spectra/MatOp/SparseSymMatProd.h>
-#include <Spectra/MatOp/SparseRegularInverseLU.h>
+#include <Spectra/MatOp/SparseRegularInverse.h>
+
+#include "EigenIOFile.h"
 
 using namespace Spectra;
 
@@ -15,41 +20,12 @@ using Matrix = Eigen::MatrixXd;
 using Vector = Eigen::VectorXd;
 using SpMatrix = Eigen::SparseMatrix<double>;
 
-// Generate random sparse matrix
-SpMatrix sprand(int size, double prob = 0.5)
-{
-    SpMatrix mat(size, size);
-    std::default_random_engine gen;
-    gen.seed(0);
-    std::uniform_real_distribution<double> distr(0.0, 1.0);
-    for (int i = 0; i < size; i++)
-    {
-        for (int j = 0; j < size; j++)
-        {
-            if (distr(gen) < prob)
-                mat.insert(i, j) = distr(gen) - 0.5;
-        }
-    }
-    return mat;
-}
-
-void gen_sparse_data(int n, SpMatrix& A, SpMatrix& B, double prob = 0.1)
-{
-    // Eigen solver only uses the lower triangle of A,
-    // so we don't need to make A symmetric here.
-    A = sprand(n, prob);
-    B = A.transpose() * A;
-    // To make sure B is positive definite
-    for (int i = 0; i < n; i++)
-        B.coeffRef(i, i) += 0.1;
-}
-
 template <typename Solver>
-void run_test(const SpMatrix& A, const SpMatrix& B, Solver& eigs, SortRule selection, bool allow_fail = false)
+void run_test(const SpMatrix& A, const SpMatrix& B, Solver& eigs, SortRule selection, bool allow_fail = false, bool invert_solution = false, double scale = 1)
 {
     eigs.init();
-    // maxit = 100 to reduce running time for failed cases
-    int nconv = eigs.compute(selection, 100);
+
+    int nconv = eigs.compute(selection, 300, 1e-14);
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
@@ -69,70 +45,74 @@ void run_test(const SpMatrix& A, const SpMatrix& B, Solver& eigs, SortRule selec
         REQUIRE(eigs.info() == CompInfo::Successful);
     }
 
-    Vector evals = eigs.eigenvalues();
+    Vector evals = eigs.eigenvalues() / scale;
     Matrix evecs = eigs.eigenvectors();
 
     Matrix resid = A.template selfadjointView<Eigen::Lower>() * evecs -
         B.template selfadjointView<Eigen::Lower>() * evecs * evals.asDiagonal();
     const double err = resid.array().abs().maxCoeff();
 
+    if (invert_solution) {
+        for (size_t i = 0; i < evals.size(); i++)
+            evals[i] = 1 / evals[i];
+    }
+
+    for (size_t i = 0; i < evals.size(); i++)
+        std::cout << "Eigenvalue #" << i << " = " << evals[i] << std::endl;
+
+    // square root
+    for (size_t i = 0; i < evals.size(); i++)
+        evals[i] = sqrt(evals[i]);
+
+    // output results
+    for (size_t i = 0; i < evals.size(); i++)
+        std::cout << "Eigen omega #" << i << " = " << evals[i] << std::endl;
+
     INFO("||AU - BUD||_inf = " << err);
     REQUIRE(err == Approx(0.0).margin(1e-9));
 }
 
-void run_test_sets(const SpMatrix& A, const SpMatrix& B, int k, int m)
+void run_test_sets(SpMatrix& A, SpMatrix& B, int k, int m)
 {
     using OpType = SparseSymMatProd<double>;
-    using BOpType = SparseRegularInverseLU<double>;
+    using BOpType = SparseRegularInverse<double>;
+
+
+    double scaleB = 1;
+    scaleB = B.norm() / std::sqrt(B.cols());
+    scaleB = std::pow(2, std::floor(std::log2(scaleB + 1)));
+
+    B /= scaleB;
+
     OpType op(A);
-    BOpType Bop(B);
+    BOpType Bop(B, BOpType::SolverType::LU); // use SparseLU as solver
     KrylovSchurGEigsSolver<OpType, BOpType, GEigsMode::RegularInverse> eigs(op, Bop, k, m);
+    //SymGEigsSolver<OpType, BOpType, GEigsMode::RegularInverse> eigs(op, Bop, k, m);
 
-    SECTION("Largest Magnitude")
-    {
-        run_test(A, B, eigs, SortRule::LargestMagn);
+    bool invert_solution = true;
+
+    if (invert_solution) {
+        SECTION("Largest Magnitude")
+        {
+            run_test(A, B, eigs, SortRule::LargestMagn, true, invert_solution, scaleB);
+        }
     }
-    SECTION("Smallest Magnitude")
-    {
-        run_test(A, B, eigs, SortRule::SmallestMagn, true);
+    else {
+        SECTION("Smallest Magnitude")
+        {
+            run_test(A, B, eigs, SortRule::SmallestMagn, true, invert_solution, scaleB);
+        }
     }
+
 }
 
-TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [10x10]", "[geigs_sym]")
+TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [16800x16800]", "[krylovschur]")
 {
-    std::srand(123);
-
-    // Eigen solver only uses the lower triangle
     SpMatrix A, B;
-    gen_sparse_data(10, A, B, 0.5);
-    int k = 3;
-    int m = 6;
-
-    run_test_sets(A, B, k, m);
-}
-
-TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [100x100]", "[geigs_sym]")
-{
-    std::srand(123);
-
-    // Eigen solver only uses the lower triangle
-    SpMatrix A, B;
-    gen_sparse_data(100, A, B, 0.1);
-    int k = 10;
-    int m = 20;
-
-    run_test_sets(A, B, k, m);
-}
-
-TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [1000x1000]", "[geigs_sym]")
-{
-    std::srand(123);
-
-    // Eigen solver only uses the lower triangle
-    SpMatrix A, B;
-    gen_sparse_data(1000, A, B, 0.01);
-    int k = 20;
-    int m = 50;
+    Eigen::read_binary_sparse("matrix_A", A);
+    Eigen::read_binary_sparse("matrix_B", B);
+    int k = 6;
+    int m = 2 * k >= 20 ? 2 * k : 20; // minimum subspace size 20
 
     run_test_sets(A, B, k, m);
 }

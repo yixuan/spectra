@@ -11,7 +11,7 @@
 #include "KrylovSchurGEigsBase.h"
 #include "Util/GEigsMode.h"
 #include "MatOp/internal/SymGEigsCholeskyOp.h"
-#include "MatOp/internal/SymGEigsRegInvLUOp.h"
+#include "MatOp/internal/SymGEigsRegInvOp.h"
 
 namespace Spectra {
 
@@ -91,29 +91,6 @@ public:
         Base(ModeMatOp(op, Bop), IdentityBOp(), nev, ncv),
         m_Bop(Bop)
     {}
-
-    /// \cond
-
-    Matrix eigenvectors(Index nvec) const override
-    {
-        Matrix res = Base::eigenvectors(nvec);
-        Vector tmp(res.rows());
-        const Index nconv = res.cols();
-        for (Index i = 0; i < nconv; i++)
-        {
-            m_Bop.upper_triangular_solve(&res(0, i), tmp.data());
-            res.col(i).noalias() = tmp;
-        }
-
-        return res;
-    }
-
-    Matrix eigenvectors() const override
-    {
-        return SymGEigsSolver<OpType, BOpType, GEigsMode::Cholesky>::eigenvectors(this->m_nev);
-    }
-
-    /// \endcond
 };
 
 ///
@@ -151,12 +128,12 @@ public:
 // Partial specialization for mode = GEigsMode::RegularInverse
 template <typename OpType, typename BOpType>
 class KrylovSchurGEigsSolver<OpType, BOpType, GEigsMode::RegularInverse> :
-    public KrylovSchurGEigsBase<SymGEigsRegInvLUOp<OpType, BOpType>, BOpType>
+    public KrylovSchurGEigsBase<SymGEigsRegInvOp<OpType, BOpType>, BOpType>
 {
 private:
     using Index = Eigen::Index;
 
-    using ModeMatOp = SymGEigsRegInvLUOp<OpType, BOpType>;
+    using ModeMatOp = SymGEigsRegInvOp<OpType, BOpType>;
     using Base = KrylovSchurGEigsBase<ModeMatOp, BOpType>;
 
 public:
