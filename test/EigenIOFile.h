@@ -1,4 +1,6 @@
-#pragma once
+
+#ifndef EIGENIOFILE_H
+#define EIGENIOFILE_H
 
 // Reference: https://gist.github.com/zishun/da277d30f4604108029d06db0e804773
 
@@ -22,7 +24,7 @@ namespace Eigen {
             out.close();
         }
         else {
-            std::cout << "Can not write to file: " << filename << std::endl;
+            std::cout << "Cannot write to file: " << filename << std::endl;
         }
     }
 
@@ -38,7 +40,7 @@ namespace Eigen {
             in.close();
         }
         else {
-            std::cout << "Can not open binary matrix file: " << filename << std::endl;
+            std::cout << "Cannot open binary matrix file: " << filename << std::endl;
         }
     }
 
@@ -71,7 +73,7 @@ namespace Eigen {
             out.close();
         }
         else {
-            std::cout << "Can not write to file: " << filename << std::endl;
+            std::cout << "Cannot write to file: " << filename << std::endl;
         }
     }
 
@@ -102,7 +104,9 @@ namespace Eigen {
             in.close();
         } // file is open
         else {
-            std::cout << "Can not open binary sparse matrix file: " << filename << std::endl;
+            std::cout << "Cannot open binary sparse matrix file: " << filename << std::endl;
         }
     }
 } // Eigen::
+
+#endif // EIGENIOFILE_H

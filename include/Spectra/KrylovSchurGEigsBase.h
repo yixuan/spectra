@@ -342,8 +342,8 @@ namespace Spectra {
                 ind = which_eigenvalues(d, selection);  // ind = whichEigenvalues(d, method);
                 Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic> reorder(ind.size());
                 reorder.indices() = Eigen::Map<Eigen::Vector<Index, Eigen::Dynamic>>(ind.data(), ind.size()).cast<int>();
-                d.noalias() = reorder.inverse() * d; // d = d(ind);
-                res.noalias() = reorder.inverse() * res;  // res = res(ind);
+                d = reorder.inverse() * d; // d = d(ind);
+                res = reorder.inverse() * res;  // res = res(ind);
 
                 // Number of converged eigenpairs :
                 Index nconvold = nconv;

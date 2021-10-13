@@ -212,9 +212,6 @@ public:
 
             if (m_stop_algorithm)
             {
-                //    U = [];
-                //    d = [];
-                //    isNotConverged = false(0, 1);
                 return;
             }
 
