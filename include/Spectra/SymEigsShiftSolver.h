@@ -213,7 +213,7 @@ public:
     /// \param sigma  The value of the shift.
     /// \param logger A logging object that inherits from the base class in LoggerBase.h
     ///
-    SymEigsShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+    SymEigsShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma, LoggerBase<Scalar, Vector>* logger) :
         Base(op, IdentityBOp(), nev, ncv, logger),
         m_sigma(sigma)
     {

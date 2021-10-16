@@ -214,7 +214,7 @@ public:
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     /// \param logger  A logging object that inherits from the base class in LoggerBase.h
     ///
-    SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+    SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, LoggerBase<Scalar, Vector>* logger) :
         Base(ModeMatOp(op, Bop), IdentityBOp(), nev, ncv, logger),
         m_Bop(Bop)
     {}
@@ -336,7 +336,7 @@ public:
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     /// \param logger  A logging object that inherits from the base class in LoggerBase.h
     ///
-    SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+    SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, LoggerBase<Scalar, Vector>* logger) :
         Base(ModeMatOp(op, Bop), Bop, nev, ncv, logger)
     {}
 };

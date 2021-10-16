@@ -110,9 +110,9 @@ void run_test_sets(const MatType& A, int k, int m)
     using Scalar = typename OpType::Scalar;
 
     OpType op(A);
-    std::unique_ptr<LoggerBase<Scalar, ComplexVector>> logger(new DerivedLogger<Scalar, ComplexVector>());
+    LoggerBase<Scalar, ComplexVector>* logger(new DerivedLogger<Scalar, ComplexVector>());
 
-    GenEigsSolver<OpType> eigs(op, k, m, std::move(logger));
+    GenEigsSolver<OpType> eigs(op, k, m, logger);
     run_test(A, eigs, SortRule::LargestMagn);
 }
 

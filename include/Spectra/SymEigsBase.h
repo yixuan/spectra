@@ -12,7 +12,6 @@
 #include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min
 #include <stdexcept>  // std::invalid_argument
-#include <memory>     // std::shared_ptr
 #include <utility>    // std::move
 
 #include "Util/Version.h"
@@ -84,7 +83,7 @@ private:
     Vector        m_resid;
     BoolArray     m_ritz_conv;  // indicator of the convergence of Ritz values
     CompInfo      m_info;       // status of the computation
-    std::shared_ptr<LoggerBase<Scalar, Vector>> m_logger;
+    LoggerBase<Scalar, Vector> *m_logger;
     // clang-format on
 
     // Move rvalue object to the container
@@ -257,7 +256,7 @@ public:
         if (ncv <= nev || ncv > m_n)
             throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
     }
-    SymEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+    SymEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, LoggerBase<Scalar, Vector>* logger) :
         SymEigsBase(op, Bop, nev, ncv)
     {
         set_logger(logger);
@@ -281,16 +280,16 @@ public:
         if (ncv <= nev || ncv > m_n)
             throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
     }
-    SymEigsBase(OpType&& op, const BOpType& Bop, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+    SymEigsBase(OpType&& op, const BOpType& Bop, Index nev, Index ncv, LoggerBase<Scalar, Vector>* logger) :
         SymEigsBase(op, Bop, nev, ncv)
     {
         set_logger(logger);
     }
 
     ///
-    /// Sets the logger shared_ptr with a user constructed logger object.
+    /// Sets the logger ptr with a user constructed logger object.
     ///
-    void set_logger(std::shared_ptr<LoggerBase<Scalar, Vector>>& logger)
+    void set_logger(LoggerBase<Scalar, Vector>* logger)
     {
         m_logger = logger;
     }

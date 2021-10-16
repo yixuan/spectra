@@ -105,8 +105,8 @@ void run_test_sets(const MatType& mat, int k, int m)
     using Scalar = typename OpType::Scalar;
 
     OpType op(mat);
-    std::unique_ptr<LoggerBase<Scalar, Vector>> logger(new DerivedLogger<Scalar, Vector>());
-    SymEigsSolver<OpType> eigs(op, k, m, std::move(logger));
+    LoggerBase<Scalar, Vector>* logger(new DerivedLogger<Scalar, Vector>());
+    SymEigsSolver<OpType> eigs(op, k, m, logger);
 
     run_test(mat, eigs, SortRule::LargestMagn);
 }
