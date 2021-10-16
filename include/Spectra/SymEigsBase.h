@@ -83,7 +83,7 @@ private:
     Vector        m_resid;
     BoolArray     m_ritz_conv;  // indicator of the convergence of Ritz values
     CompInfo      m_info;       // status of the computation
-    LoggerBase<Scalar, Vector> *m_logger;
+    LoggerBase<Scalar, Vector> *m_logger = nullptr;
     // clang-format on
 
     // Move rvalue object to the container

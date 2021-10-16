@@ -53,7 +53,7 @@ protected:
 
 private:
     CompInfo m_info = CompInfo::NotComputed;  // status of the computation
-    LoggerBase<Scalar, Vector>* m_logger;
+    LoggerBase<Scalar, Vector>* m_logger = nullptr;
 
     void check_argument() const
     {
