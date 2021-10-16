@@ -163,7 +163,7 @@ public:
     ///             and is advised to take \f$ncv \ge 2\cdot nev + 1\f$.
     /// \param logger A logging object that inherits from the base class in LoggerBase.h
     ///
-    GenEigsSolver(OpType& op, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, ComplexVector>> logger) :
+    GenEigsSolver(OpType& op, Index nev, Index ncv, LoggerBase<Scalar, ComplexVector>* logger) :
         GenEigsBase<OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv, logger)
     {}
 };

@@ -98,7 +98,7 @@ public:
     /// \param sigma  The real-valued shift.
     /// \param logger A logging object that inherits from the base class in LoggerBase.h
     ///
-    GenEigsRealShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma, std::shared_ptr<LoggerBase<Scalar, ComplexVector>> logger) :
+    GenEigsRealShiftSolver(OpType& op, Index nev, Index ncv, const Scalar& sigma, LoggerBase<Scalar, ComplexVector>* logger) :
         Base(op, IdentityBOp(), nev, ncv, logger),
         m_sigma(sigma)
     {

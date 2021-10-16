@@ -109,8 +109,8 @@ void run_test(const MatType& mat, int nev, SortRule selection)
     using OpType = typename OpTypeTrait<MatType>::OpType;
     using Scalar = typename OpType::Scalar;
     OpType op(mat);
-    std::unique_ptr<LoggerBase<Scalar, Vector<Scalar>>> logger(new DerivedLogger<Scalar, Vector<Scalar>>());
-    DavidsonSymEigsSolver<OpType> eigs(op, nev, std::move(logger));
+    LoggerBase<Scalar, Vector<Scalar>>* logger(new DerivedLogger<Scalar, Vector<Scalar>>());
+    DavidsonSymEigsSolver<OpType> eigs(op, nev, logger);
     int nconv = eigs.compute(selection);
 
     int niter = eigs.num_iterations();

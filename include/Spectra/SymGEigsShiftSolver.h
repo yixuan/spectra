@@ -224,7 +224,7 @@ public:
     /// \param sigma  The value of the shift.
     /// \param logger  A logging object that inherits from the base class in LoggerBase.h
     ///
-    SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+    SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma, LoggerBase<Scalar, Vector>* logger) :
         Base(set_shift_and_move(ModeMatOp(op, Bop), sigma), Bop, nev, ncv, logger),
         m_sigma(sigma)
     {}
@@ -414,7 +414,7 @@ public:
     /// \param sigma  The value of the shift.
     /// \param logger  A logging object that inherits from the base class in LoggerBase.h
     ///
-    SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+    SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma, LoggerBase<Scalar, Vector>* logger) :
         Base(set_shift_and_move(ModeMatOp(op, Bop), sigma), Bop, nev, ncv, std::move(logger)),
         m_sigma(sigma)
     {}
@@ -533,7 +533,7 @@ public:
     /// \param sigma  The value of the shift.
     /// \param logger  A logging object that inherits from the base class in LoggerBase.h
     ///
-    SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+    SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma, LoggerBase<Scalar, Vector>* logger) :
         Base(set_shift_and_move(ModeMatOp(op, Bop), sigma), Bop, nev, ncv, logger),
         m_sigma(sigma)
     {}

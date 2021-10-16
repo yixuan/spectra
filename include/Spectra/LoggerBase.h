@@ -9,10 +9,6 @@
 #define SPECTRA_LOGGER_BASE_H
 
 #include <Eigen/Core>
-#include <vector>  // std::vector
-
-#include "Util/Version.h"
-#include "Util/TypeTraits.h"
 
 namespace Spectra {
 

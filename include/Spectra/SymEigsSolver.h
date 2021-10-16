@@ -177,7 +177,7 @@ public:
     ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
     /// \param logger  A logging object that inherits from the base class in LoggerBase.h
     ///
-    SymEigsSolver(OpType& op, Index nev, Index ncv, std::shared_ptr<LoggerBase<Scalar, Vector>> logger) :
+    SymEigsSolver(OpType& op, Index nev, Index ncv, LoggerBase<Scalar, Vector>* logger) :
         SymEigsBase<OpType, IdentityBOp>(op, IdentityBOp(), nev, ncv, logger)
     {}
 };
