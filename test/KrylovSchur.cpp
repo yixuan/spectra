@@ -110,8 +110,8 @@ void run_test_sets(SpMatrix& A, SpMatrix& B, int k, int m)
 TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [16800x16800]", "[krylovschur]")
 {
     SpMatrix A, B;
-    Eigen::read_sparse("matrix_A.mtx", A, true);
-    Eigen::read_sparse("matrix_B.mtx", B, true);
+    Eigen::read_sparse("../test/matrix_A.mtx", A, true);
+    Eigen::read_sparse("../test/matrix_B.mtx", B, true);
     int k = 6;
     int m = 2 * k >= 20 ? 2 * k : 20;  // minimum subspace size 20
 

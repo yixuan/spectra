@@ -77,13 +77,13 @@ private:
         SolverType m_type = SolverType::ConjugateGradient;
 
         // solver
-        Eigen::SimplicialLLT<SparseMatrix> m_SimplicialLLT;
-        Eigen::SimplicialLDLT<SparseMatrix> m_SimplicialLDLT;
-        Eigen::SparseLU<SparseMatrix, Eigen::COLAMDOrdering<StorageIndex>> m_SparseLU;
-        Eigen::SparseQR<SparseMatrix, Eigen::COLAMDOrdering<StorageIndex>> m_SparseQR;
-        Eigen::ConjugateGradient<SparseMatrix> m_ConjugateGradient;
-        Eigen::BiCGSTAB<SparseMatrix> m_BiCGSTAB;
-        Eigen::LeastSquaresConjugateGradient<SparseMatrix> m_LeastSquaresConjugateGradient;
+        mutable Eigen::SimplicialLLT<SparseMatrix> m_SimplicialLLT;
+        mutable Eigen::SimplicialLDLT<SparseMatrix> m_SimplicialLDLT;
+        mutable Eigen::SparseLU<SparseMatrix, Eigen::COLAMDOrdering<StorageIndex>> m_SparseLU;
+        mutable Eigen::SparseQR<SparseMatrix, Eigen::COLAMDOrdering<StorageIndex>> m_SparseQR;
+        mutable Eigen::ConjugateGradient<SparseMatrix> m_ConjugateGradient;
+        mutable Eigen::BiCGSTAB<SparseMatrix> m_BiCGSTAB;
+        mutable Eigen::LeastSquaresConjugateGradient<SparseMatrix> m_LeastSquaresConjugateGradient;
 
     public:
         // constructor
@@ -96,7 +96,8 @@ private:
         void setType(SolverType type) { m_type = type; }
 
         // compute function
-        void compute(const SparseMatrix& mat)
+        template <typename Derived>
+        void compute(const Eigen::SparseMatrixBase<Derived>& mat)
         {
             switch (m_type)
             {
@@ -207,7 +208,7 @@ private:
         SolverType& type() { return m_type; }
     };
 
-    Solver m_solver;
+    mutable Solver m_solver;
     mutable CompInfo m_info;
 
 public:
