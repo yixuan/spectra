@@ -46,18 +46,17 @@ public:
     using Scalar = Scalar_;
 
     // enum for different solver types
-	enum class SolverType
-	{ 
-		SimplicialLLT,
-		SimplicialLDLT,
-		LU,
-		QR,
-		ConjugateGradient,
-		BiCGSTAB,
-		LeastSquaresConjugateGradient
+    enum class SolverType
+    {
+        SimplicialLLT,
+        SimplicialLDLT,
+        LU,
+        QR,
+        ConjugateGradient,
+        BiCGSTAB,
+        LeastSquaresConjugateGradient
     };
-    
-	
+
 private:
     using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
@@ -205,7 +204,6 @@ private:
 
         // return solver type
         SolverType& type() { return m_type; }
-
     };
 
     Solver m_solver;
@@ -230,7 +228,7 @@ public:
         if (mat.rows() != mat.cols())
             throw std::invalid_argument("SparseRegularInverse: matrix must be square");
 
-        m_solver.setType(type); // declare solver type
+        m_solver.setType(type);  // declare solver type
         m_solver.compute(mat);
 
         m_info = (m_solver.info() == Eigen::Success) ?

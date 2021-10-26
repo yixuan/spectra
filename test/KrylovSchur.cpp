@@ -52,7 +52,8 @@ void run_test(const SpMatrix& A, const SpMatrix& B, Solver& eigs, SortRule selec
         B.template selfadjointView<Eigen::Lower>() * evecs * evals.asDiagonal();
     const double err = resid.array().abs().maxCoeff();
 
-    if (invert_solution) {
+    if (invert_solution)
+    {
         for (size_t i = 0; i < evals.size(); i++)
             evals[i] = 1 / evals[i];
     }
@@ -77,7 +78,6 @@ void run_test_sets(SpMatrix& A, SpMatrix& B, int k, int m)
     using OpType = SparseSymMatProd<double>;
     using BOpType = SparseRegularInverse<double>;
 
-
     double scaleB = 1;
     scaleB = B.norm() / std::sqrt(B.cols());
     scaleB = std::pow(2, std::floor(std::log2(scaleB + 1)));
@@ -85,25 +85,26 @@ void run_test_sets(SpMatrix& A, SpMatrix& B, int k, int m)
     B /= scaleB;
 
     OpType op(A);
-    BOpType Bop(B, BOpType::SolverType::LU); // use SparseLU as solver
+    BOpType Bop(B, BOpType::SolverType::LU);  // use SparseLU as solver
     KrylovSchurGEigsSolver<OpType, BOpType, GEigsMode::RegularInverse> eigs(op, Bop, k, m);
     //SymGEigsSolver<OpType, BOpType, GEigsMode::RegularInverse> eigs(op, Bop, k, m);
 
     bool invert_solution = true;
 
-    if (invert_solution) {
+    if (invert_solution)
+    {
         SECTION("Largest Magnitude")
         {
             run_test(A, B, eigs, SortRule::LargestMagn, true, invert_solution, scaleB);
         }
     }
-    else {
+    else
+    {
         SECTION("Smallest Magnitude")
         {
             run_test(A, B, eigs, SortRule::SmallestMagn, true, invert_solution, scaleB);
         }
     }
-
 }
 
 TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [16800x16800]", "[krylovschur]")
@@ -112,7 +113,7 @@ TEST_CASE("Generalized eigensolver of sparse symmetric real matrix [16800x16800]
     Eigen::read_sparse("matrix_A.mtx", A, true);
     Eigen::read_sparse("matrix_B.mtx", B, true);
     int k = 6;
-    int m = 2 * k >= 20 ? 2 * k : 20; // minimum subspace size 20
+    int m = 2 * k >= 20 ? 2 * k : 20;  // minimum subspace size 20
 
     run_test_sets(A, B, k, m);
 }
