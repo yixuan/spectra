@@ -71,6 +71,7 @@ private:
     using Base = SymEigsBase<OpType, BOpType>;
 
 protected:
+    // clang-format off
 
     using Base::m_op;
     using Base::m_n;
@@ -86,6 +87,8 @@ private:
     Matrix        m_eigen_vec;   // eigenvectors
     BoolArray     m_ritz_conv;   // indicator of the convergence of Ritz values
     CompInfo      m_info;        // status of the computation
+
+    // clang-format on
 
     // Calculates the number of converged eigenvalues
     Index num_converged(const Scalar& tol, ComplexVector& evals, Vector& res)
@@ -362,17 +365,19 @@ public:
 
             // Choose desired eigenvalues in d to create a Boolean select vector
             ind = which_eigenvalues(d, selection);
-            Eigen::Map<Eigen::Matrix<Index, Eigen::Dynamic, 1>> ind_sel(ind.data(), ind.size());
             BoolArray select(m_ncv);
             select.setConstant(false);
-            select(ind_sel.head(nev_new)).setConstant(true);
+            for (unsigned int i = 0; i < nev_new; i++)
+            {
+                select(ind[i]) = true;
+            }
 
             // Make sure both parts of a conjugate pair are present
             if (isrealprob)
             {
-                for (auto it = ind_sel.begin(); it != ind_sel.end(); it++)
+                for (std::vector<Index>::iterator it = ind.begin(); it != ind.end(); it++)
                 {
-                    int i = *it;
+                    Index i = *it;
                     if (i + 1 < m_ncv && T(i + 1, i) != 0 && !select(i + 1))
                     {
                         select(i + 1) = true;
