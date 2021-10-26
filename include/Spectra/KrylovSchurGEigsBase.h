@@ -71,23 +71,21 @@ private:
     using Base = SymEigsBase<OpType, BOpType>;
 
 protected:
-    // clang-format off
 
-        using Base::m_op;
-        using Base::m_n;
-        using Base::m_nev;
-        using Base::m_ncv;
-        using Base::m_nmatop;
-        using Base::m_niter;
-        using Base::m_ritz_val;
+    using Base::m_op;
+    using Base::m_n;
+    using Base::m_nev;
+    using Base::m_ncv;
+    using Base::m_nmatop;
+    using Base::m_niter;
+    using Base::m_ritz_val;
 
-        KrylovFac     m_fac;        // Krylov-Schur specific factorization
+    KrylovFac     m_fac;         // Krylov-Schur specific factorization
 
-    private:
-        Matrix        m_eigen_vec;   // eigenvectors
-        BoolArray     m_ritz_conv;  // indicator of the convergence of Ritz values
-        CompInfo      m_info;       // status of the computation
-    // clang-format on
+private:
+    Matrix        m_eigen_vec;   // eigenvectors
+    BoolArray     m_ritz_conv;   // indicator of the convergence of Ritz values
+    CompInfo      m_info;        // status of the computation
 
     // Calculates the number of converged eigenvalues
     Index num_converged(const Scalar& tol, ComplexVector& evals, Vector& res)
@@ -340,7 +338,7 @@ public:
             // Sort eigenvalues and residuals
             ind = which_eigenvalues(d, selection);  // ind = whichEigenvalues(d, method);
             Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic> reorder(ind.size());
-            reorder.indices() = Eigen::Map<Eigen::Vector<Index, Eigen::Dynamic>>(ind.data(), ind.size()).cast<int>();
+            reorder.indices() = Eigen::Map<Eigen::Matrix<Index, Eigen::Dynamic, 1>>(ind.data(), ind.size()).cast<int>();
             d = reorder.inverse() * d;      // d = d(ind);
             res = reorder.inverse() * res;  // res = res(ind);
 
@@ -364,7 +362,7 @@ public:
 
             // Choose desired eigenvalues in d to create a Boolean select vector
             ind = which_eigenvalues(d, selection);
-            Eigen::Map<Eigen::Vector<Index, Eigen::Dynamic>> ind_sel(ind.data(), ind.size());
+            Eigen::Map<Eigen::Matrix<Index, Eigen::Dynamic, 1>> ind_sel(ind.data(), ind.size());
             BoolArray select(m_ncv);
             select.setConstant(false);
             select(ind_sel.head(nev_new)).setConstant(true);
@@ -413,7 +411,7 @@ public:
 
         m_eigen_vec.resize(m_n, m_nev);
         Eigen::PermutationMatrix<Eigen::Dynamic, Eigen::Dynamic> reorder(ind.size());
-        reorder.indices() = Eigen::Map<Eigen::Vector<Index, Eigen::Dynamic>>(ind.data(), ind.size()).cast<int>();
+        reorder.indices() = Eigen::Map<Eigen::Matrix<Index, Eigen::Dynamic, 1>>(ind.data(), ind.size()).cast<int>();
         U.noalias() = U * reorder;  // d = d(ind);
         m_eigen_vec.noalias() = (m_fac.matrix_V() * U.leftCols(m_nev)).real();
 
@@ -433,7 +431,7 @@ public:
     /// Returns the converged eigenvalues.
     ///
     /// \return A vector containing the eigenvalues.
-    /// Returned vector type will be `Eigen::Vector<Scalar, ...>`, depending on
+    /// Returned vector type will be `Eigen::Matrix<Scalar, ...>`, depending on
     /// the template parameter `Scalar` defined.
     ///
     Vector eigenvalues() const

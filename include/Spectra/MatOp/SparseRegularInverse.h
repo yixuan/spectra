@@ -14,6 +14,7 @@
 #include <Eigen/SparseQR>
 #include <Eigen/SparseCholesky>
 #include <stdexcept>
+#include "../Util/CompInfo.h"
 
 namespace Spectra {
 
