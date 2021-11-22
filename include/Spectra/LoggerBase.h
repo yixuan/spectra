@@ -52,7 +52,7 @@ public:
     ///
     /// Virtual logging function
     ///
-    virtual void iteration_log(const IterationData<Scalar, Vector>& data);
+    virtual void iteration_log(const IterationData<Scalar, Vector>& data) = 0;
 };
 
 }  // namespace Spectra
