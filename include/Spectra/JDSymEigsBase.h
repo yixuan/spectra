@@ -193,7 +193,9 @@ public:
             {
                 const Eigen::Array<bool, Eigen::Dynamic, 1> conv_eig = m_ritz_pairs.converged_eigenvalues().head(m_number_eigenvalues);
                 const Index num_conv = conv_eig.count();
-                const IterationData<Scalar, Vector> data(niter_, num_conv, m_search_space.size(), eigenvalues(), m_ritz_pairs.residues().colwise().norm().head(m_number_eigenvalues), conv_eig);
+                const Vector evals = eigenvalues();
+                const Vector res = m_ritz_pairs.residues().colwise().norm().head(m_number_eigenvalues);
+                const IterationData<Scalar, Vector> data(niter_, num_conv, m_search_space.size(), evals, res, conv_eig);
                 m_logger->iteration_log(data);
             }
             if (converged)
