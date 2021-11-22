@@ -381,7 +381,8 @@ public:
             nconv = num_converged(tol);
             if (m_logger)
             {
-                const IterationData<Scalar, Vector> data(i, nconv, m_ncv, m_ritz_val.head(m_nev), m_resid, m_ritz_conv);
+                const Vector eigs = m_ritz_val.head(m_nev);
+                const IterationData<Scalar, Vector> data(i, nconv, m_ncv, eigs, m_resid, m_ritz_conv);
                 m_logger->iteration_log(data);
             }
             if (nconv >= m_nev)

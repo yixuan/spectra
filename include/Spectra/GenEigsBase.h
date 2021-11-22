@@ -444,7 +444,8 @@ public:
             nconv = num_converged(tol);
             if (m_logger)
             {
-                const IterationData<Scalar, ComplexVector> data(i, nconv, m_ncv, m_ritz_val.head(m_nev), m_resid, m_ritz_conv);
+                const ComplexVector eigs = m_ritz_val.head(m_nev);
+                const IterationData<Scalar, ComplexVector> data(i, nconv, m_ncv, eigs, m_resid, m_ritz_conv);
                 m_logger->iteration_log(data);
             }
             if (nconv >= m_nev)
