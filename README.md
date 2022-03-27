@@ -2,8 +2,6 @@
 
 [![Build Status](https://travis-ci.org/yixuan/spectra.svg?branch=master)](https://travis-ci.org/yixuan/spectra) ![Basic CI](https://github.com/yixuan/spectra/workflows/Basic%20CI/badge.svg) [![codecov](https://codecov.io/gh/yixuan/spectra/branch/master/graph/badge.svg)](https://codecov.io/gh/yixuan/spectra)
 
-
-
 > **NOTE**: Spectra 1.0.0 is released, with a lot of
 > API-breaking changes. Please see the [migration guide](MIGRATION.md)
 > for a smooth transition to the new version.
@@ -69,6 +67,7 @@ of this object can then be called to conduct the computation and retrieve the
 eigenvalues and/or eigenvectors.
 
 Below is a list of the available eigen solvers in **Spectra**:
+
 - [SymEigsSolver](https://spectralib.org/doc/classSpectra_1_1SymEigsSolver.html):
 For real symmetric matrices
 - [GenEigsSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsSolver.html):
@@ -191,8 +190,8 @@ class MyDiagonalTen
 {
 public:
     using Scalar = double;  // A typedef named "Scalar" is required
-    int rows() { return 10; }
-    int cols() { return 10; }
+    int rows() const { return 10; }
+    int cols() const { return 10; }
     // y_out = M * x_in
     void perform_op(const double *x_in, double *y_out) const
     {
