@@ -25,8 +25,8 @@ public:
     // The line below is new
     using Scalar = double;
 
-    int rows() { return 10; }
-    int cols() { return 10; }
+    int rows() const { return 10; }
+    int cols() const { return 10; }
     // y_out = M * x_in
     void perform_op(const double *x_in, double *y_out) const
     {

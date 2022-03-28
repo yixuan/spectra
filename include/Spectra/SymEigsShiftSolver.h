@@ -113,8 +113,8 @@ namespace Spectra {
 ///     double sigma_;
 /// public:
 ///     using Scalar = double;  // A typedef named "Scalar" is required
-///     int rows() { return 10; }
-///     int cols() { return 10; }
+///     int rows() const { return 10; }
+///     int cols() const { return 10; }
 ///     void set_shift(double sigma) { sigma_ = sigma; }
 ///     // y_out = inv(A - sigma * I) * x_in
 ///     // inv(A - sigma * I) = diag(1/(1-sigma), 1/(2-sigma), ...)

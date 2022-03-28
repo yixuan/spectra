@@ -1,3 +1,10 @@
+## [Unreleased]
+### Changed
+- Fixed several bugs in the examples caused by the `const` keyword,
+  reported by [@alexpghayes](https://github.com/alexpghayes)
+  ([#135](https://github.com/yixuan/spectra/issues/135), [#137](https://github.com/yixuan/spectra/pull/137))
+
+
 ## [1.0.0] - 2021-07-01
 ### Added
 - Added version macros `SPECTRA_MAJOR_VERSION`, `SPECTRA_MINOR_VERSION`,
