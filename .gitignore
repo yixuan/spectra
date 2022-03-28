@@ -1,8 +1,13 @@
 *.o
+*.a
 *.out
-include/Eigen/*
+*~
+.project
+.cproject
+.vscode
+.settings
 .idea/
 cmake-build*/
 build/*
-.vscode
-*~
+issues/*
+include/Eigen/*
