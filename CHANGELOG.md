@@ -1,5 +1,7 @@
 ## [Unreleased]
 ### Changed
+- Added SIMD support for `UpperHessenbergSchur`. This should accelerate
+  general eigen solvers such as `GenEigsSolver`
 - Fixed several bugs in the examples caused by the `const` keyword,
   reported by [@alexpghayes](https://github.com/alexpghayes)
   ([#135](https://github.com/yixuan/spectra/issues/135), [#137](https://github.com/yixuan/spectra/pull/137))
