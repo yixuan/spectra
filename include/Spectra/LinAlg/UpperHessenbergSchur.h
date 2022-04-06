@@ -237,8 +237,8 @@ private:
             Packet vx22 = ploadu<Packet>(px2 + PacketSize);
 
             // Packet txv1 = vtau * (vx01 + vv1 * vx11 + vv2 * vx21);
-            Packet txv1 = pmul(vtau, padd(vx01, padd(pmul(vv1, vx11), pmul(vv2, vx21))));
-            Packet txv2 = pmul(vtau, padd(vx02, padd(pmul(vv1, vx12), pmul(vv2, vx22))));
+            Packet txv1 = pmul(vtau, padd(padd(vx01, pmul(vv1, vx11)), pmul(vv2, vx21)));
+            Packet txv2 = pmul(vtau, padd(padd(vx02, pmul(vv1, vx12)), pmul(vv2, vx22)));
 
             pstoreu(px0, psub(vx01, txv1));
             pstoreu(px0 + PacketSize, psub(vx02, txv2));
@@ -260,7 +260,7 @@ private:
             Packet x0_p = ploadu<Packet>(px0);
             Packet x1_p = ploadu<Packet>(px1);
             Packet x2_p = ploadu<Packet>(px2);
-            Packet txv = pmul(vtau, padd(x0_p, padd(pmul(vv1, x1_p), pmul(vv2, x2_p))));
+            Packet txv = pmul(vtau, padd(padd(x0_p, pmul(vv1, x1_p)), pmul(vv2, x2_p)));
 
             pstoreu(px0, psub(x0_p, txv));
             pstoreu(px1, psub(x1_p, pmul(txv, vv1)));
