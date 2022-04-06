@@ -60,7 +60,7 @@ private:
 
     void initialize()
     {
-        //TODO better input validation and checks
+        // TODO better input validation and checks
         if (m_matrix_operator.cols() < m_max_search_space_size)
         {
             m_max_search_space_size = m_matrix_operator.cols();

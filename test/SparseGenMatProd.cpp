@@ -26,12 +26,12 @@ Eigen::SparseMatrix<T> generate_random_sparse(Index rows, Index cols)
             auto v_ij = dist(gen);
             if (v_ij < 0.5)
             {
-                //if larger than treshold, insert it
+                // if larger than treshold, insert it
                 tripletVector.push_back(Eigen::Triplet<T>(i, j, v_ij));
             }
         }
     Eigen::SparseMatrix<T> mat(rows, cols);
-    //create the matrix
+    // create the matrix
     mat.setFromTriplets(tripletVector.begin(), tripletVector.end());
 
     return mat;
