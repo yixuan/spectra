@@ -1,6 +1,7 @@
 var group__EigenSolver =
 [
     [ "DavidsonSymEigsSolver", "classSpectra_1_1DavidsonSymEigsSolver.html", [
+      [ "DavidsonSymEigsSolver", "classSpectra_1_1DavidsonSymEigsSolver.html#a5e7f512bada5a05f59aef51eee8472b9", null ],
       [ "DavidsonSymEigsSolver", "classSpectra_1_1DavidsonSymEigsSolver.html#ab0b47a59927a22b492fe0a1b300322df", null ],
       [ "setup_initial_search_space", "classSpectra_1_1DavidsonSymEigsSolver.html#a622bf58f5bea536a794ef53c6406cbaa", null ],
       [ "calculate_correction_vector", "classSpectra_1_1DavidsonSymEigsSolver.html#a1b9455f2f5bcde0f7e1159eb9857c942", null ]
@@ -26,6 +27,7 @@ var group__EigenSolver =
       [ "GenEigsSolver", "classSpectra_1_1GenEigsSolver.html#ad4cfb8020504bc914fddc471394e8823", null ]
     ] ],
     [ "JDSymEigsBase", "classSpectra_1_1JDSymEigsBase.html", [
+      [ "JDSymEigsBase", "classSpectra_1_1JDSymEigsBase.html#a819e462c7a417af72ae3f68cb86c2f20", null ],
       [ "JDSymEigsBase", "classSpectra_1_1JDSymEigsBase.html#a1b1701964f36165abca0f1570a806eae", null ],
       [ "~JDSymEigsBase", "classSpectra_1_1JDSymEigsBase.html#ac6c3bd14b22c276f6747960073768c70", null ],
       [ "set_max_search_space_size", "classSpectra_1_1JDSymEigsBase.html#af69d245907f7d68fcec053ce9a95ca86", null ],

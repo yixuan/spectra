@@ -33,7 +33,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Spectra
-   &#160;<span id="projectnumber">1.0.0</span>
+   &#160;<span id="projectnumber">1.0.1</span>
    </div>
    <div id="projectbrief">Header-only C++ Library for Large Scale Eigenvalue Problems</div>
   </td>
@@ -214,8 +214,8 @@ Examples</h2>
 <div class="line">{</div>
 <div class="line"><span class="keyword">public</span>:</div>
 <div class="line">    <span class="keyword">using</span> Scalar = double;  <span class="comment">// A typedef named &quot;Scalar&quot; is required</span></div>
-<div class="line">    <span class="keywordtype">int</span> rows() { <span class="keywordflow">return</span> 10; }</div>
-<div class="line">    <span class="keywordtype">int</span> cols() { <span class="keywordflow">return</span> 10; }</div>
+<div class="line">    <span class="keywordtype">int</span> rows()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> 10; }</div>
+<div class="line">    <span class="keywordtype">int</span> cols()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> 10; }</div>
 <div class="line">    <span class="comment">// y_out = M * x_in</span></div>
 <div class="line">    <span class="keywordtype">void</span> perform_op(<span class="keyword">const</span> <span class="keywordtype">double</span> *x_in, <span class="keywordtype">double</span> *y_out)<span class="keyword"> const</span></div>
 <div class="line"><span class="keyword">    </span>{</div>

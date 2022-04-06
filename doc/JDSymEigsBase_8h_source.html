@@ -33,7 +33,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Spectra
-   &#160;<span id="projectnumber">1.0.0</span>
+   &#160;<span id="projectnumber">1.0.1</span>
    </div>
    <div id="projectbrief">Header-only C++ Library for Large Scale Eigenvalue Problems</div>
   </td>
@@ -145,117 +145,124 @@ $(document).ready(function(){initNavTree('JDSymEigsBase_8h_source.html',''); ini
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;nev must satisfy 1 &lt;= nev &lt;= n - 1, n is the size of matrix&quot;</span>);</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    }</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <a class="code" href="classSpectra_1_1JDSymEigsBase.html">JDSymEigsBase</a>(OpType&amp; op, Index nev) :</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        m_matrix_operator(op),</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        m_number_eigenvalues(nev),</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        m_max_search_space_size(10 * m_number_eigenvalues),</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        m_initial_search_space_size(2 * m_number_eigenvalues),</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        m_correction_size(m_number_eigenvalues)</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    {</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        check_argument();</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="comment">//TODO better input validation and checks</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="keywordflow">if</span> (op.cols() &lt; m_max_search_space_size)</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        {</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            m_max_search_space_size = op.cols();</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        }</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keywordflow">if</span> (op.cols() &lt; m_initial_search_space_size + m_correction_size)</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        {</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;            m_initial_search_space_size = op.cols() / 3;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            m_correction_size = op.cols() / 3;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        }</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    }</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160; </div>
-<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="classSpectra_1_1JDSymEigsBase.html#af69d245907f7d68fcec053ce9a95ca86">   86</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classSpectra_1_1JDSymEigsBase.html#af69d245907f7d68fcec053ce9a95ca86">set_max_search_space_size</a>(Index max_search_space_size)</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    {</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        m_max_search_space_size = max_search_space_size;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    }</div>
-<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="classSpectra_1_1JDSymEigsBase.html#a907f30b1026ecab0e7c77bed9e5f710a">   93</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classSpectra_1_1JDSymEigsBase.html#a907f30b1026ecab0e7c77bed9e5f710a">set_correction_size</a>(Index correction_size)</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">void</span> initialize()</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    {</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="comment">// TODO better input validation and checks</span></div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordflow">if</span> (m_matrix_operator.cols() &lt; m_max_search_space_size)</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        {</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            m_max_search_space_size = m_matrix_operator.cols();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        }</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordflow">if</span> (m_matrix_operator.cols() &lt; m_initial_search_space_size + m_correction_size)</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            m_initial_search_space_size = m_matrix_operator.cols() / 3;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            m_correction_size = m_matrix_operator.cols() / 3;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    }</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <a class="code" href="classSpectra_1_1JDSymEigsBase.html">JDSymEigsBase</a>(OpType&amp; op, Index nev, Index nvec_init, Index nvec_max) :</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        m_matrix_operator(op),</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        m_number_eigenvalues(nev),</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        m_max_search_space_size(nvec_max &lt; op.rows() ? nvec_max : 10 * m_number_eigenvalues),</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        m_initial_search_space_size(nvec_init &lt; op.rows() ? nvec_init : 2 * m_number_eigenvalues),</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        m_correction_size(m_number_eigenvalues)</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    {</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        check_argument();</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        initialize();</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    }</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <a class="code" href="classSpectra_1_1JDSymEigsBase.html">JDSymEigsBase</a>(OpType&amp; op, Index nev) :</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <a class="code" href="classSpectra_1_1JDSymEigsBase.html">JDSymEigsBase</a>(op, nev, 2 * nev, 10 * nev) {}</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="classSpectra_1_1JDSymEigsBase.html#af69d245907f7d68fcec053ce9a95ca86">   93</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classSpectra_1_1JDSymEigsBase.html#af69d245907f7d68fcec053ce9a95ca86">set_max_search_space_size</a>(Index max_search_space_size)</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    {</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        m_correction_size = correction_size;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        m_max_search_space_size = max_search_space_size;</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="classSpectra_1_1JDSymEigsBase.html#acbbc66f28bd1d0c75ce5926c2deee598">  101</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classSpectra_1_1JDSymEigsBase.html#acbbc66f28bd1d0c75ce5926c2deee598">set_initial_search_space_size</a>(Index initial_search_space_size)</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    {</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        m_initial_search_space_size = initial_search_space_size;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    }</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
-<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="classSpectra_1_1JDSymEigsBase.html#ac6c3bd14b22c276f6747960073768c70">  109</a></span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classSpectra_1_1JDSymEigsBase.html#ac6c3bd14b22c276f6747960073768c70">~JDSymEigsBase</a>() {}</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160; </div>
-<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="classSpectra_1_1JDSymEigsBase.html#a09d777263795aff0c6e4d6ac9f8b86a8">  115</a></span>&#160;    <a class="code" href="group__Enumerations.html#gae1a6cf904d752db2f5641ec79a1bbbf0">CompInfo</a> <a class="code" href="classSpectra_1_1JDSymEigsBase.html#a09d777263795aff0c6e4d6ac9f8b86a8">info</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_info; }</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno"><a class="line" href="classSpectra_1_1JDSymEigsBase.html#a97ebc8d84a509a4394098877ca0690a0">  120</a></span>&#160;    Index <a class="code" href="classSpectra_1_1JDSymEigsBase.html#a97ebc8d84a509a4394098877ca0690a0">num_iterations</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> niter_; }</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    Vector eigenvalues()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_ritz_pairs.ritz_values().head(m_number_eigenvalues); }</div>
+<div class="line"><a name="l00100"></a><span class="lineno"><a class="line" href="classSpectra_1_1JDSymEigsBase.html#a907f30b1026ecab0e7c77bed9e5f710a">  100</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classSpectra_1_1JDSymEigsBase.html#a907f30b1026ecab0e7c77bed9e5f710a">set_correction_size</a>(Index correction_size)</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    {</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        m_correction_size = correction_size;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    }</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="classSpectra_1_1JDSymEigsBase.html#acbbc66f28bd1d0c75ce5926c2deee598">  108</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classSpectra_1_1JDSymEigsBase.html#acbbc66f28bd1d0c75ce5926c2deee598">set_initial_search_space_size</a>(Index initial_search_space_size)</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        m_initial_search_space_size = initial_search_space_size;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    }</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="classSpectra_1_1JDSymEigsBase.html#ac6c3bd14b22c276f6747960073768c70">  116</a></span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classSpectra_1_1JDSymEigsBase.html#ac6c3bd14b22c276f6747960073768c70">~JDSymEigsBase</a>() {}</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
+<div class="line"><a name="l00122"></a><span class="lineno"><a class="line" href="classSpectra_1_1JDSymEigsBase.html#a09d777263795aff0c6e4d6ac9f8b86a8">  122</a></span>&#160;    <a class="code" href="group__Enumerations.html#gae1a6cf904d752db2f5641ec79a1bbbf0">CompInfo</a> <a class="code" href="classSpectra_1_1JDSymEigsBase.html#a09d777263795aff0c6e4d6ac9f8b86a8">info</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_info; }</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    Matrix eigenvectors()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_ritz_pairs.ritz_vectors().leftCols(m_number_eigenvalues); }</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    Index compute(<a class="code" href="group__Enumerations.html#ga699aae652eac3e9c714957fce4b395fd">SortRule</a> selection = <a class="code" href="group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fdaf58c1705d219c9465cc4a339081622b5">SortRule::LargestMagn</a>, Index maxit = 100,</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                  Scalar tol = 100 * Eigen::NumTraits&lt;Scalar&gt;::dummy_precision())</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    {</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        Derived&amp; derived = <span class="keyword">static_cast&lt;</span>Derived&amp;<span class="keyword">&gt;</span>(*this);</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        Matrix intial_space = derived.setup_initial_search_space(selection);</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keywordflow">return</span> compute_with_guess(intial_space, selection, maxit, tol);</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    }</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160; </div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    Index compute_with_guess(<span class="keyword">const</span> Eigen::Ref&lt;const Matrix&gt;&amp; initial_space,</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;                             <a class="code" href="group__Enumerations.html#ga699aae652eac3e9c714957fce4b395fd">SortRule</a> selection = <a class="code" href="group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fdaf58c1705d219c9465cc4a339081622b5">SortRule::LargestMagn</a>,</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;                             Index maxit = 100,</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;                             Scalar tol = 100 * Eigen::NumTraits&lt;Scalar&gt;::dummy_precision())</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    {</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        m_search_space.initialize_search_space(initial_space);</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        niter_ = 0;</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        <span class="keywordflow">for</span> (niter_ = 0; niter_ &lt; maxit; niter_++)</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        {</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            <span class="keywordtype">bool</span> do_restart = (m_search_space.size() &gt; m_max_search_space_size);</div>
+<div class="line"><a name="l00127"></a><span class="lineno"><a class="line" href="classSpectra_1_1JDSymEigsBase.html#a97ebc8d84a509a4394098877ca0690a0">  127</a></span>&#160;    Index <a class="code" href="classSpectra_1_1JDSymEigsBase.html#a97ebc8d84a509a4394098877ca0690a0">num_iterations</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> niter_; }</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    Vector eigenvalues()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_ritz_pairs.ritz_values().head(m_number_eigenvalues); }</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    Matrix eigenvectors()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_ritz_pairs.ritz_vectors().leftCols(m_number_eigenvalues); }</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    Index compute(<a class="code" href="group__Enumerations.html#ga699aae652eac3e9c714957fce4b395fd">SortRule</a> selection = <a class="code" href="group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fdaf58c1705d219c9465cc4a339081622b5">SortRule::LargestMagn</a>, Index maxit = 100,</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;                  Scalar tol = 100 * Eigen::NumTraits&lt;Scalar&gt;::dummy_precision())</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    {</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        Derived&amp; derived = <span class="keyword">static_cast&lt;</span>Derived&amp;<span class="keyword">&gt;</span>(*this);</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        Matrix intial_space = derived.setup_initial_search_space(selection);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        <span class="keywordflow">return</span> compute_with_guess(intial_space, selection, maxit, tol);</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    }</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    Index compute_with_guess(<span class="keyword">const</span> Eigen::Ref&lt;const Matrix&gt;&amp; initial_space,</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                             <a class="code" href="group__Enumerations.html#ga699aae652eac3e9c714957fce4b395fd">SortRule</a> selection = <a class="code" href="group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fdaf58c1705d219c9465cc4a339081622b5">SortRule::LargestMagn</a>,</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;                             Index maxit = 100,</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                             Scalar tol = 100 * Eigen::NumTraits&lt;Scalar&gt;::dummy_precision())</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160; </div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            <span class="keywordflow">if</span> (do_restart)</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;            {</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                m_search_space.restart(m_ritz_pairs, m_initial_search_space_size);</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            }</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160; </div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            m_search_space.update_operator_basis_product(m_matrix_operator);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    {</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        m_search_space.initialize_search_space(initial_space);</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        niter_ = 0;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        <span class="keywordflow">for</span> (niter_ = 0; niter_ &lt; maxit; niter_++)</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        {</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            <span class="keywordtype">bool</span> do_restart = (m_search_space.size() &gt; m_max_search_space_size);</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;            Eigen::ComputationInfo small_problem_info = m_ritz_pairs.compute_eigen_pairs(m_search_space);</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            <span class="keywordflow">if</span> (small_problem_info != Eigen::ComputationInfo::Success)</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            {</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                m_info = <a class="code" href="group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a71a8cace395f4677b2a983f2f64d6f51">CompInfo::NumericalIssue</a>;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            }</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            m_ritz_pairs.sort(selection);</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            <span class="keywordtype">bool</span> converged = m_ritz_pairs.check_convergence(tol, m_number_eigenvalues);</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            <span class="keywordflow">if</span> (converged)</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            {</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                m_info = <a class="code" href="group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a30ae8fff8898dc197acd49d9c0797d20">CompInfo::Successful</a>;</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;            }</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (niter_ == maxit - 1)</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            {</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                m_info = <a class="code" href="group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a9d43178ff551e8de813111063a34ae8d">CompInfo::NotConverging</a>;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;                <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            }</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;            Derived&amp; derived = <span class="keyword">static_cast&lt;</span>Derived&amp;<span class="keyword">&gt;</span>(*this);</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;            Matrix corr_vect = derived.calculate_correction_vector();</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;            m_search_space.extend_basis(corr_vect);</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;        }</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        <span class="keywordflow">return</span> (m_ritz_pairs.converged_eigenvalues()).<span class="keyword">template</span> cast&lt;Index&gt;().head(m_number_eigenvalues).sum();</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    }</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;};</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;}  <span class="comment">// namespace Spectra</span></div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// SPECTRA_JD_SYM_EIGS_BASE_H</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;            <span class="keywordflow">if</span> (do_restart)</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            {</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                m_search_space.restart(m_ritz_pairs, m_initial_search_space_size);</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;            }</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            m_search_space.update_operator_basis_product(m_matrix_operator);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            Eigen::ComputationInfo small_problem_info = m_ritz_pairs.compute_eigen_pairs(m_search_space);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            <span class="keywordflow">if</span> (small_problem_info != Eigen::ComputationInfo::Success)</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            {</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;                m_info = <a class="code" href="group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a71a8cace395f4677b2a983f2f64d6f51">CompInfo::NumericalIssue</a>;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;            }</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;            m_ritz_pairs.sort(selection);</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            <span class="keywordtype">bool</span> converged = m_ritz_pairs.check_convergence(tol, m_number_eigenvalues);</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;            <span class="keywordflow">if</span> (converged)</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;            {</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                m_info = <a class="code" href="group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a30ae8fff8898dc197acd49d9c0797d20">CompInfo::Successful</a>;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;            }</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (niter_ == maxit - 1)</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;            {</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;                m_info = <a class="code" href="group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a9d43178ff551e8de813111063a34ae8d">CompInfo::NotConverging</a>;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;                <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;            }</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;            Derived&amp; derived = <span class="keyword">static_cast&lt;</span>Derived&amp;<span class="keyword">&gt;</span>(*this);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;            Matrix corr_vect = derived.calculate_correction_vector();</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;            m_search_space.extend_basis(corr_vect);</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        }</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        <span class="keywordflow">return</span> (m_ritz_pairs.converged_eigenvalues()).<span class="keyword">template</span> cast&lt;Index&gt;().head(m_number_eigenvalues).sum();</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    }</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;};</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160; </div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;}  <span class="comment">// namespace Spectra</span></div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160; </div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">// SPECTRA_JD_SYM_EIGS_BASE_H</span></div>
 <div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html">Spectra::JDSymEigsBase</a></div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00034">JDSymEigsBase.h:35</a></div></div>
-<div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html_a09d777263795aff0c6e4d6ac9f8b86a8"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html#a09d777263795aff0c6e4d6ac9f8b86a8">Spectra::JDSymEigsBase::info</a></div><div class="ttdeci">CompInfo info() const</div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00115">JDSymEigsBase.h:115</a></div></div>
-<div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html_a907f30b1026ecab0e7c77bed9e5f710a"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html#a907f30b1026ecab0e7c77bed9e5f710a">Spectra::JDSymEigsBase::set_correction_size</a></div><div class="ttdeci">void set_correction_size(Index correction_size)</div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00093">JDSymEigsBase.h:93</a></div></div>
-<div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html_a97ebc8d84a509a4394098877ca0690a0"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html#a97ebc8d84a509a4394098877ca0690a0">Spectra::JDSymEigsBase::num_iterations</a></div><div class="ttdeci">Index num_iterations() const</div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00120">JDSymEigsBase.h:120</a></div></div>
-<div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html_ac6c3bd14b22c276f6747960073768c70"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html#ac6c3bd14b22c276f6747960073768c70">Spectra::JDSymEigsBase::~JDSymEigsBase</a></div><div class="ttdeci">virtual ~JDSymEigsBase()</div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00109">JDSymEigsBase.h:109</a></div></div>
-<div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html_acbbc66f28bd1d0c75ce5926c2deee598"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html#acbbc66f28bd1d0c75ce5926c2deee598">Spectra::JDSymEigsBase::set_initial_search_space_size</a></div><div class="ttdeci">void set_initial_search_space_size(Index initial_search_space_size)</div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00101">JDSymEigsBase.h:101</a></div></div>
-<div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html_af69d245907f7d68fcec053ce9a95ca86"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html#af69d245907f7d68fcec053ce9a95ca86">Spectra::JDSymEigsBase::set_max_search_space_size</a></div><div class="ttdeci">void set_max_search_space_size(Index max_search_space_size)</div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00086">JDSymEigsBase.h:86</a></div></div>
+<div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html_a09d777263795aff0c6e4d6ac9f8b86a8"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html#a09d777263795aff0c6e4d6ac9f8b86a8">Spectra::JDSymEigsBase::info</a></div><div class="ttdeci">CompInfo info() const</div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00122">JDSymEigsBase.h:122</a></div></div>
+<div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html_a907f30b1026ecab0e7c77bed9e5f710a"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html#a907f30b1026ecab0e7c77bed9e5f710a">Spectra::JDSymEigsBase::set_correction_size</a></div><div class="ttdeci">void set_correction_size(Index correction_size)</div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00100">JDSymEigsBase.h:100</a></div></div>
+<div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html_a97ebc8d84a509a4394098877ca0690a0"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html#a97ebc8d84a509a4394098877ca0690a0">Spectra::JDSymEigsBase::num_iterations</a></div><div class="ttdeci">Index num_iterations() const</div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00127">JDSymEigsBase.h:127</a></div></div>
+<div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html_ac6c3bd14b22c276f6747960073768c70"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html#ac6c3bd14b22c276f6747960073768c70">Spectra::JDSymEigsBase::~JDSymEigsBase</a></div><div class="ttdeci">virtual ~JDSymEigsBase()</div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00116">JDSymEigsBase.h:116</a></div></div>
+<div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html_acbbc66f28bd1d0c75ce5926c2deee598"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html#acbbc66f28bd1d0c75ce5926c2deee598">Spectra::JDSymEigsBase::set_initial_search_space_size</a></div><div class="ttdeci">void set_initial_search_space_size(Index initial_search_space_size)</div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00108">JDSymEigsBase.h:108</a></div></div>
+<div class="ttc" id="aclassSpectra_1_1JDSymEigsBase_html_af69d245907f7d68fcec053ce9a95ca86"><div class="ttname"><a href="classSpectra_1_1JDSymEigsBase.html#af69d245907f7d68fcec053ce9a95ca86">Spectra::JDSymEigsBase::set_max_search_space_size</a></div><div class="ttdeci">void set_max_search_space_size(Index max_search_space_size)</div><div class="ttdef"><b>Definition:</b> <a href="JDSymEigsBase_8h_source.html#l00093">JDSymEigsBase.h:93</a></div></div>
 <div class="ttc" id="agroup__Enumerations_html_ga699aae652eac3e9c714957fce4b395fd"><div class="ttname"><a href="group__Enumerations.html#ga699aae652eac3e9c714957fce4b395fd">Spectra::SortRule</a></div><div class="ttdeci">SortRule</div><div class="ttdef"><b>Definition:</b> <a href="SelectionRule_8h_source.html#l00033">SelectionRule.h:34</a></div></div>
 <div class="ttc" id="agroup__Enumerations_html_gae1a6cf904d752db2f5641ec79a1bbbf0"><div class="ttname"><a href="group__Enumerations.html#gae1a6cf904d752db2f5641ec79a1bbbf0">Spectra::CompInfo</a></div><div class="ttdeci">CompInfo</div><div class="ttdef"><b>Definition:</b> <a href="CompInfo_8h_source.html#l00017">CompInfo.h:18</a></div></div>
 <div class="ttc" id="agroup__Enumerations_html_gga699aae652eac3e9c714957fce4b395fdaf58c1705d219c9465cc4a339081622b5"><div class="ttname"><a href="group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fdaf58c1705d219c9465cc4a339081622b5">Spectra::SortRule::LargestMagn</a></div><div class="ttdeci">@ LargestMagn</div></div>

@@ -33,7 +33,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Spectra
-   &#160;<span id="projectnumber">1.0.0</span>
+   &#160;<span id="projectnumber">1.0.1</span>
    </div>
    <div id="projectbrief">Header-only C++ Library for Large Scale Eigenvalue Problems</div>
   </td>
@@ -163,7 +163,7 @@ template&lt;typename OpType , typename BOpType &gt; </div>
 </dl>
 <p><b>Spectra</b> (and also <b>ARPACK</b>) uses an iterative algorithm to find eigenvalues. This function allows the user to provide the initial residual vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00281">281</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00296">296</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
 
 </div>
 </div>
@@ -194,7 +194,7 @@ template&lt;typename OpType , typename BOpType &gt; </div>
 <p>Initializes the solver by providing a random initial residual vector.</p>
 <p>This overloaded function generates a random initial residual vector (with a fixed random seed) for the algorithm. Elements in the vector follow independent Uniform(-0.5, 0.5) distribution. </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00309">309</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00324">324</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
 
 </div>
 </div>
@@ -257,7 +257,7 @@ template&lt;typename OpType , typename BOpType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of converged eigenvalues. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00338">338</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00356">356</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
 
 </div>
 </div>
@@ -287,7 +287,7 @@ template&lt;typename OpType , typename BOpType &gt; </div>
 </div><div class="memdoc">
 <p>Returns the status of the computation. The full list of enumeration values can be found in <a class="el" href="group__Enumerations.html">Enumerations</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00368">368</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00386">386</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
 
 </div>
 </div>
@@ -317,7 +317,7 @@ template&lt;typename OpType , typename BOpType &gt; </div>
 </div><div class="memdoc">
 <p>Returns the number of iterations used in the computation. </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00373">373</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00391">391</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
 
 </div>
 </div>
@@ -347,7 +347,7 @@ template&lt;typename OpType , typename BOpType &gt; </div>
 </div><div class="memdoc">
 <p>Returns the number of matrix operations used in the computation. </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00378">378</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00396">396</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
 
 </div>
 </div>
@@ -378,7 +378,7 @@ template&lt;typename OpType , typename BOpType &gt; </div>
 <p>Returns the converged eigenvalues.</p>
 <dl class="section return"><dt>Returns</dt><dd>A vector containing the eigenvalues. Returned vector type will be <code>Eigen::Vector&lt;Scalar, ...&gt;</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00387">387</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00405">405</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
 
 </div>
 </div>
@@ -416,7 +416,7 @@ template&lt;typename OpType , typename BOpType &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A matrix containing the eigenvectors. Returned matrix type will be <code>Eigen::Matrix&lt;Scalar, ...&gt;</code>, depending on the template parameter <code>Scalar</code> defined. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00417">417</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00435">435</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
 
 </div>
 </div>
@@ -446,7 +446,7 @@ template&lt;typename OpType , typename BOpType &gt; </div>
 </div><div class="memdoc">
 <p>Returns all converged eigenvectors. </p>
 
-<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00445">445</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="SymEigsBase_8h_source.html#l00463">463</a> of file <a class="el" href="SymEigsBase_8h_source.html">SymEigsBase.h</a>.</p>
 
 </div>
 </div>

@@ -1,5 +1,6 @@
 var classSpectra_1_1JDSymEigsBase =
 [
+    [ "JDSymEigsBase", "classSpectra_1_1JDSymEigsBase.html#a819e462c7a417af72ae3f68cb86c2f20", null ],
     [ "JDSymEigsBase", "classSpectra_1_1JDSymEigsBase.html#a1b1701964f36165abca0f1570a806eae", null ],
     [ "~JDSymEigsBase", "classSpectra_1_1JDSymEigsBase.html#ac6c3bd14b22c276f6747960073768c70", null ],
     [ "set_max_search_space_size", "classSpectra_1_1JDSymEigsBase.html#af69d245907f7d68fcec053ce9a95ca86", null ],
