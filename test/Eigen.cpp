@@ -1,11 +1,11 @@
 // Test ../include/Spectra/LinAlg/UpperHessenbergEigen.h and
 //      ../include/Spectra/LinAlg/TridiagEigen.h
+#include <ctime>
+#include <iostream>
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
-#include <ctime>
 #include <Spectra/LinAlg/UpperHessenbergEigen.h>
 #include <Spectra/LinAlg/TridiagEigen.h>
-#include <iostream>
 
 using namespace Spectra;
 
