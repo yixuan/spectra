@@ -16,6 +16,7 @@ list(APPEND test_target_sources
         JDSymEigsDPRConstructor.cpp
         QR.cpp
         RitzPairs.cpp
+        Schur.cpp
         SearchSpace.cpp
         SparseGenMatProd.cpp
         SparseSymMatProd.cpp
