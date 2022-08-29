@@ -49,7 +49,7 @@ public:
     ///
     virtual ~LoggerBase() {}
 
-    virtual void call_iteration_start();
+    virtual void call_iteration_start() = 0;
     ///
     /// Virtual logging function
     ///
