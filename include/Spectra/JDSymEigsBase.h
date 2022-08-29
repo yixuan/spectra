@@ -171,6 +171,11 @@ public:
         niter_ = 0;
         for (niter_ = 0; niter_ < maxit; niter_++)
         {
+            if (m_logger)
+            {
+                m_logger->call_iteration_start();
+            }
+
             bool do_restart = (m_search_space.size() > m_max_search_space_size);
 
             if (do_restart)
@@ -189,30 +194,39 @@ public:
             m_ritz_pairs.sort(selection);
 
             bool converged = m_ritz_pairs.check_convergence(tol, m_number_eigenvalues);
-            if (m_logger)
-            {
-                const Eigen::Array<bool, Eigen::Dynamic, 1> conv_eig = m_ritz_pairs.converged_eigenvalues().head(m_number_eigenvalues);
-                const Index num_conv = conv_eig.count();
-                const Vector evals = eigenvalues();
-                const Vector res = m_ritz_pairs.residues().colwise().norm().head(m_number_eigenvalues);
-                const Index search_space_size = m_search_space.size();
-                const IterationData<Scalar, Vector> data(niter_, num_conv, search_space_size, evals, res, conv_eig);
-                m_logger->iteration_log(data);
-            }
+            const Eigen::Array<bool, Eigen::Dynamic, 1> conv_eig = m_ritz_pairs.converged_eigenvalues().head(m_number_eigenvalues);
+            const Index num_conv = conv_eig.count();
+            const Vector evals = eigenvalues();
+            const Vector res = m_ritz_pairs.residues().colwise().norm().head(m_number_eigenvalues);
+            const Index search_space_size = m_search_space.size();
+            const IterationData<Scalar, Vector> data(niter_, num_conv, search_space_size, evals, res, conv_eig);
+
             if (converged)
             {
                 m_info = CompInfo::Successful;
+                if (m_logger)
+                {
+                    m_logger->call_iteration_end(data);
+                }
                 break;
             }
             else if (niter_ == maxit - 1)
             {
                 m_info = CompInfo::NotConverging;
+                if (m_logger)
+                {
+                    m_logger->call_iteration_end(data);
+                }
                 break;
             }
             Derived& derived = static_cast<Derived&>(*this);
             Matrix corr_vect = derived.calculate_correction_vector();
 
             m_search_space.extend_basis(corr_vect);
+            if (m_logger)
+            {
+                m_logger->call_iteration_end(data);
+            }
         }
         return (m_ritz_pairs.converged_eigenvalues()).template cast<Index>().head(m_number_eigenvalues).sum();
     }

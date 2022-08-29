@@ -378,18 +378,30 @@ public:
         Index i, nconv = 0, nev_adj;
         for (i = 0; i < maxit; i++)
         {
-            nconv = num_converged(tol);
             if (m_logger)
             {
-                const Vector eigs = m_ritz_val.head(m_nev);
-                const IterationData<Scalar, Vector> data(i, nconv, m_ncv, eigs, m_resid, m_ritz_conv);
-                m_logger->iteration_log(data);
+                m_logger->call_iteration_start();
             }
+            nconv = num_converged(tol);
+            const Vector eigs = m_ritz_val.head(m_nev);
+            const IterationData<Scalar, Vector> data(i, nconv, m_ncv, eigs, m_resid, m_ritz_conv);
+
             if (nconv >= m_nev)
+            {
+                if (m_logger)
+                {
+                    m_logger->call_iteration_end(data);
+                }
                 break;
+            }
 
             nev_adj = nev_adjusted(nconv);
             restart(nev_adj, selection);
+
+            if (m_logger)
+            {
+                m_logger->call_iteration_end(data);
+            }
         }
         // Sorting results
         sort_ritzpair(sorting);
