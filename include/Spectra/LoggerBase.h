@@ -49,10 +49,11 @@ public:
     ///
     virtual ~LoggerBase() {}
 
+    virtual void call_iteration_start();
     ///
     /// Virtual logging function
     ///
-    virtual void iteration_log(const IterationData<Scalar, Vector>& data) = 0;
+    virtual void call_iteration_end(const IterationData<Scalar, Vector>& data) = 0;
 };
 
 }  // namespace Spectra

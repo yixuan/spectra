@@ -25,13 +25,36 @@ class DerivedLogger : public LoggerBase<Scalar, Vector>
 {
     // This derived logging class could have some reference to an ostream or call to another class that wraps ostreams etc.
 public:
+    std::chrono::time_point<std::chrono::high_resolution_clock> start;
+    std::chrono::time_point<std::chrono::high_resolution_clock> end;
     DerivedLogger(){};
-    void iteration_log(const IterationData<Scalar, Vector>& data) override
+    void call_iteration_start() override
     {
+        this->start = std::chrono::high_resolution_clock::now();
+    }
+    void call_iteration_end(const IterationData<Scalar, Vector>& data) override
+    {
+        this->end = std::chrono::high_resolution_clock::now();
+        auto duration = this->end - this->start;
+        auto h = std::chrono::duration_cast<std::chrono::hours>(duration);
+        duration -= h;
+        auto m = std::chrono::duration_cast<std::chrono::minutes>(duration);
+        duration -= m;
+        auto s = std::chrono::duration_cast<std::chrono::seconds>(duration);
+        duration -= s;
+        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
+        duration -= ms;
+        auto us = std::chrono::duration_cast<std::chrono::microseconds>(duration);
+        duration -= us;
+        auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration);
+        duration -= ns;
+        std::stringstream buffer;
         std::cout << "--------------------------------------------------------------------------------------------" << std::endl;
         std::cout << "    Iteration                       :   " << data.iteration << std::endl;
         std::cout << "    Number of converged eigenvalues :   " << data.number_of_converged << std::endl;
         std::cout << "    Size of subspace                :   " << data.subspace_size << std::endl;
+        std::cout << "                                      Iteration Time                                      " << std::endl;
+        std::cout << "              " << h.count() << "h:" << m.count() << "m:" << s.count() << "s:" << ms.count() << "ms:" << us.count() << "us:" << ns.count() << "ns" << std::endl;
         std::cout << "    ------------------------------------------------------------------------              " << std::endl;
         REQUIRE(data.residues.size() == data.current_eigenvalues.size());
         REQUIRE(data.residues.size() == data.current_eig_converged.size());
