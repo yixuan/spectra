@@ -30,7 +30,8 @@ namespace Spectra {
 ///
 /// The enumeration of selection rules of desired eigenvalues.
 ///
-enum class SortRule
+
+enum class SortRuleType
 {
     LargestMagn,  ///< Select eigenvalues with largest magnitude. Magnitude
                   ///< means the absolute value for real numbers and norm for
@@ -55,140 +56,55 @@ enum class SortRule
 
     BothEnds  ///< Select eigenvalues half from each end of the spectrum. When
               ///< `nev` is odd, compute more from the high end. Only for symmetric eigen solvers.
+
 };
 
 /// \cond
-
 // When comparing eigenvalues, we first calculate the "target" to sort.
 // For example, if we want to choose the eigenvalues with
 // largest magnitude, the target will be -abs(x).
 // The minus sign is due to the fact that std::sort() sorts in ascending order.
 
-// Default target: throw an exception
-template <typename Scalar, SortRule Rule>
-class SortingTarget
-{
-public:
-    static ElemType<Scalar> get(const Scalar& val)
-    {
-        using std::abs;
-        throw std::invalid_argument("incompatible selection rule");
-        return -abs(val);
-    }
-};
-
-// Specialization for SortRule::LargestMagn
-// This covers [float, double, complex] x [SortRule::LargestMagn]
 template <typename Scalar>
-class SortingTarget<Scalar, SortRule::LargestMagn>
+struct SortRule
 {
-public:
-    static ElemType<Scalar> get(const Scalar& val)
-    {
-        using std::abs;
-        return -abs(val);
-    }
-};
+    std::function<ElemType<Scalar>(Scalar)> get;
 
-// Specialization for SortRule::LargestReal
-// This covers [complex] x [SortRule::LargestReal]
-template <typename RealType>
-class SortingTarget<std::complex<RealType>, SortRule::LargestReal>
-{
-public:
-    static RealType get(const std::complex<RealType>& val)
-    {
-        return -val.real();
-    }
-};
+    inline static SortRule<Scalar> LargestMagn{[](Scalar x) { using std::abs; return -std::abs(x); }};
+    inline static SortRule<Scalar> LargestReal{[](Scalar x) {
+        if constexpr (Eigen::NumTraits<Scalar>::IsComplex)
+            return -x.real();
+        else
+            return -x;
+    }};
+    inline static SortRule<Scalar> LargestImag{[](Scalar x) {
+        static_assert<Eigen::NumTraits<Scalar>::IsComplex, "LargestImag is only for complex numbers.">;
+        return -x.imag();
+    }};
+    inline static SortRule<Scalar> LargestAlge{[](Scalar x) {
+        static_assert<!Eigen::NumTraits<Scalar>::IsComplex, "LargestAlge is only for real numbers.">;
+        return -x;
+    }};
+    inline static SortRule<Scalar> BothEnds{[](Scalar x) {
+        static_assert<!Eigen::NumTraits<Scalar>::IsComplex, "LargestAlge is only for real numbers.">;
+        return -x;
+    }};
 
-// Specialization for SortRule::LargestImag
-// This covers [complex] x [SortRule::LargestImag]
-template <typename RealType>
-class SortingTarget<std::complex<RealType>, SortRule::LargestImag>
-{
-public:
-    static RealType get(const std::complex<RealType>& val)
-    {
-        using std::abs;
-        return -abs(val.imag());
-    }
-};
-
-// Specialization for SortRule::LargestAlge
-// This covers [float, double] x [SortRule::LargestAlge]
-template <typename Scalar>
-class SortingTarget<Scalar, SortRule::LargestAlge>
-{
-public:
-    static Scalar get(const Scalar& val)
-    {
-        return -val;
-    }
-};
-
-// Here SortRule::BothEnds is the same as SortRule::LargestAlge, but
-// we need some additional steps, which are done in
-// SymEigsSolver.h => retrieve_ritzpair().
-// There we move the smallest values to the proper locations.
-template <typename Scalar>
-class SortingTarget<Scalar, SortRule::BothEnds>
-{
-public:
-    static Scalar get(const Scalar& val)
-    {
-        return -val;
-    }
-};
-
-// Specialization for SortRule::SmallestMagn
-// This covers [float, double, complex] x [SortRule::SmallestMagn]
-template <typename Scalar>
-class SortingTarget<Scalar, SortRule::SmallestMagn>
-{
-public:
-    static ElemType<Scalar> get(const Scalar& val)
-    {
-        using std::abs;
-        return abs(val);
-    }
-};
-
-// Specialization for SortRule::SmallestReal
-// This covers [complex] x [SortRule::SmallestReal]
-template <typename RealType>
-class SortingTarget<std::complex<RealType>, SortRule::SmallestReal>
-{
-public:
-    static RealType get(const std::complex<RealType>& val)
-    {
-        return val.real();
-    }
-};
-
-// Specialization for SortRule::SmallestImag
-// This covers [complex] x [SortRule::SmallestImag]
-template <typename RealType>
-class SortingTarget<std::complex<RealType>, SortRule::SmallestImag>
-{
-public:
-    static RealType get(const std::complex<RealType>& val)
-    {
-        using std::abs;
-        return abs(val.imag());
-    }
-};
-
-// Specialization for SortRule::SmallestAlge
-// This covers [float, double] x [SortRule::SmallestAlge]
-template <typename Scalar>
-class SortingTarget<Scalar, SortRule::SmallestAlge>
-{
-public:
-    static Scalar get(const Scalar& val)
-    {
-        return val;
-    }
+    inline static SortRule<Scalar> SmallestMagn{[](Scalar x) { using std::abs; return -std::abs(x); }};
+    inline static SortRule<Scalar> SmallestReal{[](Scalar x) {
+        if constexpr (Eigen::NumTraits<Scalar>::IsComplex)
+            return x.real();
+        else
+            return x;
+    }};
+    inline static SortRule<Scalar> SmallestImag{[](Scalar x) {
+        static_assert<Eigen::NumTraits<Scalar>::IsComplex, "SmallestImag is only for complex numbers.">;
+        return x.imag();
+    }};
+    inline static SortRule<Scalar> SmallestAlge{[](Scalar x) {
+        static_assert<!Eigen::NumTraits<Scalar>::IsComplex, "SmallestAlge is only for real numbers.">;
+        return x;
+    }};
 };
 
 // Sort eigenvalues
@@ -225,7 +141,7 @@ public:
 
 // Sort values[:len] according to the selection rule, and return the indices
 template <typename Scalar>
-std::vector<Eigen::Index> argsort(SortRule selection, const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>& values, Eigen::Index len)
+std::vector<Eigen::Index> argsort(SortRule<Scalar> selection, const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>& values, Eigen::Index len)
 {
     using Index = Eigen::Index;
 
@@ -269,7 +185,7 @@ std::vector<Eigen::Index> argsort(SortRule selection, const Eigen::Matrix<Scalar
     // We keep this order since the first k values will always be
     // the wanted collection, no matter k is nev_updated (used in SymEigsBase::restart())
     // or is nev (used in SymEigsBase::sort_ritzpair())
-    if (selection == SortRule::BothEnds)
+    if (&selection == &SortRule<Scalar>::BothEnds)
     {
         std::vector<Index> ind_copy(ind);
         for (Index i = 0; i < len; i++)
