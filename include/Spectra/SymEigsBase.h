@@ -174,14 +174,14 @@ private:
     }
 
     // Retrieves and sorts Ritz values and Ritz vectors
-    void retrieve_ritzpair(SortRule selection)
+    void retrieve_ritzpair(const EigenvalueSorter<Scalar> &selection)
     {
         TridiagEigen<Scalar> decomp(m_fac.matrix_H());
         const Vector& evals = decomp.eigenvalues();
         const Matrix& evecs = decomp.eigenvectors();
 
         // Sort Ritz values and put the wanted ones at the beginning
-        std::vector<Index> ind = argsort(selection, evals, m_ncv);
+        std::vector<Index> ind = selection.argsort(evals.data(), m_ncv);
 
         // Copy the Ritz values and vectors to m_ritz_val and m_ritz_vec, respectively
         for (Index i = 0; i < m_ncv; i++)
@@ -198,13 +198,9 @@ private:
 protected:
     // Sorts the first nev Ritz pairs in the specified order
     // This is used to return the final results
-    virtual void sort_ritzpair(SortRule sort_rule)
+    virtual void sort_ritzpair(const EigenvalueSorter<Scalar> &sort_rule)
     {
-        if ((sort_rule != SortRule::LargestAlge) && (sort_rule != SortRule::LargestMagn) &&
-            (sort_rule != SortRule::SmallestAlge) && (sort_rule != SortRule::SmallestMagn))
-            throw std::invalid_argument("unsupported sorting rule");
-
-        std::vector<Index> ind = argsort(sort_rule, m_ritz_val, m_nev);
+        std::vector<Index> ind = sort_rule.argsort(m_ritz_val.data(), m_nev);
 
         Vector new_ritz_val(m_ncv);
         Matrix new_ritz_vec(m_ncv, m_nev);
