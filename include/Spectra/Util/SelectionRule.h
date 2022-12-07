@@ -59,71 +59,110 @@ enum class SortRule
 
 };
 
-/// \cond
-// When comparing eigenvalues, we first calculate the "target" to sort.
-// For example, if we want to choose the eigenvalues with
-// largest magnitude, the target will be -abs(x).
-// The minus sign is due to the fact that std::sort() sorts in ascending order.
+///
+/// Eigenvalue solvers use this class to determine which eigenvalues to select.
+/// Values of the type SortRule are automatically cast to an appropriate EigenvalueSorter.
+///
+/// You can also provide your own implementation to determine which eigenvalues to select.
+/// For symmetric solvers, this should have a real scalar type.
+/// \code C++
+/// SymEigsSolver<...> eigsSolver(...);
+/// eigsSolver.init();
+/// EigenvalueSorter<double> closestToTarget{[](double eigenvalue) { return std::abs(eigenvalue - 10.); }};
+/// eigsSolver.compute(closestToTarget);
+/// \endcode
+/// For general solvers, the scalar type should be complex.
+/// \code C++
+/// GenEigsSolver<...> eigsSolver(...);
+/// eigsSolver.init();
+/// EigenvalueSorter<std::complex<double>> closestToTarget{[](std::complex<double> eigenvalue) { return std::abs(eigenvalue - 10.); }};
+/// eigsSolver.compute(closestToTarget);
+/// \endcode
 
 template <typename Scalar>
-struct EigenvalueSorter
+class EigenvalueSorter
 {
-    bool both_ends;
-    std::function<ElemType<Scalar>(Scalar)> get;
+private:
+    bool m_both_ends;
+    std::function<ElemType<Scalar>(Scalar)> m_target;
 
+public:
     using Index = Eigen::Index;
     using IndexArray = std::vector<Index>;
 
+    ///
+    /// \param target Eigenvalues will be sorted according to this target. Only the values with the lowest target will be computed.
+    /// \param both_ends If both_ends is true, half of the eigenvalues with the lowest target and half of the eigenvalues with the highest target will be computed.
+    EigenvalueSorter(std::function<ElemType<Scalar>(Scalar)> target, bool both_ends) :
+        m_both_ends(both_ends), m_target(target)
+    {
+    }
+
+    ///
+    /// \param target Eigenvalues will be sorted according to this target. Only the values with the lowest target will be computed.
+    explicit EigenvalueSorter(std::function<ElemType<Scalar>(Scalar)> target) :
+        m_both_ends(false), m_target(target)
+    {
+    }
+
+    /// This constructor casts a SortRule to an appropriate EigenvalueSorter, for complex scalar types
     template <class T = Scalar>
     EigenvalueSorter(SortRule rule, typename std::enable_if<Eigen::NumTraits<T>::IsComplex>::type* = nullptr)
     {
-        both_ends = false;
+        // The scalar-type is complex
+
+        m_both_ends = false;
         if (rule == SortRule::LargestMagn)
-            get = [](Scalar x) { using std::abs; return -std::abs(x); };
+            m_target = [](Scalar x) { using std::abs; return -std::abs(x); };
         else if (rule == SortRule::LargestReal)
-            get = [](Scalar x) {
+            m_target = [](Scalar x) {
                 return -x.real();
             };
         else if (rule == SortRule::LargestImag)
-            get = [](Scalar x) {
-                return -x.imag();
+            m_target = [](Scalar x) {
+                using std::abs;
+                return -abs(x.imag());
             };
         else if (rule == SortRule::SmallestMagn)
-            get = [](Scalar x) { using std::abs; return -std::abs(x); };
+            m_target = [](Scalar x) { using std::abs; return -std::abs(x); };
         else if (rule == SortRule::SmallestReal)
-            get = [](Scalar x) {
+            m_target = [](Scalar x) {
                 return x.real();
             };
         else if (rule == SortRule::SmallestImag)
-            get = [](Scalar x) {
-                return x.imag();
+            m_target = [](Scalar x) {
+                using std::abs;
+                return abs(x.imag());
             };
         else
             throw std::invalid_argument("unsupported selection rule for complex types");
     }
 
+    /// This constructor casts a SortRule to an appropriate EigenvalueSorter, for real scalar types
     template <class T = Scalar>
     EigenvalueSorter(SortRule rule, typename std::enable_if<!Eigen::NumTraits<T>::IsComplex>::type* = nullptr)
     {
-        both_ends = rule == SortRule::BothEnds;
+        // The scalar-type is real
+
+        m_both_ends = rule == SortRule::BothEnds;
         if (rule == SortRule::LargestMagn)
-            get = [](Scalar x) { using std::abs; return -std::abs(x); };
+            m_target = [](Scalar x) { using std::abs; return -std::abs(x); };
         else if (rule == SortRule::LargestReal)
-            get = [](Scalar x) {
+            m_target = [](Scalar x) {
                 return -x;
             };
         else if (rule == SortRule::LargestAlge || rule == SortRule::BothEnds)
-            get = [](Scalar x) {
+            m_target = [](Scalar x) {
                 return -x;
             };
         else if (rule == SortRule::SmallestMagn)
-            get = [](Scalar x) { using std::abs; return -std::abs(x); };
+            m_target = [](Scalar x) { using std::abs; return -std::abs(x); };
         else if (rule == SortRule::SmallestReal)
-            get = [](Scalar x) {
+            m_target = [](Scalar x) {
                 return x;
             };
         else if (rule == SortRule::SmallestAlge)
-            get = [](Scalar x) {
+            m_target = [](Scalar x) {
                 return x;
             };
         else
@@ -145,7 +184,7 @@ struct EigenvalueSorter
         // We keep this order since the first k values will always be
         // the wanted collection, no matter k is nev_updated (used in SymEigsBase::restart())
         // or is nev (used in SymEigsBase::sort_ritzpair())
-        if (both_ends)
+        if (m_both_ends)
         {
             IndexArray index_copy(index);
             for (Index i = 0; i < size; i++)
@@ -166,8 +205,6 @@ struct EigenvalueSorter
         return argsort(values.data(), values.size());
     }
 };
-
-/// \endcond
 
 }  // namespace Spectra
 
