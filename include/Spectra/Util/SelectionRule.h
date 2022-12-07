@@ -175,7 +175,7 @@ public:
         index.resize(size);
         for (Index i = 0; i < size; i++)
             index[i] = i;
-        std::sort(index.begin(), index.end(), [&](Index i, Index j) { return get(data[i]) < get(data[j]); });
+        std::sort(index.begin(), index.end(), [&](Index i, Index j) { return m_target(data[i]) < m_target(data[j]); });
 
         // For SortRule::BothEnds, the eigenvalues are sorted according to the
         // SortRule::LargestAlge rule, so we need to move those smallest values to the left
