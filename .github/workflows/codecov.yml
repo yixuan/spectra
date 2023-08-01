@@ -14,7 +14,7 @@ jobs:
         compiler: [ gcc ]
         BUILD_TYPE : [ Debug ]
     steps:
-    - uses: actions/checkout@v2 
+    - uses: actions/checkout@v3 
     - name: dependencies
       run: sudo apt install libeigen3-dev
     - name: configure
