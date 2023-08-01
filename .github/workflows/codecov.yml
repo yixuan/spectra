@@ -8,7 +8,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         compiler: [ gcc ]
@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3 
     - name: dependencies
-      run: sudo apt install libeigen3-dev
+      run: sudo apt install libeigen3-dev lcov
     - name: configure
       env:
         CC: ${{ matrix.compiler }}
@@ -25,5 +25,7 @@ jobs:
       run: cmake --build build -- -j4
     - name: test
       run: cd build && ctest
+    - name: Generate coverage data
+      run: lcov --directory . --capture --output-file coverage.info
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
