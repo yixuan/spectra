@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        compiler: [gcc]
-        BUILD_TYPE : [Debug]
+        compiler: [ gcc ]
+        BUILD_TYPE : [ Debug ]
     steps:
     - uses: actions/checkout@v2 
     - name: dependencies
@@ -26,4 +26,4 @@ jobs:
     - name: test
       run: cd build && ctest
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
