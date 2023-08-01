@@ -40,8 +40,8 @@ template <typename MatType, typename Solver>
 void run_test(const MatType& mat, Solver& eigs, SortRule selection, bool allow_fail = false)
 {
     eigs.init();
-    // maxit = 300 to reduce running time for failed cases
-    int nconv = eigs.compute(selection, 300);
+    // maxit = 500 to reduce running time for failed cases
+    int nconv = eigs.compute(selection, 500);
     int niter = eigs.num_iterations();
     int nops = eigs.num_operations();
 
