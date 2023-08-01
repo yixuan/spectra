@@ -122,7 +122,7 @@ public:
 
         // A very small value, but 1.0 / near_0 does not overflow
         // ~= 1e-307 for the "double" type
-        constexpr Scalar near_0 = TypeTraits<Scalar>::min() * Scalar(10);
+        const Scalar near_0 = TypeTraits<Scalar>::min() * Scalar(10);
 
         m_n = mat.rows();
         if (m_n != mat.cols())
