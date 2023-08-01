@@ -1,4 +1,4 @@
-name: check format
+name: Check format
 on:
   push:
     branches: [ master ]
@@ -13,9 +13,9 @@ jobs:
       matrix:
         compiler: [gcc]
     steps:
-    - uses: actions/checkout@v2 
+    - uses: actions/checkout@v3 
     - name: dependencies
-      run: sudo apt install libeigen3-dev clang-format-9
+      run: sudo apt install libeigen3-dev clang-format
     - name: cmake
       run: cmake -B builddir
     - name: Format
