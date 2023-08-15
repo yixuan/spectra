@@ -164,6 +164,21 @@ public:
         decomp.matrix_QtHQ(m_fac_H);
         m_k--;
     }
+
+    // In some cases we know that H has the form H = [X   e   0],
+    //                                               [e'  s   0]
+    //                                               [0   0   D]
+    // where X is an irreducible tridiagonal matrix, D is a diagonal matrix,
+    // s is a scalar, and e = (0, ..., 0, eps), eps ~= 0
+    //
+    // In this case we can force H[m+1, m] = H[m, m+1] = 0 and H[m+1, m+1] = s,
+    // where m is the size of X
+    void deflate_H(Index irr_size, const Scalar& s)
+    {
+        m_fac_H(irr_size, irr_size - 1) = Scalar(0);
+        m_fac_H(irr_size - 1, irr_size) = Scalar(0);
+        m_fac_H(irr_size, irr_size) = s;
+    }
 };
 
 }  // namespace Spectra

@@ -118,6 +118,17 @@ private:
             // Since QR = H - mu * I, we have H = QR + mu * I
             // and therefore Q'HQ = RQ + mu * I
             m_fac.compress_H(decomp);
+            // Note that in our setting, mu is an eigenvalue of H,
+            // so after applying Q'HQ, H must have be of the following form
+            // H = [X   0   0]
+            //     [0  mu   0]
+            //     [0   0   D]
+            // Then we can force H[k, k-1] = H[k-1, k] = 0 and H[k, k] = mu,
+            // where k is the size of X
+            //
+            // Currently disabled due to numerical stability
+            //
+            // m_fac.deflate_H(m_ncv - i - 1, shifts[i]);
         }
 
         m_fac.compress_V(Q);
