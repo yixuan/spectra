@@ -1,4 +1,24 @@
+## [Unreleased]
+
+### Changed
+- Fixed the support for non-literal data types
+  ([#150](https://github.com/yixuan/spectra/issues/150))
+- Various CMake configuration improvements
+  ([#127](https://github.com/yixuan/spectra/pull/127),
+  [#140](https://github.com/yixuan/spectra/pull/140),
+  [#152](https://github.com/yixuan/spectra/pull/152)),
+  thanks to [@LTLA](https://github.com/LTLA),
+  [@JensWehner](https://github.com/jschueller),
+  [@shivupa](https://github.com/shivupa),
+  [@jschueller](https://github.com/jschueller),
+  [@alecjacobson](https://github.com/alecjacobson), and
+  [@jdumas](https://github.com/jdumas)
+- Miscellaneous GitHub Actions updates
+
+
+
 ## [1.0.1] - 2022-04-06
+
 ### Added
 - Added SIMD support for `UpperHessenbergSchur`. This should accelerate
   general eigen solvers such as `GenEigsSolver`
@@ -12,7 +32,25 @@
 - Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.13.8
 
 
+
+## [1.0.1] - 2022-04-06
+
+### Added
+- Added SIMD support for `UpperHessenbergSchur`. This should accelerate
+  general eigen solvers such as `GenEigsSolver`
+- Added test code for `UpperHessenbergSchur`
+
+### Changed
+- Fixed several bugs in the examples caused by the `const` keyword,
+  reported by [@alexpghayes](https://github.com/alexpghayes)
+  ([#135](https://github.com/yixuan/spectra/issues/135),
+  [#137](https://github.com/yixuan/spectra/pull/137))
+- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.13.8
+
+
+
 ## [1.0.0] - 2021-07-01
+
 ### Added
 - Added version macros `SPECTRA_MAJOR_VERSION`, `SPECTRA_MINOR_VERSION`,
   `SPECTRA_PATCH_VERSION`, and `SPECTRA_VERSION` that are included by all eigen solvers
@@ -69,7 +107,9 @@
 - Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.13.6
 
 
+
 ## [0.9.0] - 2020-05-19
+
 ### Added
 - Added support for CMake build, contributed by
   [Guillaume Acke](https://github.com/guacke) and [Jens Wehner](https://github.com/JensWehner)
@@ -87,7 +127,9 @@
 - Changed the implementation of `BKLDLT` solver to improve precision in some tests
 
 
+
 ## [0.8.1] - 2019-06-05
+
 ### Changed
 - Fixed a bug in `BKLDLT` in which a wrong type was used, thanks to
   [@jdbancal](https://github.com/jdbancal) for the issue
@@ -101,7 +143,9 @@
   [#19](https://github.com/yixuan/spectra/issues/19)
 
 
+
 ## [0.8.0] - 2019-04-03
+
 ### Added
 - Added a `BKLDLT` class that implements the Bunch-Kaufman LDLT decomposition
   for symmetric indefinite matrices. According to the Eigen documentation,
@@ -128,7 +172,9 @@
 - Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.7.0
 
 
+
 ## [0.7.0] - 2019-01-10
+
 ### Added
 - Added a directory `contrib` to include code contributed by users. It is not
   formally a part of the Spectra library, but it may contain useful solvers
@@ -160,7 +206,9 @@
 - Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.4.2
 
 
+
 ## [0.6.2] - 2018-05-22
+
 ### Changed
 - Fixed regressions in v0.6.0 on some edge cases
 - Improved the accuracy of restarting processes in `SymEigsSolver` and `GenEigsSolver`
@@ -168,13 +216,17 @@
 - Code and documentation cleanup
 
 
+
 ## [0.6.1] - 2018-03-03
+
 ### Changed
 - Fixed a bug of uninitialized memory
 - Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.1.2
 
 
+
 ## [0.6.0] - 2018-03-03
+
 ### Added
 - Added virtual destructors to the `SymEigsSolver` and `UpperHessenbergQR` classes
   to fix compiler warnings, by [Julian Kent](https://github.com/jkflying)
@@ -200,7 +252,9 @@
 - Updated Travis CI script
 
 
+
 ## [0.5.0] - 2017-02-05
+
 ### Added
 - Added the generalized eigen solver `SymGEigsSolver` in the regular inverse mode
 - Added the wrapper class `SparseRegularInverse` that can be used with
@@ -220,7 +274,9 @@
 - Documentation improvement
 
 
+
 ## [0.4.0] - 2016-11-14
+
 ### Added
 - Added an `Uplo` template parameter to the `DenseSymShiftSolve` class
 - Added the generalized eigen solver `SymGEigsSolver` in the Cholesky mode
@@ -246,7 +302,9 @@
   detected by [@jdbancal](https://github.com/jdbancal)
 
 
+
 ## [0.3.0] - 2016-07-03
+
 ### Added
 - Added the wrapper classes `SparseSymMatProd` and `SparseSymShiftSolve`
   for sparse symmetric matrices
@@ -262,7 +320,9 @@
 - Header files for internal use were relocated
 
 
+
 ## [0.2.0] - 2016-02-28
+
 ### Added
 - Benchmark script now outputs number of matrix operations
 - Added this change log
@@ -283,6 +343,8 @@
   `DenseGenMatProd` to `DenseSymMatProd`
 
 
+
 ## [0.1.0] - 2015-12-19
+
 ### Added
 - Initial release of Spectra
