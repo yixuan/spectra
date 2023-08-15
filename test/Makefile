@@ -18,7 +18,7 @@ OUTPUT = QR.out Eigen.out Schur.out BKLDLT.out \
 	SymGEigsCholesky.out SymGEigsRegInv.out SymGEigsShift.out \
 	SVD.out \
 	JDSymEigsBase.out JDSymEigsDPRConstructor.out DavidsonSymEigs.out \
-	Example1.out
+	Example1.out Example2.out
 
 .PHONY: all test clean
 
@@ -49,6 +49,7 @@ test:
 	-./JDSymEigsDPRConstructor.out
 	-./DavidsonSymEigs.out
 	-./Example1.out
+	-./Example2.out
 
 tests-main.o: tests-main.cpp catch.hpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $< -c -o $@
