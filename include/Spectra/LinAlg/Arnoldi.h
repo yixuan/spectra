@@ -129,6 +129,8 @@ public:
     // Initialize with an operator and an initial vector
     void init(MapConstVec& v0, Index& op_counter)
     {
+        using std::abs;
+
         m_fac_V.resize(m_n, m_m);
         m_fac_H.resize(m_m, m_m);
         m_fac_f.resize(m_n);
@@ -157,9 +159,11 @@ public:
         m_fac_H(0, 0) = m_op.inner_product(v, w);
         m_fac_f.noalias() = w - v * m_fac_H(0, 0);
 
-        // In some cases f is zero in exact arithmetics, but due to rounding errors
-        // it may contain tiny fluctuations. When this happens, we force f to be zero
-        if (m_fac_f.cwiseAbs().maxCoeff() < m_eps)
+        // In some cases, H[1,1] is already an eigenvalue of A,
+        // so f would be zero in exact arithmetics. But due to rounding errors,
+        // it may contain tiny fluctuations. When this happens, we force f to be zero,
+        // so that it can be restarted in the subsequent Arnoldi factorization
+        if (m_fac_f.cwiseAbs().maxCoeff() < m_eps * abs(m_fac_H(0, 0)))
         {
             m_fac_f.setZero();
             m_beta = Scalar(0);

@@ -55,6 +55,7 @@ public:
     // Lanczos factorization starting from step-k
     void factorize_from(Index from_k, Index to_m, Index& op_counter) override
     {
+        using std::abs;
         using std::sqrt;
 
         if (to_m <= from_k)
@@ -68,6 +69,7 @@ public:
         }
 
         const Scalar beta_thresh = m_eps * sqrt(Scalar(m_n));
+        const Scalar eps_sqrt = sqrt(m_eps);
 
         // Pre-allocate vectors
         Vector Vf(to_m);
@@ -79,20 +81,41 @@ public:
 
         for (Index i = from_k; i <= to_m - 1; i++)
         {
-            bool restart = false;
             // If beta = 0, then the next V is not full rank
             // We need to generate a new residual vector that is orthogonal
             // to the current V, which we call a restart
-            if (m_beta < m_near_0)
+            //
+            // A simple criterion is beta < near_0, but it may be too stringent
+            // Another heuristic is to test whether V'B(f/||f||) ~= 0 when ||f|| is small,
+            // and to reduce the computational cost, we only use the latest Vi
+
+            // Test the first criterion
+            bool restart = (m_beta < m_near_0);
+            // If not met, test the second criterion
+            // v is the (i+1)-th column of V
+            MapVec v(&m_fac_V(0, i), m_n);
+            if (!restart)
+            {
+                // Save v <- f / ||f|| to the (i+1)-th column of V
+                v.noalias() = m_fac_f / m_beta;
+                if (m_beta < eps_sqrt)
+                {
+                    // Test Vi'v
+                    const Scalar Viv = m_op.inner_product(m_fac_V.col(i - 1), v);
+                    // Restart V if Vi'v is much larger than eps
+                    restart = (abs(Viv) > eps_sqrt);
+                }
+            }
+
+            if (restart)
             {
                 MapConstMat V(m_fac_V.data(), m_n, i);  // The first i columns
                 this->expand_basis(V, 2 * i, m_fac_f, m_beta, op_counter);
-                restart = true;
+                v.noalias() = m_fac_f / m_beta;
             }
 
-            // v <- f / ||f||
-            MapVec v(&m_fac_V(0, i), m_n);  // The (i+1)-th column
-            v.noalias() = m_fac_f / m_beta;
+            // Whether there is a restart or not, right now the (i+1)-th column of V
+            // contains f / ||f||
 
             // Note that H[i+1, i] equals to the unrestarted beta
             m_fac_H(i, i - 1) = restart ? Scalar(0) : m_beta;

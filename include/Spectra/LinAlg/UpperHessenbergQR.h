@@ -177,6 +177,7 @@ public:
     ///
     UpperHessenbergQR(Index size) :
         m_n(size),
+        m_shift(0),
         m_rot_cos(m_n - 1),
         m_rot_sin(m_n - 1),
         m_computed(false)
