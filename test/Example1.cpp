@@ -62,8 +62,8 @@ void run_test(int n, int k, int m)
     INFO("||AU - UD||_inf = " << err);
     REQUIRE(err == Approx(0.0).margin(1e-9));
 
-    INFO("True eigenvalues =\n" << true_evals);
-    INFO("Estimated =\n" << evals);
+    INFO("True eigenvalues =\n " << true_evals);
+    INFO("Estimated =\n " << evals);
     double diff = (true_evals.tail(k) - evals).array().abs().maxCoeff();
     INFO("diff = " << diff);
     REQUIRE(diff == Approx(0.0).margin(1e-9));
@@ -90,7 +90,7 @@ void run_test(int n, int k, int m)
     INFO("||AU - UD||_inf = " << err);
     REQUIRE(err == Approx(0.0).margin(1e-9));
 
-    INFO("Estimated =\n" << evals);
+    INFO("Estimated =\n " << evals);
     diff = (true_evals.head(k) - evals).array().abs().maxCoeff();
     INFO("diff = " << diff);
     REQUIRE(diff == Approx(0.0).margin(1e-9));
