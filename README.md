@@ -247,7 +247,7 @@ An optional CMake installation is supported, if you have CMake with at least v3.
 ```bash
 mkdir build && cd build
 cmake .. -DCMAKE_INSTALL_PREFIX='intended installation directory' -DCMAKE_PREFIX_PATH='path where the installation of Eigen3 can be found' -DBUILD_TESTS=TRUE
-make all && make tests && make install
+make all && make test && make install
 ```
 
 By installing **Spectra** in this way, you also create a CMake target `Spectra::Spectra` that can be used in subsequent build procedures for other programs.
