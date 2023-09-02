@@ -151,6 +151,7 @@ private:
     using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
     using ModeMatOp = SymGEigsShiftInvertOp<OpType, BOpType>;
     using Base = SymEigsBase<ModeMatOp, BOpType>;
@@ -199,6 +200,32 @@ public:
     ///
     SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma) :
         Base(set_shift_and_move(ModeMatOp(op, Bop), sigma), Bop, nev, ncv),
+        m_sigma(sigma)
+    {}
+    ///
+    /// Constructor to create a solver object with logging.
+    ///
+    /// \param op     The matrix operation object that computes \f$y=(A-\sigma B)^{-1}v\f$
+    ///               for any vector \f$v\f$. Users could either create the object from the
+    ///               wrapper class SymShiftInvert, or define their own that implements all
+    ///               the public members as in SymShiftInvert.
+    /// \param Bop    The \f$B\f$ matrix operation object that implements the matrix-vector
+    ///               multiplication \f$Bv\f$. Users could either create the object from the
+    ///               wrapper classes such as DenseSymMatProd and SparseSymMatProd, or
+    ///               define their own that implements all the public member functions
+    ///               as in DenseSymMatProd. \f$B\f$ needs to be positive definite.
+    /// \param nev    Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///               where \f$n\f$ is the size of matrix.
+    /// \param ncv    Parameter that controls the convergence speed of the algorithm.
+    ///               Typically a larger `ncv` means faster convergence, but it may
+    ///               also result in greater memory use and more matrix operations
+    ///               in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    /// \param sigma  The value of the shift.
+    /// \param logger  A logging object that inherits from the base class in LoggerBase.h
+    ///
+    SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma, LoggerBase<Scalar, Vector>* logger) :
+        Base(set_shift_and_move(ModeMatOp(op, Bop), sigma), Bop, nev, ncv, logger),
         m_sigma(sigma)
     {}
 };
@@ -311,6 +338,7 @@ private:
     using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
     using ModeMatOp = SymGEigsBucklingOp<OpType, BOpType>;
     using Base = SymEigsBase<ModeMatOp, BOpType>;
@@ -364,6 +392,32 @@ public:
         Base(set_shift_and_move(ModeMatOp(op, Bop), sigma), Bop, nev, ncv),
         m_sigma(sigma)
     {}
+    ///
+    /// Constructor to create a solver object with logging.
+    ///
+    /// \param op     The matrix operation object that computes \f$y=(K-\sigma K_G)^{-1}v\f$
+    ///               for any vector \f$v\f$. Users could either create the object from the
+    ///               wrapper class SymShiftInvert, or define their own that implements all
+    ///               the public members as in SymShiftInvert.
+    /// \param Bop    The \f$K\f$ matrix operation object that implements the matrix-vector
+    ///               multiplication \f$Kv\f$. Users could either create the object from the
+    ///               wrapper classes such as DenseSymMatProd and SparseSymMatProd, or
+    ///               define their own that implements all the public member functions
+    ///               as in DenseSymMatProd. \f$K\f$ needs to be positive definite.
+    /// \param nev    Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///               where \f$n\f$ is the size of matrix.
+    /// \param ncv    Parameter that controls the convergence speed of the algorithm.
+    ///               Typically a larger `ncv` means faster convergence, but it may
+    ///               also result in greater memory use and more matrix operations
+    ///               in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    /// \param sigma  The value of the shift.
+    /// \param logger  A logging object that inherits from the base class in LoggerBase.h
+    ///
+    SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma, LoggerBase<Scalar, Vector>* logger) :
+        Base(set_shift_and_move(ModeMatOp(op, Bop), sigma), Bop, nev, ncv, std::move(logger)),
+        m_sigma(sigma)
+    {}
 };
 
 ///
@@ -403,6 +457,7 @@ private:
     using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
     using ModeMatOp = SymGEigsCayleyOp<OpType, BOpType>;
     using Base = SymEigsBase<ModeMatOp, BOpType>;
@@ -454,6 +509,32 @@ public:
     ///
     SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma) :
         Base(set_shift_and_move(ModeMatOp(op, Bop), sigma), Bop, nev, ncv),
+        m_sigma(sigma)
+    {}
+    ///
+    /// Constructor to create a solver object with logging.
+    ///
+    /// \param op     The matrix operation object that computes \f$y=(A-\sigma B)^{-1}v\f$
+    ///               for any vector \f$v\f$. Users could either create the object from the
+    ///               wrapper class SymShiftInvert, or define their own that implements all
+    ///               the public members as in SymShiftInvert.
+    /// \param Bop    The \f$B\f$ matrix operation object that implements the matrix-vector
+    ///               multiplication \f$Bv\f$. Users could either create the object from the
+    ///               wrapper classes such as DenseSymMatProd and SparseSymMatProd, or
+    ///               define their own that implements all the public member functions
+    ///               as in DenseSymMatProd. \f$B\f$ needs to be positive definite.
+    /// \param nev    Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///               where \f$n\f$ is the size of matrix.
+    /// \param ncv    Parameter that controls the convergence speed of the algorithm.
+    ///               Typically a larger `ncv` means faster convergence, but it may
+    ///               also result in greater memory use and more matrix operations
+    ///               in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///               and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    /// \param sigma  The value of the shift.
+    /// \param logger  A logging object that inherits from the base class in LoggerBase.h
+    ///
+    SymGEigsShiftSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, const Scalar& sigma, LoggerBase<Scalar, Vector>* logger) :
+        Base(set_shift_and_move(ModeMatOp(op, Bop), sigma), Bop, nev, ncv, logger),
         m_sigma(sigma)
     {}
 };

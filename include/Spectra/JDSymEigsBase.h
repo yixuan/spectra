@@ -12,12 +12,14 @@
 #include <cmath>      // std::abs, std::pow
 #include <algorithm>  // std::min
 #include <stdexcept>  // std::invalid_argument
+#include <utility>    // std::move
 #include <iostream>
 
 #include "Util/SelectionRule.h"
 #include "Util/CompInfo.h"
 #include "LinAlg/SearchSpace.h"
 #include "LinAlg/RitzPairs.h"
+#include "LoggerBase.h"
 
 namespace Spectra {
 
@@ -51,6 +53,7 @@ protected:
 
 private:
     CompInfo m_info = CompInfo::NotComputed;  // status of the computation
+    LoggerBase<Scalar, Vector>* m_logger = nullptr;
 
     void check_argument() const
     {
@@ -82,6 +85,26 @@ public:
     {
         check_argument();
         initialize();
+    }
+
+    JDSymEigsBase(OpType& op, Index nev, Index nvec_init, Index nvec_max, LoggerBase<Scalar, Vector>* logger) :
+        m_matrix_operator(op),
+        m_number_eigenvalues(nev),
+        m_max_search_space_size(nvec_max < op.rows() ? nvec_max : 10 * m_number_eigenvalues),
+        m_initial_search_space_size(nvec_init < op.rows() ? nvec_init : 2 * m_number_eigenvalues),
+        m_correction_size(m_number_eigenvalues)
+    {
+        check_argument();
+        initialize();
+        set_logger(logger);
+    }
+
+    ///
+    /// Sets the logger ptr with a user constructed logger object.
+    ///
+    void set_logger(LoggerBase<Scalar, Vector>* logger)
+    {
+        m_logger = logger;
     }
 
     JDSymEigsBase(OpType& op, Index nev) :
@@ -148,6 +171,11 @@ public:
         niter_ = 0;
         for (niter_ = 0; niter_ < maxit; niter_++)
         {
+            if (m_logger)
+            {
+                m_logger->call_iteration_start();
+            }
+
             bool do_restart = (m_search_space.size() > m_max_search_space_size);
 
             if (do_restart)
@@ -166,20 +194,39 @@ public:
             m_ritz_pairs.sort(selection);
 
             bool converged = m_ritz_pairs.check_convergence(tol, m_number_eigenvalues);
+            const Eigen::Array<bool, Eigen::Dynamic, 1> conv_eig = m_ritz_pairs.converged_eigenvalues().head(m_number_eigenvalues);
+            const Index num_conv = conv_eig.count();
+            const Vector evals = eigenvalues();
+            const Vector res = m_ritz_pairs.residues().colwise().norm().head(m_number_eigenvalues);
+            const Index search_space_size = m_search_space.size();
+            const IterationData<Scalar, Vector> data(niter_, num_conv, search_space_size, evals, res, conv_eig);
+
             if (converged)
             {
                 m_info = CompInfo::Successful;
+                if (m_logger)
+                {
+                    m_logger->call_iteration_end(data);
+                }
                 break;
             }
             else if (niter_ == maxit - 1)
             {
                 m_info = CompInfo::NotConverging;
+                if (m_logger)
+                {
+                    m_logger->call_iteration_end(data);
+                }
                 break;
             }
             Derived& derived = static_cast<Derived&>(*this);
             Matrix corr_vect = derived.calculate_correction_vector();
 
             m_search_space.extend_basis(corr_vect);
+            if (m_logger)
+            {
+                m_logger->call_iteration_end(data);
+            }
         }
         return (m_ritz_pairs.converged_eigenvalues()).template cast<Index>().head(m_number_eigenvalues).sum();
     }

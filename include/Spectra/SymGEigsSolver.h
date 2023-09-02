@@ -189,6 +189,35 @@ public:
         Base(ModeMatOp(op, Bop), IdentityBOp(), nev, ncv),
         m_Bop(Bop)
     {}
+    ///
+    /// Constructor to create a solver object with logging.
+    ///
+    /// \param op   The \f$A\f$ matrix operation object that implements the matrix-vector
+    ///             multiplication operation of \f$A\f$:
+    ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
+    ///             create the object from the wrapper classes such as DenseSymMatProd, or
+    ///             define their own that implements all the public members
+    ///             as in DenseSymMatProd.
+    /// \param Bop  The \f$B\f$ matrix operation object that represents a Cholesky decomposition of \f$B\f$.
+    ///             It should implement the lower and upper triangular solving operations:
+    ///             calculating \f$L^{-1}v\f$ and \f$(L')^{-1}v\f$ for any vector
+    ///             \f$v\f$, where \f$LL'=B\f$. Users could either
+    ///             create the object from the wrapper classes such as DenseCholesky, or
+    ///             define their own that implements all the public member functions
+    ///             as in DenseCholesky. \f$B\f$ needs to be positive definite.
+    /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///             where \f$n\f$ is the size of matrix.
+    /// \param ncv  Parameter that controls the convergence speed of the algorithm.
+    ///             Typically a larger `ncv` means faster convergence, but it may
+    ///             also result in greater memory use and more matrix operations
+    ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    /// \param logger  A logging object that inherits from the base class in LoggerBase.h
+    ///
+    SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, LoggerBase<Scalar, Vector>* logger) :
+        Base(ModeMatOp(op, Bop), IdentityBOp(), nev, ncv, logger),
+        m_Bop(Bop)
+    {}
 
     /// \cond
 
@@ -253,7 +282,8 @@ class SymGEigsSolver<OpType, BOpType, GEigsMode::RegularInverse> :
 {
 private:
     using Index = Eigen::Index;
-
+    using Scalar = typename OpType::Scalar;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using ModeMatOp = SymGEigsRegInvOp<OpType, BOpType>;
     using Base = SymEigsBase<ModeMatOp, BOpType>;
 
@@ -282,6 +312,32 @@ public:
     ///
     SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv) :
         Base(ModeMatOp(op, Bop), Bop, nev, ncv)
+    {}
+    ///
+    /// Constructor to create a solver object with logging.
+    ///
+    /// \param op   The \f$A\f$ matrix operation object that implements the matrix-vector
+    ///             multiplication operation of \f$A\f$:
+    ///             calculating \f$Av\f$ for any vector \f$v\f$. Users could either
+    ///             create the object from the wrapper classes such as DenseSymMatProd, or
+    ///             define their own that implements all the public members
+    ///             as in DenseSymMatProd.
+    /// \param Bop  The \f$B\f$ matrix operation object that implements the multiplication operation
+    ///             \f$Bv\f$ and the linear equation solving operation \f$B^{-1}v\f$ for any vector \f$v\f$.
+    ///             Users could either create the object from the wrapper class SparseRegularInverse, or
+    ///             define their own that implements all the public member functions
+    ///             as in SparseRegularInverse. \f$B\f$ needs to be positive definite.
+    /// \param nev  Number of eigenvalues requested. This should satisfy \f$1\le nev \le n-1\f$,
+    ///             where \f$n\f$ is the size of matrix.
+    /// \param ncv  Parameter that controls the convergence speed of the algorithm.
+    ///             Typically a larger `ncv` means faster convergence, but it may
+    ///             also result in greater memory use and more matrix operations
+    ///             in each iteration. This parameter must satisfy \f$nev < ncv \le n\f$,
+    ///             and is advised to take \f$ncv \ge 2\cdot nev\f$.
+    /// \param logger  A logging object that inherits from the base class in LoggerBase.h
+    ///
+    SymGEigsSolver(OpType& op, BOpType& Bop, Index nev, Index ncv, LoggerBase<Scalar, Vector>* logger) :
+        Base(ModeMatOp(op, Bop), Bop, nev, ncv, logger)
     {}
 };
 

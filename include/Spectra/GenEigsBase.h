@@ -24,6 +24,7 @@
 #include "LinAlg/DoubleShiftQR.h"
 #include "LinAlg/UpperHessenbergEigen.h"
 #include "LinAlg/Arnoldi.h"
+#include "LoggerBase.h"
 
 namespace Spectra {
 
@@ -70,10 +71,12 @@ protected:
     ComplexVector m_ritz_val;  // Ritz values
     ComplexMatrix m_ritz_vec;  // Ritz vectors
     ComplexVector m_ritz_est;  // last row of m_ritz_vec, also called the Ritz estimates
+    ComplexVector m_resid;
 
 private:
     BoolArray     m_ritz_conv; // indicator of the convergence of Ritz values
     CompInfo      m_info;      // status of the computation
+    LoggerBase<Scalar, ComplexVector> *m_logger = nullptr;
     // clang-format on
 
     // Real Ritz values calculated from UpperHessenbergEigen have exact zero imaginary part
@@ -150,9 +153,9 @@ private:
 
         // thresh = tol * max(eps23, abs(theta)), theta for Ritz value
         Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(eps23);
-        Array resid = m_ritz_est.head(m_nev).array().abs() * m_fac.f_norm();
+        m_resid = m_ritz_est.head(m_nev).array().abs().matrix() * m_fac.f_norm();
         // Converged "wanted" Ritz values
-        m_ritz_conv = (resid < thresh);
+        m_ritz_conv = (m_resid.real().array() < thresh);
 
         return m_ritz_conv.count();
     }
@@ -321,7 +324,6 @@ protected:
 
 public:
     /// \cond
-
     GenEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv) :
         m_op(op),
         m_n(m_op.rows()),
@@ -339,6 +341,19 @@ public:
             throw std::invalid_argument("ncv must satisfy nev + 2 <= ncv <= n, n is the size of matrix");
     }
 
+    GenEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, LoggerBase<Scalar, ComplexVector>* logger) :
+        GenEigsBase(op, Bop, nev, ncv)
+    {
+        set_logger(logger);
+    }
+
+    ///
+    /// Sets the logger ptr with a user constructed logger object.
+    ///
+    void set_logger(LoggerBase<Scalar, ComplexVector>* logger)
+    {
+        m_logger = logger;
+    }
     ///
     /// Virtual destructor
     ///
@@ -362,11 +377,13 @@ public:
         m_ritz_vec.resize(m_ncv, m_nev);
         m_ritz_est.resize(m_ncv);
         m_ritz_conv.resize(m_nev);
+        m_resid.resize(m_nev);
 
         m_ritz_val.setZero();
         m_ritz_vec.setZero();
         m_ritz_est.setZero();
         m_ritz_conv.setZero();
+        m_resid.setZero();
 
         m_nmatop = 0;
         m_niter = 0;
@@ -424,12 +441,29 @@ public:
         Index i, nconv = 0, nev_adj;
         for (i = 0; i < maxit; i++)
         {
+            if (m_logger)
+            {
+                m_logger->call_iteration_start();
+            }
             nconv = num_converged(tol);
+            const ComplexVector eigs = m_ritz_val.head(m_nev);
+            const IterationData<Scalar, ComplexVector> data(i, nconv, m_ncv, eigs, m_resid, m_ritz_conv);
+
             if (nconv >= m_nev)
+            {
+                if (m_logger)
+                {
+                    m_logger->call_iteration_end(data);
+                }
                 break;
+            }
 
             nev_adj = nev_adjusted(nconv);
             restart(nev_adj, selection);
+            if (m_logger)
+            {
+                m_logger->call_iteration_end(data);
+            }
         }
         // Sorting results
         sort_ritzpair(sorting);
