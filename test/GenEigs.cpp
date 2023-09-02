@@ -37,7 +37,7 @@ SpMatrix gen_sparse_data(int n, double prob = 0.5)
 }
 
 template <typename MatType, typename Solver>
-void run_test(const MatType& mat, Solver& eigs, SortRule selection, bool allow_fail = false)
+void run_test(const MatType& mat, Solver& eigs, const EigenvalueSorter<std::complex<ElemType<typename MatType::Scalar>>>& selection, bool allow_fail = false)
 {
     eigs.init();
     // maxit = 300 to reduce running time for failed cases
@@ -105,6 +105,10 @@ void run_test_sets(const MatType& A, int k, int m)
     SECTION("Smallest Imaginary Part")
     {
         run_test(A, eigs, SortRule::SmallestImag, true);
+    }
+    SECTION("Custom SortRule: Closest to target")
+    {
+        run_test(A, eigs, EigenvalueSorter<std::complex<double>>{[](std::complex<double> d) { return std::abs(d - 10.); }});
     }
 }
 

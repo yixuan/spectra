@@ -52,9 +52,9 @@ public:
     /// Sort the eigen pairs according to the selection rule
     ///
     /// \param selection Sorting rule
-    void sort(SortRule selection)
+    void sort(const EigenvalueSorter<Scalar> &selection)
     {
-        std::vector<Index> ind = argsort(selection, m_values);
+        std::vector<Index> ind = selection.argsort(m_values);
         RitzPairs<Scalar> temp = *this;
         for (Index i = 0; i < size(); i++)
         {

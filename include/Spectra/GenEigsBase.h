@@ -83,7 +83,7 @@ private:
     static bool is_conj(const Complex& v1, const Complex& v2) { return v1 == Eigen::numext::conj(v2); }
 
     // Implicitly restarted Arnoldi factorization
-    void restart(Index k, SortRule selection)
+    void restart(Index k, const EigenvalueSorter<Complex>& selection)
     {
         using std::norm;
 
@@ -96,7 +96,7 @@ private:
 
         for (Index i = k; i < m_ncv; i++)
         {
-            if (is_complex(m_ritz_val[i]) && is_conj(m_ritz_val[i], m_ritz_val[i + 1]))
+            if (i + 1 < m_ncv && is_complex(m_ritz_val[i]) && is_conj(m_ritz_val[i], m_ritz_val[i + 1]))
             {
                 // H - mu * I = Q1 * R1
                 // H <- R1 * Q1 + mu * I = Q1' * H * Q1
@@ -193,55 +193,14 @@ private:
     }
 
     // Retrieves and sorts Ritz values and Ritz vectors
-    void retrieve_ritzpair(SortRule selection)
+    void retrieve_ritzpair(const EigenvalueSorter<Complex> & selection)
     {
         UpperHessenbergEigen<Scalar> decomp(m_fac.matrix_H());
         const ComplexVector& evals = decomp.eigenvalues();
         ComplexMatrix evecs = decomp.eigenvectors();
 
         // Sort Ritz values and put the wanted ones at the beginning
-        std::vector<Index> ind;
-        switch (selection)
-        {
-            case SortRule::LargestMagn:
-            {
-                SortEigenvalue<Complex, SortRule::LargestMagn> sorting(evals.data(), m_ncv);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::LargestReal:
-            {
-                SortEigenvalue<Complex, SortRule::LargestReal> sorting(evals.data(), m_ncv);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::LargestImag:
-            {
-                SortEigenvalue<Complex, SortRule::LargestImag> sorting(evals.data(), m_ncv);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::SmallestMagn:
-            {
-                SortEigenvalue<Complex, SortRule::SmallestMagn> sorting(evals.data(), m_ncv);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::SmallestReal:
-            {
-                SortEigenvalue<Complex, SortRule::SmallestReal> sorting(evals.data(), m_ncv);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::SmallestImag:
-            {
-                SortEigenvalue<Complex, SortRule::SmallestImag> sorting(evals.data(), m_ncv);
-                sorting.swap(ind);
-                break;
-            }
-            default:
-                throw std::invalid_argument("unsupported selection rule");
-        }
+        std::vector<Index> ind = selection.argsort(evals.data(), m_ncv);
 
         // Copy the Ritz values and vectors to m_ritz_val and m_ritz_vec, respectively
         for (Index i = 0; i < m_ncv; i++)
@@ -258,51 +217,9 @@ private:
 protected:
     // Sorts the first nev Ritz pairs in the specified order
     // This is used to return the final results
-    virtual void sort_ritzpair(SortRule sort_rule)
+    virtual void sort_ritzpair(const EigenvalueSorter<Complex> & sort_rule)
     {
-        std::vector<Index> ind;
-        switch (sort_rule)
-        {
-            case SortRule::LargestMagn:
-            {
-                SortEigenvalue<Complex, SortRule::LargestMagn> sorting(m_ritz_val.data(), m_nev);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::LargestReal:
-            {
-                SortEigenvalue<Complex, SortRule::LargestReal> sorting(m_ritz_val.data(), m_nev);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::LargestImag:
-            {
-                SortEigenvalue<Complex, SortRule::LargestImag> sorting(m_ritz_val.data(), m_nev);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::SmallestMagn:
-            {
-                SortEigenvalue<Complex, SortRule::SmallestMagn> sorting(m_ritz_val.data(), m_nev);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::SmallestReal:
-            {
-                SortEigenvalue<Complex, SortRule::SmallestReal> sorting(m_ritz_val.data(), m_nev);
-                sorting.swap(ind);
-                break;
-            }
-            case SortRule::SmallestImag:
-            {
-                SortEigenvalue<Complex, SortRule::SmallestImag> sorting(m_ritz_val.data(), m_nev);
-                sorting.swap(ind);
-                break;
-            }
-            default:
-                throw std::invalid_argument("unsupported sorting rule");
-        }
-
+        std::vector<Index> ind = sort_rule.argsort(m_ritz_val.data(), m_nev);
         ComplexVector new_ritz_val(m_ncv);
         ComplexMatrix new_ritz_vec(m_ncv, m_nev);
         BoolArray new_ritz_conv(m_nev);
@@ -414,8 +331,8 @@ public:
     ///
     /// \return Number of converged eigenvalues.
     ///
-    Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
-                  Scalar tol = 1e-10, SortRule sorting = SortRule::LargestMagn)
+    Index compute(const EigenvalueSorter<Complex>& selection = SortRule::LargestMagn, Index maxit = 1000,
+                  Scalar tol = 1e-10, const EigenvalueSorter<Complex>& sorting = SortRule::LargestMagn)
     {
         // The m-step Arnoldi factorization
         m_fac.factorize_from(1, m_ncv, m_nmatop);

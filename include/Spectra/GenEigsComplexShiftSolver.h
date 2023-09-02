@@ -51,7 +51,7 @@ private:
     const Scalar m_sigmai;
 
     // First transform back the Ritz values, and then sort
-    void sort_ritzpair(SortRule sort_rule) override
+    void sort_ritzpair(const EigenvalueSorter<Complex> &sort_rule) override
     {
         using std::abs;
         using std::sqrt;
