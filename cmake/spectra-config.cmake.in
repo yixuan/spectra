@@ -1,5 +1,6 @@
 @PACKAGE_INIT@
 
+include(CMakeFindDependencyMacro)
 find_dependency (Eigen3 CONFIG)
 
 if(NOT TARGET Spectra::Spectra)
