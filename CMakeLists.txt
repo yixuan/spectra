@@ -36,7 +36,11 @@ target_include_directories(
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 )
-target_link_libraries(Spectra INTERFACE ${EIGEN3_LIBRARIES})
+if (DEFINED EIGEN3_LIBRARIES)
+    target_link_libraries(Spectra INTERFACE ${EIGEN3_LIBRARIES})
+else()
+    target_link_libraries(Spectra INTERFACE Eigen3::Eigen)
+endif()
 
 # Parse additional options
 # ------------------------
