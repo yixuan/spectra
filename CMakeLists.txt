@@ -64,16 +64,16 @@ include(GNUInstallDirs)
 install(
     TARGETS Spectra
     EXPORT Spectra-targets
-    INCLUDES DESTINATION include
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION include)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(
     EXPORT Spectra-targets
     FILE Spectra-targets.cmake
     NAMESPACE Spectra::
-    DESTINATION share/spectra/cmake
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/Spectra
 )
 
 # Configure package
@@ -83,7 +83,7 @@ include(CMakePackageConfigHelpers)
 configure_package_config_file(
     ${PROJECT_SOURCE_DIR}/cmake/spectra-config.cmake.in
     ${CMAKE_BINARY_DIR}/cmake/spectra-config.cmake
-    INSTALL_DESTINATION share/spectra/cmake
+    INSTALL_DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/Spectra
 )
 
 write_basic_package_version_file(
@@ -96,7 +96,7 @@ install(
     FILES
         ${CMAKE_BINARY_DIR}/cmake/spectra-config.cmake
         ${CMAKE_BINARY_DIR}/cmake/spectra-config-version.cmake
-    DESTINATION share/spectra/cmake
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/Spectra
 )
 
 find_package(CLANG_FORMAT 9)
