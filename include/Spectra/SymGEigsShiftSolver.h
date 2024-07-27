@@ -167,7 +167,7 @@ private:
     }
 
     // First transform back the Ritz values, and then sort
-    void sort_ritzpair(SortRule sort_rule) override
+    void sort_ritzpair(const EigenvalueSorter<Scalar> &sort_rule) override
     {
         // The eigenvalues we get from the iteration is nu = 1 / (lambda - sigma)
         // So the eigenvalues of the original problem is lambda = 1 / nu + sigma
@@ -329,7 +329,7 @@ private:
     }
 
     // First transform back the Ritz values, and then sort
-    void sort_ritzpair(SortRule sort_rule) override
+    void sort_ritzpair(const EigenvalueSorter<Scalar> &sort_rule) override
     {
         // The eigenvalues we get from the iteration is nu = lambda / (lambda - sigma)
         // So the eigenvalues of the original problem is lambda = sigma * nu / (nu - 1)
@@ -421,7 +421,7 @@ private:
     }
 
     // First transform back the Ritz values, and then sort
-    void sort_ritzpair(SortRule sort_rule) override
+    void sort_ritzpair(const EigenvalueSorter<Scalar> &sort_rule) override
     {
         // The eigenvalues we get from the iteration is nu = (lambda + sigma) / (lambda - sigma)
         // So the eigenvalues of the original problem is lambda = sigma * (nu + 1) / (nu - 1)

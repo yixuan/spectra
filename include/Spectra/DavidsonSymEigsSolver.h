@@ -57,9 +57,9 @@ public:
     ///
     /// \param selection Spectrum section to target (e.g. lowest, etc.)
     /// \return Matrix with the initial orthonormal basis
-    Matrix setup_initial_search_space(SortRule selection) const
+    Matrix setup_initial_search_space(const EigenvalueSorter<Scalar> &selection) const
     {
-        std::vector<Eigen::Index> indices_sorted = argsort(selection, m_diagonal);
+        std::vector<Eigen::Index> indices_sorted = selection.argsort(m_diagonal);
 
         Matrix initial_basis = Matrix::Zero(this->m_matrix_operator.rows(), this->m_initial_search_space_size);
 

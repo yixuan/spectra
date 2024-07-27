@@ -160,7 +160,7 @@ private:
     const Scalar m_sigma;
 
     // First transform back the Ritz values, and then sort
-    void sort_ritzpair(SortRule sort_rule) override
+    void sort_ritzpair(const EigenvalueSorter<Scalar> &sort_rule) override
     {
         // The eigenvalues we get from the iteration is nu = 1 / (lambda - sigma)
         // So the eigenvalues of the original problem is lambda = 1 / nu + sigma

@@ -30,6 +30,7 @@ namespace Spectra {
 ///
 /// The enumeration of selection rules of desired eigenvalues.
 ///
+
 enum class SortRule
 {
     LargestMagn,  ///< Select eigenvalues with largest magnitude. Magnitude
@@ -55,245 +56,155 @@ enum class SortRule
 
     BothEnds  ///< Select eigenvalues half from each end of the spectrum. When
               ///< `nev` is odd, compute more from the high end. Only for symmetric eigen solvers.
+
 };
 
-/// \cond
+///
+/// Eigenvalue solvers use this class to determine which eigenvalues to select.
+/// Values of the type SortRule are automatically cast to an appropriate EigenvalueSorter.
+///
+/// You can also provide your own implementation to determine which eigenvalues to select.
+/// For symmetric solvers, this should have a real scalar type.
+/// \code C++
+/// SymEigsSolver<...> eigsSolver(...);
+/// eigsSolver.init();
+/// EigenvalueSorter<double> closestToTarget{[](double eigenvalue) { return std::abs(eigenvalue - 10.); }};
+/// eigsSolver.compute(closestToTarget);
+/// \endcode
+/// For general solvers, the scalar type should be complex.
+/// \code C++
+/// GenEigsSolver<...> eigsSolver(...);
+/// eigsSolver.init();
+/// EigenvalueSorter<std::complex<double>> closestToTarget{[](std::complex<double> eigenvalue) { return std::abs(eigenvalue - 10.); }};
+/// eigsSolver.compute(closestToTarget);
+/// \endcode
 
-// When comparing eigenvalues, we first calculate the "target" to sort.
-// For example, if we want to choose the eigenvalues with
-// largest magnitude, the target will be -abs(x).
-// The minus sign is due to the fact that std::sort() sorts in ascending order.
-
-// Default target: throw an exception
-template <typename Scalar, SortRule Rule>
-class SortingTarget
-{
-public:
-    static ElemType<Scalar> get(const Scalar& val)
-    {
-        using std::abs;
-        throw std::invalid_argument("incompatible selection rule");
-        return -abs(val);
-    }
-};
-
-// Specialization for SortRule::LargestMagn
-// This covers [float, double, complex] x [SortRule::LargestMagn]
 template <typename Scalar>
-class SortingTarget<Scalar, SortRule::LargestMagn>
-{
-public:
-    static ElemType<Scalar> get(const Scalar& val)
-    {
-        using std::abs;
-        return -abs(val);
-    }
-};
-
-// Specialization for SortRule::LargestReal
-// This covers [complex] x [SortRule::LargestReal]
-template <typename RealType>
-class SortingTarget<std::complex<RealType>, SortRule::LargestReal>
-{
-public:
-    static RealType get(const std::complex<RealType>& val)
-    {
-        return -val.real();
-    }
-};
-
-// Specialization for SortRule::LargestImag
-// This covers [complex] x [SortRule::LargestImag]
-template <typename RealType>
-class SortingTarget<std::complex<RealType>, SortRule::LargestImag>
-{
-public:
-    static RealType get(const std::complex<RealType>& val)
-    {
-        using std::abs;
-        return -abs(val.imag());
-    }
-};
-
-// Specialization for SortRule::LargestAlge
-// This covers [float, double] x [SortRule::LargestAlge]
-template <typename Scalar>
-class SortingTarget<Scalar, SortRule::LargestAlge>
-{
-public:
-    static Scalar get(const Scalar& val)
-    {
-        return -val;
-    }
-};
-
-// Here SortRule::BothEnds is the same as SortRule::LargestAlge, but
-// we need some additional steps, which are done in
-// SymEigsSolver.h => retrieve_ritzpair().
-// There we move the smallest values to the proper locations.
-template <typename Scalar>
-class SortingTarget<Scalar, SortRule::BothEnds>
-{
-public:
-    static Scalar get(const Scalar& val)
-    {
-        return -val;
-    }
-};
-
-// Specialization for SortRule::SmallestMagn
-// This covers [float, double, complex] x [SortRule::SmallestMagn]
-template <typename Scalar>
-class SortingTarget<Scalar, SortRule::SmallestMagn>
-{
-public:
-    static ElemType<Scalar> get(const Scalar& val)
-    {
-        using std::abs;
-        return abs(val);
-    }
-};
-
-// Specialization for SortRule::SmallestReal
-// This covers [complex] x [SortRule::SmallestReal]
-template <typename RealType>
-class SortingTarget<std::complex<RealType>, SortRule::SmallestReal>
-{
-public:
-    static RealType get(const std::complex<RealType>& val)
-    {
-        return val.real();
-    }
-};
-
-// Specialization for SortRule::SmallestImag
-// This covers [complex] x [SortRule::SmallestImag]
-template <typename RealType>
-class SortingTarget<std::complex<RealType>, SortRule::SmallestImag>
-{
-public:
-    static RealType get(const std::complex<RealType>& val)
-    {
-        using std::abs;
-        return abs(val.imag());
-    }
-};
-
-// Specialization for SortRule::SmallestAlge
-// This covers [float, double] x [SortRule::SmallestAlge]
-template <typename Scalar>
-class SortingTarget<Scalar, SortRule::SmallestAlge>
-{
-public:
-    static Scalar get(const Scalar& val)
-    {
-        return val;
-    }
-};
-
-// Sort eigenvalues
-template <typename T, SortRule Rule>
-class SortEigenvalue
+class EigenvalueSorter
 {
 private:
+    bool m_both_ends;
+    std::function<ElemType<Scalar>(Scalar)> m_target;
+
+public:
     using Index = Eigen::Index;
     using IndexArray = std::vector<Index>;
 
-    const T* m_evals;
-    IndexArray m_index;
-
-public:
-    // Sort indices according to the eigenvalues they point to
-    inline bool operator()(Index i, Index j)
+    ///
+    /// \param target Eigenvalues will be sorted according to this target. Only the values with the lowest target will be computed.
+    /// \param both_ends If both_ends is true, half of the eigenvalues with the lowest target and half of the eigenvalues with the highest target will be computed.
+    EigenvalueSorter(std::function<ElemType<Scalar>(Scalar)> target, bool both_ends) :
+        m_both_ends(both_ends), m_target(target)
     {
-        return SortingTarget<T, Rule>::get(m_evals[i]) < SortingTarget<T, Rule>::get(m_evals[j]);
     }
 
-    SortEigenvalue(const T* start, Index size) :
-        m_evals(start), m_index(size)
+    ///
+    /// \param target Eigenvalues will be sorted according to this target. Only the values with the lowest target will be computed.
+    explicit EigenvalueSorter(std::function<ElemType<Scalar>(Scalar)> target) :
+        m_both_ends(false), m_target(target)
     {
+    }
+
+    /// This constructor casts a SortRule to an appropriate EigenvalueSorter, for complex scalar types
+    template <class T = Scalar>
+    EigenvalueSorter(SortRule rule, typename std::enable_if<Eigen::NumTraits<T>::IsComplex>::type* = nullptr)
+    {
+        // The scalar-type is complex
+
+        m_both_ends = false;
+        if (rule == SortRule::LargestMagn)
+            m_target = [](Scalar x) { using std::abs; return -std::abs(x); };
+        else if (rule == SortRule::LargestReal)
+            m_target = [](Scalar x) {
+                return -x.real();
+            };
+        else if (rule == SortRule::LargestImag)
+            m_target = [](Scalar x) {
+                using std::abs;
+                return -abs(x.imag());
+            };
+        else if (rule == SortRule::SmallestMagn)
+            m_target = [](Scalar x) { using std::abs; return -std::abs(x); };
+        else if (rule == SortRule::SmallestReal)
+            m_target = [](Scalar x) {
+                return x.real();
+            };
+        else if (rule == SortRule::SmallestImag)
+            m_target = [](Scalar x) {
+                using std::abs;
+                return abs(x.imag());
+            };
+        else
+            throw std::invalid_argument("unsupported selection rule for complex types");
+    }
+
+    /// This constructor casts a SortRule to an appropriate EigenvalueSorter, for real scalar types
+    template <class T = Scalar>
+    EigenvalueSorter(SortRule rule, typename std::enable_if<!Eigen::NumTraits<T>::IsComplex>::type* = nullptr)
+    {
+        // The scalar-type is real
+
+        m_both_ends = rule == SortRule::BothEnds;
+        if (rule == SortRule::LargestMagn)
+            m_target = [](Scalar x) { using std::abs; return -std::abs(x); };
+        else if (rule == SortRule::LargestReal)
+            m_target = [](Scalar x) {
+                return -x;
+            };
+        else if (rule == SortRule::LargestAlge || rule == SortRule::BothEnds)
+            m_target = [](Scalar x) {
+                return -x;
+            };
+        else if (rule == SortRule::SmallestMagn)
+            m_target = [](Scalar x) { using std::abs; return -std::abs(x); };
+        else if (rule == SortRule::SmallestReal)
+            m_target = [](Scalar x) {
+                return x;
+            };
+        else if (rule == SortRule::SmallestAlge)
+            m_target = [](Scalar x) {
+                return x;
+            };
+        else
+            throw std::invalid_argument("unsupported selection rule for real types");
+    }
+
+    IndexArray argsort(const Scalar* data, Index size) const
+    {
+        IndexArray index;
+        index.resize(size);
         for (Index i = 0; i < size; i++)
+            index[i] = i;
+        std::sort(index.begin(), index.end(), [&](Index i, Index j) { return m_target(data[i]) < m_target(data[j]); });
+
+        // For SortRule::BothEnds, the eigenvalues are sorted according to the
+        // SortRule::LargestAlge rule, so we need to move those smallest values to the left
+        // The order would be
+        //     Largest => Smallest => 2nd largest => 2nd smallest => ...
+        // We keep this order since the first k values will always be
+        // the wanted collection, no matter k is nev_updated (used in SymEigsBase::restart())
+        // or is nev (used in SymEigsBase::sort_ritzpair())
+        if (m_both_ends)
         {
-            m_index[i] = i;
+            IndexArray index_copy(index);
+            for (Index i = 0; i < size; i++)
+            {
+                // If i is even, pick values from the left (large values)
+                // If i is odd, pick values from the right (small values)
+                if (i % 2 == 0)
+                    index[i] = index_copy[i / 2];
+                else
+                    index[i] = index_copy[size - 1 - i / 2];
+            }
         }
-        std::sort(m_index.begin(), m_index.end(), *this);
+        return index;
     }
 
-    inline IndexArray index() const { return m_index; }
-    inline void swap(IndexArray& other) { m_index.swap(other); }
+    IndexArray argsort(const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>& values) const
+    {
+        return argsort(values.data(), values.size());
+    }
 };
-
-// Sort values[:len] according to the selection rule, and return the indices
-template <typename Scalar>
-std::vector<Eigen::Index> argsort(SortRule selection, const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>& values, Eigen::Index len)
-{
-    using Index = Eigen::Index;
-
-    // Sort Ritz values and put the wanted ones at the beginning
-    std::vector<Index> ind;
-    switch (selection)
-    {
-        case SortRule::LargestMagn:
-        {
-            SortEigenvalue<Scalar, SortRule::LargestMagn> sorting(values.data(), len);
-            sorting.swap(ind);
-            break;
-        }
-        case SortRule::BothEnds:
-        case SortRule::LargestAlge:
-        {
-            SortEigenvalue<Scalar, SortRule::LargestAlge> sorting(values.data(), len);
-            sorting.swap(ind);
-            break;
-        }
-        case SortRule::SmallestMagn:
-        {
-            SortEigenvalue<Scalar, SortRule::SmallestMagn> sorting(values.data(), len);
-            sorting.swap(ind);
-            break;
-        }
-        case SortRule::SmallestAlge:
-        {
-            SortEigenvalue<Scalar, SortRule::SmallestAlge> sorting(values.data(), len);
-            sorting.swap(ind);
-            break;
-        }
-        default:
-            throw std::invalid_argument("unsupported selection rule");
-    }
-
-    // For SortRule::BothEnds, the eigenvalues are sorted according to the
-    // SortRule::LargestAlge rule, so we need to move those smallest values to the left
-    // The order would be
-    //     Largest => Smallest => 2nd largest => 2nd smallest => ...
-    // We keep this order since the first k values will always be
-    // the wanted collection, no matter k is nev_updated (used in SymEigsBase::restart())
-    // or is nev (used in SymEigsBase::sort_ritzpair())
-    if (selection == SortRule::BothEnds)
-    {
-        std::vector<Index> ind_copy(ind);
-        for (Index i = 0; i < len; i++)
-        {
-            // If i is even, pick values from the left (large values)
-            // If i is odd, pick values from the right (small values)
-            if (i % 2 == 0)
-                ind[i] = ind_copy[i / 2];
-            else
-                ind[i] = ind_copy[len - 1 - i / 2];
-        }
-    }
-
-    return ind;
-}
-
-// Default vector length
-template <typename Scalar>
-std::vector<Eigen::Index> argsort(SortRule selection, const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>& values)
-{
-    return argsort<Scalar>(selection, values, values.size());
-}
-
-/// \endcond
 
 }  // namespace Spectra
 
