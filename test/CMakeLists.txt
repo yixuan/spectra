@@ -11,6 +11,9 @@ list(APPEND test_target_sources
         GenEigs.cpp
         GenEigsRealShift.cpp
         GenEigsComplexShift.cpp
+        LoggingDavidsonSymEigs.cpp
+        LoggingGenEigs.cpp
+        LoggingSymEigs.cpp
         Orthogonalization.cpp
         JDSymEigsBase.cpp
         JDSymEigsDPRConstructor.cpp

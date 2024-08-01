@@ -23,6 +23,7 @@
 #include "LinAlg/UpperHessenbergQR.h"
 #include "LinAlg/TridiagEigen.h"
 #include "LinAlg/Lanczos.h"
+#include "LoggerBase.h"
 
 namespace Spectra {
 
@@ -79,8 +80,10 @@ protected:
 private:
     Matrix        m_ritz_vec;   // Ritz vectors
     Vector        m_ritz_est;   // last row of m_ritz_vec, also called the Ritz estimates
+    Vector        m_resid;
     BoolArray     m_ritz_conv;  // indicator of the convergence of Ritz values
     CompInfo      m_info;       // status of the computation
+    LoggerBase<Scalar, Vector> *m_logger = nullptr;
     // clang-format on
 
     // Move rvalue object to the container
@@ -150,9 +153,9 @@ private:
 
         // thresh = tol * max(eps23, abs(theta)), theta for Ritz value
         Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(eps23);
-        Array resid = m_ritz_est.head(m_nev).array().abs() * m_fac.f_norm();
+        m_resid = m_ritz_est.head(m_nev).array().abs().matrix() * m_fac.f_norm();
         // Converged "wanted" Ritz values
-        m_ritz_conv = (resid < thresh);
+        m_ritz_conv = (m_resid.array() < thresh);
 
         return m_ritz_conv.count();
     }
@@ -253,6 +256,11 @@ public:
         if (ncv <= nev || ncv > m_n)
             throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
     }
+    SymEigsBase(OpType& op, const BOpType& Bop, Index nev, Index ncv, LoggerBase<Scalar, Vector>* logger) :
+        SymEigsBase(op, Bop, nev, ncv)
+    {
+        set_logger(logger);
+    }
 
     // If op is an rvalue
     SymEigsBase(OpType&& op, const BOpType& Bop, Index nev, Index ncv) :
@@ -272,7 +280,19 @@ public:
         if (ncv <= nev || ncv > m_n)
             throw std::invalid_argument("ncv must satisfy nev < ncv <= n, n is the size of matrix");
     }
+    SymEigsBase(OpType&& op, const BOpType& Bop, Index nev, Index ncv, LoggerBase<Scalar, Vector>* logger) :
+        SymEigsBase(op, Bop, nev, ncv)
+    {
+        set_logger(logger);
+    }
 
+    ///
+    /// Sets the logger ptr with a user constructed logger object.
+    ///
+    void set_logger(LoggerBase<Scalar, Vector>* logger)
+    {
+        m_logger = logger;
+    }
     ///
     /// Virtual destructor
     ///
@@ -296,11 +316,13 @@ public:
         m_ritz_vec.resize(m_ncv, m_nev);
         m_ritz_est.resize(m_ncv);
         m_ritz_conv.resize(m_nev);
+        m_resid.resize(m_nev);
 
         m_ritz_val.setZero();
         m_ritz_vec.setZero();
         m_ritz_est.setZero();
         m_ritz_conv.setZero();
+        m_resid.setZero();
 
         m_nmatop = 0;
         m_niter = 0;
@@ -356,12 +378,30 @@ public:
         Index i, nconv = 0, nev_adj;
         for (i = 0; i < maxit; i++)
         {
+            if (m_logger)
+            {
+                m_logger->call_iteration_start();
+            }
             nconv = num_converged(tol);
+            const Vector eigs = m_ritz_val.head(m_nev);
+            const IterationData<Scalar, Vector> data(i, nconv, m_ncv, eigs, m_resid, m_ritz_conv);
+
             if (nconv >= m_nev)
+            {
+                if (m_logger)
+                {
+                    m_logger->call_iteration_end(data);
+                }
                 break;
+            }
 
             nev_adj = nev_adjusted(nconv);
             restart(nev_adj, selection);
+
+            if (m_logger)
+            {
+                m_logger->call_iteration_end(data);
+            }
         }
         // Sorting results
         sort_ritzpair(sorting);
