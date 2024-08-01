@@ -10,7 +10,11 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <Eigen/IterativeLinearSolvers>
+#include <Eigen/SparseLU>
+#include <Eigen/SparseQR>
+#include <Eigen/SparseCholesky>
 #include <stdexcept>
+#include "../Util/CompInfo.h"
 
 namespace Spectra {
 
@@ -42,6 +46,18 @@ public:
     ///
     using Scalar = Scalar_;
 
+    // enum for different solver types
+    enum class SolverType
+    {
+        SimplicialLLT,
+        SimplicialLDLT,
+        LU,
+        QR,
+        ConjugateGradient,
+        BiCGSTAB,
+        LeastSquaresConjugateGradient
+    };
+
 private:
     using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
@@ -52,7 +68,147 @@ private:
 
     ConstGenericSparseMatrix m_mat;
     const Index m_n;
-    Eigen::ConjugateGradient<SparseMatrix> m_cg;
+
+    // solver wrapper class for different solver types
+    // Author: David Kriebel
+    class Solver
+    {
+    private:
+        SolverType m_type = SolverType::ConjugateGradient;
+
+        // solver
+        mutable Eigen::SimplicialLLT<SparseMatrix> m_SimplicialLLT;
+        mutable Eigen::SimplicialLDLT<SparseMatrix> m_SimplicialLDLT;
+        mutable Eigen::SparseLU<SparseMatrix, Eigen::COLAMDOrdering<StorageIndex>> m_SparseLU;
+        mutable Eigen::SparseQR<SparseMatrix, Eigen::COLAMDOrdering<StorageIndex>> m_SparseQR;
+        mutable Eigen::ConjugateGradient<SparseMatrix> m_ConjugateGradient;
+        mutable Eigen::BiCGSTAB<SparseMatrix> m_BiCGSTAB;
+        mutable Eigen::LeastSquaresConjugateGradient<SparseMatrix> m_LeastSquaresConjugateGradient;
+
+    public:
+        // constructor
+        Solver() {}
+
+        // deconstructor
+        ~Solver() {}
+
+        // set solver type
+        void setType(SolverType type) { m_type = type; }
+
+        // compute function
+        template <typename Derived>
+        void compute(const Eigen::SparseMatrixBase<Derived>& mat)
+        {
+            switch (m_type)
+            {
+                case SolverType::SimplicialLLT:
+                    m_SimplicialLLT.analyzePattern(mat);
+                    m_SimplicialLLT.factorize(mat);
+                    m_SimplicialLLT.compute(mat);
+                    break;
+
+                case SolverType::SimplicialLDLT:
+                    m_SimplicialLDLT.analyzePattern(mat);
+                    m_SimplicialLDLT.factorize(mat);
+                    m_SimplicialLDLT.compute(mat);
+                    break;
+
+                case SolverType::LU:
+                    m_SparseLU.analyzePattern(mat);
+                    m_SparseLU.factorize(mat);
+                    m_SparseLU.compute(mat);
+                    break;
+
+                case SolverType::QR:
+                    m_SparseQR.analyzePattern(mat);
+                    m_SparseQR.factorize(mat);
+                    m_SparseQR.compute(mat);
+                    break;
+
+                case SolverType::ConjugateGradient:
+                    m_ConjugateGradient.compute(mat);
+                    break;
+
+                case SolverType::BiCGSTAB:
+                    m_BiCGSTAB.compute(mat);
+                    break;
+
+                case SolverType::LeastSquaresConjugateGradient:
+                    m_LeastSquaresConjugateGradient.compute(mat);
+                    break;
+
+                default:
+                    m_ConjugateGradient.compute(mat);
+            }
+        }
+
+        // info function
+        Eigen::ComputationInfo info() const
+        {
+            switch (m_type)
+            {
+                case SolverType::SimplicialLLT:
+                    return m_SimplicialLLT.info();
+
+                case SolverType::SimplicialLDLT:
+                    return m_SimplicialLDLT.info();
+
+                case SolverType::LU:
+                    return m_SparseLU.info();
+
+                case SolverType::QR:
+                    return m_SparseQR.info();
+
+                case SolverType::ConjugateGradient:
+                    return m_ConjugateGradient.info();
+
+                case SolverType::BiCGSTAB:
+                    return m_BiCGSTAB.info();
+
+                case SolverType::LeastSquaresConjugateGradient:
+                    return m_LeastSquaresConjugateGradient.info();
+
+                default:
+                    return m_ConjugateGradient.info();
+            }
+        }
+
+        // solve function
+        Vector solve(MapConstVec& b) const
+        {
+            switch (m_type)
+            {
+                case SolverType::SimplicialLLT:
+                    return m_SimplicialLLT.solve(b);
+
+                case SolverType::SimplicialLDLT:
+                    return m_SimplicialLDLT.solve(b);
+
+                case SolverType::LU:
+                    return m_SparseLU.solve(b);
+
+                case SolverType::QR:
+                    return m_SparseQR.solve(b);
+
+                case SolverType::ConjugateGradient:
+                    return m_ConjugateGradient.solve(b);
+
+                case SolverType::BiCGSTAB:
+                    return m_BiCGSTAB.solve(b);
+
+                case SolverType::LeastSquaresConjugateGradient:
+                    return m_LeastSquaresConjugateGradient.solve(b);
+
+                default:
+                    return m_ConjugateGradient.solve(b);
+            }
+        }
+
+        // return solver type
+        SolverType& type() { return m_type; }
+    };
+
+    mutable Solver m_solver;
     mutable CompInfo m_info;
 
 public:
@@ -64,7 +220,7 @@ public:
     /// `Eigen::Map<Eigen::SparseMatrix<Scalar, ...> >`.
     ///
     template <typename Derived>
-    SparseRegularInverse(const Eigen::SparseMatrixBase<Derived>& mat) :
+    SparseRegularInverse(const Eigen::SparseMatrixBase<Derived>& mat, SolverType type = SolverType::ConjugateGradient) :
         m_mat(mat), m_n(mat.rows())
     {
         static_assert(
@@ -74,8 +230,10 @@ public:
         if (mat.rows() != mat.cols())
             throw std::invalid_argument("SparseRegularInverse: matrix must be square");
 
-        m_cg.compute(mat);
-        m_info = (m_cg.info() == Eigen::Success) ?
+        m_solver.setType(type);  // declare solver type
+        m_solver.compute(mat);
+
+        m_info = (m_solver.info() == Eigen::Success) ?
             CompInfo::Successful :
             CompInfo::NumericalIssue;
     }
@@ -106,13 +264,13 @@ public:
     {
         MapConstVec x(x_in, m_n);
         MapVec y(y_out, m_n);
-        y.noalias() = m_cg.solve(x);
+        y.noalias() = m_solver.solve(x);
 
-        m_info = (m_cg.info() == Eigen::Success) ?
+        m_info = (m_solver.info() == Eigen::Success) ?
             CompInfo::Successful :
-            CompInfo::NotConverging;
+            CompInfo::NumericalIssue;
         if (m_info != CompInfo::Successful)
-            throw std::runtime_error("SparseRegularInverse: CG solver does not converge");
+            throw std::runtime_error("SparseRegularInverse: Solver does not converge");
     }
 
     ///
@@ -127,6 +285,14 @@ public:
         MapConstVec x(x_in, m_n);
         MapVec y(y_out, m_n);
         y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
+    }
+
+    ///
+    /// Return the solver type which was used
+    ///
+    SolverType type()
+    {
+        return m_solver.type();
     }
 };
 

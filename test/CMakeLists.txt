@@ -14,6 +14,7 @@ list(APPEND test_target_sources
         Orthogonalization.cpp
         JDSymEigsBase.cpp
         JDSymEigsDPRConstructor.cpp
+        KrylovSchur.cpp
         QR.cpp
         RitzPairs.cpp
         Schur.cpp
