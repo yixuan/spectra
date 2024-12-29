@@ -78,13 +78,13 @@ protected:
                 rng.random_vec(f);
             }
             // f <- f - V * V'Bf, so that f is orthogonal to V in B-norm
-            m_op.trans_product(V, f, Vf);
+            m_op.adjoint_product(V, f, Vf);
             f.noalias() -= V * Vf;
             // fnorm <- ||f||
             fnorm = m_op.norm(f);
 
             // Compute V'Bf again
-            m_op.trans_product(V, f, Vf);
+            m_op.adjoint_product(V, f, Vf);
             // Test whether V'B(f/||f||) < eps
             Scalar ortho_err = Vf.cwiseAbs().maxCoeff();
             // If not, iteratively correct the residual
@@ -96,7 +96,7 @@ protected:
                 // beta <- ||f||
                 fnorm = m_op.norm(f);
 
-                m_op.trans_product(V, f, Vf);
+                m_op.adjoint_product(V, f, Vf);
                 ortho_err = Vf.cwiseAbs().maxCoeff();
                 count++;
             }
@@ -231,7 +231,7 @@ public:
             // h = m_fac_H(0:i, i)
             MapVec h(&m_fac_H(0, i), i1);
             // h <- V'Bw
-            m_op.trans_product(Vs, w, h);
+            m_op.adjoint_product(Vs, w, h);
 
             // f <- w - V * h
             m_fac_f.noalias() = w - Vs * h;
@@ -242,7 +242,7 @@ public:
 
             // f/||f|| is going to be the next column of V, so we need to test
             // whether V'B(f/||f||) ~= 0
-            m_op.trans_product(Vs, m_fac_f, Vf.head(i1));
+            m_op.adjoint_product(Vs, m_fac_f, Vf.head(i1));
             Scalar ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
             // If not, iteratively correct the residual
             int count = 0;
@@ -267,7 +267,7 @@ public:
                 // beta <- ||f||
                 m_beta = m_op.norm(m_fac_f);
 
-                m_op.trans_product(Vs, m_fac_f, Vf.head(i1));
+                m_op.adjoint_product(Vs, m_fac_f, Vf.head(i1));
                 ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
                 count++;
             }

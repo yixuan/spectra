@@ -143,7 +143,7 @@ public:
             // whether V'B(f/||f||) ~= 0
             const Index i1 = i + 1;
             MapMat Vs(m_fac_V.data(), m_n, i1);  // The first (i+1) columns
-            m_op.trans_product(Vs, m_fac_f, Vf.head(i1));
+            m_op.adjoint_product(Vs, m_fac_f, Vf.head(i1));
             Scalar ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
             // If not, iteratively correct the residual
             int count = 0;
@@ -170,7 +170,7 @@ public:
                 // beta <- ||f||
                 m_beta = m_op.norm(m_fac_f);
 
-                m_op.trans_product(Vs, m_fac_f, Vf.head(i1));
+                m_op.adjoint_product(Vs, m_fac_f, Vf.head(i1));
                 ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
                 count++;
             }
