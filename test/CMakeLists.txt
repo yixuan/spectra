@@ -1,31 +1,46 @@
 set(test_target_sources)
 
-
 add_library (tests-main tests-main.cpp)
 list(APPEND test_target_sources
+        # Linear algebra
+        QR.cpp
+        Eigen.cpp
+        Schur.cpp
         BKLDLT.cpp
-        DavidsonSymEigs.cpp
+        Arnoldi.cpp
+
+        # JD linear algebra
+        Orthogonalization.cpp
+        RitzPairs.cpp
+        SearchSpace.cpp
+
+        # Matrix operators
         DenseGenMatProd.cpp
         DenseSymMatProd.cpp
-        Eigen.cpp
+        SparseGenMatProd.cpp
+        SparseSymMatProd.cpp
+
+        # Symmetric eigen solver
+        SymEigs.cpp
+        SymEigsShift.cpp
+
+        # General eigen solver
         GenEigs.cpp
         GenEigsRealShift.cpp
         GenEigsComplexShift.cpp
-        Orthogonalization.cpp
-        JDSymEigsBase.cpp
-        JDSymEigsDPRConstructor.cpp
-        QR.cpp
-        RitzPairs.cpp
-        Schur.cpp
-        SearchSpace.cpp
-        SparseGenMatProd.cpp
-        SparseSymMatProd.cpp
-        SVD.cpp
-        SymEigs.cpp
-        SymEigsShift.cpp
+
+        # Symmetric generalized eigen solver
         SymGEigsCholesky.cpp
         SymGEigsRegInv.cpp
         SymGEigsShift.cpp
+
+        # SVD
+        SVD.cpp
+
+        # JD eigen solver
+        JDSymEigsBase.cpp
+        JDSymEigsDPRConstructor.cpp
+        DavidsonSymEigs.cpp
         )
 
 foreach(TEST_SOURCE ${test_target_sources})
@@ -41,4 +56,3 @@ foreach(TEST_SOURCE ${test_target_sources})
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME}
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR})  # the working directory is the out-of-source build directory
 endforeach()
-
