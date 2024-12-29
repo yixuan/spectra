@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2023 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2018-2024 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -31,6 +31,8 @@ template <typename Scalar, typename ArnoldiOpType>
 class Arnoldi
 {
 private:
+    // The real part type of the matrix element
+    using RealScalar = typename Eigen::NumTraits<Scalar>::Real;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
@@ -41,9 +43,9 @@ private:
 protected:
     // A very small value, but 1.0 / m_near_0 does not overflow
     // ~= 1e-307 for the "double" type
-    const Scalar m_near_0 = TypeTraits<Scalar>::min() * Scalar(10);
+    const RealScalar m_near_0 = TypeTraits<RealScalar>::min() * RealScalar(10);
     // The machine precision, ~= 1e-16 for the "double" type
-    const Scalar m_eps = TypeTraits<Scalar>::epsilon();
+    const RealScalar m_eps = TypeTraits<RealScalar>::epsilon();
 
     ArnoldiOpType m_op;  // Operators for the Arnoldi factorization
     const Index m_n;     // dimension of A
@@ -52,12 +54,12 @@ protected:
     Matrix m_fac_V;      // V matrix in the Arnoldi factorization
     Matrix m_fac_H;      // H matrix in the Arnoldi factorization
     Vector m_fac_f;      // residual in the Arnoldi factorization
-    Scalar m_beta;       // ||f||, B-norm of f
+    RealScalar m_beta;   // ||f||, B-norm of f
 
-    // Given orthonormal basis V (w.r.t. B), find a nonzero vector f such that V'Bf = 0
-    // With rounding errors, we hope V'B(f/||f||) < eps
+    // Given orthonormal basis V (w.r.t. B), find a nonzero vector f such that (V^H)Bf = 0
+    // With rounding errors, we hope ||(V^H)Bf|| < eps * ||f||
     // Assume that f has been properly allocated
-    void expand_basis(MapConstMat& V, const Index seed, Vector& f, Scalar& fnorm, Index& op_counter)
+    void expand_basis(MapConstMat& V, const Index seed, Vector& f, RealScalar& fnorm, Index& op_counter)
     {
         using std::sqrt;
 
@@ -77,16 +79,16 @@ protected:
             {
                 rng.random_vec(f);
             }
-            // f <- f - V * V'Bf, so that f is orthogonal to V in B-norm
+            // f <- f - V * (V^H)Bf, so that f is orthogonal to V in B-norm
             m_op.adjoint_product(V, f, Vf);
             f.noalias() -= V * Vf;
             // fnorm <- ||f||
             fnorm = m_op.norm(f);
 
-            // Compute V'Bf again
+            // Compute (V^H)Bf again
             m_op.adjoint_product(V, f, Vf);
-            // Test whether V'B(f/||f||) < eps
-            Scalar ortho_err = Vf.cwiseAbs().maxCoeff();
+            // Test whether ||(V^H)Bf|| < eps * ||f||
+            RealScalar ortho_err = Vf.cwiseAbs().maxCoeff();
             // If not, iteratively correct the residual
             int count = 0;
             while (count < 3 && ortho_err >= m_eps * fnorm)
@@ -123,7 +125,7 @@ public:
     const Matrix& matrix_V() const { return m_fac_V; }
     const Matrix& matrix_H() const { return m_fac_H; }
     const Vector& vector_f() const { return m_fac_f; }
-    Scalar f_norm() const { return m_beta; }
+    RealScalar f_norm() const { return m_beta; }
     Index subspace_dim() const { return m_k; }
 
     // Initialize with an operator and an initial vector
@@ -137,7 +139,7 @@ public:
         m_fac_H.setZero();
 
         // Verify the initial vector
-        const Scalar v0norm = m_op.norm(v0);
+        const RealScalar v0norm = m_op.norm(v0);
         if (v0norm < m_near_0)
             throw std::invalid_argument("initial residual vector cannot be zero");
 
@@ -148,7 +150,7 @@ public:
         op_counter++;
 
         // Normalize
-        const Scalar vnorm = m_op.norm(v);
+        const RealScalar vnorm = m_op.norm(v);
         v /= vnorm;
 
         // Compute H and f
@@ -166,7 +168,7 @@ public:
         if (m_fac_f.cwiseAbs().maxCoeff() < m_eps * abs(m_fac_H(0, 0)))
         {
             m_fac_f.setZero();
-            m_beta = Scalar(0);
+            m_beta = RealScalar(0);
         }
         else
         {
@@ -192,7 +194,7 @@ public:
             throw std::invalid_argument(msg);
         }
 
-        const Scalar beta_thresh = m_eps * sqrt(Scalar(m_n));
+        const RealScalar beta_thresh = m_eps * sqrt(RealScalar(m_n));
 
         // Pre-allocate vectors
         Vector Vf(to_m);
@@ -219,7 +221,7 @@ public:
             m_fac_V.col(i).noalias() = m_fac_f / m_beta;  // The (i+1)-th column
 
             // Note that H[i+1, i] equals to the unrestarted beta
-            m_fac_H(i, i - 1) = restart ? Scalar(0) : m_beta;
+            m_fac_H(i, i - 1) = restart ? Scalar(0) : Scalar(m_beta);
 
             // w <- A * v, v = m_fac_V.col(i)
             m_op.perform_op(&m_fac_V(0, i), w.data());
@@ -230,20 +232,20 @@ public:
             MapConstMat Vs(m_fac_V.data(), m_n, i1);
             // h = m_fac_H(0:i, i)
             MapVec h(&m_fac_H(0, i), i1);
-            // h <- V'Bw
+            // h <- (V^H)Bw
             m_op.adjoint_product(Vs, w, h);
 
             // f <- w - V * h
             m_fac_f.noalias() = w - Vs * h;
             m_beta = m_op.norm(m_fac_f);
 
-            if (m_beta > Scalar(0.717) * m_op.norm(h))
+            if (m_beta > RealScalar(0.717) * m_op.norm(h))
                 continue;
 
             // f/||f|| is going to be the next column of V, so we need to test
-            // whether V'B(f/||f||) ~= 0
+            // whether (V^H)B(f/||f||) ~= 0
             m_op.adjoint_product(Vs, m_fac_f, Vf.head(i1));
-            Scalar ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
+            RealScalar ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
             // If not, iteratively correct the residual
             int count = 0;
             while (count < 5 && ortho_err > m_eps * m_beta)
@@ -256,7 +258,7 @@ public:
                 if (m_beta < beta_thresh)
                 {
                     m_fac_f.setZero();
-                    m_beta = Scalar(0);
+                    m_beta = RealScalar(0);
                     break;
                 }
 
