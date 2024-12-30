@@ -36,8 +36,6 @@ public:
     using Scalar = Scalar_;
 
 private:
-    // The real part type of the matrix element
-    using RealScalar = typename Eigen::NumTraits<Scalar>::Real;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic, Flags>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
