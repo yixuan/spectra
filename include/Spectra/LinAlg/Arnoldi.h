@@ -298,13 +298,21 @@ public:
     // Only need to update the first k+1 columns of V
     // The first (m - k + i) elements of the i-th column of Q are non-zero,
     // and the rest are zero
-    void compress_V(const Matrix& Q)
+    //
+    // When V has a complex type, Q can be either real or complex
+    // Hense we use a generic implementation
+    template <typename Derived>
+    void compress_V(const Eigen::MatrixBase<Derived>& Q)
     {
+        using QScalar = typename Derived::Scalar;
+        using QVector = Eigen::Matrix<QScalar, Eigen::Dynamic, 1>;
+        using QMapConstVec = Eigen::Map<const QVector>;
+
         Matrix Vs(m_n, m_k + 1);
         for (Index i = 0; i < m_k; i++)
         {
             const Index nnz = m_m - m_k + i + 1;
-            MapConstVec q(&Q(0, i), nnz);
+            QMapConstVec q(&Q(0, i), nnz);
             Vs.col(i).noalias() = m_fac_V.leftCols(nnz) * q;
         }
         Vs.col(m_k).noalias() = m_fac_V * Q.col(m_k);
