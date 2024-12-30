@@ -1,9 +1,11 @@
-// Test ../include/Spectra/LinAlg/Arnoldi.h, ../include/Spectra/LinAlg/Lanczos.h
+// Test ../include/Spectra/LinAlg/Arnoldi.h and
+//      ../include/Spectra/LinAlg/Lanczos.h
 #include <Eigen/Core>
 #include <Spectra/LinAlg/Arnoldi.h>
 #include <Spectra/LinAlg/Lanczos.h>
-#include <Spectra/MatOp/DenseSymMatProd.h>
 #include <Spectra/MatOp/DenseGenMatProd.h>
+#include <Spectra/MatOp/DenseSymMatProd.h>
+#include <Spectra/MatOp/DenseHermMatProd.h>
 
 using namespace Spectra;
 
@@ -30,7 +32,7 @@ void run_test(FacType &fac, const MatType& A, int m)
     INFO("k1 = " << k1);
     REQUIRE(k1 == 1);
 
-    // A*V = V*H + f*e
+    // A*V = V*H + f*e'
     constexpr double tol = 1e-12;
     MatType V = fac.matrix_V().leftCols(k1);
     MatType H = fac.matrix_H().topLeftCorner(k1, k1);
@@ -81,6 +83,23 @@ void run_test(FacType &fac, const MatType& A, int m)
     REQUIRE((resid.template rightCols<1>() - f).cwiseAbs().maxCoeff() == Approx(0.0).margin(tol));
 }
 
+TEST_CASE("Arnoldi factorization of general real matrix", "[Arnoldi]")
+{
+    std::srand(123);
+    const int n = 10;
+    Matrix A = Matrix::Random(n, n);
+    const int m = 6;
+
+    using AOpType = DenseGenMatProd<double>;
+    using ArnoldiOpType = ArnoldiOp<double, AOpType, IdentityBOp>;
+
+    AOpType Aop(A);
+    ArnoldiOpType arn(Aop, IdentityBOp());
+    Arnoldi<double, ArnoldiOpType> fac(arn, m);
+
+    run_test(fac, A, m);
+}
+
 TEST_CASE("Lanczos factorization of symmetric real matrix", "[Lanczos]")
 {
     std::srand(123);
@@ -99,23 +118,6 @@ TEST_CASE("Lanczos factorization of symmetric real matrix", "[Lanczos]")
     run_test(fac, A, m);
 }
 
-TEST_CASE("Arnoldi factorization of general real matrix", "[Arnoldi]")
-{
-    std::srand(123);
-    const int n = 10;
-    Matrix A = Matrix::Random(n, n);
-    const int m = 6;
-
-    using AOpType = DenseGenMatProd<double>;
-    using ArnoldiOpType = ArnoldiOp<double, AOpType, IdentityBOp>;
-
-    AOpType Aop(A);
-    ArnoldiOpType arn(Aop, IdentityBOp());
-    Arnoldi<double, ArnoldiOpType> fac(arn, m);
-
-    run_test(fac, A, m);
-}
-
 TEST_CASE("Arnoldi factorization of general complex matrix", "[Arnoldi]")
 {
     std::srand(123);
@@ -130,6 +132,25 @@ TEST_CASE("Arnoldi factorization of general complex matrix", "[Arnoldi]")
     AOpType Aop(A);
     ArnoldiOpType arn(Aop, IdentityBOp());
     Arnoldi<Scalar, ArnoldiOpType> fac(arn, m);
+
+    run_test(fac, A, m);
+}
+
+TEST_CASE("Lanczos factorization of Hermitian complex matrix", "[Lanczos]")
+{
+    std::srand(123);
+    const int n = 10;
+    Eigen::MatrixXcd A = Eigen::MatrixXcd::Random(n, n);
+    A = (A + A.adjoint()).eval();
+    const int m = 6;
+
+    using Scalar = std::complex<double>;
+    using AOpType = DenseHermMatProd<Scalar>;
+    using ArnoldiOpType = ArnoldiOp<Scalar, AOpType, IdentityBOp>;
+
+    AOpType Aop(A);
+    ArnoldiOpType arn(Aop, IdentityBOp());
+    Lanczos<Scalar, ArnoldiOpType> fac(arn, m);
 
     run_test(fac, A, m);
 }

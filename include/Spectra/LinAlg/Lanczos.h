@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2023 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2018-2024 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -27,6 +27,8 @@ template <typename Scalar, typename ArnoldiOpType>
 class Lanczos : public Arnoldi<Scalar, ArnoldiOpType>
 {
 private:
+    // The real part type of the matrix element
+    using RealScalar = typename Eigen::NumTraits<Scalar>::Real;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
@@ -68,8 +70,8 @@ public:
             throw std::invalid_argument(msg);
         }
 
-        const Scalar beta_thresh = m_eps * sqrt(Scalar(m_n));
-        const Scalar eps_sqrt = sqrt(m_eps);
+        const RealScalar beta_thresh = m_eps * sqrt(RealScalar(m_n));
+        const RealScalar eps_sqrt = sqrt(m_eps);
 
         // Pre-allocate vectors
         Vector Vf(to_m);
@@ -86,7 +88,7 @@ public:
             // to the current V, which we call a restart
             //
             // A simple criterion is beta < near_0, but it may be too stringent
-            // Another heuristic is to test whether V'B(f/||f||) ~= 0 when ||f|| is small,
+            // Another heuristic is to test whether (V^H)B(f/||f||) ~= 0 when ||f|| is small,
             // and to reduce the computational cost, we only use the latest Vi
 
             // Test the first criterion
@@ -100,9 +102,9 @@ public:
                 v.noalias() = m_fac_f / m_beta;
                 if (m_beta < eps_sqrt)
                 {
-                    // Test Vi'v
+                    // Test (Vi^H)v
                     const Scalar Viv = m_op.inner_product(m_fac_V.col(i - 1), v);
-                    // Restart V if Vi'v is much larger than eps
+                    // Restart V if (Vi^H)v is much larger than eps
                     restart = (abs(Viv) > eps_sqrt);
                 }
             }
@@ -118,21 +120,21 @@ public:
             // contains f / ||f||
 
             // Note that H[i+1, i] equals to the unrestarted beta
-            m_fac_H(i, i - 1) = restart ? Scalar(0) : m_beta;
+            m_fac_H(i, i - 1) = restart ? Scalar(0) : Scalar(m_beta);
             m_fac_H(i - 1, i) = m_fac_H(i, i - 1);  // Due to symmetry
 
             // w <- A * v
             m_op.perform_op(v.data(), w.data());
             op_counter++;
 
-            // f <- w - V * V'Bw = w - H[i+1, i] * V{i} - H[i+1, i+1] * V{i+1}
+            // f <- w - V * (V^H)Bw = w - H[i+1, i] * V{i} - H[i+1, i+1] * V{i+1}
             // If restarting, we know that H[i+1, i] = 0
             // First do w <- w - H[i+1, i] * V{i}, see the discussions in Section 2.3 of
             // Cullum and Willoughby (2002). Lanczos Algorithms for Large Symmetric Eigenvalue Computations: Vol. 1
             if (!restart)
                 w.noalias() -= m_fac_H(i, i - 1) * m_fac_V.col(i - 1);
 
-            // H[i+1, i+1] = <v, w> = v'Bw
+            // H[i+1, i+1] = <v, w> = (v^H)Bw
             m_fac_H(i, i) = m_op.inner_product(v, w);
 
             // f <- w - H[i+1, i+1] * V{i+1}
@@ -140,11 +142,11 @@ public:
             m_beta = m_op.norm(m_fac_f);
 
             // f/||f|| is going to be the next column of V, so we need to test
-            // whether V'B(f/||f||) ~= 0
+            // whether (V^H)B(f/||f||) ~= 0
             const Index i1 = i + 1;
             MapMat Vs(m_fac_V.data(), m_n, i1);  // The first (i+1) columns
             m_op.adjoint_product(Vs, m_fac_f, Vf.head(i1));
-            Scalar ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
+            RealScalar ortho_err = Vf.head(i1).cwiseAbs().maxCoeff();
             // If not, iteratively correct the residual
             int count = 0;
             while (count < 5 && ortho_err > m_eps * m_beta)
@@ -157,7 +159,7 @@ public:
                 if (m_beta < beta_thresh)
                 {
                     m_fac_f.setZero();
-                    m_beta = Scalar(0);
+                    m_beta = RealScalar(0);
                     break;
                 }
 
