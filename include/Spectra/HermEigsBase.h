@@ -38,7 +38,7 @@ namespace Spectra {
 /// This is the base class for Hermitian (and real symmetric) eigen solvers,
 /// mainly for internal use.
 /// It is kept here to provide the documentation for member functions of
-/// concrete eigen solvers such as SymEigsSolver and SymEigsShiftSolver.
+/// concrete eigen solvers such as SymEigsSolver, HermEigsSolver, SymEigsShiftSolver, etc.
 ///
 template <typename OpType, typename BOpType>
 class HermEigsBase
@@ -402,9 +402,11 @@ public:
     ///
     /// Returns the converged eigenvalues.
     ///
-    /// \return A vector containing the eigenvalues.
-    /// Returned vector type will be `Eigen::Vector<Scalar, ...>`, depending on
-    /// the template parameter `Scalar` defined.
+    /// \return A vector containing the real-valued eigenvalues.
+    /// Returned vector type will be `Eigen::Vector<RealScalar, ...>`, depending on
+    /// the `Scalar` type defined in the matrix operation class.
+    /// For example, if `Scalar` is `double` or `std::complex<double>`,
+    /// then `RealScalar` would be `double`.
     ///
     RealVector eigenvalues() const
     {
@@ -434,7 +436,7 @@ public:
     ///
     /// \return A matrix containing the eigenvectors.
     /// Returned matrix type will be `Eigen::Matrix<Scalar, ...>`,
-    /// depending on the template parameter `Scalar` defined.
+    /// depending on the `Scalar` type defined in the matrix operation class.
     ///
     virtual Matrix eigenvectors(Index nvec) const
     {
