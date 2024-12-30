@@ -86,22 +86,6 @@ public:
         MapVec y(y_out, m_mat.rows());
         y.noalias() = m_mat.template selfadjointView<Uplo>() * x;
     }
-
-    ///
-    /// Perform the matrix-matrix multiplication operation \f$y=Ax\f$.
-    ///
-    Matrix operator*(const Eigen::Ref<const Matrix>& mat_in) const
-    {
-        return m_mat.template selfadjointView<Uplo>() * mat_in;
-    }
-
-    ///
-    /// Extract (i,j) element of the underlying matrix.
-    ///
-    Scalar operator()(Index i, Index j) const
-    {
-        return m_mat.coeff(i, j);
-    }
 };
 }  // namespace Spectra
 
