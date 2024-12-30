@@ -35,6 +35,7 @@ private:
     using MapMat = Eigen::Map<Matrix>;
     using MapVec = Eigen::Map<Vector>;
     using MapConstMat = Eigen::Map<const Matrix>;
+    using RealMatrix = Eigen::Matrix<RealScalar, Eigen::Dynamic, Eigen::Dynamic>;
 
     using Arnoldi<Scalar, ArnoldiOpType>::m_op;
     using Arnoldi<Scalar, ArnoldiOpType>::m_n;
@@ -184,7 +185,14 @@ public:
 
     // Apply H -> Q'HQ, where Q is from a tridiagonal QR decomposition
     // Function overloading here, not overriding
-    void compress_H(const TridiagQR<Scalar>& decomp)
+    //
+    // Note that H is by nature a real symmetric matrix, but it may be stored
+    // as a complex matrix (e.g. in HermEigsSolver).
+    // Therefore, if m_fac_H has a real type (as in SymEigsSolver), then we
+    // directly overwrite m_fac_H. Otherwise, m_fac_H has a complex type
+    // (as in HermEigsSolver), so we first compute the real-typed result,
+    // and then cast to the complex type. This is done in the TridiagQR class
+    void compress_H(const TridiagQR<RealScalar>& decomp)
     {
         decomp.matrix_QtHQ(m_fac_H);
         m_k--;
