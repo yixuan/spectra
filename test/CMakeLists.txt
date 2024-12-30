@@ -24,6 +24,9 @@ list(APPEND test_target_sources
         SymEigs.cpp
         SymEigsShift.cpp
 
+        # Hermitian eigen solver
+        HermEigs.cpp
+
         # General eigen solver
         GenEigs.cpp
         GenEigsRealShift.cpp
