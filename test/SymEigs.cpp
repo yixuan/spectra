@@ -19,13 +19,13 @@ using SpMatrix = Eigen::SparseMatrix<double>;
 // Generate data for testing
 Matrix gen_dense_data(int n)
 {
-    const Matrix mat = Eigen::MatrixXd::Random(n, n);
+    const Matrix mat = Matrix::Random(n, n);
     return mat + mat.transpose();
 }
 
 SpMatrix gen_sparse_data(int n, double prob = 0.5)
 {
-    // Eigen solver only uses the lower triangle of mat,
+    // Eigen solver only uses the lower triangular part of mat,
     // so we don't need to make mat symmetric here.
     SpMatrix mat(n, n);
     std::default_random_engine gen;
