@@ -1,4 +1,4 @@
-// Copyright (C) 2019-2023 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2019-2024 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -10,10 +10,35 @@
 #include <Eigen/Core>
 #include <vector>
 #include <stdexcept>
+#include <type_traits>  // std::is_same
 
 #include "../Util/CompInfo.h"
 
 namespace Spectra {
+
+// We need a generic conj() function for both real and complex values,
+// and hope that conj(x) == x if x is real-valued. However, in STL,
+// conj(x) == std::complex(x, 0) for such cases, meaning that the
+// return value type is not necessarily the same as x. To avoid this
+// inconvenience, we define a simple Conj class that does this task
+template <typename Scalar>
+struct Conj
+{
+    static Scalar run(const Scalar& x)
+    {
+        return x;
+    }
+};
+// Specialization for complex values
+template <typename RealScalar>
+struct Conj<std::complex<RealScalar>>
+{
+    static std::complex<RealScalar> run(const std::complex<RealScalar>& x)
+    {
+        using std::conj;
+        return conj(x);
+    }
+};
 
 // Bunch-Kaufman LDLT decomposition
 // References:
@@ -27,6 +52,8 @@ template <typename Scalar = double>
 class BKLDLT
 {
 private:
+    // The real part type of the matrix element
+    using RealScalar = typename Eigen::NumTraits<Scalar>::Real;
     using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using MapVec = Eigen::Map<Vector>;
@@ -70,7 +97,7 @@ private:
 
     // Copy mat - shift * I to m_data
     template <typename Derived>
-    void copy_data(const Eigen::MatrixBase<Derived>& mat, int uplo, const Scalar& shift)
+    void copy_data(const Eigen::MatrixBase<Derived>& mat, int uplo, const RealScalar& shift)
     {
         // If mat is an expression, first evaluate it into a temporary object
         // This can be achieved by assigning mat to a const Eigen::Ref<const Matrix>&
@@ -85,7 +112,7 @@ private:
                 const Scalar* begin = &src.coeffRef(j, j);
                 const Index len = m_n - j;
                 std::copy(begin, begin + len, col_pointer(j));
-                diag_coeff(j) -= shift;
+                diag_coeff(j) -= Scalar(shift);
             }
             return;
         }
@@ -98,9 +125,9 @@ private:
                 if (uplo == Eigen::Lower)
                     *dest = src.coeff(i, j);
                 else
-                    *dest = src.coeff(j, i);
+                    *dest = Conj<Scalar>::run(src.coeff(j, i));
             }
-            diag_coeff(j) -= shift;
+            diag_coeff(j) -= Scalar(shift);
         }
     }
 
@@ -135,10 +162,29 @@ private:
         std::swap_ranges(&coeff(r + 1, k), col_pointer(k + 1), &coeff(r + 1, r));
 
         // A[(k+1):(r-1), k] <-> A[r, (k+1):(r-1)]
+        // Note: for Hermitian matrices, also need to do conjugate
         Scalar* src = &coeff(k + 1, k);
-        for (Index j = k + 1; j < r; j++, src++)
+        if (std::is_same<Scalar, RealScalar>::value)
         {
-            std::swap(*src, coeff(r, j));
+            for (Index j = k + 1; j < r; j++, src++)
+            {
+                std::swap(*src, coeff(r, j));
+            }
+        }
+        else
+        {
+            for (Index j = k + 1; j < r; j++, src++)
+            {
+                const Scalar src_conj = Conj<Scalar>::run(*src);
+                *src = Conj<Scalar>::run(coeff(r, j));
+                coeff(r, j) = src_conj;
+            }
+        }
+
+        // A[r, k] <- Conj(A[r, k])
+        if (!std::is_same<Scalar, RealScalar>::value)
+        {
+            coeff(r, k) = Conj<Scalar>::run(coeff(r, k));
         }
 
         m_perm[k] = r;
@@ -178,7 +224,7 @@ private:
     // Largest (in magnitude) off-diagonal element in the first column of the current reduced matrix
     // r is the row index
     // Assume k < end
-    Scalar find_lambda(Index k, Index& r)
+    RealScalar find_lambda(Index k, Index& r)
     {
         using std::abs;
 
@@ -186,11 +232,11 @@ private:
         const Scalar* end = col_pointer(k + 1);
         // Start with r=k+1, lambda=A[k+1, k]
         r = k + 1;
-        Scalar lambda = abs(head[1]);
+        RealScalar lambda = abs(head[1]);
         // Scan remaining elements
         for (const Scalar* ptr = head + 2; ptr < end; ptr++)
         {
-            const Scalar abs_elem = abs(*ptr);
+            const RealScalar abs_elem = abs(*ptr);
             if (lambda < abs_elem)
             {
                 lambda = abs_elem;
@@ -205,20 +251,20 @@ private:
     // Largest (in magnitude) off-diagonal element in the r-th column of the current reduced matrix
     // p is the row index
     // Assume k < r < end
-    Scalar find_sigma(Index k, Index r, Index& p)
+    RealScalar find_sigma(Index k, Index r, Index& p)
     {
         using std::abs;
 
         // First search A[r+1, r], ...,  A[end, r], which has the same task as find_lambda()
         // If r == end, we skip this search
-        Scalar sigma = Scalar(-1);
+        RealScalar sigma = RealScalar(-1);
         if (r < m_n - 1)
             sigma = find_lambda(r, p);
 
         // Then search A[k, r], ..., A[r-1, r], which maps to A[r, k], ..., A[r, r-1]
         for (Index j = k; j < r; j++)
         {
-            const Scalar abs_elem = abs(coeff(r, j));
+            const RealScalar abs_elem = abs(coeff(r, j));
             if (sigma < abs_elem)
             {
                 sigma = abs_elem;
@@ -231,21 +277,21 @@ private:
 
     // Generate permutations and apply to A
     // Return true if the resulting pivoting is 1x1, and false if 2x2
-    bool permutate_mat(Index k, const Scalar& alpha)
+    bool permutate_mat(Index k, const RealScalar& alpha)
     {
         using std::abs;
 
         Index r = k, p = k;
-        const Scalar lambda = find_lambda(k, r);
+        const RealScalar lambda = find_lambda(k, r);
 
         // If lambda=0, no need to interchange
-        if (lambda > Scalar(0))
+        if (lambda > RealScalar(0))
         {
-            const Scalar abs_akk = abs(diag_coeff(k));
+            const RealScalar abs_akk = abs(diag_coeff(k));
             // If |A[k, k]| >= alpha * lambda, no need to interchange
             if (abs_akk < alpha * lambda)
             {
-                const Scalar sigma = find_sigma(k, r, p);
+                const RealScalar sigma = find_sigma(k, r, p);
 
                 // If sigma * |A[k, k]| >= alpha * lambda^2, no need to interchange
                 if (sigma * abs_akk < alpha * lambda * lambda)
@@ -307,7 +353,9 @@ private:
     {
         // inv(E) = [d11, d12], d11 = e22/delta, d21 = -e21/delta, d22 = e11/delta
         //          [d21, d22]
-        const Scalar delta = e11 * e22 - e21 * e21;
+        // delta = e11 * e22 - e12 * e21
+        const Scalar e12 = Conj<Scalar>::run(e21);
+        const Scalar delta = e11 * e22 - e12 * e21;
         std::swap(e11, e22);
         e11 /= delta;
         e22 /= delta;
@@ -325,13 +373,13 @@ private:
 
         diag_coeff(k) = Scalar(1) / akk;
 
-        // B -= l * l' / A[k, k], B := A[(k+1):end, (k+1):end], l := L[(k+1):end, k]
+        // B -= l * l^H / A[k, k], B := A[(k+1):end, (k+1):end], l := L[(k+1):end, k]
         Scalar* lptr = col_pointer(k) + 1;
         const Index ldim = m_n - k - 1;
         MapVec l(lptr, ldim);
         for (Index j = 0; j < ldim; j++)
         {
-            MapVec(col_pointer(j + k + 1), ldim - j).noalias() -= (lptr[j] / akk) * l.tail(ldim - j);
+            MapVec(col_pointer(j + k + 1), ldim - j).noalias() -= (Conj<Scalar>::run(lptr[j]) / akk) * l.tail(ldim - j);
         }
 
         // l /= A[k, k]
@@ -347,8 +395,9 @@ private:
         Scalar& e11 = diag_coeff(k);
         Scalar& e21 = coeff(k + 1, k);
         Scalar& e22 = diag_coeff(k + 1);
+        Scalar e12 = Conj<Scalar>::run(e21);
         // Return CompInfo::NumericalIssue if not invertible
-        if (e11 * e22 - e21 * e21 == Scalar(0))
+        if (e11 * e22 - e12 * e21 == Scalar(0))
             return CompInfo::NumericalIssue;
 
         inverse_inplace_2x2(e11, e21, e22);
@@ -360,13 +409,16 @@ private:
         MapVec l1(l1ptr, ldim), l2(l2ptr, ldim);
 
         Eigen::Matrix<Scalar, Eigen::Dynamic, 2> X(ldim, 2);
+        e12 = Conj<Scalar>::run(e21);
         X.col(0).noalias() = l1 * e11 + l2 * e21;
-        X.col(1).noalias() = l1 * e21 + l2 * e22;
+        X.col(1).noalias() = l1 * e12 + l2 * e22;
 
-        // B -= l * inv(E) * l' = X * l', B = A[(k+2):end, (k+2):end]
+        // B -= l * inv(E) * l^H = X * l^H, B = A[(k+2):end, (k+2):end]
         for (Index j = 0; j < ldim; j++)
         {
-            MapVec(col_pointer(j + k + 2), ldim - j).noalias() -= (X.col(0).tail(ldim - j) * l1ptr[j] + X.col(1).tail(ldim - j) * l2ptr[j]);
+            const Scalar l1j_conj = Conj<Scalar>::run(l1ptr[j]);
+            const Scalar l2j_conj = Conj<Scalar>::run(l2ptr[j]);
+            MapVec(col_pointer(j + k + 2), ldim - j).noalias() -= (X.col(0).tail(ldim - j) * l1j_conj + X.col(1).tail(ldim - j) * l2j_conj);
         }
 
         // l = X
@@ -383,14 +435,14 @@ public:
 
     // Factorize mat - shift * I
     template <typename Derived>
-    BKLDLT(const Eigen::MatrixBase<Derived>& mat, int uplo = Eigen::Lower, const Scalar& shift = Scalar(0)) :
+    BKLDLT(const Eigen::MatrixBase<Derived>& mat, int uplo = Eigen::Lower, const RealScalar& shift = RealScalar(0)) :
         m_n(mat.rows()), m_computed(false), m_info(CompInfo::NotComputed)
     {
         compute(mat, uplo, shift);
     }
 
     template <typename Derived>
-    void compute(const Eigen::MatrixBase<Derived>& mat, int uplo = Eigen::Lower, const Scalar& shift = Scalar(0))
+    void compute(const Eigen::MatrixBase<Derived>& mat, int uplo = Eigen::Lower, const RealScalar& shift = RealScalar(0))
     {
         using std::abs;
 
@@ -406,7 +458,7 @@ public:
         compute_pointer();
         copy_data(mat, uplo, shift);
 
-        const Scalar alpha = (1.0 + std::sqrt(17.0)) / 8.0;
+        const RealScalar alpha = (1.0 + std::sqrt(17.0)) / 8.0;
         Index k = 0;
         for (k = 0; k < m_n - 1; k++)
         {
@@ -449,7 +501,8 @@ public:
         if (!m_computed)
             throw std::logic_error("BKLDLT: need to call compute() first");
 
-        // PAP' = LDL'
+        // PAP' = LD(L^H), A = P'LD(L^H)P
+        // Ax = b ==> P'LD(L^H)Px = b ==> LD(L^H)Px = Pb
         // 1. b -> Pb
         Scalar* x = b.data();
         MapVec res(x, m_n);
@@ -459,6 +512,7 @@ public:
             std::swap(x[m_permc[i].first], x[m_permc[i].second]);
         }
 
+        // z = D(L^H)Px
         // 2. Lz = Pb
         // If m_perm[end] < 0, then end with m_n - 3, otherwise end with m_n - 2
         const Index end = (m_perm[m_n - 1] < 0) ? (m_n - 3) : (m_n - 2);
@@ -480,6 +534,7 @@ public:
             }
         }
 
+        // w = (L^H)Px
         // 3. Dw = z
         for (Index i = 0; i < m_n; i++)
         {
@@ -491,26 +546,28 @@ public:
             else
             {
                 const Scalar e21 = coeff(i + 1, i), e22 = diag_coeff(i + 1);
-                const Scalar wi = x[i] * e11 + x[i + 1] * e21;
+                const Scalar e12 = Conj<Scalar>::run(e21);
+                const Scalar wi = x[i] * e11 + x[i + 1] * e12;
                 x[i + 1] = x[i] * e21 + x[i + 1] * e22;
                 x[i] = wi;
                 i++;
             }
         }
 
-        // 4. L'y = w
+        // y = Px
+        // 4. (L^H)y = w
         // If m_perm[end] < 0, then start with m_n - 3, otherwise start with m_n - 2
         Index i = (m_perm[m_n - 1] < 0) ? (m_n - 3) : (m_n - 2);
         for (; i >= 0; i--)
         {
             const Index ldim = m_n - i - 1;
             MapConstVec l(&coeff(i + 1, i), ldim);
-            x[i] -= res.segment(i + 1, ldim).dot(l);
+            x[i] -= l.dot(res.segment(i + 1, ldim));
 
             if (m_perm[i] < 0)
             {
                 MapConstVec l2(&coeff(i + 1, i - 1), ldim);
-                x[i - 1] -= res.segment(i + 1, ldim).dot(l2);
+                x[i - 1] -= l2.dot(res.segment(i + 1, ldim));
                 i--;
             }
         }
