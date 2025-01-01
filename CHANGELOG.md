@@ -8,9 +8,12 @@
 - Added testing code for Arnoldi factorization on both real matrices and complex Hermitian matrices
 - Added `BKLDLT` tests for complex Hermitian matrices
 - Added testing code for the `HermEigsSolver` solver
+- Added test examples from previous bug reports
 
 ### Changed
 
+- Better heuristics for basis restarting in the Lanczos factorization,
+  which fixes [#159](https://github.com/yixuan/spectra/issues/159)
 - Fixed the support for non-literal data types
   ([#150](https://github.com/yixuan/spectra/issues/150))
 - Various CMake configuration improvements
