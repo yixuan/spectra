@@ -20,23 +20,36 @@ namespace Spectra {
 // and hope that conj(x) == x if x is real-valued. However, in STL,
 // conj(x) == std::complex(x, 0) for such cases, meaning that the
 // return value type is not necessarily the same as x. To avoid this
-// inconvenience, we define a simple Conj class that does this task
+// inconvenience, we define a simple class that does this task
+//
+// Similarly, define a real(x) function that returns x itself if
+// x is real-valued, and returns std::complex(x, 0) if x is complex-valued
 template <typename Scalar>
-struct Conj
+struct ScalarOp
 {
-    static Scalar run(const Scalar& x)
+    static Scalar conj(const Scalar& x)
+    {
+        return x;
+    }
+
+    static Scalar real(const Scalar& x)
     {
         return x;
     }
 };
 // Specialization for complex values
 template <typename RealScalar>
-struct Conj<std::complex<RealScalar>>
+struct ScalarOp<std::complex<RealScalar>>
 {
-    static std::complex<RealScalar> run(const std::complex<RealScalar>& x)
+    static std::complex<RealScalar> conj(const std::complex<RealScalar>& x)
     {
         using std::conj;
         return conj(x);
+    }
+
+    static std::complex<RealScalar> real(const std::complex<RealScalar>& x)
+    {
+        return std::complex<RealScalar>(x.real(), RealScalar(0));
     }
 };
 
@@ -125,7 +138,7 @@ private:
                     if (uplo == Eigen::Lower)
                         *dest = src.coeff(i, j);
                     else
-                        *dest = Conj<Scalar>::run(src.coeff(j, i));
+                        *dest = ScalarOp<Scalar>::conj(src.coeff(j, i));
                 }
                 diag_coeff(j) -= Scalar(shift);
             }
@@ -177,8 +190,8 @@ private:
             // For complex values
             for (Index j = k + 1; j < r; j++, src++)
             {
-                const Scalar src_conj = Conj<Scalar>::run(*src);
-                *src = Conj<Scalar>::run(coeff(r, j));
+                const Scalar src_conj = ScalarOp<Scalar>::conj(*src);
+                *src = ScalarOp<Scalar>::conj(coeff(r, j));
                 coeff(r, j) = src_conj;
             }
         }
@@ -186,7 +199,7 @@ private:
         // A[r, k] <- Conj(A[r, k])
         if (!std::is_same<Scalar, RealScalar>::value)
         {
-            coeff(r, k) = Conj<Scalar>::run(coeff(r, k));
+            coeff(r, k) = ScalarOp<Scalar>::conj(coeff(r, k));
         }
     }
 
@@ -355,7 +368,7 @@ private:
         // inv(E) = [d11, d12], d11 = e22/delta, d21 = -e21/delta, d22 = e11/delta
         //          [d21, d22]
         // delta = e11 * e22 - e12 * e21
-        const Scalar e12 = Conj<Scalar>::run(e21);
+        const Scalar e12 = ScalarOp<Scalar>::conj(e21);
         const Scalar delta = e11 * e22 - e12 * e21;
         std::swap(e11, e22);
         e11 /= delta;
@@ -373,7 +386,7 @@ private:
     {
         using std::abs;
 
-        const Scalar e12 = Conj<Scalar>::run(e21);
+        const Scalar e12 = ScalarOp<Scalar>::conj(e21);
         const RealScalar e11_abs = abs(e11);
         const RealScalar e21_abs = abs(e21);
         // If |e11| >= |e21|, no need to exchange rows
@@ -410,7 +423,7 @@ private:
     {
         using std::abs;
 
-        const Scalar e12 = Conj<Scalar>::run(e21);
+        const Scalar e12 = ScalarOp<Scalar>::conj(e21);
         const RealScalar e11_abs = abs(e11);
         const RealScalar e12_abs = abs(e12);
         // If |e11| >= |e12|, no need to exchange rows
@@ -438,8 +451,12 @@ private:
     // Return value is the status, CompInfo::Successful/NumericalIssue
     CompInfo gaussian_elimination_1x1(Index k)
     {
-        // D = 1 / A[k, k]
-        const Scalar akk = diag_coeff(k);
+        // A[k, k] is known to be real-valued, so we force its imaginary
+        // part to be zero when Scalar is a complex type
+        // Interestingly, this has a significant effect on the accuracy
+        // and numerical stability of the final solution
+        const Scalar akk = ScalarOp<Scalar>::real(diag_coeff(k));
+        diag_coeff(k) = akk;
         // Return CompInfo::NumericalIssue if not invertible
         if (akk == Scalar(0))
             return CompInfo::NumericalIssue;
@@ -453,7 +470,8 @@ private:
         MapVec l(lptr, ldim);
         for (Index j = 0; j < ldim; j++)
         {
-            MapVec(col_pointer(j + k + 1), ldim - j).noalias() -= (Conj<Scalar>::run(lptr[j]) / akk) * l.tail(ldim - j);
+            Scalar l_conj = ScalarOp<Scalar>::conj(lptr[j]);
+            MapVec(col_pointer(j + k + 1), ldim - j).noalias() -= (l_conj / akk) * l.tail(ldim - j);
         }
 
         // l /= A[k, k]
@@ -465,11 +483,18 @@ private:
     // Return value is the status, CompInfo::Successful/NumericalIssue
     CompInfo gaussian_elimination_2x2(Index k)
     {
-        // D = inv(E)
         Scalar& e11 = diag_coeff(k);
         Scalar& e21 = coeff(k + 1, k);
         Scalar& e22 = diag_coeff(k + 1);
-        Scalar e12 = Conj<Scalar>::run(e21);
+
+        // A[k, k] and A[k+1, k+1] are known to be real-valued,
+        // so we force their imaginary parts to be zero when Scalar
+        // is a complex type
+        // Interestingly, this has a significant effect on the accuracy
+        // and numerical stability of the final solution
+        e11 = ScalarOp<Scalar>::real(e11);
+        e22 = ScalarOp<Scalar>::real(e22);
+        Scalar e12 = ScalarOp<Scalar>::conj(e21);
         // Return CompInfo::NumericalIssue if not invertible
         if (e11 * e22 - e12 * e21 == Scalar(0))
             return CompInfo::NumericalIssue;
@@ -485,7 +510,7 @@ private:
 
         Eigen::Matrix<Scalar, Eigen::Dynamic, 2> X(ldim, 2);
         // [inverse]
-        // e12 = Conj<Scalar>::run(e21);
+        // e12 = ScalarOp<Scalar>::conj(e21);
         // X.col(0).noalias() = l1 * e11 + l2 * e21;
         // X.col(1).noalias() = l1 * e12 + l2 * e22;
         // [solve]
@@ -494,8 +519,8 @@ private:
         // B -= l * inv(E) * l^H = X * l^H, B = A[(k+2):end, (k+2):end]
         for (Index j = 0; j < ldim; j++)
         {
-            const Scalar l1j_conj = Conj<Scalar>::run(l1ptr[j]);
-            const Scalar l2j_conj = Conj<Scalar>::run(l2ptr[j]);
+            const Scalar l1j_conj = ScalarOp<Scalar>::conj(l1ptr[j]);
+            const Scalar l2j_conj = ScalarOp<Scalar>::conj(l2ptr[j]);
             MapVec(col_pointer(j + k + 2), ldim - j).noalias() -= (X.col(0).tail(ldim - j) * l1j_conj + X.col(1).tail(ldim - j) * l2j_conj);
         }
 
@@ -561,7 +586,8 @@ public:
         // Invert the last 1x1 block if it exists
         if (k == m_n - 1)
         {
-            const Scalar akk = diag_coeff(k);
+            const Scalar akk = ScalarOp<Scalar>::real(diag_coeff(k));
+            diag_coeff(k) = akk;
             if (akk == Scalar(0))
                 m_info = CompInfo::NumericalIssue;
 
@@ -629,7 +655,7 @@ public:
             {
                 const Scalar e21 = coeff(i + 1, i), e22 = diag_coeff(i + 1);
                 // [inverse]
-                // const Scalar e12 = Conj<Scalar>::run(e21);
+                // const Scalar e12 = ScalarOp<Scalar>::conj(e21);
                 // const Scalar wi = x[i] * e11 + x[i + 1] * e12;
                 // x[i + 1] = x[i] * e21 + x[i + 1] * e22;
                 // x[i] = wi;
