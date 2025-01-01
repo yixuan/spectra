@@ -44,6 +44,11 @@ list(APPEND test_target_sources
         JDSymEigsBase.cpp
         JDSymEigsDPRConstructor.cpp
         DavidsonSymEigs.cpp
+
+        # Examples from bug reports
+        Example1.cpp
+        Example2.cpp
+        Example3.cpp
         )
 
 foreach(TEST_SOURCE ${test_target_sources})
