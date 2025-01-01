@@ -15,6 +15,7 @@ using Matrix = Eigen::MatrixXd;
 using Vector = Eigen::VectorXd;
 using Index = Eigen::Index;
 
+// clang-format off
 template <typename FacType, typename MatType>
 void run_test(FacType& fac, const MatType& A, int m)
 {
@@ -82,6 +83,7 @@ void run_test(FacType& fac, const MatType& A, int m)
     REQUIRE(resid.leftCols(k3 - 1).cwiseAbs().maxCoeff() == Approx(0.0).margin(tol));
     REQUIRE((resid.template rightCols<1>() - f).cwiseAbs().maxCoeff() == Approx(0.0).margin(tol));
 }
+// clang-format on
 
 TEST_CASE("Arnoldi factorization of general real matrix", "[Arnoldi]")
 {
