@@ -208,7 +208,7 @@ public:
     ///
     /// Virtual destructor.
     ///
-    virtual ~UpperHessenbergQR() {};
+    virtual ~UpperHessenbergQR() {}
 
     ///
     /// Compute the QR decomposition of an upper Hessenberg matrix with
