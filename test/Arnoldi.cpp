@@ -16,7 +16,7 @@ using Vector = Eigen::VectorXd;
 using Index = Eigen::Index;
 
 template <typename FacType, typename MatType>
-void run_test(FacType &fac, const MatType& A, int m)
+void run_test(FacType& fac, const MatType& A, int m)
 {
     using VecType = Eigen::Matrix<typename MatType::Scalar, Eigen::Dynamic, 1>;
 

@@ -381,8 +381,7 @@ private:
     // Overwrite b with x = inv(E) * b, which is equivalent to solving E * x = b
     void solve_inplace_2x2(
         const Scalar& e11, const Scalar& e21, const Scalar& e22,
-        Scalar& b1, Scalar& b2
-    ) const
+        Scalar& b1, Scalar& b2) const
     {
         using std::abs;
 
@@ -418,8 +417,7 @@ private:
     void solve_left_2x2(
         const Scalar& e11, const Scalar& e21, const Scalar& e22,
         const MapVec& c1, const MapVec& c2,
-        Eigen::Matrix<Scalar, Eigen::Dynamic, 2>& x
-    ) const
+        Eigen::Matrix<Scalar, Eigen::Dynamic, 2>& x) const
     {
         using std::abs;
 

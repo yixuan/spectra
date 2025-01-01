@@ -8,7 +8,7 @@
 #define SPECTRA_ARNOLDI_OP_H
 
 #include <Eigen/Core>
-#include <cmath>  // std::sqrt
+#include <cmath>    // std::sqrt
 #include <complex>  // std::real
 
 namespace Spectra {

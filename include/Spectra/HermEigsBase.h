@@ -105,7 +105,7 @@ private:
 
         if (k >= m_ncv)
             return;
-        
+
         // QR decomposition on a real symmetric matrix
         TridiagQR<RealScalar> decomp(m_ncv);
         // Q is a real orthogonal matrix
@@ -115,7 +115,7 @@ private:
         const int nshift = m_ncv - k;
         RealVector shifts = m_ritz_val.tail(nshift);
         std::sort(shifts.data(), shifts.data() + nshift,
-            [](const RealScalar& v1, const RealScalar& v2) { return abs(v1) > abs(v2); });
+                  [](const RealScalar& v1, const RealScalar& v2) { return abs(v1) > abs(v2); });
 
         for (Index i = 0; i < nshift; i++)
         {
