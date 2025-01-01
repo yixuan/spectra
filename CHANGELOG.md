@@ -1,9 +1,17 @@
-## [Unreleased]
+## [1.1.0] - 2025-01-01
 
 ### Added
+
+- Added the eigen solver `HermEigsSolver` for complex-valued Hermitian matrices
+- Added the support for complex Hermitian matrices to various linear algebra classes, such as `Arnoldi`, `Lanczos`, and `BKLDLT`
+- `SimpleRandom` can now generate random complex values
+- Added testing code for Arnoldi factorization on both real matrices and complex Hermitian matrices
+- Added `BKLDLT` tests for complex Hermitian matrices
+- Added testing code for the `HermEigsSolver` solver
 - Added test examples from previous bug reports
 
 ### Changed
+
 - Better heuristics for basis restarting in the Lanczos factorization,
   which fixes [#159](https://github.com/yixuan/spectra/issues/159)
 - Fixed the support for non-literal data types
@@ -19,33 +27,22 @@
   [@alecjacobson](https://github.com/alecjacobson), and
   [@jdumas](https://github.com/jdumas)
 - Miscellaneous GitHub Actions updates
+- Various internal implementation changes to accommodate operations on complex-valued matrices
+- Improved the numerical stability of `BKLDLT` linear system solver
+- Change `SymEigsBase` to `HermEigsBase` as the base class for both real symmetric and complex Hermitian eigen solvers
 
 
 
 ## [1.0.1] - 2022-04-06
 
 ### Added
+
 - Added SIMD support for `UpperHessenbergSchur`. This should accelerate
   general eigen solvers such as `GenEigsSolver`
 - Added test code for `UpperHessenbergSchur`
 
 ### Changed
-- Fixed several bugs in the examples caused by the `const` keyword,
-  reported by [@alexpghayes](https://github.com/alexpghayes)
-  ([#135](https://github.com/yixuan/spectra/issues/135),
-  [#137](https://github.com/yixuan/spectra/pull/137))
-- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.13.8
 
-
-
-## [1.0.1] - 2022-04-06
-
-### Added
-- Added SIMD support for `UpperHessenbergSchur`. This should accelerate
-  general eigen solvers such as `GenEigsSolver`
-- Added test code for `UpperHessenbergSchur`
-
-### Changed
 - Fixed several bugs in the examples caused by the `const` keyword,
   reported by [@alexpghayes](https://github.com/alexpghayes)
   ([#135](https://github.com/yixuan/spectra/issues/135),
@@ -57,6 +54,7 @@
 ## [1.0.0] - 2021-07-01
 
 ### Added
+
 - Added version macros `SPECTRA_MAJOR_VERSION`, `SPECTRA_MINOR_VERSION`,
   `SPECTRA_PATCH_VERSION`, and `SPECTRA_VERSION` that are included by all eigen solvers
 - Added the wrapper class `SparseGenComplexShiftSolve` for eigen solver with complex shifts
@@ -78,6 +76,7 @@
   `SparseSymMatProd` to handle matrix-matrix products and coefficient-wise accessors
 
 ### Changed
+
 - **API change**: Spectra now requires C++11
 - **API change**: All enumerations have been converted to enum classes
   (e.g. `LARGEST_MAGN` is now `SortRule::LargestMagn`)
@@ -116,6 +115,7 @@
 ## [0.9.0] - 2020-05-19
 
 ### Added
+
 - Added support for CMake build, contributed by
   [Guillaume Acke](https://github.com/guacke) and [Jens Wehner](https://github.com/JensWehner)
   ([#70](https://github.com/yixuan/spectra/pull/70), [#88](https://github.com/yixuan/spectra/pull/88))
@@ -127,6 +127,7 @@
   [Jens Wehner](https://github.com/JensWehner)
 
 ### Changed
+
 - Fixed a compiler warning caused by unused parameter, contributed by
   [Julien Schueller](https://github.com/jschueller) ([#80](https://github.com/yixuan/spectra/pull/80))
 - Changed the implementation of `BKLDLT` solver to improve precision in some tests
@@ -136,6 +137,7 @@
 ## [0.8.1] - 2019-06-05
 
 ### Changed
+
 - Fixed a bug in `BKLDLT` in which a wrong type was used, thanks to
   [@jdbancal](https://github.com/jdbancal) for the issue
   [#64](https://github.com/yixuan/spectra/pull/64)
@@ -152,6 +154,7 @@
 ## [0.8.0] - 2019-04-03
 
 ### Added
+
 - Added a `BKLDLT` class that implements the Bunch-Kaufman LDLT decomposition
   for symmetric indefinite matrices. According to the Eigen documentation,
   currently `Eigen::LDLT` cannot handle some special indefinite matrices such
@@ -161,6 +164,7 @@
 - Added a unit test for `BKLDLT`
 
 ### Changed
+
 - `DenseSymShiftSolve` now uses the newly added `BKLDLT` class to do the
   decomposition. This change broadens the class of matrices that
   `DenseSymShiftSolve` can handle, reduces memory use, and should also improve
@@ -181,6 +185,7 @@
 ## [0.7.0] - 2019-01-10
 
 ### Added
+
 - Added a directory `contrib` to include code contributed by users. It is not
   formally a part of the Spectra library, but it may contain useful solvers
   and applications based on Spectra. Code in `contrib` may not be fully tested,
@@ -194,6 +199,7 @@
 - Added a few other internal classes to refactor the eigen solver classes (see below)
 
 ### Changed
+
 - **API change**: Spectra now requires Eigen >= 3.3
 - **API change**: The library header files are moved into a directory
   named `Spectra`. Hence the recommended include directive would look like
@@ -215,6 +221,7 @@
 ## [0.6.2] - 2018-05-22
 
 ### Changed
+
 - Fixed regressions in v0.6.0 on some edge cases
 - Improved the accuracy of restarting processes in `SymEigsSolver` and `GenEigsSolver`
 - Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.2.2
@@ -225,6 +232,7 @@
 ## [0.6.1] - 2018-03-03
 
 ### Changed
+
 - Fixed a bug of uninitialized memory
 - Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.1.2
 
@@ -233,6 +241,7 @@
 ## [0.6.0] - 2018-03-03
 
 ### Added
+
 - Added virtual destructors to the `SymEigsSolver` and `UpperHessenbergQR` classes
   to fix compiler warnings, by [Julian Kent](https://github.com/jkflying)
 - Added a `NUMERICAL_ISSUE` entry to the `COMPUTATION_INFO` enumeration to indicate
@@ -245,6 +254,7 @@
   types
 
 ### Changed
+
 - Documentation updates
 - Updated the project URL to [https://spectralib.org](https://spectralib.org)
 - Some internal improvements, such as pre-allocating vectors in loops, and changing
@@ -261,12 +271,14 @@
 ## [0.5.0] - 2017-02-05
 
 ### Added
+
 - Added the generalized eigen solver `SymGEigsSolver` in the regular inverse mode
 - Added the wrapper class `SparseRegularInverse` that can be used with
   `SymGEigsSolver` in the regular inverse mode
 - Added test code for generalized eigen solver in the regular inverse mode
 
 ### Changed
+
 - Improved the numerical precision and stability of some internal linear
   algebra classes, including `TridiagEigen`, `UpperHessenbergEigen`, and
   `DoubleShiftQR`
@@ -283,6 +295,7 @@
 ## [0.4.0] - 2016-11-14
 
 ### Added
+
 - Added an `Uplo` template parameter to the `DenseSymShiftSolve` class
 - Added the generalized eigen solver `SymGEigsSolver` in the Cholesky mode
 - Added the wrapper classes `DenseCholesky` and `SparseCholesky` that can be
@@ -290,6 +303,7 @@
 - Added test code for generalized eigen solver in the Cholesky mode
 
 ### Changed
+
 - Updated included [Catch](https://github.com/philsquared/Catch) to v1.5.7
 - Improved documentation
 - Updated Travis CI script
@@ -311,6 +325,7 @@
 ## [0.3.0] - 2016-07-03
 
 ### Added
+
 - Added the wrapper classes `SparseSymMatProd` and `SparseSymShiftSolve`
   for sparse symmetric matrices
 - Added the wrapper class `SparseGenRealShiftSolve` for general sparse matrices
@@ -318,6 +333,7 @@
 - Using Travis CI for automatic unit test
 
 ### Changed
+
 - Updated included [Catch](https://github.com/philsquared/Catch) to v1.5.6
 - **API change**: Each eigen solver was moved to its own header file.
   For example to use `SymEigsShiftSolver` one needs to include
@@ -329,6 +345,7 @@
 ## [0.2.0] - 2016-02-28
 
 ### Added
+
 - Benchmark script now outputs number of matrix operations
 - Added this change log
 - Added a simple built-in random number generator, so that the algorithm
@@ -336,6 +353,7 @@
 - Added the wrapper class `DenseSymMatProd` for symmetric matrices
 
 ### Changed
+
 - Improved Arnoldi factorization
   - Iteratively corrects orthogonality
   - Creates new residual vector when invariant subspace is found
@@ -352,4 +370,5 @@
 ## [0.1.0] - 2015-12-19
 
 ### Added
+
 - Initial release of Spectra

@@ -10,10 +10,11 @@ HEADERS = $(wildcard ../include/Spectra/MatOp/*.h) \
 	$(wildcard ../include/Spectra/*.h) \
 	$(wildcard ../include/Spectra/contrib/*.h)
 
-OUTPUT = QR.out Eigen.out Schur.out BKLDLT.out \
+OUTPUT = QR.out Eigen.out Schur.out BKLDLT.out Arnoldi.out \
 	Orthogonalization.out RitzPairs.out SearchSpace.out \
 	DenseGenMatProd.out DenseSymMatProd.out SparseGenMatProd.out SparseSymMatProd.out \
 	SymEigs.out SymEigsShift.out \
+	HermEigs.out \
 	GenEigs.out GenEigsRealShift.out GenEigsComplexShift.out \
 	SymGEigsCholesky.out SymGEigsRegInv.out SymGEigsShift.out \
 	SVD.out \
@@ -29,6 +30,7 @@ test:
 	-./Eigen.out
 	-./Schur.out
 	-./BKLDLT.out
+	-./Arnoldi.out
 	-./Orthogonalization.out
 	-./RitzPairs.out
 	-./SearchSpace.out
@@ -38,6 +40,7 @@ test:
 	-./SparseSymMatProd.out
 	-./SymEigs.out
 	-./SymEigsShift.out
+	-./HermEigs.out
 	-./GenEigs.out
 	-./GenEigsRealShift.out
 	-./GenEigsComplexShift.out

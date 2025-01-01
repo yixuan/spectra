@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2025 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -208,7 +208,7 @@ public:
     ///
     /// Virtual destructor.
     ///
-    virtual ~UpperHessenbergQR(){};
+    virtual ~UpperHessenbergQR() {}
 
     ///
     /// Compute the QR decomposition of an upper Hessenberg matrix with
@@ -549,6 +549,7 @@ private:
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
+    using ComplexMatrix = Eigen::Matrix<std::complex<Scalar>, Eigen::Dynamic, Eigen::Dynamic>;
 
     using UpperHessenbergQR<Scalar>::m_n;
     using UpperHessenbergQR<Scalar>::m_shift;
@@ -775,6 +776,21 @@ public:
 
         // Copy the lower subdiagonal to upper subdiagonal
         dest.diagonal(1).noalias() = dest.diagonal(-1);
+    }
+
+    ///
+    /// The version of matrix_QtHQ() when `dest` has a complex value type.
+    ///
+    /// This is used in Hermitian eigen solvers where the result is stored
+    /// as a complex matrix.
+    ///
+    void matrix_QtHQ(ComplexMatrix& dest) const
+    {
+        // Simply compute the real-typed result and copy to the complex one
+        Matrix dest_real;
+        this->matrix_QtHQ(dest_real);
+        dest.resize(m_n, m_n);
+        dest.noalias() = dest_real.template cast<std::complex<Scalar>>();
     }
 };
 

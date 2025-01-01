@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2023 Yixuan Qiu <yixuan.qiu@cos.name>
+// Copyright (C) 2016-2025 Yixuan Qiu <yixuan.qiu@cos.name>
 //
 // This Source Code Form is subject to the terms of the Mozilla
 // Public License v. 2.0. If a copy of the MPL was not distributed
@@ -9,7 +9,7 @@
 
 #include <Eigen/Core>
 
-#include "SymEigsBase.h"
+#include "HermEigsBase.h"
 #include "Util/SelectionRule.h"
 #include "MatOp/DenseSymShiftSolve.h"
 
@@ -146,14 +146,14 @@ namespace Spectra {
 /// \endcode
 ///
 template <typename OpType = DenseSymShiftSolve<double>>
-class SymEigsShiftSolver : public SymEigsBase<OpType, IdentityBOp>
+class SymEigsShiftSolver : public HermEigsBase<OpType, IdentityBOp>
 {
 private:
     using Scalar = typename OpType::Scalar;
     using Index = Eigen::Index;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
 
-    using Base = SymEigsBase<OpType, IdentityBOp>;
+    using Base = HermEigsBase<OpType, IdentityBOp>;
     using Base::m_nev;
     using Base::m_ritz_val;
 

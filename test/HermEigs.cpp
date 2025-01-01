@@ -4,29 +4,32 @@
 #include <type_traits>
 #include <random>  // Requires C++ 11
 
-#include <Spectra/SymEigsSolver.h>
-#include <Spectra/MatOp/DenseSymMatProd.h>
-#include <Spectra/MatOp/SparseSymMatProd.h>
+#include <Spectra/HermEigsSolver.h>
+#include <Spectra/MatOp/DenseHermMatProd.h>
+#include <Spectra/MatOp/SparseHermMatProd.h>
 
 using namespace Spectra;
 
 #include "catch.hpp"
 
-using Matrix = Eigen::MatrixXd;
-using Vector = Eigen::VectorXd;
-using SpMatrix = Eigen::SparseMatrix<double>;
+using Matrix = Eigen::MatrixXcd;
+using Vector = Eigen::VectorXcd;
+using SpMatrix = Eigen::SparseMatrix<std::complex<double>>;
+using RealMatrix = Eigen::MatrixXd;
+using RealVector = Eigen::VectorXd;
 
 // Generate data for testing
 Matrix gen_dense_data(int n)
 {
     const Matrix mat = Matrix::Random(n, n);
-    return mat + mat.transpose();
+    return mat + mat.adjoint();
 }
 
 SpMatrix gen_sparse_data(int n, double prob = 0.5)
 {
     // Eigen solver only uses the lower triangular part of mat,
-    // so we don't need to make mat symmetric here.
+    // so we don't need to make mat an Hermitian matrix here,
+    // but diagonal elements must have a zero imaginary part
     SpMatrix mat(n, n);
     std::default_random_engine gen;
     gen.seed(0);
@@ -36,7 +39,11 @@ SpMatrix gen_sparse_data(int n, double prob = 0.5)
         for (int j = 0; j < n; j++)
         {
             if (distr(gen) < prob)
-                mat.insert(i, j) = distr(gen) - 0.5;
+            {
+                double re = distr(gen) - 0.5;
+                double im = (i == j) ? 0.0 : (distr(gen) - 0.5);
+                mat.insert(i, j) = std::complex<double>(re, im);
+            }
         }
     }
     return mat;
@@ -55,7 +62,7 @@ void run_test(const MatType& mat, Solver& eigs, SortRule selection)
     INFO("nops  = " << nops);
     REQUIRE(eigs.info() == CompInfo::Successful);
 
-    Vector evals = eigs.eigenvalues();
+    RealVector evals = eigs.eigenvalues();
     Matrix evecs = eigs.eigenvectors();
 
     Matrix resid = mat.template selfadjointView<Eigen::Lower>() * evecs - evecs * evals.asDiagonal();
@@ -69,12 +76,12 @@ template <typename MatType>
 void run_test_sets(const MatType& mat, int k, int m)
 {
     constexpr bool is_dense = std::is_same<MatType, Matrix>::value;
-    using DenseOp = DenseSymMatProd<double>;
-    using SparseOp = SparseSymMatProd<double>;
+    using DenseOp = DenseHermMatProd<std::complex<double>>;
+    using SparseOp = SparseHermMatProd<std::complex<double>>;
     using OpType = typename std::conditional<is_dense, DenseOp, SparseOp>::type;
 
     OpType op(mat);
-    SymEigsSolver<OpType> eigs(op, k, m);
+    HermEigsSolver<OpType> eigs(op, k, m);
 
     SECTION("Largest Magnitude")
     {
@@ -98,7 +105,7 @@ void run_test_sets(const MatType& mat, int k, int m)
     }
 }
 
-TEST_CASE("Eigensolver of symmetric real matrix [10x10]", "[eigs_sym]")
+TEST_CASE("Eigensolver of Hermitian matrix [10x10]", "[eigs_herm]")
 {
     std::srand(123);
 
@@ -109,7 +116,7 @@ TEST_CASE("Eigensolver of symmetric real matrix [10x10]", "[eigs_sym]")
     run_test_sets(A, k, m);
 }
 
-TEST_CASE("Eigensolver of symmetric real matrix [100x100]", "[eigs_sym]")
+TEST_CASE("Eigensolver of Hermitian matrix [100x100]", "[eigs_herm]")
 {
     std::srand(123);
 
@@ -120,7 +127,7 @@ TEST_CASE("Eigensolver of symmetric real matrix [100x100]", "[eigs_sym]")
     run_test_sets(A, k, m);
 }
 
-TEST_CASE("Eigensolver of symmetric real matrix [1000x1000]", "[eigs_sym]")
+TEST_CASE("Eigensolver of Hermitian matrix [1000x1000]", "[eigs_herm]")
 {
     std::srand(123);
 
@@ -131,7 +138,7 @@ TEST_CASE("Eigensolver of symmetric real matrix [1000x1000]", "[eigs_sym]")
     run_test_sets(A, k, m);
 }
 
-TEST_CASE("Eigensolver of sparse symmetric real matrix [10x10]", "[eigs_sym]")
+TEST_CASE("Eigensolver of sparse Hermitian matrix [10x10]", "[eigs_herm]")
 {
     std::srand(123);
 
@@ -143,7 +150,7 @@ TEST_CASE("Eigensolver of sparse symmetric real matrix [10x10]", "[eigs_sym]")
     run_test_sets(A, k, m);
 }
 
-TEST_CASE("Eigensolver of sparse symmetric real matrix [100x100]", "[eigs_sym]")
+TEST_CASE("Eigensolver of sparse Hermitian matrix [100x100]", "[eigs_herm]")
 {
     std::srand(123);
 
@@ -155,7 +162,7 @@ TEST_CASE("Eigensolver of sparse symmetric real matrix [100x100]", "[eigs_sym]")
     run_test_sets(A, k, m);
 }
 
-TEST_CASE("Eigensolver of sparse symmetric real matrix [1000x1000]", "[eigs_sym]")
+TEST_CASE("Eigensolver of sparse Hermitian matrix [1000x1000]", "[eigs_herm]")
 {
     std::srand(123);
 

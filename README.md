@@ -2,7 +2,7 @@
 
 ![Basic CI](https://github.com/yixuan/spectra/workflows/Basic%20CI/badge.svg) [![codecov](https://codecov.io/gh/yixuan/spectra/branch/master/graph/badge.svg)](https://codecov.io/gh/yixuan/spectra)
 
-> **NOTE**: Spectra 1.0.0 is released, with a lot of
+> **NOTE**: Spectra 1.0.0 was released in 2021-07-01, with a lot of
 > API-breaking changes. Please see the [migration guide](MIGRATION.md)
 > for a smooth transition to the new version.
 
@@ -86,6 +86,8 @@ For generalized eigen solver with real symmetric matrices
 For generalized eigen solver with real symmetric matrices, using the shift-and-invert mode
 - [DavidsonSymEigsSolver](https://spectralib.org/doc/classSpectra_1_1DavidsonSymEigsSolver.html):
 Jacobi-Davidson eigen solver for real symmetric matrices, with the DPR correction method
+- [HermEigsSolver](https://spectralib.org/doc/classSpectra_1_1HermEigsSolver.html):
+For complex Hermitian matrices
 
 ## Examples
 

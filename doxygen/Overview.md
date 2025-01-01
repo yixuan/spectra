@@ -73,6 +73,8 @@ Below is a list of the available eigen solvers in **Spectra**:
   For generalized eigen solver with real symmetric matrices, using the shift-and-invert mode
 - \link Spectra::DavidsonSymEigsSolver DavidsonSymEigsSolver\endlink:
   Jacobi-Davidson eigen solver for real symmetric matrices, with the DPR correction method
+- \link Spectra::HermEigsSolver HermEigsSolver\endlink:
+  For complex Hermitian matrices
 
 ## Examples
 
