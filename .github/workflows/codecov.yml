@@ -8,13 +8,13 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         compiler: [ gcc ]
         BUILD_TYPE : [ Debug ]
     steps:
-    - uses: actions/checkout@v3 
+    - uses: actions/checkout@v4
     - name: dependencies
       run: sudo apt install libeigen3-dev lcov
     - name: configure
@@ -28,4 +28,5 @@ jobs:
     - name: Generate coverage data
       run: lcov --directory . --capture --output-file coverage.info
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
+
