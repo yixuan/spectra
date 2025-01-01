@@ -1,4 +1,20 @@
 var searchData=
 [
-  ['upper_5ftriangular_5fsolve_181',['upper_triangular_solve',['../classSpectra_1_1DenseCholesky.html#a8deeb2bdb056d08b21ac28b98953ea0d',1,'Spectra::DenseCholesky::upper_triangular_solve()'],['../classSpectra_1_1SparseCholesky.html#ad0b72710cee5dfeabccfdf6c36832481',1,'Spectra::SparseCholesky::upper_triangular_solve()']]]
+  ['set_5fcorrection_5fsize_0',['set_correction_size',['../classSpectra_1_1JDSymEigsBase.html#a907f30b1026ecab0e7c77bed9e5f710a',1,'Spectra::JDSymEigsBase']]],
+  ['set_5finitial_5fsearch_5fspace_5fsize_1',['set_initial_search_space_size',['../classSpectra_1_1JDSymEigsBase.html#acbbc66f28bd1d0c75ce5926c2deee598',1,'Spectra::JDSymEigsBase']]],
+  ['set_5fmax_5fsearch_5fspace_5fsize_2',['set_max_search_space_size',['../classSpectra_1_1JDSymEigsBase.html#af69d245907f7d68fcec053ce9a95ca86',1,'Spectra::JDSymEigsBase']]],
+  ['set_5fshift_3',['set_shift',['../classSpectra_1_1DenseGenComplexShiftSolve.html#ae54da43bbdaed24e5c9e88cea33f14e9',1,'Spectra::DenseGenComplexShiftSolve::set_shift()'],['../classSpectra_1_1DenseGenRealShiftSolve.html#aac452a7b5d3b51b14721b6966a78b8b5',1,'Spectra::DenseGenRealShiftSolve::set_shift()'],['../classSpectra_1_1DenseSymShiftSolve.html#af6b798d87d5cddc2d2b88d3d074df4ad',1,'Spectra::DenseSymShiftSolve::set_shift()'],['../classSpectra_1_1SparseGenComplexShiftSolve.html#a82936f2a916a59337fcc15d87bf70f23',1,'Spectra::SparseGenComplexShiftSolve::set_shift()'],['../classSpectra_1_1SparseGenRealShiftSolve.html#abdab8ee0ed6b95e3b9e35eb4416f008f',1,'Spectra::SparseGenRealShiftSolve::set_shift()'],['../classSpectra_1_1SparseSymShiftSolve.html#a466dff86ec0ffe861e8a2b7982cc3e18',1,'Spectra::SparseSymShiftSolve::set_shift()'],['../classSpectra_1_1SymShiftInvert.html#aab528a6ab2ed41439a34a07aecbd121a',1,'Spectra::SymShiftInvert::set_shift()']]],
+  ['setup_5finitial_5fsearch_5fspace_4',['setup_initial_search_space',['../classSpectra_1_1DavidsonSymEigsSolver.html#a622bf58f5bea536a794ef53c6406cbaa',1,'Spectra::DavidsonSymEigsSolver']]],
+  ['solve_5',['solve',['../classSpectra_1_1SparseRegularInverse.html#a2b31f3b0e07a70ced090dfab63167cb9',1,'Spectra::SparseRegularInverse']]],
+  ['sparsecholesky_6',['SparseCholesky',['../classSpectra_1_1SparseCholesky.html#a4fd10532a947bfa01e1a79ee90d93fcc',1,'Spectra::SparseCholesky']]],
+  ['sparsegencomplexshiftsolve_7',['SparseGenComplexShiftSolve',['../classSpectra_1_1SparseGenComplexShiftSolve.html#a0d2ac56ece15e60477a6ab339be7b642',1,'Spectra::SparseGenComplexShiftSolve']]],
+  ['sparsegenmatprod_8',['SparseGenMatProd',['../classSpectra_1_1SparseGenMatProd.html#a9a76cfa0031d40d850527711ce3d82f4',1,'Spectra::SparseGenMatProd']]],
+  ['sparsegenrealshiftsolve_9',['SparseGenRealShiftSolve',['../classSpectra_1_1SparseGenRealShiftSolve.html#ab6e4b7bacd4206980dfb15d3cdcab4d9',1,'Spectra::SparseGenRealShiftSolve']]],
+  ['sparsehermmatprod_10',['SparseHermMatProd',['../classSpectra_1_1SparseHermMatProd.html#a4d5a71bcf659b2eb4817799b3a562ab3',1,'Spectra::SparseHermMatProd']]],
+  ['sparseregularinverse_11',['SparseRegularInverse',['../classSpectra_1_1SparseRegularInverse.html#a4214922ec516233aae01da7c95468af2',1,'Spectra::SparseRegularInverse']]],
+  ['sparsesymmatprod_12',['SparseSymMatProd',['../classSpectra_1_1SparseSymMatProd.html#a073b99e8d016dbcdb71146cb171344a7',1,'Spectra::SparseSymMatProd']]],
+  ['sparsesymshiftsolve_13',['SparseSymShiftSolve',['../classSpectra_1_1SparseSymShiftSolve.html#a135bdfcd1851229b3b4f9b6eccff9427',1,'Spectra::SparseSymShiftSolve']]],
+  ['symeigsshiftsolver_14',['SymEigsShiftSolver',['../classSpectra_1_1SymEigsShiftSolver.html#a72c2c5e29a19956faf309bc62742de59',1,'Spectra::SymEigsShiftSolver']]],
+  ['symeigssolver_15',['SymEigsSolver',['../classSpectra_1_1SymEigsSolver.html#a469d37e08be076e198c9e383236c5056',1,'Spectra::SymEigsSolver']]],
+  ['symshiftinvert_16',['SymShiftInvert',['../classSpectra_1_1SymShiftInvert.html#a18da2c5554cbf15db04f72fb31f68052',1,'Spectra::SymShiftInvert']]]
 ];

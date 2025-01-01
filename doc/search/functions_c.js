@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7ejdsymeigsbase_182',['~JDSymEigsBase',['../classSpectra_1_1JDSymEigsBase.html#ac6c3bd14b22c276f6747960073768c70',1,'Spectra::JDSymEigsBase']]]
+  ['upper_5ftriangular_5fsolve_0',['upper_triangular_solve',['../classSpectra_1_1DenseCholesky.html#a8deeb2bdb056d08b21ac28b98953ea0d',1,'Spectra::DenseCholesky::upper_triangular_solve()'],['../classSpectra_1_1SparseCholesky.html#ad0b72710cee5dfeabccfdf6c36832481',1,'Spectra::SparseCholesky::upper_triangular_solve()']]]
 ];

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['info_154',['info',['../classSpectra_1_1GenEigsBase.html#af632c18e6b59f4ee264bbca9310e9db8',1,'Spectra::GenEigsBase::info()'],['../classSpectra_1_1JDSymEigsBase.html#a09d777263795aff0c6e4d6ac9f8b86a8',1,'Spectra::JDSymEigsBase::info()'],['../classSpectra_1_1SymEigsBase.html#a76a2a3878356eb7c1f9343cc1f903c0e',1,'Spectra::SymEigsBase::info()'],['../classSpectra_1_1DenseCholesky.html#a7e9b08a19a51814be65482a8f98f9342',1,'Spectra::DenseCholesky::info()'],['../classSpectra_1_1SparseCholesky.html#a87e8318e6c80cb74a6b856163abb7e92',1,'Spectra::SparseCholesky::info()'],['../classSpectra_1_1SparseRegularInverse.html#a0b80cfd0995d862611841a2320651c82',1,'Spectra::SparseRegularInverse::info()']]],
-  ['init_155',['init',['../classSpectra_1_1GenEigsBase.html#af9c9e0f93ece1285fc6dee5fcc07f832',1,'Spectra::GenEigsBase::init(const Scalar *init_resid)'],['../classSpectra_1_1GenEigsBase.html#ab702361a3fbffdd760a3c5b9d42dd20e',1,'Spectra::GenEigsBase::init()'],['../classSpectra_1_1SymEigsBase.html#a527ee8b5c6c2f8b6ed6028e5c4c0af9e',1,'Spectra::SymEigsBase::init(const Scalar *init_resid)'],['../classSpectra_1_1SymEigsBase.html#a7d9fc09cf435dec24c4cd1a17b28faa4',1,'Spectra::SymEigsBase::init()']]]
+  ['hermeigssolver_0',['HermEigsSolver',['../classSpectra_1_1HermEigsSolver.html#a463d32667b451155d4aaf34fab0eb256',1,'Spectra::HermEigsSolver']]]
 ];
