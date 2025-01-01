@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
 project (Spectra VERSION 1.1.0 LANGUAGES CXX)
 
 # Make CMake look into the ./cmake/ folder for configuration files
