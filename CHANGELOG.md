@@ -1,6 +1,11 @@
 ## [Unreleased]
 
+### Added
+- Added test examples from previous bug reports
+
 ### Changed
+- Better heuristics for basis restarting in the Lanczos factorization,
+  which fixes [#159](https://github.com/yixuan/spectra/issues/159)
 - Fixed the support for non-literal data types
   ([#150](https://github.com/yixuan/spectra/issues/150))
 - Various CMake configuration improvements
