@@ -114,20 +114,21 @@ private:
                 std::copy(begin, begin + len, col_pointer(j));
                 diag_coeff(j) -= Scalar(shift);
             }
-            return;
         }
-
-        Scalar* dest = m_data.data();
-        for (Index j = 0; j < m_n; j++)
+        else
         {
-            for (Index i = j; i < m_n; i++, dest++)
+            Scalar* dest = m_data.data();
+            for (Index j = 0; j < m_n; j++)
             {
-                if (uplo == Eigen::Lower)
-                    *dest = src.coeff(i, j);
-                else
-                    *dest = Conj<Scalar>::run(src.coeff(j, i));
+                for (Index i = j; i < m_n; i++, dest++)
+                {
+                    if (uplo == Eigen::Lower)
+                        *dest = src.coeff(i, j);
+                    else
+                        *dest = Conj<Scalar>::run(src.coeff(j, i));
+                }
+                diag_coeff(j) -= Scalar(shift);
             }
-            diag_coeff(j) -= Scalar(shift);
         }
     }
 
@@ -148,12 +149,11 @@ private:
     // Assume r >= k
     void pivoting_1x1(Index k, Index r)
     {
+        m_perm[k] = r;
+
         // No permutation
         if (k == r)
-        {
-            m_perm[k] = r;
             return;
-        }
 
         // A[k, k] <-> A[r, r]
         std::swap(diag_coeff(k), diag_coeff(r));
@@ -166,6 +166,7 @@ private:
         Scalar* src = &coeff(k + 1, k);
         if (std::is_same<Scalar, RealScalar>::value)
         {
+            // Simple swapping for real values
             for (Index j = k + 1; j < r; j++, src++)
             {
                 std::swap(*src, coeff(r, j));
@@ -173,6 +174,7 @@ private:
         }
         else
         {
+            // For complex values
             for (Index j = k + 1; j < r; j++, src++)
             {
                 const Scalar src_conj = Conj<Scalar>::run(*src);
@@ -186,8 +188,6 @@ private:
         {
             coeff(r, k) = Conj<Scalar>::run(coeff(r, k));
         }
-
-        m_perm[k] = r;
     }
 
     // Working on the A[k:end, k:end] submatrix
@@ -323,7 +323,7 @@ private:
                         // r = k+1, so that only one permutation needs to be performed
                         /* const Index rp_min = std::min(r, p);
                         const Index rp_max = std::max(r, p);
-                        if(rp_min == k + 1)
+                        if (rp_min == k + 1)
                         {
                             r = rp_min; p = rp_max;
                         } else {
@@ -334,6 +334,7 @@ private:
 
                         // Permutation on A
                         pivoting_2x2(k, r, p);
+
                         // Permutation on L
                         interchange_rows(k, p, 0, k - 1);
                         interchange_rows(k + 1, r, 0, k - 1);
@@ -362,6 +363,78 @@ private:
         e21 = -e21 / delta;
     }
 
+    // E = [e11, e12]
+    //     [e21, e22]
+    // Overwrite b with x = inv(E) * b, which is equivalent to solving E * x = b
+    void solve_inplace_2x2(
+        const Scalar& e11, const Scalar& e21, const Scalar& e22,
+        Scalar& b1, Scalar& b2
+    ) const
+    {
+        using std::abs;
+
+        const Scalar e12 = Conj<Scalar>::run(e21);
+        const RealScalar e11_abs = abs(e11);
+        const RealScalar e21_abs = abs(e21);
+        // If |e11| >= |e21|, no need to exchange rows
+        if (e11_abs >= e21_abs)
+        {
+            const Scalar fac = e21 / e11;
+            const Scalar x2 = (b2 - fac * b1) / (e22 - fac * e12);
+            const Scalar x1 = (b1 - e12 * x2) / e11;
+            b1 = x1;
+            b2 = x2;
+        }
+        else
+        {
+            // Exchange row 1 and row 2, so the system becomes
+            // E* = [e21, e22], b* = [b2], x* = [x1]
+            //      [e11, e12]       [b1]       [x2]
+            const Scalar fac = e11 / e21;
+            const Scalar x2 = (b1 - fac * b2) / (e12 - fac * e22);
+            const Scalar x1 = (b2 - e22 * x2) / e21;
+            b1 = x1;
+            b2 = x2;
+        }
+    }
+
+    // Compute C * inv(E), which is equivalent to solving X * E = C
+    // X [n x 2], E [2 x 2], C [n x 2]
+    // X = [x1, x2], E = [e11, e12], C = [c1 c2]
+    //                   [e21, e22]
+    void solve_left_2x2(
+        const Scalar& e11, const Scalar& e21, const Scalar& e22,
+        const MapVec& c1, const MapVec& c2,
+        Eigen::Matrix<Scalar, Eigen::Dynamic, 2>& x
+    ) const
+    {
+        using std::abs;
+
+        const Scalar e12 = Conj<Scalar>::run(e21);
+        const RealScalar e11_abs = abs(e11);
+        const RealScalar e12_abs = abs(e12);
+        // If |e11| >= |e12|, no need to exchange rows
+        if (e11_abs >= e12_abs)
+        {
+            const Scalar fac = e12 / e11;
+            // const Scalar x2 = (c2 - fac * c1) / (e22 - fac * e21);
+            // const Scalar x1 = (c1 - e21 * x2) / e11;
+            x.col(1).array() = (c2 - fac * c1).array() / (e22 - fac * e21);
+            x.col(0).array() = (c1 - e21 * x.col(1)).array() / e11;
+        }
+        else
+        {
+            // Exchange column 1 and column 2, so the system becomes
+            // X* = [x1, x2], E* = [e12, e11], C* = [c2 c1]
+            //                     [e22, e21]
+            const Scalar fac = e11 / e12;
+            // const Scalar x2 = (c1 - fac * c2) / (e21 - fac * e22);
+            // const Scalar x1 = (c2 - e22 * x2) / e12;
+            x.col(1).array() = (c1 - fac * c2).array() / (e21 - fac * e22);
+            x.col(0).array() = (c2 - e22 * x.col(1)).array() / e12;
+        }
+    }
+
     // Return value is the status, CompInfo::Successful/NumericalIssue
     CompInfo gaussian_elimination_1x1(Index k)
     {
@@ -371,7 +444,8 @@ private:
         if (akk == Scalar(0))
             return CompInfo::NumericalIssue;
 
-        diag_coeff(k) = Scalar(1) / akk;
+        // [inverse]
+        // diag_coeff(k) = Scalar(1) / akk;
 
         // B -= l * l^H / A[k, k], B := A[(k+1):end, (k+1):end], l := L[(k+1):end, k]
         Scalar* lptr = col_pointer(k) + 1;
@@ -400,7 +474,8 @@ private:
         if (e11 * e22 - e12 * e21 == Scalar(0))
             return CompInfo::NumericalIssue;
 
-        inverse_inplace_2x2(e11, e21, e22);
+        // [inverse]
+        // inverse_inplace_2x2(e11, e21, e22);
 
         // X = l * inv(E), l := L[(k+2):end, k:(k+1)]
         Scalar* l1ptr = &coeff(k + 2, k);
@@ -409,9 +484,12 @@ private:
         MapVec l1(l1ptr, ldim), l2(l2ptr, ldim);
 
         Eigen::Matrix<Scalar, Eigen::Dynamic, 2> X(ldim, 2);
-        e12 = Conj<Scalar>::run(e21);
-        X.col(0).noalias() = l1 * e11 + l2 * e21;
-        X.col(1).noalias() = l1 * e12 + l2 * e22;
+        // [inverse]
+        // e12 = Conj<Scalar>::run(e21);
+        // X.col(0).noalias() = l1 * e11 + l2 * e21;
+        // X.col(1).noalias() = l1 * e12 + l2 * e22;
+        // [solve]
+        solve_left_2x2(e11, e21, e22, l1, l2, X);
 
         // B -= l * inv(E) * l^H = X * l^H, B = A[(k+2):end, (k+2):end]
         for (Index j = 0; j < ldim; j++)
@@ -487,7 +565,8 @@ public:
             if (akk == Scalar(0))
                 m_info = CompInfo::NumericalIssue;
 
-            diag_coeff(k) = Scalar(1) / diag_coeff(k);
+            // [inverse]
+            // diag_coeff(k) = Scalar(1) / diag_coeff(k);
         }
 
         compress_permutation();
@@ -541,15 +620,22 @@ public:
             const Scalar e11 = diag_coeff(i);
             if (m_perm[i] >= 0)
             {
-                x[i] *= e11;
+                // [inverse]
+                // x[i] *= e11;
+                // [solve]
+                x[i] /= e11;
             }
             else
             {
                 const Scalar e21 = coeff(i + 1, i), e22 = diag_coeff(i + 1);
-                const Scalar e12 = Conj<Scalar>::run(e21);
-                const Scalar wi = x[i] * e11 + x[i + 1] * e12;
-                x[i + 1] = x[i] * e21 + x[i + 1] * e22;
-                x[i] = wi;
+                // [inverse]
+                // const Scalar e12 = Conj<Scalar>::run(e21);
+                // const Scalar wi = x[i] * e11 + x[i + 1] * e12;
+                // x[i + 1] = x[i] * e21 + x[i + 1] * e22;
+                // x[i] = wi;
+                // [solve]
+                solve_inplace_2x2(e11, e21, e22, x[i], x[i + 1]);
+
                 i++;
             }
         }
