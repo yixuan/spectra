@@ -118,7 +118,7 @@ namespace Spectra {
 ///     void set_shift(double sigma) { sigma_ = sigma; }
 ///     // y_out = inv(A - sigma * I) * x_in
 ///     // inv(A - sigma * I) = diag(1/(1-sigma), 1/(2-sigma), ...)
-///     void perform_op(double *x_in, double *y_out) const
+///     void perform_op(const double *x_in, double *y_out) const
 ///     {
 ///         for (int i = 0; i < rows(); i++)
 ///         {

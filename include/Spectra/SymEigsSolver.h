@@ -104,7 +104,7 @@ namespace Spectra {
 ///     int rows() const { return 10; }
 ///     int cols() const { return 10; }
 ///     // y_out = M * x_in
-///     void perform_op(double *x_in, double *y_out) const
+///     void perform_op(const double *x_in, double *y_out) const
 ///     {
 ///         for (int i = 0; i < rows(); i++)
 ///         {

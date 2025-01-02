@@ -65,6 +65,9 @@ namespace Spectra {
 ///
 ///     std::cout << "Eigenvalues found:\n" << evalues << std::endl;
 ///
+///     Eigen::MatrixXcd evecs = eigs.eigenvectors();
+///     std::cout << "Eigenvectors:\n" << evecs << std::endl;
+///
 ///     return 0;
 /// }
 /// \endcode
@@ -86,7 +89,7 @@ namespace Spectra {
 ///     int rows() const { return 10; }
 ///     int cols() const { return 10; }
 ///     // y_out = M * x_in
-///     void perform_op(Scalar *x_in, Scalar *y_out) const
+///     void perform_op(const Scalar *x_in, Scalar *y_out) const
 ///     {
 ///         for (int i = 0; i < rows(); i++)
 ///         {
@@ -106,6 +109,9 @@ namespace Spectra {
 ///         Eigen::VectorXd evalues = eigs.eigenvalues();
 ///         // Will get (10, 9, 8)
 ///         std::cout << "Eigenvalues found:\n" << evalues << std::endl;
+///
+///         Eigen::MatrixXcd evecs = eigs.eigenvectors();
+///         std::cout << "Eigenvectors:\n" << evecs << std::endl;
 ///     }
 ///
 ///     return 0;
