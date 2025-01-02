@@ -13,10 +13,11 @@ jobs:
       matrix:
         compiler: [gcc]
     steps:
-    - uses: actions/checkout@v3 
+    - uses: actions/checkout@v4
     - name: dependencies
       run: sudo apt install libeigen3-dev clang-format
     - name: cmake
       run: cmake -B builddir
     - name: Format
       run: cmake --build builddir --target format && git diff --exit-code
+
