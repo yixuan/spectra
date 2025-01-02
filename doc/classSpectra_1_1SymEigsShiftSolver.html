@@ -221,7 +221,7 @@ class Spectra::SymEigsShiftSolver&lt; OpType &gt;</div><p>This class implements 
 <div class="line">    <span class="keywordtype">void</span> set_shift(<span class="keywordtype">double</span> sigma) { sigma_ = sigma; }</div>
 <div class="line">    <span class="comment">// y_out = inv(A - sigma * I) * x_in</span></div>
 <div class="line">    <span class="comment">// inv(A - sigma * I) = diag(1/(1-sigma), 1/(2-sigma), ...)</span></div>
-<div class="line">    <span class="keywordtype">void</span> perform_op(<span class="keywordtype">double</span> *x_in, <span class="keywordtype">double</span> *y_out)<span class="keyword"> const</span></div>
+<div class="line">    <span class="keywordtype">void</span> perform_op(<span class="keyword">const</span> <span class="keywordtype">double</span> *x_in, <span class="keywordtype">double</span> *y_out)<span class="keyword"> const</span></div>
 <div class="line"><span class="keyword">    </span>{</div>
 <div class="line">        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; rows(); i++)</div>
 <div class="line">        {</div>

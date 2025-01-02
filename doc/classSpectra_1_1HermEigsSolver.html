@@ -188,10 +188,13 @@ class Spectra::HermEigsSolver&lt; OpType &gt;</div><p>This class implements the 
 <div class="line"> </div>
 <div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Eigenvalues found:\n&quot;</span> &lt;&lt; evalues &lt;&lt; std::endl;</div>
 <div class="line"> </div>
+<div class="line">    Eigen::MatrixXcd evecs = eigs.eigenvectors();</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Eigenvectors:\n&quot;</span> &lt;&lt; evecs &lt;&lt; std::endl;</div>
+<div class="line"> </div>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 <div class="ttc" id="aclassSpectra_1_1DenseHermMatProd_html"><div class="ttname"><a href="classSpectra_1_1DenseHermMatProd.html">Spectra::DenseHermMatProd</a></div><div class="ttdef"><b>Definition</b> <a href="DenseHermMatProd_8h_source.html#l00030">DenseHermMatProd.h:31</a></div></div>
-<div class="ttc" id="aclassSpectra_1_1HermEigsSolver_html_a463d32667b451155d4aaf34fab0eb256"><div class="ttname"><a href="#a463d32667b451155d4aaf34fab0eb256">Spectra::HermEigsSolver::HermEigsSolver</a></div><div class="ttdeci">HermEigsSolver(OpType &amp;op, Index nev, Index ncv)</div><div class="ttdef"><b>Definition</b> <a href="HermEigsSolver_8h_source.html#l00139">HermEigsSolver.h:139</a></div></div>
+<div class="ttc" id="aclassSpectra_1_1HermEigsSolver_html_a463d32667b451155d4aaf34fab0eb256"><div class="ttname"><a href="#a463d32667b451155d4aaf34fab0eb256">Spectra::HermEigsSolver::HermEigsSolver</a></div><div class="ttdeci">HermEigsSolver(OpType &amp;op, Index nev, Index ncv)</div><div class="ttdef"><b>Definition</b> <a href="HermEigsSolver_8h_source.html#l00145">HermEigsSolver.h:145</a></div></div>
 <div class="ttc" id="agroup__Enumerations_html_gga699aae652eac3e9c714957fce4b395fda1b41c4b719d458f621ae11861ac637c1"><div class="ttname"><a href="group__Enumerations.html#gga699aae652eac3e9c714957fce4b395fda1b41c4b719d458f621ae11861ac637c1">Spectra::SortRule::LargestAlge</a></div><div class="ttdeci">@ LargestAlge</div><div class="ttdef"><b>Definition</b> <a href="SelectionRule_8h_source.html#l00044">SelectionRule.h:44</a></div></div>
 <div class="ttc" id="agroup__Enumerations_html_ggae1a6cf904d752db2f5641ec79a1bbbf0a30ae8fff8898dc197acd49d9c0797d20"><div class="ttname"><a href="group__Enumerations.html#ggae1a6cf904d752db2f5641ec79a1bbbf0a30ae8fff8898dc197acd49d9c0797d20">Spectra::CompInfo::Successful</a></div><div class="ttdeci">@ Successful</div><div class="ttdoc">Computation was successful.</div><div class="ttdef"><b>Definition</b> <a href="CompInfo_8h_source.html#l00019">CompInfo.h:19</a></div></div>
 </div><!-- fragment --><p>And here is an example for user-supplied matrix operation class.</p>
@@ -209,7 +212,7 @@ class Spectra::HermEigsSolver&lt; OpType &gt;</div><p>This class implements the 
 <div class="line">    <span class="keywordtype">int</span> rows()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> 10; }</div>
 <div class="line">    <span class="keywordtype">int</span> cols()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> 10; }</div>
 <div class="line">    <span class="comment">// y_out = M * x_in</span></div>
-<div class="line">    <span class="keywordtype">void</span> perform_op(Scalar *x_in, Scalar *y_out)<span class="keyword"> const</span></div>
+<div class="line">    <span class="keywordtype">void</span> perform_op(<span class="keyword">const</span> Scalar *x_in, Scalar *y_out)<span class="keyword"> const</span></div>
 <div class="line"><span class="keyword">    </span>{</div>
 <div class="line">        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; rows(); i++)</div>
 <div class="line">        {</div>
@@ -229,12 +232,15 @@ class Spectra::HermEigsSolver&lt; OpType &gt;</div><p>This class implements the 
 <div class="line">        Eigen::VectorXd evalues = eigs.eigenvalues();</div>
 <div class="line">        <span class="comment">// Will get (10, 9, 8)</span></div>
 <div class="line">        std::cout &lt;&lt; <span class="stringliteral">&quot;Eigenvalues found:\n&quot;</span> &lt;&lt; evalues &lt;&lt; std::endl;</div>
+<div class="line"> </div>
+<div class="line">        Eigen::MatrixXcd evecs = eigs.eigenvectors();</div>
+<div class="line">        std::cout &lt;&lt; <span class="stringliteral">&quot;Eigenvectors:\n&quot;</span> &lt;&lt; evecs &lt;&lt; std::endl;</div>
 <div class="line">    }</div>
 <div class="line"> </div>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="HermEigsSolver_8h_source.html#l00116">116</a> of file <a class="el" href="HermEigsSolver_8h_source.html">HermEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="HermEigsSolver_8h_source.html#l00122">122</a> of file <a class="el" href="HermEigsSolver_8h_source.html">HermEigsSolver.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a463d32667b451155d4aaf34fab0eb256" name="a463d32667b451155d4aaf34fab0eb256"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a463d32667b451155d4aaf34fab0eb256">&#9670;&#160;</a></span>HermEigsSolver()</h2>
@@ -279,7 +285,7 @@ template&lt;typename OpType = DenseHermMatProd&lt;double&gt;&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="HermEigsSolver_8h_source.html#l00139">139</a> of file <a class="el" href="HermEigsSolver_8h_source.html">HermEigsSolver.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="HermEigsSolver_8h_source.html#l00145">145</a> of file <a class="el" href="HermEigsSolver_8h_source.html">HermEigsSolver.h</a>.</p>
 
 </div>
 </div>
