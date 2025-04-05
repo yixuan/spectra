@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
-project(Spectra VERSION 1.1.0 LANGUAGES CXX)
+cmake_minimum_required (VERSION 3.10 FATAL_ERROR)
+project (Spectra VERSION 1.1.0 LANGUAGES CXX)
 
 # Make CMake look into the ./cmake/ folder for configuration files
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -23,16 +23,16 @@ include(FeatureSummary) # More verbose Output for libraries using set_package_pr
 # Look for supporting libraries
 # -----------------------------
 CPMAddPackage(
-  NAME Eigen
-  VERSION 3.4.0
-  URL https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
-  # Eigen's CMakelists are not intended for library use
-  DOWNLOAD_ONLY YES 
+    NAME Eigen
+    VERSION 3.4.0
+    URL https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
+    # Eigen's CMakelists are not intended for library use
+    DOWNLOAD_ONLY YES
 )
 
 if(Eigen_ADDED)
-  add_library(Eigen INTERFACE IMPORTED)
-  target_include_directories(Eigen INTERFACE ${Eigen_SOURCE_DIR})
+    add_library(Eigen INTERFACE IMPORTED)
+    target_include_directories(Eigen INTERFACE ${Eigen_SOURCE_DIR})
 endif()
 
 # Setup library
@@ -102,8 +102,8 @@ write_basic_package_version_file(
 
 install(
     FILES
-    ${CMAKE_BINARY_DIR}/cmake/spectra-config.cmake
-    ${CMAKE_BINARY_DIR}/cmake/spectra-config-version.cmake
+        ${CMAKE_BINARY_DIR}/cmake/spectra-config.cmake
+        ${CMAKE_BINARY_DIR}/cmake/spectra-config-version.cmake
     DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/Spectra
 )
 
