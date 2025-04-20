@@ -22,17 +22,19 @@ include(FeatureSummary) # More verbose Output for libraries using set_package_pr
 
 # Look for supporting libraries
 # -----------------------------
-CPMAddPackage(
-    NAME Eigen
-    VERSION 3.4.0
-    URL https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
-    # Eigen's CMakelists are not intended for library use
-    DOWNLOAD_ONLY YES
-)
+if(NOT TARGET Eigen3::Eigen)
+    CPMFindPackage(
+        NAME Eigen3
+        VERSION 3.4.0
+        URL https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz
+        # Eigen's CMakelists are not intended for library use
+        DOWNLOAD_ONLY YES
+    )
 
-if(Eigen_ADDED)
-    add_library(Eigen INTERFACE IMPORTED)
-    target_include_directories(Eigen INTERFACE ${Eigen_SOURCE_DIR})
+    if(Eigen3_ADDED)
+        add_library(Eigen3::Eigen INTERFACE IMPORTED)
+        target_include_directories(Eigen3::Eigen INTERFACE ${Eigen3_SOURCE_DIR})
+    endif()
 endif()
 
 # Setup library
