@@ -26,8 +26,8 @@ struct StableScaling
     // Given a >= b > 0, compute r = sqrt(a^2 + b^2), c = a / r, and s = b / r with a high precision
     static void run(const Scalar& a, const Scalar& b, Scalar& r, Scalar& c, Scalar& s)
     {
-        using std::sqrt;
         using std::pow;
+        using std::hypot;
 
         // Let t = b / a, then 0 < t <= 1
         // c = 1 / sqrt(1 + t^2)
@@ -40,13 +40,14 @@ struct StableScaling
         const Scalar eps = TypeTraits<Scalar>::epsilon();
         // std::pow() is not constexpr, so we do not declare cutoff to be constexpr
         // But most compilers should be able to compute cutoff at compile time
+        // cutoff ~= 1.22e-5
         const Scalar cutoff = Scalar(0.1) * pow(eps, Scalar(0.25));
         if (t >= cutoff)
         {
-            const Scalar denom = sqrt(Scalar(1) + t * t);
-            c = Scalar(1) / denom;
-            s = t * c;
-            r = a * denom;
+            // When t is not too small, we can directly compute r, c, s
+            r = hypot(a, b);
+            c = a / r;
+            s = b / r;
         }
         else
         {
@@ -68,9 +69,8 @@ struct StableScaling
             const Scalar c38 = Scalar(0.375);
             const Scalar c516 = Scalar(0.3125);
             const Scalar t2 = t * t;
-            const Scalar tc = t2 * (c2 - t2 * (c38 - c516 * t2));
-            c = c1 - tc;
-            s = t - t * tc;
+            c = c1 - t2 * (c2 - t2 * (c38 - c516 * t2));
+            s = t * c;
             r = a + c2 * b * t * (c1 - t2 * (c4 - c8 * t2));
 
             /* const Scalar t_2 = Scalar(0.5) * t;
@@ -105,7 +105,7 @@ struct StableScaling
         if (t2 >= cutoff)
         {
             tc1 = sqrt(Scalar(1) + t2);
-            tc2 = Scalar(1) / tc1;
+            tc2 = sqrt(a2 / (a2 + b2));
         }
         else
         {
