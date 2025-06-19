@@ -156,6 +156,12 @@ private:
 
 public:
     // c is always real, and other variables can be real or complex
+    //
+    // Given x and y, compute 1) r = sqrt(x^2 + y^2), 2) c = x / r, 3) s = -y / r
+    // If both x and y are zero, set c = 1 and s = 0
+    // We must implement it in a numerically stable way
+    // The implementation below is shown to be more accurate than directly computing
+    //     r = std::hypot(x, y); c = x / r; s = -y / r;
     static void compute_rotation(const Scalar& x, const Scalar& y, Scalar& r, RealScalar& c, Scalar& s)
     {
         using std::abs;

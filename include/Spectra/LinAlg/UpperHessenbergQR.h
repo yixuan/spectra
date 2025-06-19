@@ -13,6 +13,7 @@
 #include <stdexcept>  // std::logic_error
 
 #include "../Util/TypeTraits.h"
+#include "Givens.h"
 
 namespace Spectra {
 
@@ -45,11 +46,16 @@ template <typename Scalar = double>
 class UpperHessenbergQR
 {
 private:
+    // The type of the real part, e.g.,
+    //     Scalar = double               => RealScalar = double
+    //     Scalar = std::complex<double> => RealScalar = double
+    using RealScalar = typename Eigen::NumTraits<Scalar>::Real;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using RowVector = Eigen::Matrix<Scalar, 1, Eigen::Dynamic>;
     using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
+    using RealArray = Eigen::Array<RealScalar, Eigen::Dynamic, 1>;
 
     using GenericMatrix = Eigen::Ref<Matrix>;
     using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
@@ -58,117 +64,23 @@ private:
 
 protected:
     Index m_n;
-    // Gi = [ cos[i]  sin[i]]
-    //      [-sin[i]  cos[i]]
-    // Q = G1 * G2 * ... * G_{n-1}
     Scalar m_shift;
-    Array m_rot_cos;
+    // Given an upper Hessenberg matrix H, find an orthogonal matrix Q
+    // and upper triangular matrix R such that H - s*I = QR
+    // In other words, we want to transform H - s*I to R by
+    // orthogonal transformation Q^H (H - s*I) = R
+    // Q can be represented by a sequence of Givens rotations,
+    // Q = Q1 * Q2 * ... * Q_{n-1}, and each Qi is determined by the 2x2 matrix
+    //     Gi = [  c[i]   s[i]]
+    //          [-(s[i])  c[i]]
+    // where c is real, and (s) is the conjugate of s
+    //
+    // Each Gi is responsible for transforming a 2x1 vector u = [x] into v = [r]
+    //                                                          [y]          [0]
+    // See Givens.h for details
+    RealArray m_rot_cos;
     Array m_rot_sin;
     bool m_computed;
-
-    // Given a >= b > 0, compute r = sqrt(a^2 + b^2), c = a / r, and s = b / r with high precision
-    static void stable_scaling(const Scalar& a, const Scalar& b, Scalar& r, Scalar& c, Scalar& s)
-    {
-        using std::sqrt;
-        using std::pow;
-
-        // Let t = b / a, then 0 < t <= 1
-        // c = 1 / sqrt(1 + t^2)
-        // s = t * c
-        // r = a * sqrt(1 + t^2)
-        const Scalar t = b / a;
-        // We choose a cutoff such that cutoff^4 < eps
-        // If t > cutoff, use the standard way; otherwise use Taylor series expansion
-        // to avoid an explicit sqrt() call that may lose precision
-        const Scalar eps = TypeTraits<Scalar>::epsilon();
-        // std::pow() is not constexpr, so we do not declare cutoff to be constexpr
-        // But most compilers should be able to compute cutoff at compile time
-        const Scalar cutoff = Scalar(0.1) * pow(eps, Scalar(0.25));
-        if (t >= cutoff)
-        {
-            const Scalar denom = sqrt(Scalar(1) + t * t);
-            c = Scalar(1) / denom;
-            s = t * c;
-            r = a * denom;
-        }
-        else
-        {
-            // 1 / sqrt(1 + t^2) ~=     1 - (1/2) * t^2 + (3/8) * t^4
-            // 1 / sqrt(1 + l^2) ~= 1 / l - (1/2) / l^3 + (3/8) / l^5
-            //                   ==     t - (1/2) * t^3 + (3/8) * t^5, where l = 1 / t
-            // sqrt(1 + t^2)     ~=     1 + (1/2) * t^2 - (1/8) * t^4 + (1/16) * t^6
-            //
-            // c = 1 / sqrt(1 + t^2) ~= 1 - t^2 * (1/2 - (3/8) * t^2)
-            // s = 1 / sqrt(1 + l^2) ~= t * (1 - t^2 * (1/2 - (3/8) * t^2))
-            // r = a * sqrt(1 + t^2) ~= a + (1/2) * b * t - (1/8) * b * t^3 + (1/16) * b * t^5
-            //                       == a + (b/2) * t * (1 - t^2 * (1/4 - 1/8 * t^2))
-            const Scalar c1 = Scalar(1);
-            const Scalar c2 = Scalar(0.5);
-            const Scalar c4 = Scalar(0.25);
-            const Scalar c8 = Scalar(0.125);
-            const Scalar c38 = Scalar(0.375);
-            const Scalar t2 = t * t;
-            const Scalar tc = t2 * (c2 - c38 * t2);
-            c = c1 - tc;
-            s = t - t * tc;
-            r = a + c2 * b * t * (c1 - t2 * (c4 - c8 * t2));
-
-            /* const Scalar t_2 = Scalar(0.5) * t;
-            const Scalar t2_2 = t_2 * t;
-            const Scalar t3_2 = t2_2 * t;
-            const Scalar t4_38 = Scalar(1.5) * t2_2 * t2_2;
-            const Scalar t5_16 = Scalar(0.25) * t3_2 * t2_2;
-            c = Scalar(1) - t2_2 + t4_38;
-            s = t - t3_2 + Scalar(6) * t5_16;
-            r = a + b * (t_2 - Scalar(0.25) * t3_2 + t5_16); */
-        }
-    }
-
-    // Given x and y, compute 1) r = sqrt(x^2 + y^2), 2) c = x / r, 3) s = -y / r
-    // If both x and y are zero, set c = 1 and s = 0
-    // We must implement it in a numerically stable way
-    // The implementation below is shown to be more accurate than directly computing
-    //     r = std::hypot(x, y); c = x / r; s = -y / r;
-    static void compute_rotation(const Scalar& x, const Scalar& y, Scalar& r, Scalar& c, Scalar& s)
-    {
-        using std::abs;
-
-        // Only need xsign when x != 0
-        const Scalar xsign = (x > Scalar(0)) ? Scalar(1) : Scalar(-1);
-        const Scalar xabs = abs(x);
-        if (y == Scalar(0))
-        {
-            c = (x == Scalar(0)) ? Scalar(1) : xsign;
-            s = Scalar(0);
-            r = xabs;
-            return;
-        }
-
-        // Now we know y != 0
-        const Scalar ysign = (y > Scalar(0)) ? Scalar(1) : Scalar(-1);
-        const Scalar yabs = abs(y);
-        if (x == Scalar(0))
-        {
-            c = Scalar(0);
-            s = -ysign;
-            r = yabs;
-            return;
-        }
-
-        // Now we know x != 0, y != 0
-        if (xabs > yabs)
-        {
-            stable_scaling(xabs, yabs, r, c, s);
-            c = xsign * c;
-            s = -ysign * s;
-        }
-        else
-        {
-            stable_scaling(yabs, xabs, r, s, c);
-            c = xsign * c;
-            s = -ysign * s;
-        }
-    }
 
 public:
     ///
@@ -235,7 +147,8 @@ public:
         m_mat_R.noalias() = mat;
         m_mat_R.diagonal().array() -= m_shift;
 
-        Scalar xi, xj, r, c, s;
+        Scalar xi, xj, r, s;
+        RealScalar c;
         Scalar *Rii, *ptr;
         const Index n1 = m_n - 1;
         for (Index i = 0; i < n1; i++)
@@ -248,18 +161,18 @@ public:
 
             xi = Rii[0];  // R[i, i]
             xj = Rii[1];  // R[i + 1, i]
-            compute_rotation(xi, xj, r, c, s);
+            Givens<Scalar>::compute_rotation(xi, xj, r, c, s);
             m_rot_cos.coeffRef(i) = c;
             m_rot_sin.coeffRef(i) = s;
 
             // For a complete QR decomposition,
             // we first obtain the rotation matrix
-            // G = [ cos  sin]
-            //     [-sin  cos]
-            // and then do R[i:(i + 1), i:(n - 1)] = G' * R[i:(i + 1), i:(n - 1)]
+            // G = [  c   s]
+            //     [-(s)  c]
+            // and then do R[i:(i + 1), i:(n - 1)] = G^H * R[i:(i + 1), i:(n - 1)]
 
-            // Gt << c, -s, s, c;
-            // m_mat_R.block(i, i, 2, m_n - i) = Gt * m_mat_R.block(i, i, 2, m_n - i);
+            // GH << c, -s, Eigen::numext::conj(s), c;
+            // m_mat_R.block(i, i, 2, m_n - i) = GH * m_mat_R.block(i, i, 2, m_n - i);
             Rii[0] = r;       // R[i, i]     => r
             Rii[1] = 0;       // R[i + 1, i] => 0
             ptr = Rii + m_n;  // R[i, k], k = i+1, i+2, ..., n-1
@@ -267,14 +180,14 @@ public:
             {
                 const Scalar tmp = ptr[0];
                 ptr[0] = c * tmp - s * ptr[1];
-                ptr[1] = s * tmp + c * ptr[1];
+                ptr[1] = Eigen::numext::conj(s) * tmp + c * ptr[1];
             }
 
             // If we do not need to calculate the R matrix, then
-            // only the cos and sin sequences are required.
+            // only the cos and sin sequences are required
             // In such case we only update R[i + 1, (i + 1):(n - 1)]
             // m_mat_R.block(i + 1, i + 1, 1, m_n - i - 1) *= c;
-            // m_mat_R.block(i + 1, i + 1, 1, m_n - i - 1) += s * m_mat_R.block(i, i + 1, 1, m_n - i - 1);
+            // m_mat_R.block(i + 1, i + 1, 1, m_n - i - 1) += conj(s) * m_mat_R.block(i, i + 1, 1, m_n - i - 1);
         }
 
         m_computed = true;
@@ -296,7 +209,7 @@ public:
     }
 
     ///
-    /// Overwrite `dest` with \f$Q'HQ = RQ + sI\f$, where \f$H\f$ is the input matrix `mat`,
+    /// Overwrite `dest` with \f$Q^H H Q = RQ + sI\f$, where \f$H\f$ is the input matrix `mat`,
     /// and \f$s\f$ is the shift. The result is an upper Hessenberg matrix.
     ///
     /// \param mat The matrix to be overwritten, whose type should be `Eigen::Matrix<Scalar, ...>`,
@@ -315,11 +228,11 @@ public:
         const Index n1 = m_n - 1;
         for (Index i = 0; i < n1; i++)
         {
-            const Scalar c = m_rot_cos.coeff(i);
+            const RealScalar c = m_rot_cos.coeff(i);
             const Scalar s = m_rot_sin.coeff(i);
             // RQ[, i:(i + 1)] = RQ[, i:(i + 1)] * Gi
-            // Gi = [ cos[i]  sin[i]]
-            //      [-sin[i]  cos[i]]
+            // Gi = [  c[i]   s[i]]
+            //      [-(s[i])  c[i]]
             Scalar *Yi, *Yi1;
             Yi = &dest.coeffRef(0, i);
             Yi1 = Yi + m_n;  // RQ[0, i + 1]
@@ -327,12 +240,12 @@ public:
             for (Index j = 0; j < i2; j++)
             {
                 const Scalar tmp = Yi[j];
-                Yi[j] = c * tmp - s * Yi1[j];
+                Yi[j] = c * tmp - Eigen::numext::conj(s) * Yi1[j];
                 Yi1[j] = s * tmp + c * Yi1[j];
             }
 
             /* Vector dest = RQ.block(0, i, i + 2, 1);
-            dest.block(0, i, i + 2, 1)     = c * Yi - s * dest.block(0, i + 1, i + 2, 1);
+            dest.block(0, i, i + 2, 1)     = c * Yi - conj(s) * dest.block(0, i + 1, i + 2, 1);
             dest.block(0, i + 1, i + 2, 1) = s * Yi + c * dest.block(0, i + 1, i + 2, 1); */
         }
 
@@ -359,11 +272,11 @@ public:
             const Scalar c = m_rot_cos.coeff(i);
             const Scalar s = m_rot_sin.coeff(i);
             // Y[i:(i + 1)] = Gi * Y[i:(i + 1)]
-            // Gi = [ cos[i]  sin[i]]
-            //      [-sin[i]  cos[i]]
+            // Gi = [  c[i]   s[i]]
+            //      [-(s[i])  c[i]]
             const Scalar tmp = Y[i];
             Y[i] = c * tmp + s * Y[i + 1];
-            Y[i + 1] = -s * tmp + c * Y[i + 1];
+            Y[i + 1] = -Eigen::numext::conj(s) * tmp + c * Y[i + 1];
         }
     }
 
@@ -375,7 +288,7 @@ public:
     /// Vector type can be `Eigen::Vector<Scalar, ...>`, depending on
     /// the template parameter `Scalar` defined.
     ///
-    // Y -> Q'Y = G_{n-1}' * ... * G2' * G1' * Y
+    // Y -> Q^H Y = G_{n-1}^H * ... * G2^H * G1^H * Y
     void apply_QtY(Vector& Y) const
     {
         if (!m_computed)
@@ -384,14 +297,14 @@ public:
         const Index n1 = m_n - 1;
         for (Index i = 0; i < n1; i++)
         {
-            const Scalar c = m_rot_cos.coeff(i);
+            const RealScalar c = m_rot_cos.coeff(i);
             const Scalar s = m_rot_sin.coeff(i);
-            // Y[i:(i + 1)] = Gi' * Y[i:(i + 1)]
-            // Gi = [ cos[i]  sin[i]]
-            //      [-sin[i]  cos[i]]
+            // Y[i:(i + 1)] = Gi^H * Y[i:(i + 1)]
+            // Gi = [  c[i]   s[i]], Gi^H = [ c[i]  -s[i]]
+            //      [-(s[i])  c[i]]         [(s[i])  c[i]]
             const Scalar tmp = Y[i];
             Y[i] = c * tmp - s * Y[i + 1];
-            Y[i + 1] = s * tmp + c * Y[i + 1];
+            Y[i + 1] = Eigen::numext::conj(s) * tmp + c * Y[i + 1];
         }
     }
 
@@ -413,15 +326,15 @@ public:
         RowVector Yi(Y.cols()), Yi1(Y.cols());
         for (Index i = m_n - 2; i >= 0; i--)
         {
-            const Scalar c = m_rot_cos.coeff(i);
+            const RealScalar c = m_rot_cos.coeff(i);
             const Scalar s = m_rot_sin.coeff(i);
             // Y[i:(i + 1), ] = Gi * Y[i:(i + 1), ]
-            // Gi = [ cos[i]  sin[i]]
-            //      [-sin[i]  cos[i]]
+            // Gi = [  c[i]   s[i]]
+            //      [-(s[i])  c[i]]
             Yi.noalias() = Y.row(i);
             Yi1.noalias() = Y.row(i + 1);
             Y.row(i) = c * Yi + s * Yi1;
-            Y.row(i + 1) = -s * Yi + c * Yi1;
+            Y.row(i + 1) = -Eigen::numext::conj(s) * Yi + c * Yi1;
         }
     }
 
@@ -434,7 +347,7 @@ public:
     /// `Eigen::MatrixXd` and `Eigen::MatrixXf`), or its mapped version
     /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
     ///
-    // Y -> Q'Y = G_{n-1}' * ... * G2' * G1' * Y
+    // Y -> Q^H Y = G_{n-1}^H * ... * G2^H * G1^H * Y
     void apply_QtY(GenericMatrix Y) const
     {
         if (!m_computed)
@@ -444,15 +357,15 @@ public:
         const Index n1 = m_n - 1;
         for (Index i = 0; i < n1; i++)
         {
-            const Scalar c = m_rot_cos.coeff(i);
+            const RealScalar c = m_rot_cos.coeff(i);
             const Scalar s = m_rot_sin.coeff(i);
-            // Y[i:(i + 1), ] = Gi' * Y[i:(i + 1), ]
-            // Gi = [ cos[i]  sin[i]]
-            //      [-sin[i]  cos[i]]
+            // Y[i:(i + 1), ] = Gi^H * Y[i:(i + 1), ]
+            // Gi = [  c[i]   s[i]], Gi^H = [ c[i]  -s[i]]
+            //      [-(s[i])  c[i]]         [(s[i])  c[i]]
             Yi.noalias() = Y.row(i);
             Yi1.noalias() = Y.row(i + 1);
             Y.row(i) = c * Yi - s * Yi1;
-            Y.row(i + 1) = s * Yi + c * Yi1;
+            Y.row(i + 1) = Eigen::numext::conj(s) * Yi + c * Yi1;
         }
     }
 
@@ -477,10 +390,10 @@ public:
             const Scalar c = m_rot_cos.coeff(i);
             const Scalar s = m_rot_sin.coeff(i);
             // Y[, i:(i + 1)] = Y[, i:(i + 1)] * Gi
-            // Gi = [ cos[i]  sin[i]]
-            //      [-sin[i]  cos[i]]
+            // Gi = [  c[i]   s[i]]
+            //      [-(s[i])  c[i]]
             Yi.noalias() = Y.col(i);
-            Y.col(i)     = c * Yi - s * Y.col(i + 1);
+            Y.col(i)     = c * Yi - conj(s) * Y.col(i + 1);
             Y.col(i + 1) = s * Yi + c * Y.col(i + 1);
         }*/
         Scalar *Y_col_i, *Y_col_i1;
@@ -488,7 +401,7 @@ public:
         const Index nrow = Y.rows();
         for (Index i = 0; i < n1; i++)
         {
-            const Scalar c = m_rot_cos.coeff(i);
+            const RealScalar c = m_rot_cos.coeff(i);
             const Scalar s = m_rot_sin.coeff(i);
 
             Y_col_i = &Y.coeffRef(0, i);
@@ -496,7 +409,7 @@ public:
             for (Index j = 0; j < nrow; j++)
             {
                 Scalar tmp = Y_col_i[j];
-                Y_col_i[j] = c * tmp - s * Y_col_i1[j];
+                Y_col_i[j] = c * tmp - Eigen::numext::conj(s) * Y_col_i1[j];
                 Y_col_i1[j] = s * tmp + c * Y_col_i1[j];
             }
         }
@@ -511,7 +424,7 @@ public:
     /// `Eigen::MatrixXd` and `Eigen::MatrixXf`), or its mapped version
     /// (e.g. `Eigen::Map<Eigen::MatrixXd>`).
     ///
-    // Y -> YQ' = Y * G_{n-1}' * ... * G2' * G1'
+    // Y -> YQ^H = Y * G_{n-1}^H * ... * G2^H * G1^H
     void apply_YQt(GenericMatrix Y) const
     {
         if (!m_computed)
@@ -522,11 +435,11 @@ public:
         {
             const Scalar c = m_rot_cos.coeff(i);
             const Scalar s = m_rot_sin.coeff(i);
-            // Y[, i:(i + 1)] = Y[, i:(i + 1)] * Gi'
-            // Gi = [ cos[i]  sin[i]]
-            //      [-sin[i]  cos[i]]
+            // Y[, i:(i + 1)] = Y[, i:(i + 1)] * Gi^H
+            // Gi = [  c[i]   s[i]], Gi^H = [ c[i]  -s[i]]
+            //      [-(s[i])  c[i]]         [(s[i])  c[i]]
             Yi.noalias() = Y.col(i);
-            Y.col(i) = c * Yi + s * Y.col(i + 1);
+            Y.col(i) = c * Yi + Eigen::numext::conj(s) * Y.col(i + 1);
             Y.col(i + 1) = -s * Yi + c * Y.col(i + 1);
         }
     }
@@ -642,7 +555,7 @@ public:
             // Tsubd[i] == R[i + 1, i]
             // r = sqrt(R[i, i]^2 + R[i + 1, i]^2)
             // c = R[i, i] / r, s = -R[i + 1, i] / r
-            this->compute_rotation(m_R_diag.coeff(i), m_T_subd.coeff(i), r, *c, *s);
+            Givens<Scalar>::compute_rotation(m_R_diag.coeff(i), m_T_subd.coeff(i), r, *c, *s);
 
             // For a complete QR decomposition,
             // we first obtain the rotation matrix
