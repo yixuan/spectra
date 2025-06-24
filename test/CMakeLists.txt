@@ -3,6 +3,7 @@ set(test_target_sources)
 add_library (tests-main tests-main.cpp)
 list(APPEND test_target_sources
         # Linear algebra
+        Givens.cpp
         QR.cpp
         Eigen.cpp
         Schur.cpp
