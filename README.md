@@ -255,8 +255,13 @@ make all && make test && make install
 By installing **Spectra** in this way, you also create a CMake target `Spectra::Spectra` that can be used in subsequent build procedures for other programs.
 
 If you already have Eigen installed, you can specify the installation directory by setting the `CMAKE_PREFIX_PATH` variable or `Eigen3_ROOT`.
+For example:
 
-A couple of useful environment variables can be set to control the download of Eigen, `CPM_DOWNLOAD_ALL=ON` will force the download of Eigen, even if an installation is already present on the system, `CPM_LOCAL_PACKAGES_ONLY=ON` will force the opposite behavior. The download directory can be controlled by setting the variable `CPM_SOURCE_CACHE`.
+```bash
+cmake .. -DCMAKE_INSTALL_PREFIX='intended installation directory' -DCMAKE_PREFIX_PATH='path where the installation of Eigen3 can be found' -DBUILD_TESTS=TRUE
+```
+
+A couple of useful environment variables can be set to control the download of Eigen. `CPM_DOWNLOAD_ALL=ON` will force the download of Eigen, even if an installation is already present on the system. `CPM_LOCAL_PACKAGES_ONLY=ON` will force the opposite behavior. The download directory can be controlled by setting the variable `CPM_SOURCE_CACHE`.
 
 ## License
 
