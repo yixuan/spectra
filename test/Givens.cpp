@@ -1,4 +1,5 @@
 // Test ../include/Spectra/LinAlg/Givens.h
+#include <complex>
 #include <random>
 #include <vector>
 #include <string>
@@ -11,6 +12,7 @@
 #include "catch.hpp"
 
 using Vector = Eigen::VectorXd;
+using Complex = std::complex<double>;
 using ComplexVector = Eigen::VectorXcd;
 
 // Fill x with random real numbers
@@ -39,7 +41,7 @@ void fill_vector(ComplexVector& x, std::default_random_engine& gen)
         // With probability 0.1, set value to be zero
         double xr = (unif(gen) < 0.1) ? 0.0 : distr(gen);
         double xi = (unif(gen) < 0.1) ? 0.0 : distr(gen);
-        x[i] = std::complex<double>(xr, xi);
+        x[i] = Complex(xr, xi);
     }
 }
 
@@ -55,7 +57,7 @@ void report_stats(const std::string& prefix, const Vector& r_err, const Vector& 
     REQUIRE(r_err_max == Approx(0.0).margin(1e-12));
 
     INFO(prefix + " zero_log10err_mean = " << zero_log10err_mean);
-    INFO(prefix + " zero_err_max = " << zero_err_max);    
+    INFO(prefix + " zero_err_max = " << zero_err_max);
     REQUIRE(zero_err_max == Approx(0.0).margin(1e-12));
 }
 
@@ -68,7 +70,7 @@ TEST_CASE("Givens rotation on real numbers", "[Givens]")
     Vector x(nsim), y(nsim);
     fill_vector(x, gen);
     fill_vector(y, gen);
-    
+
     // Simulations
     Vector r_err_eigen(nsim), zero_err_eigen(nsim), r_err_spectra(nsim), zero_err_spectra(nsim);
     for (int i = 0; i < nsim; i++)
@@ -100,7 +102,6 @@ TEST_CASE("Givens rotation on complex numbers", "[Givens]")
 {
     using std::abs;
     using std::conj;
-    using Complex = std::complex<double>;
 
     // Random number generation
     std::default_random_engine gen;
@@ -109,7 +110,7 @@ TEST_CASE("Givens rotation on complex numbers", "[Givens]")
     ComplexVector x(nsim), y(nsim);
     fill_vector(x, gen);
     fill_vector(y, gen);
-    
+
     // Simulations
     Vector r_err_eigen(nsim), zero_err_eigen(nsim), r_err_spectra(nsim), zero_err_spectra(nsim);
     for (int i = 0; i < nsim; i++)

@@ -84,7 +84,7 @@ struct StableScaling
         }
     }
 
-    // Given |a|_1 >= |b|_1 > 0, 
+    // Given |a|_1 >= |b|_1 > 0,
     // compute a2 = |a|^2, t = |b| / |a|, tc1 = sqrt(1 + t^2), tc2 = 1 / sqrt(1 + t^2)
     static void run(const Complex& a, const Complex& b, Scalar& a2, Scalar& tc1, Scalar& tc2)
     {
@@ -301,7 +301,7 @@ public:
             // z = x / |x|, w = y / |y|
             // rho = sqrt(|x|^2 + |y|^2), r = z * rho, c = |x| / rho
             // s = -z * (y) / rho = -z * (w) * |y| / rho
-            
+
             // Scale x, equivalent to Givens rotation on (x.real, -x.imag)
             const RealScalar xr = Eigen::numext::real(x), xi = Eigen::numext::imag(x);
             RealScalar xnorm, zr, zi;
