@@ -1,94 +1,111 @@
 ---
-Language:        Cpp
-# BasedOnStyle:  WebKit
 AccessModifierOffset: -4
 AlignAfterOpenBracket: Align
-AlignConsecutiveMacros: false
-AlignConsecutiveAssignments: false
-AlignConsecutiveDeclarations: false
+AlignConsecutiveAssignments: None
+AlignConsecutiveBitFields: None
+AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: None
 AlignEscapedNewlines: Left
-AlignOperands:   false
+AlignOperands: DontAlign
 AlignTrailingComments: true
 AllowAllArgumentsOnNextLine: true
 AllowAllConstructorInitializersOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
-AllowShortBlocksOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: All
 AllowShortLambdasOnASingleLine: All
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: All
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: MultiLine
+AttributeMacros:
+  - __capability
 BinPackArguments: true
 BinPackParameters: true
+BitFieldColonSpacing: None
 BraceWrapping:
-  AfterCaseLabel:  true
-  AfterClass:      true
+  AfterCaseLabel: true
+  AfterClass: true
   AfterControlStatement: true
-  AfterEnum:       true
-  AfterFunction:   true
-  AfterNamespace:  false
+  AfterEnum: true
+  AfterFunction: true
+  AfterNamespace: false
   AfterObjCDeclaration: false
-  AfterStruct:     true
-  AfterUnion:      true
+  AfterStruct: true
+  AfterUnion: true
   AfterExternBlock: false
-  BeforeCatch:     true
-  BeforeElse:      true
-  IndentBraces:    false
+  BeforeCatch: true
+  BeforeElse: true
+  IndentBraces: false
   SplitEmptyFunction: false
   SplitEmptyRecord: false
   SplitEmptyNamespace: false
+  BeforeLambdaBody: false
+  BeforeWhile: false
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Custom
 BreakBeforeInheritanceComma: false
 BreakInheritanceList: AfterColon
+BreakBeforeConceptDeclarations: false
 BreakBeforeTernaryOperators: false
-BreakConstructorInitializersBeforeComma: false
 BreakConstructorInitializers: AfterColon
 BreakAfterJavaFieldAnnotations: false
 BreakStringLiterals: true
-ColumnLimit:     0
-CommentPragmas:  '^ IWYU pragma:'
+ColumnLimit: 0
+CommentPragmas: '^ IWYU pragma:'
 CompactNamespaces: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
-ConstructorInitializerIndentWidth: 4
+ConstructorInitializerIndentWidth : 4
 ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
+DeriveLineEnding: true
 DerivePointerAlignment: true
-DisableFormat:   false
+EmptyLineBeforeAccessModifier: Leave
 ExperimentalAutoDetectBinPacking: false
 FixNamespaceComments: true
 ForEachMacros:
   - foreach
   - Q_FOREACH
   - BOOST_FOREACH
-IncludeBlocks:   Preserve
-IncludeCategories: 
-  - Regex:           '^<ext/.*\.h>'
-    Priority:        2
-  - Regex:           '^<.*\.h>'
-    Priority:        1
-  - Regex:           '^<.*'
-    Priority:        2
-  - Regex:           '.*'
-    Priority:        3
-IncludeIsMainRegex: '([-_](test|unittest))?$'
+IncludeBlocks: Preserve
+IncludeCategories:
+  - Regex: '^<ext/.*\.h>'
+    Priority: 2
+  - Regex: '^<.*\.h>'
+    Priority: 1
+  - Regex: '^<.*'
+    Priority: 2
+  - Regex: '.*'
+    Priority: 3
+IncludeIsMainRegex: ([-_](test|unittest))?$
+IncludeIsMainSourceRegex: ''
+IndentCaseBlocks: false
 IndentCaseLabels: true
+IndentExternBlock: NoIndent
+IndentGotoLabels: false
 IndentPPDirectives: None
-IndentWidth:     4
+IndentRequires: false
+IndentWidth: 4
 IndentWrappedFunctionNames: false
+InsertTrailingCommas: None
+JavaImportGroups:
+  ['com.example', 'com', 'org']
 JavaScriptQuotes: Leave
 JavaScriptWrapImports: true
 KeepEmptyLinesAtTheStartOfBlocks: false
+Language: Cpp
+LineEnding: DeriveLF
 MacroBlockBegin: ''
-MacroBlockEnd:   ''
+MacroBlockEnd: ''
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: Inner
 ObjCBinPackProtocolList: Auto
 ObjCBlockIndentWidth: 4
+ObjCBreakBeforeNestedBlockParam: false
 ObjCSpaceAfterProperty: true
 ObjCSpaceBeforeProtocolList: true
 PenaltyBreakAssignment: 2
@@ -98,32 +115,80 @@ PenaltyBreakFirstLessLess: 120
 PenaltyBreakString: 1000
 PenaltyBreakTemplateDeclaration: 10
 PenaltyExcessCharacter: 1000000
+PenaltyIndentedWhitespace: 0
 PenaltyReturnTypeOnItsOwnLine: 60
 PointerAlignment: Left
-ReflowComments:  true
-SortIncludes:    false
+RawStringFormats:
+  - Language: Cpp
+    Delimiters:
+      - cc
+      - CC
+      - cpp
+      - Cpp
+      - CPP
+      - 'c++'
+      - 'C++'
+    CanonicalDelimiter: ''
+    BasedOnStyle: google
+  - Language: TextProto
+    Delimiters:
+      - pb
+      - PB
+      - proto
+      - PROTO
+    EnclosingFunctions:
+      - EqualsProto
+      - EquivToProto
+      - PARSE_PARTIAL_TEXT_PROTO
+      - PARSE_TEST_PROTO
+      - PARSE_TEXT_PROTO
+      - ParseTextOrDie
+      - ParseTextProtoOrDie
+      - ParseTestProto
+      - ParsePartialTestProto
+    CanonicalDelimiter: ''
+    BasedOnStyle: google
+ReflowComments: true
+SortIncludes: false
+SortJavaStaticImport: Before
 SortUsingDeclarations: false
 SpaceAfterCStyleCast: true
 SpaceAfterLogicalNot: false
 SpaceAfterTemplateKeyword: true
+SpaceAroundPointerQualifiers: Default
 SpaceBeforeAssignmentOperators: true
+SpaceBeforeCaseColon: false
 SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: ControlStatements
 SpaceBeforeRangeBasedForLoopColon: true
+SpaceBeforeSquareBrackets: false
+SpaceInEmptyBlock: false
 SpaceInEmptyParentheses: false
 SpacesBeforeTrailingComments: 2
-SpacesInAngles:  false
+SpacesInAngles: false
 SpacesInContainerLiterals: true
 SpacesInCStyleCastParentheses: false
+SpacesInConditionalStatement: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
-Standard:        Cpp11
-StatementMacros: 
+Standard: Cpp11
+StatementAttributeLikeMacros:
   - Q_UNUSED
   - QT_REQUIRE_VERSION
-TabWidth:        8
-UseTab:          Never
+StatementMacros:
+  - Q_UNUSED
+  - QT_REQUIRE_VERSION
+TabWidth: 8
+TypenameMacros:
+  ['STACK_OF', 'LIST']
+UseCRLF: false
+UseTab: Never
+WhitespaceSensitiveMacros:
+  - STRINGIZE
+  - PP_STRINGIZE
+  - BOOST_PP_STRINGIZE
+  - NS_SWIFT_NAME
+  - CF_SWIFT_NAME
 ...
-
