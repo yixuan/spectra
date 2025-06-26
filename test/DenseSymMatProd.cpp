@@ -1,12 +1,9 @@
-
-#include <Spectra/MatOp/DenseSymMatProd.h>
-#include <Eigen/Dense>
 #include <Eigen/Core>
-
-using namespace Spectra;
+#include <Spectra/MatOp/DenseSymMatProd.h>
 
 #include "catch.hpp"
-#include <complex>
+
+using namespace Spectra;
 
 template <typename TestType>
 using Matrix = Eigen::Matrix<TestType, Eigen::Dynamic, Eigen::Dynamic>;

@@ -3,9 +3,9 @@
 #include <Eigen/Core>
 #include <Spectra/LinAlg/UpperHessenbergSchur.h>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Matrix = Eigen::MatrixXd;
 using Vector = Eigen::VectorXd;

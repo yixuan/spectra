@@ -1,14 +1,13 @@
+#include <iostream>
+#include <random>
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 #include <Eigen/SVD>
-#include <iostream>
-#include <random>  // Requires C++ 11
-
 #include <Spectra/contrib/PartialSVDSolver.h>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Matrix = Eigen::MatrixXd;
 using Vector = Eigen::VectorXd;

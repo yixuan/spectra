@@ -1,16 +1,15 @@
-#include <Eigen/Core>
-#include <Eigen/SparseCore>
 #include <iostream>
 #include <type_traits>
-#include <random>  // Requires C++ 11
-
+#include <random>
+#include <Eigen/Core>
+#include <Eigen/SparseCore>
 #include <Spectra/HermEigsSolver.h>
 #include <Spectra/MatOp/DenseHermMatProd.h>
 #include <Spectra/MatOp/SparseHermMatProd.h>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Matrix = Eigen::MatrixXcd;
 using Vector = Eigen::VectorXcd;

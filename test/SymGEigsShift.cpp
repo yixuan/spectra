@@ -1,16 +1,15 @@
+#include <iostream>
+#include <random>
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <iostream>
-#include <random>  // Requires C++ 11
-
 #include <Spectra/SymGEigsShiftSolver.h>
 #include <Spectra/MatOp/SymShiftInvert.h>
 #include <Spectra/MatOp/DenseSymMatProd.h>
 #include <Spectra/MatOp/SparseSymMatProd.h>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Matrix = Eigen::MatrixXd;
 using Vector = Eigen::VectorXd;

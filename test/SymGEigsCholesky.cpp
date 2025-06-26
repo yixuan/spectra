@@ -1,18 +1,17 @@
-#include <Eigen/Core>
-#include <Eigen/SparseCore>
 #include <iostream>
 #include <type_traits>
-#include <random>  // Requires C++ 11
-
+#include <random>
+#include <Eigen/Core>
+#include <Eigen/SparseCore>
 #include <Spectra/SymGEigsSolver.h>
 #include <Spectra/MatOp/DenseSymMatProd.h>
 #include <Spectra/MatOp/DenseCholesky.h>
 #include <Spectra/MatOp/SparseSymMatProd.h>
 #include <Spectra/MatOp/SparseCholesky.h>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Matrix = Eigen::MatrixXd;
 using Vector = Eigen::VectorXd;

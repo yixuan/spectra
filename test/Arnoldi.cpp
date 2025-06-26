@@ -7,9 +7,9 @@
 #include <Spectra/MatOp/DenseSymMatProd.h>
 #include <Spectra/MatOp/DenseHermMatProd.h>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Matrix = Eigen::MatrixXd;
 using Vector = Eigen::VectorXd;

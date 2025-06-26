@@ -2,9 +2,9 @@
 #include <Spectra/MatOp/DenseGenMatProd.h>
 #include <Eigen/Dense>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Eigen::Matrix;
 using Eigen::Index;

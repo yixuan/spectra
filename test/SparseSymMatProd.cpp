@@ -1,11 +1,10 @@
-
-#include <Spectra/MatOp/SparseSymMatProd.h>
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-
-using namespace Spectra;
+#include <Spectra/MatOp/SparseSymMatProd.h>
 
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Eigen::Index;
 template <typename TestType>

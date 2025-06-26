@@ -1,14 +1,14 @@
 // Example reported in Issue #115
 // https://github.com/yixuan/spectra/issues/115
+#include <iostream>
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <iostream>
 #include <Spectra/SymGEigsSolver.h>
 #include <Spectra/MatOp/SparseCholesky.h>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Matrix = Eigen::MatrixXd;
 using Vector = Eigen::VectorXd;
