@@ -109,7 +109,7 @@ install(
     DESTINATION ${CMAKE_INSTALL_DATADIR}/cmake/Spectra
 )
 
-find_package(CLANG_FORMAT 9)
+find_package(CLANG_FORMAT 16)
 if(CLANG_FORMAT_FOUND)
     file(GLOB_RECURSE FORMAT_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
     add_custom_target(
