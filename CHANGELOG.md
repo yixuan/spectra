@@ -1,3 +1,27 @@
+## [Unreleased]
+
+### Added
+
+- Added a separate `Givens` class for computing Givens rotations in a numerically stable way
+- Added the implementation of `UpperHessenbergQR` for complex-valued matrices
+- Added testing code for the `Givens` class
+- Added `UpperHessenbergQR` tests for complex-valued matrices
+
+### Changed
+
+- `UpperHessenbergQR` now uses the `Givens` class to compute Givens rotations
+- The CMake script now uses [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) to manage
+  the dependence on Eigen. By default, it will first search for Eigen in the system, and
+  if it is not found, the script will automatically download the Eigen library.
+  This functionality was contributed by [@eduardz1](https://github.com/eduardz1)
+  ([#178](https://github.com/yixuan/spectra/pull/178))
+- The minimum version for Clang-Format is now 16, and the configuration file is also updated
+- Updated Doxygen configuration to v1.14.0
+- Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.13.10
+- Updated author information
+
+
+
 ## [1.1.0] - 2025-01-01
 
 ### Added
