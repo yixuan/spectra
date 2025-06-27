@@ -1,9 +1,10 @@
+#include <iostream>
 #include <Eigen/Core>
 #include <Spectra/LinAlg/Orthogonalization.h>
-#include <iostream>
-using namespace Spectra;
 
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;

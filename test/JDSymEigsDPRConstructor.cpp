@@ -1,12 +1,11 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-
 #include <Spectra/DavidsonSymEigsSolver.h>
 #include <Spectra/MatOp/DenseGenMatProd.h>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 TEMPLATE_TEST_CASE("Constructing JDSymEigsDPR", "[JDSymEigsDPR]", float, double)
 {

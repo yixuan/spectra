@@ -1,13 +1,12 @@
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-
 #include <Spectra/DavidsonSymEigsSolver.h>
 #include <Spectra/MatOp/DenseSymMatProd.h>
 #include <Spectra/MatOp/SparseSymMatProd.h>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 template <typename T>
 using Matrix = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;

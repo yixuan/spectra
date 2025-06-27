@@ -1,15 +1,14 @@
 // Example reported in Issue #159
 // https://github.com/yixuan/spectra/issues/159
+#include <iostream>
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
-#include <iostream>
-
 #include <Spectra/SymEigsSolver.h>
 #include <Spectra/MatOp/DenseSymMatProd.h>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Matrix = Eigen::MatrixXd;
 using Vector = Eigen::VectorXd;

@@ -1,13 +1,10 @@
-
-#include <Spectra/MatOp/SparseGenMatProd.h>
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-
-#include <Eigen/Dense>
-
-using namespace Spectra;
+#include <Spectra/MatOp/SparseGenMatProd.h>
 
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Eigen::Index;
 template <typename TestType>

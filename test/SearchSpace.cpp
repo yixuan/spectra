@@ -1,13 +1,13 @@
+#include <iostream>
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <iostream>
 #include <Spectra/MatOp/DenseGenMatProd.h>
 #include <Spectra/LinAlg/SearchSpace.h>
 #include <Spectra/LinAlg/Orthogonalization.h>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Matrix = Eigen::MatrixXd;
 using Vector = Eigen::VectorXd;

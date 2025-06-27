@@ -1,14 +1,13 @@
+#include <iostream>
+#include <random>
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
-#include <iostream>
-#include <random>  // Requires C++ 11
-
 #include <Spectra/JDSymEigsBase.h>
 #include <Spectra/MatOp/DenseGenMatProd.h>
 
-using namespace Spectra;
-
 #include "catch.hpp"
+
+using namespace Spectra;
 
 using Matrix = Eigen::MatrixXd;
 using Vector = Eigen::VectorXd;
@@ -16,6 +15,7 @@ using ComplexMatrix = Eigen::MatrixXcd;
 using ComplexVector = Eigen::VectorXcd;
 using SpMatrix = Eigen::SparseMatrix<double>;
 using Index = Eigen::Index;
+
 template <typename OpType>
 class JDMock : public JDSymEigsBase<JDMock<OpType>, OpType>
 {

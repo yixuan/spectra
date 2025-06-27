@@ -7,15 +7,11 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        compiler: [gcc]
     steps:
     - uses: actions/checkout@v4
     - name: dependencies
-      run: sudo apt install libeigen3-dev clang-format
+      run: sudo apt install libeigen3-dev clang-format git
     - name: cmake
       run: cmake -B builddir
     - name: Format

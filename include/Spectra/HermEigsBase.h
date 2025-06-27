@@ -44,10 +44,13 @@ template <typename OpType, typename BOpType>
 class HermEigsBase
 {
 private:
+    // Scalar is the type of the matrix element
+    // Can be real or complex
     using Scalar = typename OpType::Scalar;
     // The real part type of the matrix element, e.g.,
     //     Scalar = double               => RealScalar = double
     //     Scalar = std::complex<double> => RealScalar = double
+    // The eigenvalues are known to be real numbers
     using RealScalar = typename Eigen::NumTraits<Scalar>::Real;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
@@ -377,7 +380,7 @@ public:
         // Sorting results
         sort_ritzpair(sorting);
 
-        m_niter += i + 1;
+        m_niter += (i + 1);
         m_info = (nconv >= m_nev) ? CompInfo::Successful : CompInfo::NotConverging;
 
         return (std::min)(m_nev, nconv);
