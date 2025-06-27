@@ -7,11 +7,10 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        compiler: [ gcc ]
+        compiler: [ g++ ]
         BUILD_TYPE : [ Debug ]
     steps:
     - uses: actions/checkout@v4
@@ -19,7 +18,7 @@ jobs:
       run: sudo apt install libeigen3-dev lcov
     - name: configure
       env:
-        CC: ${{ matrix.compiler }}
+        CXX: ${{ matrix.compiler }}
       run: cmake -H. -Bbuild -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=${{ matrix.BUILD_TYPE }} -DENABLE_COVERAGE_BUILD=ON
     - name: make
       run: cmake --build build -- -j4
@@ -29,4 +28,3 @@ jobs:
       run: lcov --directory . --capture --output-file coverage.info
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
-
