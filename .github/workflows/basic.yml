@@ -13,15 +13,15 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-22.04, ubuntu-latest ]
-        compiler: [ gcc, clang ]
+        compiler: [ g++, clang++ ]
         BUILD_TYPE: [ Debug, Release ]
     steps:
     - uses: actions/checkout@v4
     - name: dependencies
-      run: sudo apt install libeigen3-dev
+      run: sudo apt install g++ clang libeigen3-dev
     - name: configure
       env:
-        CC: ${{ matrix.compiler }}
+        CXX: ${{ matrix.compiler }}
       run: cmake -H. -Bbuild -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=${{ matrix.BUILD_TYPE }}
     - name: make
       run: cmake --build build -- -j4
