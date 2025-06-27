@@ -27,10 +27,11 @@ namespace Spectra {
 // f: n x 1
 // e: [0, ..., 0, 1]
 // V and H are allocated of dimension m, so the maximum value of k is m
-template <typename Scalar, typename ArnoldiOpType>
+template <typename ArnoldiOpType>
 class Arnoldi
 {
 private:
+    using Scalar = typename ArnoldiOpType::Scalar;
     // The real part type of the matrix element
     using RealScalar = typename Eigen::NumTraits<Scalar>::Real;
     using Index = Eigen::Index;

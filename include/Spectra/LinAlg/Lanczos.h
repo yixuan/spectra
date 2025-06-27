@@ -23,10 +23,11 @@ namespace Spectra {
 // f: n x 1
 // e: [0, ..., 0, 1]
 // V and H are allocated of dimension m, so the maximum value of k is m
-template <typename Scalar, typename ArnoldiOpType>
-class Lanczos : public Arnoldi<Scalar, ArnoldiOpType>
+template <typename ArnoldiOpType>
+class Lanczos : public Arnoldi<ArnoldiOpType>
 {
 private:
+    using Scalar = typename ArnoldiOpType::Scalar;
     // The real part type of the matrix element
     using RealScalar = typename Eigen::NumTraits<Scalar>::Real;
     using Index = Eigen::Index;
@@ -37,22 +38,23 @@ private:
     using MapConstMat = Eigen::Map<const Matrix>;
     using RealMatrix = Eigen::Matrix<RealScalar, Eigen::Dynamic, Eigen::Dynamic>;
 
-    using Arnoldi<Scalar, ArnoldiOpType>::m_op;
-    using Arnoldi<Scalar, ArnoldiOpType>::m_n;
-    using Arnoldi<Scalar, ArnoldiOpType>::m_m;
-    using Arnoldi<Scalar, ArnoldiOpType>::m_k;
-    using Arnoldi<Scalar, ArnoldiOpType>::m_fac_V;
-    using Arnoldi<Scalar, ArnoldiOpType>::m_fac_H;
-    using Arnoldi<Scalar, ArnoldiOpType>::m_fac_f;
-    using Arnoldi<Scalar, ArnoldiOpType>::m_beta;
-    using Arnoldi<Scalar, ArnoldiOpType>::m_near_0;
-    using Arnoldi<Scalar, ArnoldiOpType>::m_eps;
+    using Base = Arnoldi<ArnoldiOpType>;
+    using Base::m_op;
+    using Base::m_n;
+    using Base::m_m;
+    using Base::m_k;
+    using Base::m_fac_V;
+    using Base::m_fac_H;
+    using Base::m_fac_f;
+    using Base::m_beta;
+    using Base::m_near_0;
+    using Base::m_eps;
 
 public:
     // Forward parameter `op` to the constructor of Arnoldi
     template <typename T>
     Lanczos(T&& op, Index m) :
-        Arnoldi<Scalar, ArnoldiOpType>(std::forward<T>(op), m)
+        Base(std::forward<T>(op), m)
     {}
 
     // Lanczos factorization starting from step-k

@@ -52,8 +52,8 @@ private:
     using ComplexMatrix = Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic>;
     using ComplexVector = Eigen::Matrix<Complex, Eigen::Dynamic, 1>;
 
-    using ArnoldiOpType = ArnoldiOp<Scalar, OpType, BOpType>;
-    using ArnoldiFac = Arnoldi<Scalar, ArnoldiOpType>;
+    using ArnoldiOpType = ArnoldiOp<OpType, BOpType>;
+    using ArnoldiFac = Arnoldi<ArnoldiOpType>;
 
 protected:
     // clang-format off

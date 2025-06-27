@@ -29,9 +29,12 @@ namespace Spectra {
 ///
 /// Operators used in the Arnoldi factorization.
 ///
-template <typename Scalar, typename OpType, typename BOpType>
+template <typename OpType, typename BOpType>
 class ArnoldiOp
 {
+public:
+    using Scalar = typename OpType::Scalar;
+
 private:
     // The real part type of the matrix element
     using RealScalar = typename Eigen::NumTraits<Scalar>::Real;
@@ -107,9 +110,12 @@ class IdentityBOp
 ///
 /// Partial specialization for the case \f$B = I\f$.
 ///
-template <typename Scalar, typename OpType>
-class ArnoldiOp<Scalar, OpType, IdentityBOp>
+template <typename OpType>
+class ArnoldiOp<OpType, IdentityBOp>
 {
+public:
+    using Scalar = typename OpType::Scalar;
+
 private:
     // The real part type of the matrix element
     using RealScalar = typename Eigen::NumTraits<Scalar>::Real;

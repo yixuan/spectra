@@ -93,11 +93,11 @@ TEST_CASE("Arnoldi factorization of general real matrix", "[Arnoldi]")
     const int m = 6;
 
     using AOpType = DenseGenMatProd<double>;
-    using ArnoldiOpType = ArnoldiOp<double, AOpType, IdentityBOp>;
+    using ArnoldiOpType = ArnoldiOp<AOpType, IdentityBOp>;
 
     AOpType Aop(A);
     ArnoldiOpType arn(Aop, IdentityBOp());
-    Arnoldi<double, ArnoldiOpType> fac(arn, m);
+    Arnoldi<ArnoldiOpType> fac(arn, m);
 
     run_test(fac, A, m);
 }
@@ -111,11 +111,11 @@ TEST_CASE("Lanczos factorization of symmetric real matrix", "[Lanczos]")
     const int m = 6;
 
     using AOpType = DenseSymMatProd<double>;
-    using ArnoldiOpType = ArnoldiOp<double, AOpType, IdentityBOp>;
+    using ArnoldiOpType = ArnoldiOp<AOpType, IdentityBOp>;
 
     AOpType Aop(A);
     ArnoldiOpType arn(Aop, IdentityBOp());
-    Lanczos<double, ArnoldiOpType> fac(arn, m);
+    Lanczos<ArnoldiOpType> fac(arn, m);
 
     run_test(fac, A, m);
 }
@@ -129,11 +129,11 @@ TEST_CASE("Arnoldi factorization of general complex matrix", "[Arnoldi]")
 
     using Scalar = std::complex<double>;
     using AOpType = DenseGenMatProd<Scalar>;
-    using ArnoldiOpType = ArnoldiOp<Scalar, AOpType, IdentityBOp>;
+    using ArnoldiOpType = ArnoldiOp<AOpType, IdentityBOp>;
 
     AOpType Aop(A);
     ArnoldiOpType arn(Aop, IdentityBOp());
-    Arnoldi<Scalar, ArnoldiOpType> fac(arn, m);
+    Arnoldi<ArnoldiOpType> fac(arn, m);
 
     run_test(fac, A, m);
 }
@@ -148,11 +148,11 @@ TEST_CASE("Lanczos factorization of Hermitian complex matrix", "[Lanczos]")
 
     using Scalar = std::complex<double>;
     using AOpType = DenseHermMatProd<Scalar>;
-    using ArnoldiOpType = ArnoldiOp<Scalar, AOpType, IdentityBOp>;
+    using ArnoldiOpType = ArnoldiOp<AOpType, IdentityBOp>;
 
     AOpType Aop(A);
     ArnoldiOpType arn(Aop, IdentityBOp());
-    Lanczos<Scalar, ArnoldiOpType> fac(arn, m);
+    Lanczos<ArnoldiOpType> fac(arn, m);
 
     run_test(fac, A, m);
 }

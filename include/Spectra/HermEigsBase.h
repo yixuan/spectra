@@ -63,8 +63,8 @@ private:
     using MapVec = Eigen::Map<Vector>;
     using MapConstVec = Eigen::Map<const Vector>;
 
-    using ArnoldiOpType = ArnoldiOp<Scalar, OpType, BOpType>;
-    using LanczosFac = Lanczos<Scalar, ArnoldiOpType>;
+    using ArnoldiOpType = ArnoldiOp<OpType, BOpType>;
+    using LanczosFac = Lanczos<ArnoldiOpType>;
 
 protected:
     // clang-format off
