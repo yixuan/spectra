@@ -21,8 +21,9 @@
 namespace Spectra {
 
 // Modified from Eigen/src/Eigenvaleus/RealSchur.h
-// The main change in this version is to use SIMD operations to
-// optimize some intensive computation
+//
+// The main change in this version is to assume that the input matrix
+// is upper Hessenberg, and we use SIMD operations to optimize some intensive computation
 template <typename Scalar = double>
 class UpperHessenbergSchur
 {

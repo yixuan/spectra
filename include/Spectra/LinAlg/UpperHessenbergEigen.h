@@ -15,11 +15,16 @@
 #include <stdexcept>
 #include <complex>
 
+#include "../Util/TypeTraits.h"
 #include "UpperHessenbergSchur.h"
 
 namespace Spectra {
 
 // Default implementation for real-valued matrices
+//
+// Modified from Eigen/src/Eigenvaleus/EigenSolver.h
+// The main change in this version is to assume that the input matrix
+// is upper Hessenberg, and in general it is faster than Eigen::EigenSolver
 template <typename Scalar = double>
 class UpperHessenbergEigen
 {
@@ -312,8 +317,10 @@ public:
 };
 
 // Partial specialization for complex-valued matrices
-// TODO: Right now just a placeholder that simply calls Eigen::ComplexEigenSolver
-//       A better implementation is to use the upper Hessenberg structure
+//
+// Modified from Eigen/src/Eigenvaleus/ComplexEigenSolver.h
+// The main change in this version is to assume that the input matrix
+// is upper Hessenberg, and in general it is faster than Eigen::ComplexEigenSolver
 template <typename RealScalar>
 class UpperHessenbergEigen<std::complex<RealScalar>>
 {
@@ -323,13 +330,70 @@ private:
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
+    using Complex = Scalar;
     using ComplexMatrix = Matrix;
     using ComplexVector = Vector;
 
-    Index m_n;                                   // Size of the matrix
-    Eigen::ComplexEigenSolver<Matrix> m_solver;  // Eigen decomposition solver
-    ComplexVector m_eivalues;                    // Eigenvalues
+    Index m_n;                            // Size of the matrix
+    Eigen::ComplexSchur<Matrix> m_schur;  // Schur decomposition solver
+    ComplexMatrix m_eivec;                // Eigenvectors
+    ComplexVector m_eivalues;             // Eigenvalues
     bool m_computed;
+
+    void doComputeEigenvectors(RealScalar matrixnorm)
+    {
+        const Index n = m_eivalues.size();
+
+        matrixnorm = (std::max)(matrixnorm, TypeTraits<RealScalar>::min());
+
+        // Compute X such that T = X D X^(-1), where D is the diagonal of T
+        // The matrix X is unit triangular
+        ComplexMatrix m_matX = ComplexMatrix::Zero(n, n);
+        for (Index k = n - 1; k >= 0; k--)
+        {
+            m_matX.coeffRef(k, k) = Complex(1.0, 0.0);
+            // Compute X(i,k) using the (i,k) entry of the equation X T = D X
+            for (Index i = k - 1; i >= 0; i--)
+            {
+                m_matX.coeffRef(i, k) = -m_schur.matrixT().coeff(i, k);
+                if (k - i - 1 > 0)
+                    m_matX.coeffRef(i, k) -= (m_schur.matrixT().row(i).segment(i + 1, k - i - 1) * m_matX.col(k).segment(i + 1, k - i - 1)).value();
+                Complex z = m_schur.matrixT().coeff(i, i) - m_schur.matrixT().coeff(k, k);
+                if (z == Complex(0))
+                {
+                    // If the i-th and k-th eigenvalue are equal, then z equals 0.
+                    // Use a small value instead, to prevent division by zero.
+                    Eigen::numext::real_ref(z) = TypeTraits<RealScalar>::epsilon() * matrixnorm;
+                }
+                m_matX.coeffRef(i, k) = m_matX.coeff(i, k) / z;
+            }
+        }
+
+        // Compute V as V = U X; now A = U T U^* = U X D X^(-1) U^* = V D V^(-1)
+        m_eivec.noalias() = m_schur.matrixU() * m_matX;
+        // .. and normalize the eigenvectors
+        for (Index k = 0; k < n; k++)
+        {
+            m_eivec.col(k).normalize();
+        }
+    }
+
+    void sortEigenvalues(bool computeEigenvectors)
+    {
+        const Index n = m_eivalues.size();
+        for (Index i = 0; i < n; i++)
+        {
+            Index k;
+            m_eivalues.cwiseAbs().tail(n - i).minCoeff(&k);
+            if (k != 0)
+            {
+                k += i;
+                std::swap(m_eivalues[k], m_eivalues[i]);
+                if (computeEigenvectors)
+                    m_eivec.col(i).swap(m_eivec.col(k));
+            }
+        }
+    }
 
 public:
     UpperHessenbergEigen() :
@@ -344,8 +408,27 @@ public:
 
     void compute(ConstGenericMatrix& mat)
     {
-        m_solver.compute(mat);
-        m_eivalues = m_solver.eigenvalues();
+        if (mat.rows() != mat.cols())
+            throw std::invalid_argument("UpperHessenbergEigen: matrix must be square");
+
+        // Do a complex Schur decomposition, A = U T U^*
+        // The eigenvalues are on the diagonal of T
+        // A is known to be upper Hessenberg
+        m_eivec.resize(mat.rows(), mat.cols());
+        m_eivec.setIdentity();
+        m_schur.computeFromHessenberg(mat, m_eivec, true);
+
+        if (m_schur.info() == Eigen::Success)
+        {
+            m_eivalues = m_schur.matrixT().diagonal();
+            doComputeEigenvectors(m_schur.matrixT().norm());
+            sortEigenvalues(true);
+        }
+        else
+        {
+            throw std::runtime_error("UpperHessenbergEigen: eigen decomposition failed");
+        }
+
         m_computed = true;
     }
 
@@ -357,12 +440,12 @@ public:
         return m_eivalues;
     }
 
-    ComplexMatrix eigenvectors() const
+    const ComplexMatrix& eigenvectors() const
     {
         if (!m_computed)
             throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
 
-        return m_solver.eigenvectors();
+        return m_eivec;
     }
 };
 
