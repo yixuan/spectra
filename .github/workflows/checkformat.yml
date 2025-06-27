@@ -16,3 +16,4 @@ jobs:
       run: cmake -B builddir
     - name: Format
       run: cmake --build builddir --target format && git diff --exit-code
+

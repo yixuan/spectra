@@ -28,3 +28,4 @@ jobs:
       run: lcov --directory . --capture --output-file coverage.info
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
+
