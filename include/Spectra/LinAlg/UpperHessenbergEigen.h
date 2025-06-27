@@ -13,11 +13,13 @@
 
 #include <Eigen/Core>
 #include <stdexcept>
+#include <complex>
 
 #include "UpperHessenbergSchur.h"
 
 namespace Spectra {
 
+// Default implementation for real-valued matrices
 template <typename Scalar = double>
 class UpperHessenbergEigen
 {
@@ -273,7 +275,7 @@ public:
         return m_eivalues;
     }
 
-    ComplexMatrix eigenvectors()
+    ComplexMatrix eigenvectors() const
     {
         using std::abs;
 
@@ -306,6 +308,61 @@ public:
         }
 
         return matV;
+    }
+};
+
+// Partial specialization for complex-valued matrices
+// TODO: Right now just a placeholder that simply calls Eigen::ComplexEigenSolver
+//       A better implementation is to use the upper Hessenberg structure
+template <typename RealScalar>
+class UpperHessenbergEigen<std::complex<RealScalar>>
+{
+private:
+    using Scalar = std::complex<RealScalar>;
+    using Index = Eigen::Index;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    using ConstGenericMatrix = const Eigen::Ref<const Matrix>;
+    using ComplexMatrix = Matrix;
+    using ComplexVector = Vector;
+
+    Index m_n;                                   // Size of the matrix
+    Eigen::ComplexEigenSolver<Matrix> m_solver;  // Eigen decomposition solver
+    ComplexVector m_eivalues;                    // Eigenvalues
+    bool m_computed;
+
+public:
+    UpperHessenbergEigen() :
+        m_n(0), m_computed(false)
+    {}
+
+    UpperHessenbergEigen(ConstGenericMatrix& mat) :
+        m_n(mat.rows()), m_computed(false)
+    {
+        compute(mat);
+    }
+
+    void compute(ConstGenericMatrix& mat)
+    {
+        m_solver.compute(mat);
+        m_eivalues = m_solver.eigenvalues();
+        m_computed = true;
+    }
+
+    const ComplexVector& eigenvalues() const
+    {
+        if (!m_computed)
+            throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
+
+        return m_eivalues;
+    }
+
+    ComplexMatrix eigenvectors() const
+    {
+        if (!m_computed)
+            throw std::logic_error("UpperHessenbergEigen: need to call compute() first");
+
+        return m_solver.eigenvectors();
     }
 };
 

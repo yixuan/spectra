@@ -20,6 +20,9 @@
 
 namespace Spectra {
 
+// Modified from Eigen/src/Eigenvaleus/RealSchur.h
+// The main change in this version is to use SIMD operations to
+// optimize some intensive computation
 template <typename Scalar = double>
 class UpperHessenbergSchur
 {
