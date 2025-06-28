@@ -234,6 +234,68 @@ the documentation of
 [SymEigsShiftSolver](https://spectralib.org/doc/classSpectra_1_1SymEigsShiftSolver.html)
 for details.
 
+## Complex-valued Matrices
+
+**Spectra** provides the [HermEigsSolver](https://spectralib.org/doc/classSpectra_1_1HermEigsSolver.html) solver for complex-valued Hermitian matrices,
+and the [GenEigsSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsSolver.html) solver for general complex-valued matrices. See the example below.
+
+```cpp
+#include <Eigen/Core>
+#include <Spectra/HermEigsSolver.h>
+#include <Spectra/GenEigsSolver.h>
+#include <iostream>
+
+using namespace Spectra;
+
+int main()
+{
+    std::srand(0);
+
+    // We are going to calculate the eigenvalues of H and G
+    Eigen::MatrixXcd G = Eigen::MatrixXcd::Random(10, 10);
+    // H is Hermitian
+    Eigen::MatrixXcd H = G + G.adjoint();
+
+    // Construct matrix operation objects using the wrapper
+    // classes DenseHermMatProd and DenseGenMatProd
+    using OpHType = DenseHermMatProd<std::complex<double>>;
+    using OpGType = DenseGenMatProd<std::complex<double>>;
+    OpHType opH(H);
+    OpGType opG(G);
+
+    // Construct solver object for H, requesting the largest three eigenvalues
+    HermEigsSolver<OpHType> eigsH(opH, 3, 6);
+
+    // Initialize and compute
+    eigsH.init();
+    int nconvH = eigsH.compute(SortRule::LargestAlge);
+
+    // Retrieve results
+    // Eigenvalues are real-valued, and eigenvectors are complex-valued
+    if (eigsH.info() == CompInfo::Successful)
+    {
+        Eigen::VectorXd evaluesH = eigsH.eigenvalues();
+        std::cout << "Eigenvalues of H found:\n" << evaluesH << std::endl;
+        Eigen::MatrixXcd evecsH = eigsH.eigenvectors();
+        std::cout << "Eigenvectors of H:\n" << evecsH << std::endl;
+    }
+
+    // Similar procedure for matrix G
+    GenEigsSolver<OpGType> eigsG(opG, 3, 6);
+    eigsG.init();
+    int nconvG = eigsG.compute(SortRule::LargestMagn);
+    if (eigsG.info() == CompInfo::Successful)
+    {
+        Eigen::VectorXcd evaluesG = eigsG.eigenvalues();
+        std::cout << "Eigenvalues of G found:\n" << evaluesG << std::endl;
+        Eigen::MatrixXcd evecsG = eigsG.eigenvectors();
+        std::cout << "Eigenvectors of G:\n" << evecsG << std::endl;
+    }
+
+    return 0;
+}
+```
+
 ## Documentation
 
 The [API reference](https://spectralib.org/doc/) page contains the documentation
