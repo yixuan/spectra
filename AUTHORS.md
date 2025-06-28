@@ -8,11 +8,12 @@ were adapted from
 
 - `Eigen/src/Eigenvaleus/SelfAdjointEigenSolver.h`
 - `Eigen/src/Eigenvaleus/EigenSolver.h`
+- `Eigen/src/Eigenvaleus/ComplexEigenSolver.h`
 - `Eigen/src/Eigenvaleus/RealSchur.h`
 
 in the [Eigen](https://eigen.tuxfamily.org/) library.
 
-The authors for these three files are Gael Guennebaud (<gael.guennebaud@inria.fr>)
+The authors for these code files are Gael Guennebaud (<gael.guennebaud@inria.fr>)
 and Jitse Niesen (<jitse@maths.leeds.ac.uk>).
 
 The file `include/contrib/LOBPCGSolver.h` was originally contributed by Anna Araslanova.

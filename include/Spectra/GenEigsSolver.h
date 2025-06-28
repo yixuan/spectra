@@ -18,8 +18,9 @@ namespace Spectra {
 ///
 /// \ingroup EigenSolver
 ///
-/// This class implements the eigen solver for general real matrices, i.e.,
-/// to solve \f$Ax=\lambda x\f$ for a possibly non-symmetric \f$A\f$ matrix.
+/// This class implements the eigen solver for general matrices, i.e.,
+/// to solve \f$Ax=\lambda x\f$ for a possibly non-symmetric (for real-valued matrices)
+/// or non-Hermitian (for complex-valued matrices) \f$A\f$ matrix.
 ///
 /// Most of the background information documented in the SymEigsSolver class
 /// also applies to the GenEigsSolver class here, except that the eigenvalues

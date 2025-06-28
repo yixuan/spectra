@@ -29,6 +29,16 @@ namespace Spectra {
 
 // Helper class to restart Arnoldi factorization
 //
+// Given the current upper Hessenberg matrix H and a number of
+// shifts mu[1], ..., mu[n]:
+//
+// 1. Compute QR decomposition H - mu[i] * I = Qi * Ri
+// 2. Update Q <- Q * Qi
+// 3. Update H <- Qi^H * H * Qi
+//
+// The updated H has the same eigenvalues as the original one,
+// but typically the new H is closer to a diagonal matrix
+//
 // Default implementation for real type
 template <typename Scalar, typename ArnoldiFac>
 class RestartArnoldi
@@ -46,6 +56,7 @@ private:
     static bool is_conj(const Complex& v1, const Complex& v2) { return v1 == Eigen::numext::conj(v2); }
 
 public:
+    // Shifts are ritz_val[k], ritz_val[k+1], ...
     static void run(const ComplexVector& ritz_val, Index k, ArnoldiFac& fac, Matrix& Q)
     {
         using std::norm;
@@ -58,20 +69,23 @@ public:
         {
             if (is_complex(ritz_val[i]) && is_conj(ritz_val[i], ritz_val[i + 1]))
             {
-                // H - mu * I = Q1 * R1
-                // H <- R1 * Q1 + mu * I = Q1' * H * Q1
-                // H - conj(mu) * I = Q2 * R2
-                // H <- R2 * Q2 + conj(mu) * I = Q2' * H * Q2
+                // For real-valued H and two conjugate shifts mu, conj(mu),
+                // H - mu * I = Q * R may be a complex-valued QR decomposition,
+                // which is costly in computation
                 //
-                // (H - mu * I) * (H - conj(mu) * I) = Q1 * Q2 * R2 * R1 = Q * R
+                // Instead, we can apply two conjugate shifts simultaneously, i.e.,
+                // (H - mu * I) * (H - conj(mu) * I) = Q * R, and then update
+                // H <- Q'HQ
+                //
+                // This is called a double shift QR decomposition
+                // (H - mu * I) * (H - conj(mu) * I) = H^2 - 2 * Re(mu) * H + |mu|^2 * I
                 const Scalar s = Scalar(2) * ritz_val[i].real();
                 const Scalar t = norm(ritz_val[i]);
-
                 decomp_ds.compute(fac.matrix_H(), s, t);
 
-                // Q -> Q * Qi
+                // Q <- Q * Qi
                 decomp_ds.apply_YQ(Q);
-                // H -> Q'HQ
+                // H <- Qi' * H * Qi
                 // Matrix Q = Matrix::Identity(ncv, ncv);
                 // decomp_ds.apply_YQ(Q);
                 // fac_H = Q.transpose() * fac_H * Q;
@@ -81,12 +95,12 @@ public:
             }
             else
             {
-                // QR decomposition of H - mu * I, mu is real
+                // QR decomposition of H - mu[i] * I, mu[i] is real
                 decomp_hb.compute(fac.matrix_H(), ritz_val[i].real());
 
-                // Q -> Q * Qi
+                // Q <- Q * Qi
                 decomp_hb.apply_YQ(Q);
-                // H -> Q'HQ = RQ + mu * I
+                // H <- Qi' * H * Qi = Ri * Qi + mu[i] * I
                 fac.compress_H(decomp_hb);
             }
         }
@@ -107,19 +121,19 @@ private:
 public:
     static void run(const ComplexVector& ritz_val, Index k, ArnoldiFac& fac, Matrix& Q)
     {
-        using std::norm;
-
         const Index ncv = ritz_val.size();
+        // This is the complex-valued QR decomposition
         UpperHessenbergQR<Scalar> decomp_hb(ncv);
 
+        // For complex-valued H, simply apply complex shifts mu[i] one by one
         for (Index i = k; i < ncv; i++)
         {
-            // QR decomposition of H - mu * I
+            // QR decomposition of H - mu[i] * I
             decomp_hb.compute(fac.matrix_H(), ritz_val[i]);
 
-            // Q -> Q * Qi
+            // Q <- Q * Qi
             decomp_hb.apply_YQ(Q);
-            // H -> Q'HQ = RQ + mu * I
+            // H <- Qi^H * H * Qi = Ri * Qi + mu[i] * I
             fac.compress_H(decomp_hb);
         }
     }
@@ -194,12 +208,16 @@ private:
         if (k >= m_ncv)
             return;
 
+        // Use Q to collect orthogonal transformations
         Matrix Q = Matrix::Identity(m_ncv, m_ncv);
+        // Apply shifts and update H and Q
         RestartArnoldi<Scalar, ArnoldiFac>::run(m_ritz_val, k, m_fac, Q);
-
+        // Apply orthogonal transformation to V, V <- V * Q
         m_fac.compress_V(Q);
+        // It can be verified that the updated V and H admit a k-step
+        // Arnoldi factorization, and we expand it to m-step
         m_fac.factorize_from(k, m_ncv, m_nmatop);
-
+        // Retrieve the new Ritz pairs
         retrieve_ritzpair(selection);
     }
 

@@ -15,12 +15,13 @@ namespace Spectra {
 /// \ingroup MatOp
 ///
 /// This class defines the matrix-vector multiplication operation on a
-/// sparse real matrix \f$A\f$, i.e., calculating \f$y=Ax\f$ for any vector
-/// \f$x\f$. It is mainly used in the GenEigsSolver and SymEigsSolver
-/// eigen solvers.
+/// sparse real- or complex-valued matrix \f$A\f$, i.e., calculating
+/// \f$y=Ax\f$ for any vector \f$x\f$. It is mainly used in the
+/// GenEigsSolver eigen solver.
 ///
 /// \tparam Scalar_      The element type of the matrix, for example,
-///                      `float`, `double`, and `long double`.
+///                      `float`, `double`, `long double`, and their
+///                      complex types (e.g., `std::complex<double>`).
 /// \tparam Flags        Either `Eigen::ColMajor` or `Eigen::RowMajor`, indicating
 ///                      the storage format of the input matrix.
 /// \tparam StorageIndex The type of the indices for the sparse matrix.
