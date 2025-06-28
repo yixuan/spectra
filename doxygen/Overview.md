@@ -14,13 +14,13 @@ The development page of **Spectra** is at
 
 ## Relation to ARPACK
 
-[ARPACK](http://www.caam.rice.edu/software/ARPACK/) is a software written in
+[ARPACK](https://www.arpack.org/) is a software package written in
 FORTRAN for solving large scale eigenvalue problems. The development of
-**Spectra** is much inspired by ARPACK, and as the whole name indicates,
+**Spectra** is much inspired by ARPACK, and as the full name indicates,
 **Spectra** is a redesign of the ARPACK library using the C++ language.
 
 In fact, **Spectra** is based on the algorithm described in the
-[ARPACK Users' Guide](http://www.caam.rice.edu/software/ARPACK/UG/ug.html),
+[ARPACK Users' Guide](http://li.mit.edu/Archive/Activities/Archive/CourseWork/Ju_Li/MITCourses/18.335/Doc/ARPACK/Lehoucq97.pdf),
 the implicitly restarted Arnoldi/Lanczos method. However,
 it does not use the ARPACK code, and it is **NOT** a clone of ARPACK for C++.
 In short, **Spectra** implements the major algorithms in ARPACK,
@@ -30,12 +30,11 @@ depend on ARPACK.
 ## Common Usage
 
 **Spectra** is designed to calculate a specified number (\f$k\f$) of eigenvalues
-of a large square matrix (\f$A\f$). Usually \f$k\f$ is much smaller than the size of matrix
+of a large square matrix (\f$A\f$). Usually \f$k\f$ is much smaller than the size of the matrix
 (\f$n\f$), so that only a few eigenvalues and eigenvectors are computed, which
 in general is more efficient than calculating the whole spectral decomposition.
 Users can choose eigenvalue selection rules to pick the eigenvalues of interest,
-such as the largest \f$k\f$ eigenvalues, or eigenvalues with largest real parts,
-etc.
+such as the largest \f$k\f$ eigenvalues, or eigenvalues with largest real parts, etc.
 
 To use the eigen solvers in this library, the user does not need to directly
 provide the whole matrix, but instead, the algorithm only requires certain operations
@@ -50,9 +49,11 @@ There are two major steps to use the **Spectra** library:
 matrix-vector multiplication \f$y=Ax\f$ or the shift-solve operation
 \f$y=(A-\sigma I)^{-1}x\f$. **Spectra** has defined a number of
 helper classes to quickly create such operations from a matrix object.
-See the documentation of Spectra::DenseGenMatProd, Spectra::DenseSymShiftSolve, etc.
+See the documentation of \link Spectra::DenseGenMatProd DenseGenMatProd\endlink,
+\link Spectra::DenseSymShiftSolve DenseSymShiftSolve\endlink, etc.
 2. Create an object of one of the eigen solver classes, for example
-Spectra::SymEigsSolver for symmetric matrices, and Spectra::GenEigsSolver
+\link Spectra::SymEigsSolver SymEigsSolver\endlink for symmetric matrices, and
+\link Spectra::GenEigsSolver GenEigsSolver\endlink
 for general matrices. Member functions of this object can then be called to
 conduct the computation and retrieve the eigenvalues and/or eigenvectors.
 
@@ -60,7 +61,7 @@ Below is a list of the available eigen solvers in **Spectra**:
 - \link Spectra::SymEigsSolver SymEigsSolver\endlink:
   For real symmetric matrices
 - \link Spectra::GenEigsSolver GenEigsSolver\endlink:
-  For general real matrices
+  For general real- and complex-valued matrices
 - \link Spectra::SymEigsShiftSolver SymEigsShiftSolver\endlink:
   For real symmetric matrices using the shift-and-invert mode
 - \link Spectra::GenEigsRealShiftSolver GenEigsRealShiftSolver\endlink:
@@ -116,7 +117,8 @@ int main()
 }
 ~~~~~~~~~~
 
-Sparse matrix is supported via classes such as Spectra::SparseGenMatProd and Spectra::SparseSymMatProd.
+Sparse matrix is supported via classes such as \link Spectra::SparseGenMatProd SparseGenMatProd\endlink
+and \link Spectra::SparseSymMatProd SparseSymMatProd\endlink.
 
 ~~~~~~~~~~{.cpp}
 #include <Eigen/Core>
@@ -216,7 +218,71 @@ of eigen solvers.
 In the shift-and-invert mode, selection rules are applied to \f$1/(\lambda-\sigma)\f$
 rather than \f$\lambda\f$, where \f$\lambda\f$ are eigenvalues of \f$A\f$.
 To use this mode, users need to define the shift-solve matrix operation. See
-the documentation of Spectra::SymEigsShiftSolver for details.
+the documentation of \link Spectra::SymEigsShiftSolver SymEigsShiftSolver\endlink for details.
+
+## Complex-valued Matrices
+
+**Spectra** provides the \link Spectra::HermEigsSolver HermEigsSolver\endlink
+solver for complex-valued Hermitian matrices,
+and the \link Spectra::GenEigsSolver GenEigsSolver\endlink
+solver for general complex-valued matrices. See the example below.
+
+~~~~~~~~~~{.cpp}
+#include <Eigen/Core>
+#include <Spectra/HermEigsSolver.h>
+#include <Spectra/GenEigsSolver.h>
+#include <iostream>
+
+using namespace Spectra;
+
+int main()
+{
+    std::srand(0);
+
+    // We are going to calculate the eigenvalues of H and G
+    Eigen::MatrixXcd G = Eigen::MatrixXcd::Random(10, 10);
+    // H is Hermitian
+    Eigen::MatrixXcd H = G + G.adjoint();
+
+    // Construct matrix operation objects using the wrapper
+    // classes DenseHermMatProd and DenseGenMatProd
+    using OpHType = DenseHermMatProd<std::complex<double>>;
+    using OpGType = DenseGenMatProd<std::complex<double>>;
+    OpHType opH(H);
+    OpGType opG(G);
+
+    // Construct solver object for H, requesting the largest three eigenvalues
+    HermEigsSolver<OpHType> eigsH(opH, 3, 6);
+
+    // Initialize and compute
+    eigsH.init();
+    int nconvH = eigsH.compute(SortRule::LargestAlge);
+
+    // Retrieve results
+    // Eigenvalues are real-valued, and eigenvectors are complex-valued
+    if (eigsH.info() == CompInfo::Successful)
+    {
+        Eigen::VectorXd evaluesH = eigsH.eigenvalues();
+        std::cout << "Eigenvalues of H found:\n" << evaluesH << std::endl;
+        Eigen::MatrixXcd evecsH = eigsH.eigenvectors();
+        std::cout << "Eigenvectors of H:\n" << evecsH << std::endl;
+    }
+
+    // Similar procedure for matrix G
+    GenEigsSolver<OpGType> eigsG(opG, 3, 6);
+    eigsG.init();
+    int nconvG = eigsG.compute(SortRule::LargestMagn);
+    if (eigsG.info() == CompInfo::Successful)
+    {
+        Eigen::VectorXcd evaluesG = eigsG.eigenvalues();
+        std::cout << "Eigenvalues of G found:\n" << evaluesG << std::endl;
+        Eigen::MatrixXcd evecsG = eigsG.eigenvectors();
+        std::cout << "Eigenvectors of G:\n" << evecsG << std::endl;
+    }
+
+    return 0;
+}
+~~~~~~~~~~
 
 ## License
 
