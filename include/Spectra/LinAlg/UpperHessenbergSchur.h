@@ -14,7 +14,9 @@
 #include <Eigen/Core>
 #include <Eigen/Jacobi>
 #include <Eigen/Householder>
-#include <stdexcept>
+#include <cmath>      // std::sqrt, std::abs
+#include <algorithm>  // std::min
+#include <stdexcept>  // std::invalid_argument, std::logic_error, std::runtime_error
 
 #include "../Util/TypeTraits.h"
 

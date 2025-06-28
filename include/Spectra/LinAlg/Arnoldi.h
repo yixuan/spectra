@@ -8,8 +8,9 @@
 #define SPECTRA_ARNOLDI_H
 
 #include <Eigen/Core>
-#include <cmath>      // std::sqrt
+#include <cmath>      // std::sqrt, std::abs
 #include <utility>    // std::move
+#include <string>     // std::string
 #include <stdexcept>  // std::invalid_argument
 
 #include "../MatOp/internal/ArnoldiOp.h"
@@ -32,7 +33,9 @@ class Arnoldi
 {
 private:
     using Scalar = typename ArnoldiOpType::Scalar;
-    // The real part type of the matrix element
+    // The type of the real part, e.g.,
+    //     Scalar = double               => RealScalar = double
+    //     Scalar = std::complex<double> => RealScalar = double
     using RealScalar = typename Eigen::NumTraits<Scalar>::Real;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
@@ -281,13 +284,14 @@ public:
     }
 
     // Apply H -> Q'HQ, where Q is from a double shift QR decomposition
+    // Only used when Scalar is a real type
     void compress_H(const DoubleShiftQR<Scalar>& decomp)
     {
         decomp.matrix_QtHQ(m_fac_H);
         m_k -= 2;
     }
 
-    // Apply H -> Q'HQ, where Q is from an upper Hessenberg QR decomposition
+    // Apply H -> Q^H H Q, where Q is from an upper Hessenberg QR decomposition
     void compress_H(const UpperHessenbergQR<Scalar>& decomp)
     {
         decomp.matrix_QtHQ(m_fac_H);

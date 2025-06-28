@@ -8,10 +8,9 @@
 #define SPECTRA_DOUBLE_SHIFT_QR_H
 
 #include <Eigen/Core>
-#include <vector>     // std::vector
-#include <algorithm>  // std::min, std::fill, std::copy
-#include <utility>    // std::swap
 #include <cmath>      // std::abs, std::sqrt, std::pow
+#include <vector>     // std::vector
+#include <algorithm>  // std::min, std::fill, std::copy, std::swap
 #include <stdexcept>  // std::invalid_argument, std::logic_error
 
 #include "../Util/TypeTraits.h"

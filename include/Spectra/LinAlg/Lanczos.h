@@ -8,8 +8,9 @@
 #define SPECTRA_LANCZOS_H
 
 #include <Eigen/Core>
-#include <cmath>      // std::sqrt
+#include <cmath>      // std::sqrt, std::abs
 #include <utility>    // std::forward
+#include <string>     // std::string
 #include <stdexcept>  // std::invalid_argument
 
 #include "Arnoldi.h"

@@ -8,8 +8,12 @@
 #define SPECTRA_BK_LDLT_H
 
 #include <Eigen/Core>
-#include <vector>
-#include <stdexcept>
+#include <cmath>        // std::abs, std::sqrt
+#include <complex>      // std::complex, std::conj
+#include <vector>       // std::vector
+#include <utility>      // std::pair, std::make_pair
+#include <algorithm>    // std::copy, std::swap, std::swap_ranges
+#include <stdexcept>    // std::invalid_argument, std::logic_error
 #include <type_traits>  // std::is_same
 
 #include "../Util/CompInfo.h"
@@ -65,7 +69,9 @@ template <typename Scalar = double>
 class BKLDLT
 {
 private:
-    // The real part type of the matrix element
+    // The type of the real part, e.g.,
+    //     Scalar = double               => RealScalar = double
+    //     Scalar = std::complex<double> => RealScalar = double
     using RealScalar = typename Eigen::NumTraits<Scalar>::Real;
     using Index = Eigen::Index;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;

@@ -8,9 +8,10 @@
 #define SPECTRA_UPPER_HESSENBERG_QR_H
 
 #include <Eigen/Core>
-#include <cmath>      // std::abs, std::sqrt, std::pow
+#include <cmath>      // std::abs
+#include <complex>    // std::complex
 #include <algorithm>  // std::fill
-#include <stdexcept>  // std::logic_error
+#include <stdexcept>  // std::invalid_argument, std::logic_error
 
 #include "../Util/TypeTraits.h"
 #include "Givens.h"

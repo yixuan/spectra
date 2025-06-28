@@ -1,4 +1,5 @@
 // The code was adapted from Eigen/src/Eigenvaleus/EigenSolver.h
+// and Eigen/src/Eigenvaleus/ComplexEigenSolver.h
 //
 // Copyright (C) 2008 Gael Guennebaud <gael.guennebaud@inria.fr>
 // Copyright (C) 2010,2012 Jitse Niesen <jitse@maths.leeds.ac.uk>
@@ -13,8 +14,10 @@
 
 #include <Eigen/Core>
 #include <Eigen/Eigenvalues>
-#include <stdexcept>
-#include <complex>
+#include <cmath>      // std::sqrt, std::abs
+#include <complex>    // std::complex
+#include <algorithm>  // std::max, std::swap
+#include <stdexcept>  // std::invalid_argument, std::logic_error, std::runtime_error
 
 #include "../Util/TypeTraits.h"
 #include "UpperHessenbergSchur.h"

@@ -8,7 +8,8 @@
 #define SPECTRA_GIVENS_H
 
 #include <Eigen/Core>
-#include <complex>
+#include <cmath>    // std::sqrt, std::pow, std::hypot
+#include <complex>  // std::complex
 
 #include "../Util/TypeTraits.h"
 
@@ -216,8 +217,9 @@ public:
     // c is real, and other variables are complex
     static void compute_rotation(const Scalar& x, const Scalar& y, Scalar& r, RealScalar& c, Scalar& s)
     {
-        const Complex zero(RealScalar(0), RealScalar(0));
+        using std::sqrt;
 
+        const Complex zero(RealScalar(0), RealScalar(0));
         if (y == zero)
         {
             c = RealScalar(1);
@@ -285,8 +287,8 @@ public:
             // s = -z * (y) / rho
 
             // const Complex xs = x / ynorm1, ys = y / ynorm1;
-            // const RealScalar rho = ynorm1 * std::sqrt(Eigen::numext::abs2(xs) + Eigen::numext::abs2(ys));
-            const RealScalar rho = std::sqrt(Eigen::numext::abs2(x) + Eigen::numext::abs2(y));
+            // const RealScalar rho = ynorm1 * sqrt(Eigen::numext::abs2(xs) + Eigen::numext::abs2(ys));
+            const RealScalar rho = sqrt(Eigen::numext::abs2(x) + Eigen::numext::abs2(y));
             // Scale x, equivalent to Givens rotation on (x.real, -x.imag)
             const RealScalar xr = Eigen::numext::real(x), xi = Eigen::numext::imag(x);
             RealScalar xnorm, zr, zi;
