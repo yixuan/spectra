@@ -16,6 +16,7 @@ OUTPUT = Givens.out QR.out Eigen.out Schur.out BKLDLT.out Arnoldi.out \
 	SymEigs.out SymEigsShift.out \
 	HermEigs.out \
 	GenEigs.out GenEigsRealShift.out GenEigsComplexShift.out \
+	ComplexEigs.out \
 	SymGEigsCholesky.out SymGEigsRegInv.out SymGEigsShift.out \
 	SVD.out \
 	JDSymEigsBase.out JDSymEigsDPRConstructor.out DavidsonSymEigs.out \
@@ -45,6 +46,7 @@ test:
 	-./GenEigs.out
 	-./GenEigsRealShift.out
 	-./GenEigsComplexShift.out
+	-./ComplexEigs.out
 	-./SymGEigsCholesky.out
 	-./SymGEigsRegInv.out
 	-./SymGEigsShift.out

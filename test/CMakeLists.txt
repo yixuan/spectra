@@ -33,6 +33,9 @@ list(APPEND test_target_sources
         GenEigsRealShift.cpp
         GenEigsComplexShift.cpp
 
+        # Complex eigen solver
+        ComplexEigs.cpp
+
         # Symmetric generalized eigen solver
         SymGEigsCholesky.cpp
         SymGEigsRegInv.cpp
