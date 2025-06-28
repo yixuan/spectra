@@ -2,14 +2,18 @@
 
 ### Added
 
+- Added the support for complex-valued matrices in the `GenEigsSolver` eigen solver
 - Added a separate `Givens` class for computing Givens rotations in a numerically stable way
-- Added the implementation of `UpperHessenbergQR` for complex-valued matrices
+- Added the implementation of `UpperHessenbergQR` and `UpperHessenbergEigen` for complex-valued matrices
+- Added testing code for complex eigen solvers based on the `GenEigsSolver` class
 - Added testing code for the `Givens` class
-- Added `UpperHessenbergQR` tests for complex-valued matrices
+- Added `UpperHessenbergQR` and `UpperHessenbergEigen` tests for complex-valued matrices
 
 ### Changed
 
 - `UpperHessenbergQR` now uses the `Givens` class to compute Givens rotations
+- Removed the redundant `Scalar` template paramter in internal classes such as
+  `ArnoldiOp`, `Arnoldi`, and `Lanczos`
 - The CMake script now uses [CPM.cmake](https://github.com/cpm-cmake/CPM.cmake) to manage
   the dependence on Eigen. By default, it will first search for Eigen in the system, and
   if it is not found, the script will automatically download the Eigen library.
@@ -19,6 +23,7 @@
 - Updated Doxygen configuration to v1.14.0
 - Updated the included [Catch2](https://github.com/catchorg/Catch2) to v2.13.10
 - Updated author information
+- Various documentation updates and improvements
 
 
 
