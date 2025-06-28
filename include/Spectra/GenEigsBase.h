@@ -27,6 +27,104 @@
 
 namespace Spectra {
 
+// Helper class to restart Arnoldi factorization
+//
+// Default implementation for real type
+template <typename Scalar, typename ArnoldiFac>
+class RestartArnoldi
+{
+private:
+    using Index = Eigen::Index;
+    using Complex = std::complex<Scalar>;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using ComplexVector = Eigen::Matrix<Complex, Eigen::Dynamic, 1>;
+
+    // Real Ritz values calculated from UpperHessenbergEigen have exact zero imaginary part
+    // Complex Ritz values have exact conjugate pairs
+    // So we use exact tests here
+    static bool is_complex(const Complex& v) { return v.imag() != Scalar(0); }
+    static bool is_conj(const Complex& v1, const Complex& v2) { return v1 == Eigen::numext::conj(v2); }
+
+public:
+    static void run(const ComplexVector& ritz_val, Index k, ArnoldiFac& fac, Matrix& Q)
+    {
+        using std::norm;
+
+        const Index ncv = ritz_val.size();
+        DoubleShiftQR<Scalar> decomp_ds(ncv);
+        UpperHessenbergQR<Scalar> decomp_hb(ncv);
+
+        for (Index i = k; i < ncv; i++)
+        {
+            if (is_complex(ritz_val[i]) && is_conj(ritz_val[i], ritz_val[i + 1]))
+            {
+                // H - mu * I = Q1 * R1
+                // H <- R1 * Q1 + mu * I = Q1' * H * Q1
+                // H - conj(mu) * I = Q2 * R2
+                // H <- R2 * Q2 + conj(mu) * I = Q2' * H * Q2
+                //
+                // (H - mu * I) * (H - conj(mu) * I) = Q1 * Q2 * R2 * R1 = Q * R
+                const Scalar s = Scalar(2) * ritz_val[i].real();
+                const Scalar t = norm(ritz_val[i]);
+
+                decomp_ds.compute(fac.matrix_H(), s, t);
+
+                // Q -> Q * Qi
+                decomp_ds.apply_YQ(Q);
+                // H -> Q'HQ
+                // Matrix Q = Matrix::Identity(ncv, ncv);
+                // decomp_ds.apply_YQ(Q);
+                // fac_H = Q.transpose() * fac_H * Q;
+                fac.compress_H(decomp_ds);
+
+                i++;
+            }
+            else
+            {
+                // QR decomposition of H - mu * I, mu is real
+                decomp_hb.compute(fac.matrix_H(), ritz_val[i].real());
+
+                // Q -> Q * Qi
+                decomp_hb.apply_YQ(Q);
+                // H -> Q'HQ = RQ + mu * I
+                fac.compress_H(decomp_hb);
+            }
+        }
+    }
+};
+
+// Partial specialization for complex-valued matrices
+template <typename RealScalar, typename ArnoldiFac>
+class RestartArnoldi<std::complex<RealScalar>, ArnoldiFac>
+{
+private:
+    using Index = Eigen::Index;
+    using Scalar = std::complex<RealScalar>;
+    using Complex = Scalar;
+    using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using ComplexVector = Eigen::Matrix<Complex, Eigen::Dynamic, 1>;
+
+public:
+    static void run(const ComplexVector& ritz_val, Index k, ArnoldiFac& fac, Matrix& Q)
+    {
+        using std::norm;
+
+        const Index ncv = ritz_val.size();
+        UpperHessenbergQR<Scalar> decomp_hb(ncv);
+
+        for (Index i = k; i < ncv; i++)
+        {
+            // QR decomposition of H - mu * I
+            decomp_hb.compute(fac.matrix_H(), ritz_val[i]);
+
+            // Q -> Q * Qi
+            decomp_hb.apply_YQ(Q);
+            // H -> Q'HQ = RQ + mu * I
+            fac.compress_H(decomp_hb);
+        }
+    }
+};
+
 ///
 /// \ingroup EigenSolver
 ///
