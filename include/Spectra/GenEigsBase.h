@@ -194,46 +194,8 @@ private:
         if (k >= m_ncv)
             return;
 
-        DoubleShiftQR<Scalar> decomp_ds(m_ncv);
-        UpperHessenbergQR<Scalar> decomp_hb(m_ncv);
         Matrix Q = Matrix::Identity(m_ncv, m_ncv);
-
-        for (Index i = k; i < m_ncv; i++)
-        {
-            if (is_complex(m_ritz_val[i]) && is_conj(m_ritz_val[i], m_ritz_val[i + 1]))
-            {
-                // H - mu * I = Q1 * R1
-                // H <- R1 * Q1 + mu * I = Q1' * H * Q1
-                // H - conj(mu) * I = Q2 * R2
-                // H <- R2 * Q2 + conj(mu) * I = Q2' * H * Q2
-                //
-                // (H - mu * I) * (H - conj(mu) * I) = Q1 * Q2 * R2 * R1 = Q * R
-                const Scalar s = Scalar(2) * m_ritz_val[i].real();
-                const Scalar t = norm(m_ritz_val[i]);
-
-                decomp_ds.compute(m_fac.matrix_H(), s, t);
-
-                // Q -> Q * Qi
-                decomp_ds.apply_YQ(Q);
-                // H -> Q'HQ
-                // Matrix Q = Matrix::Identity(m_ncv, m_ncv);
-                // decomp_ds.apply_YQ(Q);
-                // m_fac_H = Q.transpose() * m_fac_H * Q;
-                m_fac.compress_H(decomp_ds);
-
-                i++;
-            }
-            else
-            {
-                // QR decomposition of H - mu * I, mu is real
-                decomp_hb.compute(m_fac.matrix_H(), m_ritz_val[i].real());
-
-                // Q -> Q * Qi
-                decomp_hb.apply_YQ(Q);
-                // H -> Q'HQ = RQ + mu * I
-                m_fac.compress_H(decomp_hb);
-            }
-        }
+        RestartArnoldi<Scalar, ArnoldiFac>::run(m_ritz_val, k, m_fac, Q);
 
         m_fac.compress_V(Q);
         m_fac.factorize_from(k, m_ncv, m_nmatop);
