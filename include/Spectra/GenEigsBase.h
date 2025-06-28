@@ -11,7 +11,7 @@
 #include <vector>     // std::vector
 #include <cmath>      // std::abs, std::pow, std::sqrt
 #include <algorithm>  // std::min, std::copy
-#include <complex>    // std::complex, std::conj, std::norm, std::abs
+#include <complex>    // std::complex, std::norm, std::abs
 #include <stdexcept>  // std::invalid_argument
 
 #include "Util/Version.h"
@@ -136,19 +136,25 @@ template <typename OpType, typename BOpType>
 class GenEigsBase
 {
 private:
+    // Scalar is the type of the matrix element
+    // Can be real or complex
     using Scalar = typename OpType::Scalar;
+    // The real part type of the matrix element, e.g.,
+    //     Scalar = double               => RealScalar = double
+    //     Scalar = std::complex<double> => RealScalar = double
+    using RealScalar = typename Eigen::NumTraits<Scalar>::Real;
+    // The eigenvalues are known to be complex numbers
+    using Complex = std::complex<RealScalar>;
     using Index = Eigen::Index;
     using Matrix = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    using Array = Eigen::Array<Scalar, Eigen::Dynamic, 1>;
+    using ComplexMatrix = Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic>;
+    using ComplexVector = Eigen::Matrix<Complex, Eigen::Dynamic, 1>;
+    using RealArray = Eigen::Array<RealScalar, Eigen::Dynamic, 1>;
     using BoolArray = Eigen::Array<bool, Eigen::Dynamic, 1>;
     using MapMat = Eigen::Map<Matrix>;
     using MapVec = Eigen::Map<Vector>;
     using MapConstVec = Eigen::Map<const Vector>;
-
-    using Complex = std::complex<Scalar>;
-    using ComplexMatrix = Eigen::Matrix<Complex, Eigen::Dynamic, Eigen::Dynamic>;
-    using ComplexVector = Eigen::Matrix<Complex, Eigen::Dynamic, 1>;
 
     using ArnoldiOpType = ArnoldiOp<OpType, BOpType>;
     using ArnoldiFac = Arnoldi<ArnoldiOpType>;
@@ -236,19 +242,19 @@ private:
     }
 
     // Calculates the number of converged Ritz values
-    Index num_converged(const Scalar& tol)
+    Index num_converged(const RealScalar& tol)
     {
         using std::pow;
 
         // The machine precision, ~= 1e-16 for the "double" type
-        const Scalar eps = TypeTraits<Scalar>::epsilon();
+        const RealScalar eps = TypeTraits<RealScalar>::epsilon();
         // std::pow() is not constexpr, so we do not declare eps23 to be constexpr
         // But most compilers should be able to compute eps23 at compile time
-        const Scalar eps23 = pow(eps, Scalar(2) / 3);
+        const RealScalar eps23 = pow(eps, RealScalar(2) / 3);
 
         // thresh = tol * max(eps23, abs(theta)), theta for Ritz value
-        Array thresh = tol * m_ritz_val.head(m_nev).array().abs().max(eps23);
-        Array resid = m_ritz_est.head(m_nev).array().abs() * m_fac.f_norm();
+        RealArray thresh = tol * m_ritz_val.head(m_nev).array().abs().max(eps23);
+        RealArray resid = m_ritz_est.head(m_nev).array().abs() * m_fac.f_norm();
         // Converged "wanted" Ritz values
         m_ritz_conv = (resid < thresh);
 
@@ -262,7 +268,7 @@ private:
 
         // A very small value, but 1.0 / near_0 does not overflow
         // ~= 1e-307 for the "double" type
-        const Scalar near_0 = TypeTraits<Scalar>::min() * Scalar(10);
+        const RealScalar near_0 = TypeTraits<RealScalar>::min() * RealScalar(10);
 
         Index nev_new = m_nev;
         for (Index i = m_nev; i < m_ncv; i++)
@@ -513,7 +519,7 @@ public:
     /// \return Number of converged eigenvalues.
     ///
     Index compute(SortRule selection = SortRule::LargestMagn, Index maxit = 1000,
-                  Scalar tol = 1e-10, SortRule sorting = SortRule::LargestMagn)
+                  RealScalar tol = 1e-10, SortRule sorting = SortRule::LargestMagn)
     {
         // The m-step Arnoldi factorization
         m_fac.factorize_from(1, m_ncv, m_nmatop);
@@ -532,7 +538,7 @@ public:
         // Sorting results
         sort_ritzpair(sorting);
 
-        m_niter += i + 1;
+        m_niter += (i + 1);
         m_info = (nconv >= m_nev) ? CompInfo::Successful : CompInfo::NotConverging;
 
         return (std::min)(m_nev, nconv);
