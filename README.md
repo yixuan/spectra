@@ -20,13 +20,13 @@ C++ projects that require calculating eigenvalues of large matrices.
 
 ## Relation to ARPACK
 
-[ARPACK](http://www.caam.rice.edu/software/ARPACK/) is a software package written in
+[ARPACK](https://www.arpack.org/) is a software package written in
 FORTRAN for solving large scale eigenvalue problems. The development of
 **Spectra** is much inspired by ARPACK, and as the full name indicates,
 **Spectra** is a redesign of the ARPACK library using the C++ language.
 
 In fact, **Spectra** is based on the algorithm described in the
-[ARPACK Users' Guide](http://www.caam.rice.edu/software/ARPACK/UG/ug.html),
+[ARPACK Users' Guide](http://li.mit.edu/Archive/Activities/Archive/CourseWork/Ju_Li/MITCourses/18.335/Doc/ARPACK/Lehoucq97.pdf),
 the implicitly restarted Arnoldi/Lanczos method. However,
 it does not use the ARPACK code, and it is **NOT** a clone of ARPACK for C++.
 In short, **Spectra** implements the major algorithms in ARPACK,
@@ -71,7 +71,7 @@ Below is a list of the available eigen solvers in **Spectra**:
 - [SymEigsSolver](https://spectralib.org/doc/classSpectra_1_1SymEigsSolver.html):
 For real symmetric matrices
 - [GenEigsSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsSolver.html):
-For general real matrices
+For general real- and complex-valued matrices
 - [SymEigsShiftSolver](https://spectralib.org/doc/classSpectra_1_1SymEigsShiftSolver.html):
 For real symmetric matrices using the shift-and-invert mode
 - [GenEigsRealShiftSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
