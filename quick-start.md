@@ -8,16 +8,15 @@ title: Quick Start
 ### Common Usage
 
 Spectra is designed to calculate a specified number (`k`) of eigenvalues
-of a large square matrix (`A`). Usually `k` is much smaller than the size of matrix
+of a large square matrix (`A`). Usually `k` is much smaller than the size of the matrix
 (`n`), so that only a few eigenvalues and eigenvectors are computed, which
 in general is more efficient than calculating the whole spectral decomposition.
-Users can choose eigenvalue selection rules to pick up the eigenvalues of interest,
-such as the largest `k` eigenvalues, or eigenvalues with largest real parts,
-etc.
+Users can choose eigenvalue selection rules to pick the eigenvalues of interest,
+such as the largest `k` eigenvalues, or eigenvalues with largest real parts, etc.
 
 To use the eigen solvers in this library, the user does not need to directly
 provide the whole matrix, but instead, the algorithm only requires certain operations
-defined on `A`, and in the basic setting, it is simply the matrix-vector
+defined on `A`. In the basic setting, it is simply the matrix-vector
 multiplication. Therefore, if the matrix-vector product `A * x` can be computed
 efficiently, which is the case when `A` is sparse, Spectra
 will be very powerful for large scale eigenvalue problems.
@@ -28,7 +27,7 @@ There are two major steps to use the Spectra library:
 
 1. Define a class that implements a certain matrix operation, for example the
 matrix-vector multiplication `y = A * x` or the shift-solve operation
-`y = inv(A - σ * I) * x`. Spectra has defined a number of
+`y = inv(A - σ * I) * x`. **Spectra** has defined a number of
 helper classes to quickly create such operations from a matrix object.
 See the documentation of
 [DenseGenMatProd](https://spectralib.org/doc/classSpectra_1_1DenseGenMatProd.html),
@@ -38,7 +37,7 @@ See the documentation of
 for symmetric matrices, and
 [GenEigsSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsSolver.html)
 for general matrices. Member functions
-of this object can then be called to conduct the computation and to retrieve the
+of this object can then be called to conduct the computation and retrieve the
 eigenvalues and/or eigenvectors.
 
 ### Solvers
@@ -48,7 +47,7 @@ Below is a list of the available eigen solvers in Spectra:
 - [SymEigsSolver](https://spectralib.org/doc/classSpectra_1_1SymEigsSolver.html):
 For real symmetric matrices
 - [GenEigsSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsSolver.html):
-For general real matrices
+For general real- and complex-valued matrices
 - [SymEigsShiftSolver](https://spectralib.org/doc/classSpectra_1_1SymEigsShiftSolver.html):
 For real symmetric matrices using the shift-and-invert mode
 - [GenEigsRealShiftSolver](https://spectralib.org/doc/classSpectra_1_1GenEigsRealShiftSolver.html):
@@ -63,6 +62,8 @@ For generalized eigen solver with real symmetric matrices
 For generalized eigen solver with real symmetric matrices, using the shift-and-invert mode
 - [DavidsonSymEigsSolver](https://spectralib.org/doc/classSpectra_1_1DavidsonSymEigsSolver.html):
 Jacobi-Davidson eigen solver for real symmetric matrices, with the DPR correction method
+- [HermEigsSolver](https://spectralib.org/doc/classSpectra_1_1HermEigsSolver.html):
+For complex Hermitian matrices
 
 ### Examples
 
