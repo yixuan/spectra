@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['matrix_20operations_0',['Matrix Operations',['../group__MatOp.html',1,'']]],
-  ['mode_1',['Shift-and-invert Mode',['../index.html#autotoc_md3',1,'']]]
+  ['matrices_0',['Complex-valued Matrices',['../index.html#autotoc_md4',1,'']]],
+  ['matrix_20operations_1',['Matrix Operations',['../group__MatOp.html',1,'']]],
+  ['mode_2',['Shift-and-invert Mode',['../index.html#autotoc_md3',1,'']]]
 ];
