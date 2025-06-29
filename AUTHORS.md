@@ -16,7 +16,8 @@ in the [Eigen](https://eigen.tuxfamily.org/) library.
 The authors for these code files are Gael Guennebaud (<gael.guennebaud@inria.fr>)
 and Jitse Niesen (<jitse@maths.leeds.ac.uk>).
 
-The file `include/contrib/LOBPCGSolver.h` was originally contributed by Anna Araslanova.
+The file `include/contrib/LOBPCGSolver.h` was originally contributed by
+Anna Araslanova (<araslanova.anna.a@gmail.com>).
 
 The Jacobi-Davidson solvers were written by Felipe Zapata, Nicolas Renaud, Victor Azizi, Pablo Lopez-Tarifa
 and Jens Wehner from the Netherlands eScience Center (<J.Wehner@esciencecenter.nl>).

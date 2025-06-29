@@ -1,4 +1,5 @@
 name: Codecov
+
 on:
   push:
     branches: [ master ]
