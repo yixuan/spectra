@@ -53,6 +53,7 @@ list(APPEND test_target_sources
         Example1.cpp
         Example2.cpp
         Example3.cpp
+        Example4.cpp
         )
 
 foreach(TEST_SOURCE ${test_target_sources})
