@@ -155,7 +155,18 @@ public:
 
         // Normalize
         const RealScalar vnorm = m_op.norm(v);
-        v /= vnorm;
+        // If vnorm ~= 0, we cannot do v <- v / vnorm
+        // In this case, v0 is in the null space of A, which means that
+        // v0 is a (possibly unnormalized) eigenvector of A associated with a zero eigenvalue
+        // Then we can use v0 as the initial vector instead
+        if (vnorm < m_near_0)
+        {
+            v.noalias() = v0 / v0norm;
+        }
+        else
+        {
+            v /= vnorm;
+        }
 
         // Compute H and f
         Vector w(m_n);
