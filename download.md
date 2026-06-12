@@ -18,9 +18,9 @@ of Eigen as dependency.
 </button>
 </a>
 
-<a href="https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz">
+<a href="https://gitlab.com/libeigen/eigen/-/archive/5.0.1/eigen-5.0.1.tar.gz">
 <button type="button" class="btn btn-success btn-sm">
-<span class="glyphicon glyphicon-download"></span> Download Eigen 3.4.0
+<span class="glyphicon glyphicon-download"></span> Download Eigen 5.0.1
 </button>
 </a>
 
