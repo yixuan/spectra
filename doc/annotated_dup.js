@@ -17,7 +17,7 @@ var annotated_dup =
       [ "HermEigsSolver", "classSpectra_1_1HermEigsSolver.html", "classSpectra_1_1HermEigsSolver" ],
       [ "JDSymEigsBase", "classSpectra_1_1JDSymEigsBase.html", "classSpectra_1_1JDSymEigsBase" ],
       [ "RestartArnoldi", "classSpectra_1_1RestartArnoldi.html", null ],
-      [ "RestartArnoldi< std::complex< RealScalar >, ArnoldiFac >", "classSpectra_1_1RestartArnoldi_3_01std_1_1complex_3_01RealScalar_01_4_00_01ArnoldiFac_01_4.html", null ],
+      [ "RestartArnoldi&lt; std::complex&lt; RealScalar &gt;, ArnoldiFac &gt;", "classSpectra_1_1RestartArnoldi_3_01std_1_1complex_3_01RealScalar_01_4_00_01ArnoldiFac_01_4.html", null ],
       [ "SparseCholesky", "classSpectra_1_1SparseCholesky.html", "classSpectra_1_1SparseCholesky" ],
       [ "SparseGenComplexShiftSolve", "classSpectra_1_1SparseGenComplexShiftSolve.html", "classSpectra_1_1SparseGenComplexShiftSolve" ],
       [ "SparseGenMatProd", "classSpectra_1_1SparseGenMatProd.html", "classSpectra_1_1SparseGenMatProd" ],
@@ -29,12 +29,12 @@ var annotated_dup =
       [ "SymEigsShiftSolver", "classSpectra_1_1SymEigsShiftSolver.html", "classSpectra_1_1SymEigsShiftSolver" ],
       [ "SymEigsSolver", "classSpectra_1_1SymEigsSolver.html", "classSpectra_1_1SymEigsSolver" ],
       [ "SymGEigsShiftSolver", "classSpectra_1_1SymGEigsShiftSolver.html", null ],
-      [ "SymGEigsShiftSolver< OpType, BOpType, GEigsMode::Buckling >", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1Buckling_01_4.html", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1Buckling_01_4" ],
-      [ "SymGEigsShiftSolver< OpType, BOpType, GEigsMode::Cayley >", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1Cayley_01_4.html", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1Cayley_01_4" ],
-      [ "SymGEigsShiftSolver< OpType, BOpType, GEigsMode::ShiftInvert >", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1ShiftInvert_01_4.html", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1ShiftInvert_01_4" ],
+      [ "SymGEigsShiftSolver&lt; OpType, BOpType, GEigsMode::Buckling &gt;", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1Buckling_01_4.html", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1Buckling_01_4" ],
+      [ "SymGEigsShiftSolver&lt; OpType, BOpType, GEigsMode::Cayley &gt;", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1Cayley_01_4.html", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1Cayley_01_4" ],
+      [ "SymGEigsShiftSolver&lt; OpType, BOpType, GEigsMode::ShiftInvert &gt;", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1ShiftInvert_01_4.html", "classSpectra_1_1SymGEigsShiftSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1ShiftInvert_01_4" ],
       [ "SymGEigsSolver", "classSpectra_1_1SymGEigsSolver.html", null ],
-      [ "SymGEigsSolver< OpType, BOpType, GEigsMode::Cholesky >", "classSpectra_1_1SymGEigsSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1Cholesky_01_4.html", "classSpectra_1_1SymGEigsSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1Cholesky_01_4" ],
-      [ "SymGEigsSolver< OpType, BOpType, GEigsMode::RegularInverse >", "classSpectra_1_1SymGEigsSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1RegularInverse_01_4.html", "classSpectra_1_1SymGEigsSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1RegularInverse_01_4" ],
+      [ "SymGEigsSolver&lt; OpType, BOpType, GEigsMode::Cholesky &gt;", "classSpectra_1_1SymGEigsSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1Cholesky_01_4.html", "classSpectra_1_1SymGEigsSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1Cholesky_01_4" ],
+      [ "SymGEigsSolver&lt; OpType, BOpType, GEigsMode::RegularInverse &gt;", "classSpectra_1_1SymGEigsSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1RegularInverse_01_4.html", "classSpectra_1_1SymGEigsSolver_3_01OpType_00_01BOpType_00_01GEigsMode_1_1RegularInverse_01_4" ],
       [ "SymShiftInvert", "classSpectra_1_1SymShiftInvert.html", "classSpectra_1_1SymShiftInvert" ]
     ] ]
 ];
