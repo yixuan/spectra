@@ -8,6 +8,7 @@
 #define SPECTRA_PARTIAL_SVD_SOLVER_H
 
 #include <Eigen/Core>
+#include <memory>
 #include "../SymEigsSolver.h"
 
 namespace Spectra {
@@ -125,8 +126,8 @@ private:
     ConstGenericMatrix m_mat;
     const Index m_m;
     const Index m_n;
-    SVDMatOp<Scalar>* m_op;
-    SymEigsSolver<SVDMatOp<Scalar>>* m_eigs;
+    std::unique_ptr<SVDMatOp<Scalar>> m_op;
+    std::unique_ptr<SymEigsSolver<SVDMatOp<Scalar>>> m_eigs;
     Index m_nconv;
     Matrix m_evecs;
 
@@ -138,23 +139,18 @@ public:
         // Determine the matrix type, tall or wide
         if (m_m > m_n)
         {
-            m_op = new SVDTallMatOp<Scalar, MatrixType>(mat);
+            m_op.reset(new SVDTallMatOp<Scalar, MatrixType>(mat));
         }
         else
         {
-            m_op = new SVDWideMatOp<Scalar, MatrixType>(mat);
+            m_op.reset(new SVDWideMatOp<Scalar, MatrixType>(mat));
         }
 
         // Solver object
-        m_eigs = new SymEigsSolver<SVDMatOp<Scalar>>(*m_op, ncomp, ncv);
+        m_eigs.reset(new SymEigsSolver<SVDMatOp<Scalar>>(*m_op, ncomp, ncv));
     }
 
-    // Destructor
-    virtual ~PartialSVDSolver()
-    {
-        delete m_eigs;
-        delete m_op;
-    }
+    ~PartialSVDSolver() = default;
 
     // Computation
     Index compute(Index maxit = 1000, Scalar tol = 1e-10)
