@@ -34,8 +34,8 @@ inline long next_long_rand(long seed)
 
     unsigned long lo, hi;
 
-    lo = m_a * (long) (seed & 0xFFFF);
-    hi = m_a * (long) ((unsigned long) seed >> 16);
+    lo = (unsigned long) m_a * (unsigned long) (seed & 0xFFFFUL);
+    hi = (unsigned long) m_a * (unsigned long) ((unsigned long) seed >> 16);
     lo += (hi & 0x7FFF) << 16;
     if (lo > m_max)
     {

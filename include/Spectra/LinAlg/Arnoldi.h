@@ -122,7 +122,7 @@ public:
 
     // Move an ArnoldiOp
     Arnoldi(ArnoldiOpType&& op, Index m) :
-        m_op(std::move(op)), m_n(op.rows()), m_m(m), m_k(0)
+        m_op(std::move(op)), m_n(m_op.rows()), m_m(m), m_k(0)
     {}
 
     // Const-reference to internal structures

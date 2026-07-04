@@ -204,7 +204,7 @@ private:
 
 public:
     // Sort indices according to the eigenvalues they point to
-    inline bool operator()(Index i, Index j)
+    inline bool operator()(Index i, Index j) const
     {
         return SortingTarget<T, Rule>::get(m_evals[i]) < SortingTarget<T, Rule>::get(m_evals[j]);
     }

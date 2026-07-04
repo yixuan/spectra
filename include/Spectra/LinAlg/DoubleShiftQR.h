@@ -282,8 +282,8 @@ private:
         const Scalar u0 = m_ref_u.coeff(0, u_ind), u1 = m_ref_u.coeff(1, u_ind);
         const Scalar u0_2 = Scalar(2) * u0, u1_2 = Scalar(2) * u1;
 
-        const int nrow = X.rows();
-        const int ncol = X.cols();
+        const Index nrow = X.rows();
+        const Index ncol = X.cols();
         Scalar *X0 = X.data(), *X1 = X0 + stride;  // X0 => X.col(0), X1 => X.col(1)
 
         if (nr == 2 || ncol == 2)
