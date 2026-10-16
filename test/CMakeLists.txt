@@ -41,6 +41,9 @@ list(APPEND test_target_sources
         SymGEigsRegInv.cpp
         SymGEigsShift.cpp
 
+        # Contributed eigen solvers
+        LOBPCG.cpp
+
         # SVD
         SVD.cpp
 
