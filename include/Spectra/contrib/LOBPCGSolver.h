@@ -535,7 +535,7 @@ public:
 
     Matrix eigenvectors()
     {
-        return m_evectors;
+        return m_evectors.size() ? Matrix(X) : m_evectors;
     }
 
     Matrix residuals()
