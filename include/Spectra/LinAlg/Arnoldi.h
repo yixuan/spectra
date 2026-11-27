@@ -209,7 +209,7 @@ public:
             throw std::invalid_argument(msg);
         }
 
-        const RealScalar beta_thresh = m_eps * sqrt(RealScalar(m_n));
+        const RealScalar relative_beta_thresh = m_eps * sqrt(RealScalar(m_n));
 
         // Pre-allocate vectors
         Vector Vf(to_m);
@@ -254,7 +254,8 @@ public:
             m_fac_f.noalias() = w - Vs * h;
             m_beta = m_op.norm(m_fac_f);
 
-            if (m_beta > RealScalar(0.717) * m_op.norm(h))
+            const RealScalar h_norm = h.norm();
+            if (m_beta > RealScalar(0.717) * h_norm)
                 continue;
 
             // f/||f|| is going to be the next column of V, so we need to test
@@ -270,7 +271,7 @@ public:
                 // likely to fail. In particular, if beta=0, then the test is ensured to fail.
                 // Hence when this happens, we force f to be zero, and then restart in the
                 // next iteration.
-                if (m_beta < beta_thresh)
+                if (m_beta < relative_beta_thresh * h_norm)
                 {
                     m_fac_f.setZero();
                     m_beta = RealScalar(0);

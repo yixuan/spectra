@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 #include <type_traits>
 #include <random>
 #include <Eigen/Core>
@@ -177,4 +178,26 @@ TEST_CASE("Eigensolver of sparse real matrix [1000x1000]", "[eigs_gen]")
     double sigma = 100.0;
 
     run_test_sets(A, k, m, sigma);
+}
+
+TEST_CASE("Real shift-invert converges at small inverse scales", "[eigs_gen]")
+{
+    constexpr Eigen::Index n = 48;
+    Matrix unit = Matrix::Zero(n, n);
+    unit.diagonal() = Vector::LinSpaced(n, 1.0, double(n));
+    unit.diagonal(1).setConstant(0.25);
+
+    const double scale = std::ldexp(1.0, 50);
+    const Matrix A = unit * scale;
+    DenseGenRealShiftSolve<double> op(A);
+    GenEigsRealShiftSolver<> eigs(op, 3, 8, 11.4 * scale);
+    eigs.init();
+    REQUIRE(eigs.compute(SortRule::LargestMagn, 1000, 1e-8, SortRule::LargestMagn) == 3);
+    REQUIRE(eigs.info() == CompInfo::Successful);
+
+    const ComplexVector values = eigs.eigenvalues() / scale;
+    REQUIRE(values.real().isApprox(Eigen::Vector3d(12.0, 11.0, 10.0), 1e-8));
+    const ComplexMatrix vectors = eigs.eigenvectors();
+    const ComplexMatrix residual = unit * vectors - vectors * values.asDiagonal();
+    REQUIRE(residual.cwiseAbs().maxCoeff() < 1e-7);
 }
