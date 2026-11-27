@@ -54,7 +54,7 @@ public:
     // Constructor
     SVDTallMatOp(ConstGenericMatrix& mat) :
         m_mat(mat),
-        m_dim((std::min)(mat.rows(), mat.cols())),
+        m_dim((std::min) (mat.rows(), mat.cols())),
         m_cache(mat.rows())
     {}
 
@@ -93,7 +93,7 @@ public:
     // Constructor
     SVDWideMatOp(ConstGenericMatrix& mat) :
         m_mat(mat),
-        m_dim((std::min)(mat.rows(), mat.cols())),
+        m_dim((std::min) (mat.rows(), mat.cols())),
         m_cache(mat.cols())
     {}
 
@@ -176,7 +176,7 @@ public:
         {
             m_evecs = m_eigs->eigenvectors();
         }
-        nu = (std::min)(nu, m_nconv);
+        nu = (std::min) (nu, m_nconv);
         if (m_m <= m_n)
         {
             return m_evecs.leftCols(nu);
@@ -192,7 +192,7 @@ public:
         {
             m_evecs = m_eigs->eigenvectors();
         }
-        nv = (std::min)(nv, m_nconv);
+        nv = (std::min) (nv, m_nconv);
         if (m_m > m_n)
         {
             return m_evecs.leftCols(nv);

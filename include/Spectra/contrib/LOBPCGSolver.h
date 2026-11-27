@@ -453,7 +453,7 @@ public:
             DenseCholesky<Scalar> Bop(gramB);
 
             SymGEigsSolver<DenseSymMatProd<Scalar>, DenseCholesky<Scalar>, GEigsMode::Cholesky>
-                geigs(Aop, Bop, m_nev, (std::min)(10, int(gramA.rows()) - 1));
+                geigs(Aop, Bop, m_nev, (std::min) (10, int(gramA.rows()) - 1));
 
             geigs.init();
             geigs.compute(SortRule::SmallestAlge);

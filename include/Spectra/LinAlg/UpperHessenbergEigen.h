@@ -61,7 +61,7 @@ private:
         Scalar norm(0);
         for (Index j = 0; j < size; ++j)
         {
-            norm += m_matT.row(j).segment((std::max)(j - 1, Index(0)), size - (std::max)(j - 1, Index(0))).cwiseAbs().sum();
+            norm += m_matT.row(j).segment((std::max) (j - 1, Index(0)), size - (std::max) (j - 1, Index(0))).cwiseAbs().sum();
         }
 
         // Backsubstitute to find vectors of upper triangular form
@@ -187,7 +187,7 @@ private:
                         }
 
                         // Overflow control
-                        Scalar t = (std::max)(abs(m_matT.coeff(i, n - 1)), abs(m_matT.coeff(i, n)));
+                        Scalar t = (std::max) (abs(m_matT.coeff(i, n - 1)), abs(m_matT.coeff(i, n)));
                         if ((eps * t) * t > Scalar(1))
                             m_matT.block(i, n - 1, size - i, 2) /= t;
                     }
@@ -255,7 +255,7 @@ public:
                 {
                     Scalar t0 = m_matT.coeff(i + 1, i);
                     Scalar t1 = m_matT.coeff(i, i + 1);
-                    Scalar maxval = (std::max)(abs(p), (std::max)(abs(t0), abs(t1)));
+                    Scalar maxval = (std::max) (abs(p), (std::max) (abs(t0), abs(t1)));
                     t0 /= maxval;
                     t1 /= maxval;
                     Scalar p0 = p / maxval;
@@ -348,7 +348,7 @@ private:
     {
         const Index n = m_eivalues.size();
 
-        matrixnorm = (std::max)(matrixnorm, TypeTraits<RealScalar>::min());
+        matrixnorm = (std::max) (matrixnorm, TypeTraits<RealScalar>::min());
 
         // Compute X such that T = X D X^(-1), where D is the diagonal of T
         // The matrix X is unit triangular

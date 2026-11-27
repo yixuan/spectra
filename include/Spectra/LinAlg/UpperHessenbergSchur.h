@@ -49,7 +49,7 @@ private:
         const Index n = x.cols();
         Scalar norm(0);
         for (Index j = 0; j < n; j++)
-            norm += x.col(j).segment(0, (std::min)(n, j + 2)).cwiseAbs().sum();
+            norm += x.col(j).segment(0, (std::min) (n, j + 2)).cwiseAbs().sum();
         return norm;
     }
 
@@ -313,7 +313,7 @@ private:
                 // m_T.block(0, k, (std::min)(iu, k + 3) + 1, 3).applyHouseholderOnTheRight(ess, tau, workspace);
                 // m_U.block(0, k, m_n, 3).applyHouseholderOnTheRight(ess, tau, workspace);
                 apply_householder_left(ess, tau, &m_T.coeffRef(k, k), m_n - k, m_n);
-                apply_householder_right_simd(ess, tau, &m_T.coeffRef(0, k), (std::min)(iu, k + 3) + 1, m_n);
+                apply_householder_right_simd(ess, tau, &m_T.coeffRef(0, k), (std::min) (iu, k + 3) + 1, m_n);
                 apply_householder_right_simd(ess, tau, &m_U.coeffRef(0, k), m_n, m_n);
             }
         }
