@@ -233,7 +233,7 @@ private:
         const RealScalar eps23 = pow(eps, RealScalar(2) / 3);
 
         // Scale the roundoff floor with the factorization.
-        const RealScalar scale = (std::max)(m_ritz_val.cwiseAbs().maxCoeff(), m_fac.f_norm());
+        const RealScalar scale = (std::max) (m_ritz_val.cwiseAbs().maxCoeff(), m_fac.f_norm());
         const RealScalar floor = scale > RealScalar(0) ? eps23 * scale : eps23;
         RealArray thresh = tol * m_ritz_val.head(m_nev).array().abs().max(floor);
         RealArray resid = m_ritz_est.head(m_nev).array().abs() * m_fac.f_norm();
